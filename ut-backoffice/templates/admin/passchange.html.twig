@@ -1,0 +1,22 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title 'Changement de mot de passe' %}
+
+{% block main %}
+    <div class="alert alert-info" role="alert">Mot de passe</div>
+
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+
+    <button type="submit" class="btn btn-primary">
+        <i class="fa fa-save" aria-hidden="true"></i> Sauvegarder
+    </button>
+    {{ form_end(form) }}
+
+
+    <div class="section">
+        <a href="{{ path('app_profile_edit') }}" class="btn btn-lg btn-block btn-danger">
+            <i class="fa fa-edit" aria-hidden="true"></i> Editer votre compte
+        </a>
+    </div>
+{% endblock %}

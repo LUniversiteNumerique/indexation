@@ -1,0 +1,27 @@
+version: "3.8"
+
+volumes:
+  db_data:
+
+services:
+  ut-backoffice:
+    container_name: ut-backoffice
+    build:
+      context: ./ut-backoffice
+    ports:
+      - '80:80'
+    depends_on:
+      - mariadb
+
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    restart: always
+    environment:
+      MYSQL_DATABASE: unt
+      MYSQL_ROOT_PASSWORD: unt_ssl
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+

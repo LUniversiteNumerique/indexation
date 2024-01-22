@@ -1,0 +1,15 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title 'Edition de profile' %}
+
+{% block main %}
+
+    {{ form_start(form, {'att': {'class':'col-6'}}) }}
+        {{ form_widget(form) }}
+
+        <button type="submit" class="btn btn-primary">
+            <i class="fa fa-save" aria-hidden="true"></i> Sauvegarder
+        </button>
+    {{ form_end(form) }}
+{% endblock %}
+
