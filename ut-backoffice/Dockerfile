@@ -6,9 +6,11 @@ RUN apt update \
     && pecl install apcu \
     && docker-php-ext-enable apcu \
     && docker-php-ext-configure zip \
-    && docker-php-ext-install zip \
-    && nginx \
-    && supervisor
+    && docker-php-ext-install zip
+
+
+RUN apt install -y nginx
+RUN apt install -y supervisor
 
 RUN mkdir -p /var/log/supervisor
 COPY ./resources/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
@@ -18,9 +20,12 @@ WORKDIR /var/www/site
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-RUN curl -sS https://get.symfony.com/cli/installer | bash
-RUN mv /root/.symfony/bin/symfony /usr/local/bin/symfony
-
 COPY . /var/www/site/
+
+RUN ["composer","install","-v"]
+
+RUN mkdir -p /var/log/php-fpm
+RUN mkdir -p /var/log/ngninx
+
 
 CMD ["/usr/bin/supervisord"]
