@@ -1,12 +1,14 @@
 version: "3.8"
 
+
+
 volumes:
   db_data:
 
 services:
-  ut-backoffice:
+  lun-backoffice:
     build:
-      context: ./ut-backoffice
+      context: ./lun-backoffice
     ports:
       - '80:80'
     depends_on:
@@ -16,10 +18,10 @@ services:
     image: mariadb:latest
     restart: always
     environment:
-      MYSQL_DATABASE: unt
-      MYSQL_ROOT_PASSWORD: unt_ssl
+      MYSQL_DATABASE: ${MARIADB_DB}
+      MYSQL_ROOT_PASSWORD: ${MARIADB_ADMIN_PASSWORD}
     ports:
-      - "3306:3306"
+      - ${MARIADB_PORT}
     volumes:
-      - db_data:/var/lib/mysql
+      - db_data:${MARIADB_DATA}
 
