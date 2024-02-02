@@ -12,7 +12,7 @@ node {
       withSonarQubeEnv('SonarQube SSL') {
         script {
           // Execution de l'analyse sonar
-          sh 'sonar-scanner -Dsonar.projectKey=$SONARPROJECTKEY -Dsonar.projectVersion=$BUILDVERSION -Dproject.settings=sonar-project.properties'
+          sh 'sonar-scanner -Dsonar.projectKey=$SONARPROJECTKEY -Dsonar.projectVersion=$BUILDVERSION'
         }
       }
     }
