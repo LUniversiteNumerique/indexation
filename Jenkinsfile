@@ -4,7 +4,9 @@ pipeline {
     stage('SonarQube Analysis') {
       agent {
         docker {
-          image 'sonarsource/sonar-scanner-cli:4.6' args '-v $PWD:/usr/src'
+          image 'sonarsource/sonar-scanner-cli:4.6'
+          args '-v $PWD:/usr/src'
+          reuseNode true
         }
       }
       steps {
