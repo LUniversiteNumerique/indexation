@@ -16,7 +16,7 @@ Les composants de cette application sont les suivants :
 ## Démarrer le projet
 
 ```bash
-docker-compose up -d
+docker-compose up -d --build
 ```
 
 ## Initialisation schéma base de données backoffice
