@@ -6,9 +6,9 @@ volumes:
   db_data:
 
 services:
-  lun-backoffice:
+  backoffice:
     build:
-      context: ./lun-backoffice
+      context: ./lunt-backoffice
     ports:
       - '80:80'
     depends_on:
