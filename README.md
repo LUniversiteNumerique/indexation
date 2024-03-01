@@ -30,6 +30,10 @@ docker-compose exec backoffice php bin/console doctrine:database:drop --force
 docker-compose exec backoffice php bin/console doctrine:database:create
 ```
 
+## Initialisation données de test
+
+Des scripts SQL permettent de peupler la base de données avec des données de tests [lunt-mariadb\src\test\local](lunt-mariadb\src\test\local).
+
 ## Documentations
 
 L'ensemble des documents du projet est entrepôsé dans le répertoire <K:\SSL\Clients\Université Numérique\INDEXATION NOTICES>
