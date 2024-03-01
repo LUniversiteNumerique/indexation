@@ -43,6 +43,7 @@ pipeline {
           sh 'docker rmi -f sslv-nexus.coexya.eu/lunt-backoffice:latest'
           sh 'docker rmi -f lunt-backoffice:$DOCKERTAG'
           sh 'docker rmi -f sslv-nexus.coexya.eu/lunt-backoffice:$DOCKERTAG'
+        }
       }
     }
   }
