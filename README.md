@@ -19,6 +19,17 @@ Les composants de cette application sont les suivants :
 docker-compose up -d
 ```
 
+## Initialisation schéma base de données backoffice
+
+```bash
+# A ne faire qu'une fois
+docker-compose exec backoffice php bin/console d:m:mi -n
+
+# Si besoin pour réinitialiser sa base de données
+docker-compose exec backoffice php bin/console doctrine:database:drop --force
+docker-compose exec backoffice php bin/console doctrine:database:create
+```
+
 ## Documentations
 
 L'ensemble des documents du projet est entrepôsé dans le répertoire <K:\SSL\Clients\Université Numérique\INDEXATION NOTICES>
