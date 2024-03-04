@@ -1,10 +1,6 @@
 pipeline {
   agent any
 
-  environment {
-    DOCKERTAG = "$BUILD_NUMBER$DOCKERTAGEND"
-  }
-
   stages {
     stage('SonarQube Analysis') {
       agent {
@@ -25,24 +21,28 @@ pipeline {
     }
 
     stage('Docker build image backoffice') {
+      when {
+        buildingTag()
+        beforeAgent true
+      }
       steps {
         script {
           // Construction de l'image docker
-          sh 'docker build -t lunt-backoffice:latest -t lunt-backoffice:$DOCKERTAG lunt-backoffice'
+          sh 'docker build -t lunt-backoffice:latest -t lunt-backoffice:$TAG_NAME lunt-backoffice'
 
           // Tag de l'image docker pour le nexus
           sh 'docker tag lunt-backoffice:latest sslv-nexus.coexya.eu/lunt-backoffice:latest'
-          sh 'docker tag lunt-backoffice:$DOCKERTAG sslv-nexus.coexya.eu/lunt-backoffice:$DOCKERTAG'
+          sh 'docker tag lunt-backoffice:$TAG_NAME sslv-nexus.coexya.eu/lunt-backoffice:$TAG_NAME'
 
           // Upload de l'image docker sur le nexus
           sh 'docker push sslv-nexus.coexya.eu/lunt-backoffice:latest'
-          sh 'docker push sslv-nexus.coexya.eu/lunt-backoffice:$DOCKERTAG'
+          sh 'docker push sslv-nexus.coexya.eu/lunt-backoffice:$TAG_NAME'
 
           // Suppression des images docker locales
           sh 'docker rmi -f lunt-backoffice:latest'
           sh 'docker rmi -f sslv-nexus.coexya.eu/lunt-backoffice:latest'
-          sh 'docker rmi -f lunt-backoffice:$DOCKERTAG'
-          sh 'docker rmi -f sslv-nexus.coexya.eu/lunt-backoffice:$DOCKERTAG'
+          sh 'docker rmi -f lunt-backoffice:$TAG_NAME'
+          sh 'docker rmi -f sslv-nexus.coexya.eu/lunt-backoffice:$TAG_NAME'
         }
       }
     }
