@@ -1,7 +1,48 @@
 pipeline {
   agent any
+  post {
+    failure {
+      updateGitlabCommitStatus name: 'build', state: 'failed'
+    }
+    success {
+      updateGitlabCommitStatus name: 'build', state: 'success'
+    }
+    aborted {
+      updateGitlabCommitStatus name: 'build', state: 'canceled'
+    }
+  }
+  options {
+    gitLabConnection('SSL Gitlab')
+  }
+
+  parameters {
+    string name: 'SONARPROJECTKEY',
+           defaultValue: 'lunt-indexation-notice-dev'
+  }
+
+  environment {
+    def tagName = tagName()
+  }
+
+  triggers {
+    gitlab(
+      triggerOnPush: true,
+      triggerOnMergeRequest: false
+    )
+  }
 
   stages {
+
+    stage('Build Details') {
+      steps {
+        script {
+          sh 'echo "GitLab Source Branch: ${gitlabSourceBranch}"'
+          sh 'echo "GitLab Action Type: ${gitlabActionType}"'
+          sh 'echo "Calculated Tag Name: ${tagName}"'
+        }
+      }
+    }
+
     stage('SonarQube Analysis') {
       agent {
         docker {
@@ -22,41 +63,53 @@ pipeline {
 
     stage('Docker build image backoffice') {
       when {
-        buildingTag()
+        environment name: 'gitlabActionType', value: 'TAG_PUSH'
         beforeAgent true
       }
       steps {
         script {
           // Construction de l'image docker
-          sh 'docker build -t lunt-backoffice:latest -t lunt-backoffice:$TAG_NAME lunt-backoffice'
+          sh 'docker build -t lunt-backoffice:latest -t lunt-backoffice:$tagName lunt-backoffice'
 
           // Tag de l'image docker pour le nexus
           sh 'docker tag lunt-backoffice:latest sslv-nexus.coexya.eu/lunt-backoffice:latest'
-          sh 'docker tag lunt-backoffice:$TAG_NAME sslv-nexus.coexya.eu/lunt-backoffice:$TAG_NAME'
+          sh 'docker tag lunt-backoffice:$tagName sslv-nexus.coexya.eu/lunt-backoffice:$tagName'
 
           // Upload de l'image docker sur le nexus
           sh 'docker push sslv-nexus.coexya.eu/lunt-backoffice:latest'
-          sh 'docker push sslv-nexus.coexya.eu/lunt-backoffice:$TAG_NAME'
+          sh 'docker push sslv-nexus.coexya.eu/lunt-backoffice:$tagName'
 
           // Suppression des images docker locales
           sh 'docker rmi -f lunt-backoffice:latest'
           sh 'docker rmi -f sslv-nexus.coexya.eu/lunt-backoffice:latest'
-          sh 'docker rmi -f lunt-backoffice:$TAG_NAME'
-          sh 'docker rmi -f sslv-nexus.coexya.eu/lunt-backoffice:$TAG_NAME'
+          sh 'docker rmi -f lunt-backoffice:$tagName'
+          sh 'docker rmi -f sslv-nexus.coexya.eu/lunt-backoffice:$tagName'
         }
       }
     }
 
     stage('Update development platform') {
+      agent {
+        docker {
+          image 'ictu/sshpass'
+          reuseNode true
+        }
+      }
       when {
-        buildingTag()
+        environment name: 'gitlabActionType', value: 'TAG_PUSH'
         beforeAgent true
       }
       steps {
-        sshagent(['jenkins-lunt-ssh-development-user-pwd']) {
-          sh("ssh -tt user@sslv-lunt-develop.lyon-dev2.local VERSION=$DOCKERTAG docker-compose -f /home/user/lunt-indexation-notice/docker-compose.yml up -d")
+        withCredentials([string(credentialsId: 'jenkins-lunt-ssh-development-user-pwd', variable: 'VAR')]) {
+          sh '''
+          sshpass -p ${VAR} ssh -oStrictHostKeyChecking=no user@sslv-lunt-develop.lyon-dev2.local VERSION=${tagName} docker-compose -f /home/user/lunt-indexation-notice/docker-compose.yml up -d
+          '''
         }
       }
     }
   }
+}
+
+def tagName() {
+    return "${gitlabSourceBranch}" ? "${gitlabSourceBranch}".split('/')[-1] : 'snapshot'
 }
