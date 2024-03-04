@@ -11,6 +11,7 @@ services:
       MARIADB_PASS: ${MARIADB_ADMIN_PASSWORD}
       MARIADB_DB: ${MARIADB_DB}
       APP_PORT: "80"
+      SERVER_NAME: ${SERVER_NAME}
     ports:
       - "80:80"
     depends_on:

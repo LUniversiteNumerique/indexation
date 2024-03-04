@@ -2,7 +2,7 @@ server {
 
     listen 80;
     index index.php;
-    server_name localhost;
+    server_name $SERVER_NAME;
     root /var/www/site/public;
     error_log /var/log/nginx/project_error.log;
     access_log /var/log/nginx/project_access.log;
