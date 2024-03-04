@@ -46,5 +46,17 @@ pipeline {
         }
       }
     }
+
+    stage('Update development platform') {
+      when {
+        buildingTag()
+        beforeAgent true
+      }
+      steps {
+        sshagent(['jenkins-lunt-ssh-development-user-pwd']) {
+          sh("ssh -tt user@sslv-lunt-develop.lyon-dev2.local VERSION=$DOCKERTAG docker-compose -f /home/user/lunt-indexation-notice/docker-compose.yml up -d")
+        }
+      }
+    }
   }
 }
