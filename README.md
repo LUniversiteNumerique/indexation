@@ -23,11 +23,16 @@ docker-compose up -d --build
 
 ```bash
 # A ne faire qu'une fois
+docker-compose exec backoffice php bin/console m:mi -n
 docker-compose exec backoffice php bin/console d:m:mi -n
 
 # Si besoin pour réinitialiser sa base de données
 docker-compose exec backoffice php bin/console doctrine:database:drop --force
 docker-compose exec backoffice php bin/console doctrine:database:create
+docker-compose exec backoffice php bin/console m:mi -n
+docker-compose exec backoffice php bin/console d:m:mi -n
+docker-compose exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat /var/www/site/sql/samples-data/groupe.sql)"'
+docker-compose exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat /var/www/site/sql/samples-data/user.sql)"'
 ```
 
 ## Initialisation données de test

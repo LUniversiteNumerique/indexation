@@ -19,6 +19,8 @@ COPY ./resources/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY ./resources/default.conf.template /etc/nginx/conf.d/templates/default.conf.template
 COPY ./resources/nginx-start.sh /root/nginx-start.sh
 
+RUN chmod +x /root/nginx-start.sh
+
 WORKDIR /var/www/site
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
