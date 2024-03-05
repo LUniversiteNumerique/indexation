@@ -41,7 +41,7 @@ pipeline {
 
     stage('SonarQube Analysis') {
       when {
-        environment name: 'gitlabActionType', value: 'TAG_PUSH'
+        environment name: 'gitlabSourceBranch', value: 'origin/develop'
         beforeAgent true
       }
       agent {
@@ -63,7 +63,7 @@ pipeline {
 
     stage('Docker build image backoffice') {
       when {
-        branch 'origin/develop'
+        environment name: 'gitlabActionType', value: 'TAG_PUSH'
         beforeAgent true
       }
       steps {
