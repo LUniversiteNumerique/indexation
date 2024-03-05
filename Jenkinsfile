@@ -110,8 +110,8 @@ pipeline {
             sh 'sshpass -p ${VAR} ssh -oStrictHostKeyChecking=no user@sslv-lunt-develop.lyon-dev2.local docker-compose -f /home/user/lunt-indexation-notice/docker-compose.yml exec backoffice php bin/console doctrine:database:create'
             sh 'sshpass -p ${VAR} ssh -oStrictHostKeyChecking=no user@sslv-lunt-develop.lyon-dev2.local docker-compose -f /home/user/lunt-indexation-notice/docker-compose.yml exec backoffice php bin/console m:mi -n'
             sh 'sshpass -p ${VAR} ssh -oStrictHostKeyChecking=no user@sslv-lunt-develop.lyon-dev2.local docker-compose -f /home/user/lunt-indexation-notice/docker-compose.yml exec backoffice php bin/console d:m:mi -n'
-            sh "sshpass -p ${VAR} ssh -oStrictHostKeyChecking=no user@sslv-lunt-develop.lyon-dev2.local docker-compose -f /home/user/lunt-indexation-notice/docker-compose.yml exec backoffice sh -c 'php bin/console d:q:sql -n \"$(cat /var/www/site/sql/samples-data/groupe.sql)\"'"
-            sh "sshpass -p ${VAR} ssh -oStrictHostKeyChecking=no user@sslv-lunt-develop.lyon-dev2.local docker-compose -f /home/user/lunt-indexation-notice/docker-compose.yml exec backoffice sh -c 'php bin/console d:q:sql -n \"$(cat /var/www/site/sql/samples-data/user.sql)\"'"
+            sh 'sshpass -p ${VAR} ssh -oStrictHostKeyChecking=no user@sslv-lunt-develop.lyon-dev2.local docker-compose -f /home/user/lunt-indexation-notice/docker-compose.yml exec backoffice sh -c \'php bin/console d:q:sql -n "$(cat /var/www/site/sql/samples-data/groupe.sql)"\''
+            sh 'sshpass -p ${VAR} ssh -oStrictHostKeyChecking=no user@sslv-lunt-develop.lyon-dev2.local docker-compose -f /home/user/lunt-indexation-notice/docker-compose.yml exec backoffice sh -c \'php bin/console d:q:sql -n "$(cat /var/www/site/sql/samples-data/user.sql)"\''
           }
         }
       }
