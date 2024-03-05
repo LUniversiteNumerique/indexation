@@ -42,3 +42,13 @@ L'ensemble des documents du projet est entrepôsé dans le répertoire <K:\SSL\C
 
 Des opérations d'intégration continue et de déploiement automatique sont configurées dans le dossier Jenkins :  
 https://sslv-factory.coexya.lan/jenkins/job/Universit%C3%A9%20Num%C3%A9rique/
+
+L'intégration de Jenkins a été réalisée pour le projet. La configuration est disponible ici :  
+https://ssl-gitlab.coexya.eu/universite-numerique/lunt-indexation-notice/-/settings/integrations/jenkins/edit
+
+Le job Jenkins effectue une analyse Sonar à chaque push sur la branche develop.  
+Un déploiement sur la plateforme de développement est réalisé à chaque création de tag.
+
+## Environnement
+
+Accès Backoffice développement : http://sslv-lunt-develop.lyon-dev2.local/

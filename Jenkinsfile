@@ -15,13 +15,9 @@ pipeline {
     gitLabConnection('SSL Gitlab')
   }
 
-  parameters {
-    string name: 'SONARPROJECTKEY',
-           defaultValue: 'lunt-indexation-notice-dev'
-  }
-
   environment {
     def tagName = tagName()
+    def SONARPROJECTKEY = 'lunt-indexation-notice-develop'
   }
 
   triggers {
@@ -44,6 +40,10 @@ pipeline {
     }
 
     stage('SonarQube Analysis') {
+      when {
+        environment name: 'gitlabActionType', value: 'TAG_PUSH'
+        beforeAgent true
+      }
       agent {
         docker {
           image 'sonarsource/sonar-scanner-cli:4.6'
@@ -63,7 +63,7 @@ pipeline {
 
     stage('Docker build image backoffice') {
       when {
-        environment name: 'gitlabActionType', value: 'TAG_PUSH'
+        branch 'origin/develop'
         beforeAgent true
       }
       steps {

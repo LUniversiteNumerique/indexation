@@ -2,6 +2,9 @@ version: "3.8"
 
 services:
   backoffice:
+    # Variante pour les environnements dev et int
+    # image: sslv-nexus.coexya.eu/lunt-backoffice:${VERSION:-latest}
+    # Variante pour le développement local
     build:
       context: ./lunt-backoffice
     environment:
