@@ -101,15 +101,18 @@ pipeline {
       }
       steps {
         withCredentials([string(credentialsId: 'jenkins-lunt-ssh-development-user-pwd', variable: 'VAR')]) {
-          sh '''
-          sshpass -p ${VAR} ssh -oStrictHostKeyChecking=no user@sslv-lunt-develop.lyon-dev2.local VERSION=${tagName} docker-compose -f /home/user/lunt-indexation-notice/docker-compose.yml up -d
-          sshpass -p ${VAR} ssh -oStrictHostKeyChecking=no user@sslv-lunt-develop.lyon-dev2.local docker-compose -f /home/user/lunt-indexation-notice/docker-compose.yml exec backoffice php bin/console doctrine:database:drop --force
-          sshpass -p ${VAR} ssh -oStrictHostKeyChecking=no user@sslv-lunt-develop.lyon-dev2.local docker-compose -f /home/user/lunt-indexation-notice/docker-compose.yml exec backoffice php bin/console doctrine:database:create
-          sshpass -p ${VAR} ssh -oStrictHostKeyChecking=no user@sslv-lunt-develop.lyon-dev2.local docker-compose -f /home/user/lunt-indexation-notice/docker-compose.yml exec backoffice php bin/console m:mi -n
-          sshpass -p ${VAR} ssh -oStrictHostKeyChecking=no user@sslv-lunt-develop.lyon-dev2.local docker-compose -f /home/user/lunt-indexation-notice/docker-compose.yml exec backoffice php bin/console d:m:mi -n
-          sshpass -p ${VAR} ssh -oStrictHostKeyChecking=no user@sslv-lunt-develop.lyon-dev2.local docker-compose -f /home/user/lunt-indexation-notice/docker-compose.yml exec backoffice sh -c \'php bin/console d:q:sql -n \"$(cat /var/www/site/sql/samples-data/groupe.sql)\"\'
-          sshpass -p ${VAR} ssh -oStrictHostKeyChecking=no user@sslv-lunt-develop.lyon-dev2.local docker-compose -f /home/user/lunt-indexation-notice/docker-compose.yml exec backoffice sh -c \'php bin/console d:q:sql -n \"$(cat /var/www/site/sql/samples-data/user.sql)\"\'
-          '''
+          script {
+            // Mise à jour de l'environnement avec la nouvelle version
+            sh 'sshpass -p ${VAR} ssh -oStrictHostKeyChecking=no user@sslv-lunt-develop.lyon-dev2.local VERSION=${tagName} docker-compose -f /home/user/lunt-indexation-notice/docker-compose.yml up -d'
+
+            // Réinitialisation des données
+            sh 'sshpass -p ${VAR} ssh -oStrictHostKeyChecking=no user@sslv-lunt-develop.lyon-dev2.local docker-compose -f /home/user/lunt-indexation-notice/docker-compose.yml exec backoffice php bin/console doctrine:database:drop --force'
+            sh 'sshpass -p ${VAR} ssh -oStrictHostKeyChecking=no user@sslv-lunt-develop.lyon-dev2.local docker-compose -f /home/user/lunt-indexation-notice/docker-compose.yml exec backoffice php bin/console doctrine:database:create'
+            sh 'sshpass -p ${VAR} ssh -oStrictHostKeyChecking=no user@sslv-lunt-develop.lyon-dev2.local docker-compose -f /home/user/lunt-indexation-notice/docker-compose.yml exec backoffice php bin/console m:mi -n'
+            sh 'sshpass -p ${VAR} ssh -oStrictHostKeyChecking=no user@sslv-lunt-develop.lyon-dev2.local docker-compose -f /home/user/lunt-indexation-notice/docker-compose.yml exec backoffice php bin/console d:m:mi -n'
+            sh 'sshpass -p ${VAR} ssh -oStrictHostKeyChecking=no user@sslv-lunt-develop.lyon-dev2.local docker-compose -f /home/user/lunt-indexation-notice/docker-compose.yml exec backoffice sh -c \'php bin/console d:q:sql -n \"$(cat /var/www/site/sql/samples-data/groupe.sql)\"\''
+            sh 'sshpass -p ${VAR} ssh -oStrictHostKeyChecking=no user@sslv-lunt-develop.lyon-dev2.local docker-compose -f /home/user/lunt-indexation-notice/docker-compose.yml exec backoffice sh -c \'php bin/console d:q:sql -n \"$(cat /var/www/site/sql/samples-data/user.sql)\"\''
+          }
         }
       }
     }
