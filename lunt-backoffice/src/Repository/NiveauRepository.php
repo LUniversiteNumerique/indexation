@@ -21,28 +21,18 @@ class NiveauRepository extends ServiceEntityRepository
         parent::__construct($registry, Niveau::class);
     }
 
-//    /**
-//     * @return Niveau[] Returns an array of Niveau objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('n')
-//            ->andWhere('n.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('n.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function add(Niveau $u=null): ?Niveau
+    {
+        if($u) $this->_em->persist($u);
+        $this->_em->flush();
+        return $u;
+    }
 
-//    public function findOneBySomeField($value): ?Niveau
-//    {
-//        return $this->createQueryBuilder('n')
-//            ->andWhere('n.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function del(Niveau $u): Niveau
+    {
+        $this->_em->remove($u);
+        $this->_em->flush();
+
+        return $u;
+    }
 }

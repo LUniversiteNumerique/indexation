@@ -21,28 +21,18 @@ class LicenceRepository extends ServiceEntityRepository
         parent::__construct($registry, Licence::class);
     }
 
-//    /**
-//     * @return Licence[] Returns an array of Licence objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('l')
-//            ->andWhere('l.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('l.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function add(Licence $u=null): ?Licence
+    {
+        if($u) $this->_em->persist($u);
+        $this->_em->flush();
+        return $u;
+    }
 
-//    public function findOneBySomeField($value): ?Licence
-//    {
-//        return $this->createQueryBuilder('l')
-//            ->andWhere('l.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function del(Licence $u): Licence
+    {
+        $this->_em->remove($u);
+        $this->_em->flush();
+
+        return $u;
+    }
 }

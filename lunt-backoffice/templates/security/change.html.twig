@@ -3,7 +3,7 @@
 {% block content_title 'Changement de mot de passe' %}
 
 {% block main %}
-    <div class="alert alert-info" role="alert">Mot de passe</div>
+    <div class="alert alert-info" role="alert">Après avoir modifié votre mot de passe, vous serez déconnecté de l'application.</div>
 
     {{ form_start(form) }}
     {{ form_widget(form) }}
@@ -12,11 +12,4 @@
         <i class="fa fa-save" aria-hidden="true"></i> Sauvegarder
     </button>
     {{ form_end(form) }}
-
-
-    <div class="section">
-        <a href="{{ path('app_profile_edit') }}" class="btn btn-lg btn-block btn-danger">
-            <i class="fa fa-edit" aria-hidden="true"></i> Editer votre compte
-        </a>
-    </div>
 {% endblock %}

@@ -1,0 +1,15 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title 'Profile utilisateur' %}
+
+{% block page_actions %}
+    <a class="btn btn-primary" href="{{ path('app_profile_edit') }}">Editer le profile</a>
+    <a class="btn btn-outline-danger" href="{{ path('app_profile_change') }}">Changer le mot de passe</a>
+{% endblock %}
+
+{% block main %}
+    <div class="example-wrapper">
+        <h1>Hello {{ app.user }}! ✅</h1>
+    </div>
+    <span class="badge badge-outline">{{ app.user.group }}</span>
+{% endblock %}

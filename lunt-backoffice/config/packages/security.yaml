@@ -4,10 +4,8 @@ security:
     providers:
         app_user:
             id: App\Security\UserProvider #entity: class: App\Entity\User
-    role_hierarchy:
-        ROLE_CONTR:       ROLE_USER
-        ROLE_DOCUM:       ROLE_USER
-        ROLE_ADMIN: [ROLE_DOCUM]
+    access_decision_manager:
+        strategy: unanimous
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -20,8 +18,9 @@ security:
                 check_path: app_login
                 enable_csrf: true
             logout:
-                path: app_logout
+                path: /logout
                 # target: app_any_route
+            user_checker: App\Security\UserChecker
             remember_me:
                 secret: '%kernel.secret%'
                 lifetime: 604800
@@ -29,7 +28,7 @@ security:
                 always_remember_me: true
 
     access_control:
-        - { path: ^/login, roles: PUBLIC_ACCESS  }
+        - { path: ^/(login|reset-pass), roles: PUBLIC_ACCESS  }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY  }
         - { path: ^/profile, roles: ROLE_USER }
 

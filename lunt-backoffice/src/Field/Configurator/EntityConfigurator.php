@@ -15,6 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\PropertyAccess\{Exception\UnexpectedTypeException, PropertyAccessor};
 use function Symfony\Component\Translation\t;
+use function Symfony\Component\String\u;
 
 readonly class EntityConfigurator implements FieldConfiguratorInterface
 {
@@ -113,9 +114,9 @@ readonly class EntityConfigurator implements FieldConfiguratorInterface
         } else {
 
             if ($mapped === false || $entityDto->isToOneAssociation($propertyName))
-                $this->configureToOneAssociation($field);
+                $field->setFormattedValue($this->configureToOneAssociation($field));
             elseif ($entityDto->isToManyAssociation($propertyName))
-                $this->configureToManyAssociation($field);
+                $field->setFormattedValue($this->configureToManyAssociation($field,$context));
 
         }
 
@@ -147,7 +148,7 @@ readonly class EntityConfigurator implements FieldConfiguratorInterface
 
     }
 
-    private function configureToOneAssociation(FieldDto $field): void
+    private function configureToOneAssociation(FieldDto $field): ?string
     {
         $mapped = $field->getFormTypeOption('mapped');
         $field->setCustomOption(EntityField::OPTION_DOCTRINE_ASSOCIATION_TYPE, 'toOne');
@@ -169,10 +170,10 @@ readonly class EntityConfigurator implements FieldConfiguratorInterface
 
         $field->setCustomOption(EntityField::OPTION_RELATED_URL, $this->generateLinkToAssociatedEntity($targetCrudControllerFqcn, $targetEntityDto));
 
-        $field->setFormattedValue($this->formatAsString($field->getValue(), $targetEntityDto));
+        return $this->formatAsString($field->getValue(), $targetEntityDto);
     }
 
-    private function configureToManyAssociation(FieldDto $field): void
+    private function configureToManyAssociation(FieldDto $field, AdminContext $context): ?string
     {
         $field->setCustomOption(EntityField::OPTION_DOCTRINE_ASSOCIATION_TYPE, 'toMany');
 
@@ -181,11 +182,17 @@ readonly class EntityConfigurator implements FieldConfiguratorInterface
         /* @var PersistentCollection $collection */
         $field->setFormTypeOptionIfNotSet('class', $field->getDoctrineMetadata()->get('targetEntity'));
 
-        if (null === $field->getTextAlign()) {
-            $field->setTextAlign(TextAlign::RIGHT);
-        }
+        if (null === $field->getTextAlign()) $field->setTextAlign(TextAlign::RIGHT);
 
-        $field->setFormattedValue($this->countNumElements($field->getValue()));
+        $collectionItemsAsText = [];
+        foreach ($field->getValue() ?? [] as $item) {
+            if (!\is_string($item) && !(\is_object($item) && method_exists($item, '__toString')))
+                return $this->countNumElements($field->getValue());
+            $collectionItemsAsText[] = (string) $item;
+        }
+        $isDetailAction = Action::DETAIL === $context->getCrud()->getCurrentAction();
+
+        return u(', ')->join($collectionItemsAsText)->truncate($isDetailAction ? 512 : 32, '…')->toString();
     }
 
     private function formatAsString($entityInstance, EntityDto $entityDto): ?string

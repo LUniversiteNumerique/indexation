@@ -3,37 +3,48 @@
 namespace App\Entity;
 
 use App\Repository\GroupeRepository;
+use Doctrine\Common\Collections\{ArrayCollection,Collection};
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: GroupeRepository::class)]
 class Groupe
 {
     const PERMISSIONS = array(
-        "ROLE_CONTR" => 'Contributeur',
-        "ROLE_DOCUM" => 'Documentaliste',
-        "ROLE_ADMIN" => 'Administrateur'
+        'Lire_Auteur'=>'ROLE_READ_ACTE', 'Créer_Auteur'=>'ROLE_CREA_ACTE', 'Editer_Auteur'=>'ROLE_EDIT_ACTE', 'Supprimer_Auteur'=>'ROLE_DROP_ACTE',
+        'Lire_Cdewey'=>'ROLE_READ_DEWE', 'Créer_Cdewey'=>'ROLE_CREA_DEWE', 'Editer_Cdewey'=>'ROLE_EDIT_DEWE', 'Supprimer_Cdewey'=>'ROLE_DROP_DEWE',
+        'Lire_Discip'=>'ROLE_READ_DISC', 'Créer_Discip'=>'ROLE_CREA_DISC', 'Editer_Discip'=>'ROLE_EDIT_DISC', 'Supprimer_Discip'=>'ROLE_DROP_DISC',
+        'Lire_Etabli'=>'ROLE_READ_ETAB', 'Créer_Etabli'=>'ROLE_CREA_ETAB', 'Editer_Etabli'=>'ROLE_EDIT_ETAB', 'Supprimer_Etabli'=>'ROLE_DROP_ETAB',
+        'Lire_Groupe'=>'ROLE_READ_GROU', 'Créer_Groupe'=>'ROLE_CREA_GROU', 'Editer_Groupe'=>'ROLE_EDIT_GROU', 'Supprimer_Groupe'=>'ROLE_DROP_GROU',
+        'Lire_MotClé'=>'ROLE_READ_KEYW', 'Créer_MotClé'=>'ROLE_CREA_KEYW', 'Editer_MotClé'=>'ROLE_EDIT_KEYW', 'Supprimer_MotClé'=>'ROLE_DROP_KEYW',
+        'Lire_Utilis'=>'ROLE_READ_USER', 'Créer_Utilis'=>'ROLE_CREA_USER', 'Editer_Utilis'=>'ROLE_EDIT_USER', 'Supprimer_Utilis'=>'ROLE_DROP_USER',
+        'Lire_Licenc'=>'ROLE_READ_LICE', 'Créer_Licenc'=>'ROLE_CREA_LICE', 'Editer_Licenc'=>'ROLE_EDIT_LICE', 'Supprimer_Licenc'=>'ROLE_DROP_LICE',
+        'Lire_Pédago'=>'ROLE_READ_TPED', 'Créer_Pédago'=>'ROLE_CREA_TPED', 'Editer_Pédago'=>'ROLE_EDIT_TPED', 'Supprimer_Pédago'=>'ROLE_DROP_TPED',
+        'Lire_Notice'=>'ROLE_READ_NOTI', 'Créer_Notice'=>'ROLE_CREA_NOTI', 'Editer_Notice'=>'ROLE_EDIT_NOTI', 'Supprimer_Notice'=>'ROLE_DROP_NOTI', 'Valider_Notice'=>'ROLE_VALI_NOTI',
     );
 
-    #[ORM\Id,ORM\Column]
-    #[ORM\GeneratedValue]
-    private ?int $id = null;
+    use Timestamps;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255),
+        Assert\NotBlank, Assert\Type('string')]
     private ?string $label = null;
 
-    #[ORM\Column]
+    #[ORM\Column, Assert\Count(min: 1),
+    Assert\Choice(choices: self::PERMISSIONS, multiple: true)]
     private array $rights = [];
 
-    public function __construct() {}
+    #[ORM\OneToMany(mappedBy: 'group', targetEntity: User::class)]
+    private Collection $users;
+
+    public function __construct()
+    {
+        $this->users = new ArrayCollection();
+        $this->creeLe = new \DateTimeImmutable();
+    }
 
     public function hasRight($name): bool
     {
         return in_array($name, $this->getRights(),true);
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getLabel(): ?string
@@ -41,7 +52,7 @@ class Groupe
         return $this->label;
     }
 
-    public function setLabel(string $label): static
+    public function setLabel(?string $label): static
     {
         $this->label = $label;
 
@@ -56,6 +67,29 @@ class Groupe
     public function setRights(array $rights): static
     {
         $this->rights = $rights;
+
+        return $this;
+    }
+
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user))
+            $this->users->add($user->setGroup($this));
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->removeElement($user)) {
+            if ($user->getGroup() === $this)
+                $user->setGroup(null);
+        }
 
         return $this;
     }

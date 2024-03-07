@@ -29,7 +29,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $qr = $this->createQueryBuilder('u')->select('u,f')->leftJoin('u.fields', 'f');
         if(!empty($disc))
-            foreach ($disc as $option => $key) $qr->andWhere(":in$key MEMBER OF u.fields")->setParameter("in$key", $option);
+            foreach ($disc as $option => $key) $qr->andWhere(":in$key MEMBER OF u.untheme.fields")->setParameter("in$key", $option);
         elseif($etab) $qr->andWhere("u.school = :etab")->setParameter("etab", $etab);
 
         return $qr->getQuery()->getResult();

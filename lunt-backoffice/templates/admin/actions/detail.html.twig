@@ -1,0 +1,26 @@
+{% extends '@!EasyAdmin/crud/detail.html.twig' %}
+
+{% block delete_form %}
+    {{ include('@EasyAdmin/crud/includes/_delete_form.html.twig', { entity_id: entity.primaryKeyValue }, with_context = false) }}
+
+    <div id="modal-confirm" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <form method="post" id="confirm-form" class="modal-content" action="{{ ea_url().setController('App\\Controller\\NoticeCrudController').setAction('labelNotice').setEntityId(entity.primaryKeyValue) }}">
+                <div class="modal-header"><h4>Catégoriser Notice</h4></div>
+                <div class="modal-body">
+                    <input type="text" id="label" name="label" class="form-control" placeholder="Entrer la catégorie" required autofocus>
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-bs-dismiss="modal" class="btn btn-secondary">
+                        <span class="btn-label">{{ 'action.cancel'|trans([], 'EasyAdminBundle') }}</span>
+                    </button>
+
+                    <button type="submit" class="btn btn-primary" id="modal-confirm-button">
+                        <i class="fa fa-send" aria-hidden="true"></i> Sauvegarder
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock delete_form %}

@@ -11,113 +11,122 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: NoticeRepository::class)]
 class Notice
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    use Timestamps;
 
     #[ORM\Column(length: 255), Assert\NotBlank]
     private ?string $titre = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[ORM\Column(type: Types::TEXT), Assert\NotNull]
     private ?string $description = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $label = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $dewey = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
     private ?string $vignette = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?string $dureExec = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?string $dureAppr = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $objectif = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $propUser = null;
-
     #[ORM\Column(nullable: true)]
-    private ?int $taille = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?int $dureExec = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?int $dureAppr = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?array $ressLang = null;
+    private ?array $propUser = null;
 
     #[ORM\Column(nullable: true)]
     private ?array $userLang = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $creeLe;
+    #[ORM\Column(nullable: true),
+        Assert\Count(min: 1)]
+    private ?array $ressLang = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $modifieLe = null;
+    #[ORM\Column(nullable: true)]
+    private ?int $taille = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $ressDate;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $publieLe = null;
 
-    #[ORM\Column(length: 10, nullable: true, enumType: NoticEtat::class)]
+    #[ORM\Column(length: 10, nullable: true,
+        enumType: NoticEtat::class)]
     private ?NoticEtat $etat;
 
     #[ORM\Column(nullable: true)]
     private ?bool $exportOAI = null;
 
-    #[ORM\ManyToOne, ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    #[ORM\ManyToOne]
+    private ?User $createur,$validateur;
 
-    #[ORM\Embedded(Ressource::class),
-        Assert\Valid, Assert\Type(Ressource::class)]
-    private ?Ressource $contenu;
+    #[ORM\Column(length: 255),Assert\Url]
+    private ?string $ressUrl = null;
 
-    #[ORM\ManyToOne, Assert\NotNull]
+    #[ORM\Column(length: 255, nullable: true),Assert\Url]
+    private ?string $formEvalUrl = null;
+
+    #[ORM\ManyToOne, Assert\NotNull,
+        ORM\JoinColumn(nullable: false)]
     private ?Licence $droit = null;
 
-    #[ORM\ManyToOne, Assert\NotNull]
+    #[ORM\ManyToOne, Assert\Valid,
+        Assert\Type(Dewey::class)]
+    private ?Dewey $codewey = null;
+
+    #[ORM\ManyToOne, ORM\JoinColumn(nullable: false),
+        Assert\Valid, Assert\Type(Discipline::class)]
     private ?Discipline $specialite = null;
 
-    #[ORM\ManyToMany(targetEntity: Etablissement::class)]
+    #[ORM\ManyToOne] private ?Etablissement $publisher;
+
+    #[ORM\ManyToMany(targetEntity: Etablissement::class),
+        Assert\Count(min: 1)]
     private Collection $porteurs;
 
-    #[ORM\ManyToMany(targetEntity: Auteur::class, cascade: ['persist'])]
+    #[ORM\ManyToMany(targetEntity: Auteur::class, cascade: ['persist']),
+        Assert\Count(min: 1)]
     private Collection $auteurs;
 
-    #[ORM\ManyToMany(targetEntity: TDocument::class)]
+    #[ORM\ManyToMany(targetEntity: TDocument::class),
+        Assert\Count(min: 1)]
     private Collection $docTypes;
 
-    #[ORM\ManyToMany(targetEntity: TPedagogie::class)]
+    #[ORM\ManyToMany(targetEntity: TPedagogie::class),
+        Assert\Count(min: 1)]
     private Collection $pedTypes;
 
-    #[ORM\ManyToMany(targetEntity: Niveau::class)]
+    #[ORM\ManyToMany(targetEntity: Niveau::class),
+        Assert\Count(min: 1)]
     private Collection $niveaux;
 
-    #[ORM\ManyToMany(targetEntity: Keyword::class, cascade: ['persist'])]
+    #[ORM\ManyToMany(targetEntity: Keyword::class, cascade: ['persist']),
+        Assert\Count(min: 1)]
     private Collection $tags;
 
     #[ORM\ManyToMany(targetEntity: self::class)]
     private Collection $ressources;
 
+    #[ORM\Column]
+    private ?bool $ressPayant = false, $proprIntel = false;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $editDemande = null;
+
     public function __construct()
     {
-        $this->contenu = new Ressource();
         $this->niveaux = new ArrayCollection();
         $this->docTypes = new ArrayCollection();
         $this->pedTypes = new ArrayCollection();
         $this->ressources = new ArrayCollection();
         $this->porteurs = new ArrayCollection();
-        $this->auteurs = new ArrayCollection();
         $this->tags = new ArrayCollection();
+        $this->auteurs = new ArrayCollection();
         $this->etat = NoticEtat::Working;
-        $this->creeLe = new \DateTime();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
+        $this->creeLe = new \DateTimeImmutable();
     }
 
     public function getTitre(): ?string
@@ -125,7 +134,7 @@ class Notice
         return $this->titre;
     }
 
-    public function setTitre(string $titre): static
+    public function setTitre(string $titre): self
     {
         $this->titre = $titre;
 
@@ -137,7 +146,7 @@ class Notice
         return $this->description;
     }
 
-    public function setDescription(string $description): static
+    public function setDescription(string $description): self
     {
         $this->description = $description;
 
@@ -149,21 +158,9 @@ class Notice
         return $this->label;
     }
 
-    public function setLabel(?string $label): static
+    public function setLabel(?string $label): self
     {
         $this->label = $label;
-
-        return $this;
-    }
-
-    public function getDewey(): ?string
-    {
-        return $this->dewey;
-    }
-
-    public function setDewey(?string $dewey): static
-    {
-        $this->dewey = $dewey;
 
         return $this;
     }
@@ -173,43 +170,43 @@ class Notice
         return $this->taille;
     }
 
-    public function setTaille(int $taille): static
+    public function setTaille(int $taille): self
     {
         $this->taille = $taille;
 
         return $this;
     }
 
-    public function getDureExec(): ?int
+    public function getDureExec(): ?string
     {
         return $this->dureExec;
     }
 
-    public function setDureExec(?int $dureExec): static
+    public function setDureExec(?string $dureExec): self
     {
         $this->dureExec = $dureExec;
 
         return $this;
     }
 
-    public function getDureAppr(): ?int
+    public function getDureAppr(): ?string
     {
         return $this->dureAppr;
     }
 
-    public function setDureAppr(?int $dureAppr): static
+    public function setDureAppr(?string $dureAppr): self
     {
         $this->dureAppr = $dureAppr;
 
         return $this;
     }
 
-    public function getPropUser(): ?string
+    public function getPropUser(): ?array
     {
         return $this->propUser;
     }
 
-    public function setPropUser(?string $propUser): static
+    public function setPropUser(?array $propUser): self
     {
         $this->propUser = $propUser;
 
@@ -221,7 +218,7 @@ class Notice
         return $this->vignette;
     }
 
-    public function setVignette(?string $vignette): static
+    public function setVignette(?string $vignette): self
     {
         $this->vignette = $vignette;
 
@@ -233,21 +230,9 @@ class Notice
         return $this->objectif;
     }
 
-    public function setObjectif(?string $objectif): static
+    public function setObjectif(?string $objectif): self
     {
         $this->objectif = $objectif;
-
-        return $this;
-    }
-
-    public function getRessLang(): ?array
-    {
-        return $this->ressLang;
-    }
-
-    public function setRessLang(?array $ressLang): static
-    {
-        $this->ressLang = $ressLang;
 
         return $this;
     }
@@ -257,33 +242,33 @@ class Notice
         return $this->userLang;
     }
 
-    public function setUserLang(?array $userLang): static
+    public function setUserLang(?array $userLang): self
     {
         $this->userLang = $userLang;
 
         return $this;
     }
 
-    public function getCreeLe(): ?\DateTimeInterface
+    public function getRessLang(): ?array
     {
-        return $this->creeLe;
+        return $this->ressLang;
     }
 
-    public function setCreeLe(\DateTimeInterface $creeLe): static
+    public function setRessLang(?array $ressLang): self
     {
-        $this->creeLe = $creeLe;
+        $this->ressLang = $ressLang;
 
         return $this;
     }
 
-    public function getModifieLe(): ?\DateTimeInterface
+    public function getRessDate(): ?\DateTimeInterface
     {
-        return $this->modifieLe;
+        return $this->ressDate;
     }
 
-    public function setModifieLe(?\DateTimeInterface $modifieLe): static
+    public function setRessDate(?\DateTimeInterface $ressDate): self
     {
-        $this->modifieLe = $modifieLe;
+        $this->ressDate = $ressDate;
 
         return $this;
     }
@@ -293,7 +278,7 @@ class Notice
         return $this->publieLe;
     }
 
-    public function setPublieLe(?\DateTimeInterface $publieLe): static
+    public function setPublieLe(?\DateTimeInterface $publieLe): self
     {
         $this->publieLe = $publieLe;
 
@@ -305,7 +290,7 @@ class Notice
         return $this->etat;
     }
 
-    public function setEtat(?NoticEtat $etat): static
+    public function setEtat(?NoticEtat $etat): self
     {
         $this->etat = $etat;
 
@@ -317,33 +302,57 @@ class Notice
         return $this->exportOAI;
     }
 
-    public function setExportOAI(?bool $exportOAI): static
+    public function setExportOAI(?bool $exportOAI): self
     {
         $this->exportOAI = $exportOAI;
 
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getRessUrl(): ?string
     {
-        return $this->user;
+        return $this->ressUrl;
     }
 
-    public function setUser(?User $user): static
+    public function setRessUrl(?string $contenu): self
     {
-        $this->user = $user;
+        $this->ressUrl = $contenu;
 
         return $this;
     }
 
-    public function getContenu(): ?Ressource
+    public function getFormEvalUrl(): ?string
     {
-        return $this->contenu;
+        return $this->formEvalUrl;
     }
 
-    public function setContenu(?Ressource $contenu): static
+    public function setFormEvalUrl(?string $formEvalUrl): static
     {
-        $this->contenu = $contenu;
+        $this->formEvalUrl = $formEvalUrl;
+
+        return $this;
+    }
+
+    public function getCreateur(): ?User
+    {
+        return $this->createur;
+    }
+
+    public function setCreateur(?User $createur): self
+    {
+        $this->createur = $createur;
+
+        return $this;
+    }
+
+    public function getValidateur(): ?User
+    {
+        return $this->validateur;
+    }
+
+    public function setValidateur(?User $validateur): self
+    {
+        $this->validateur = $validateur;
 
         return $this;
     }
@@ -353,9 +362,21 @@ class Notice
         return $this->droit;
     }
 
-    public function setDroit(?Licence $droit): static
+    public function setDroit(?Licence $droit): self
     {
         $this->droit = $droit;
+
+        return $this;
+    }
+
+    public function getCodewey(): ?Dewey
+    {
+        return $this->codewey;
+    }
+
+    public function setCodewey(?Dewey $codewey): self
+    {
+        $this->codewey = $codewey;
 
         return $this;
     }
@@ -365,9 +386,21 @@ class Notice
         return $this->specialite;
     }
 
-    public function setSpecialite(?Discipline $specialite): static
+    public function setSpecialite(?Discipline $specialite): self
     {
         $this->specialite = $specialite;
+
+        return $this;
+    }
+
+    public function getPublisher(): ?Etablissement
+    {
+        return $this->publisher;
+    }
+
+    public function setPublisher(?Etablissement $publisher): self
+    {
+        $this->publisher = $publisher;
 
         return $this;
     }
@@ -380,7 +413,7 @@ class Notice
         return $this->niveaux;
     }
 
-    public function addNiveau(Niveau $niveau): static
+    public function addNiveau(Niveau $niveau): self
     {
         if (!$this->niveaux->contains($niveau)) {
             $this->niveaux->add($niveau);
@@ -389,7 +422,7 @@ class Notice
         return $this;
     }
 
-    public function removeNiveau(Niveau $niveau): static
+    public function removeNiveau(Niveau $niveau): self
     {
         $this->niveaux->removeElement($niveau);
 
@@ -404,7 +437,7 @@ class Notice
         return $this->docTypes;
     }
 
-    public function addDocType(TDocument $docType): static
+    public function addDocType(TDocument $docType): self
     {
         if (!$this->docTypes->contains($docType)) {
             $this->docTypes->add($docType);
@@ -413,7 +446,7 @@ class Notice
         return $this;
     }
 
-    public function removeDocType(TDocument $docType): static
+    public function removeDocType(TDocument $docType): self
     {
         $this->docTypes->removeElement($docType);
 
@@ -428,7 +461,7 @@ class Notice
         return $this->pedTypes;
     }
 
-    public function addPedType(TPedagogie $pedType): static
+    public function addPedType(TPedagogie $pedType): self
     {
         if (!$this->pedTypes->contains($pedType)) {
             $this->pedTypes->add($pedType);
@@ -437,7 +470,7 @@ class Notice
         return $this;
     }
 
-    public function removePedType(TPedagogie $pedType): static
+    public function removePedType(TPedagogie $pedType): self
     {
         $this->pedTypes->removeElement($pedType);
 
@@ -452,7 +485,7 @@ class Notice
         return $this->porteurs;
     }
 
-    public function addPorteur(Etablissement $porteur): static
+    public function addPorteur(Etablissement $porteur): self
     {
         if (!$this->porteurs->contains($porteur)) {
             $this->porteurs->add($porteur);
@@ -461,7 +494,7 @@ class Notice
         return $this;
     }
 
-    public function removePorteur(Etablissement $porteur): static
+    public function removePorteur(Etablissement $porteur): self
     {
         $this->porteurs->removeElement($porteur);
 
@@ -500,7 +533,7 @@ class Notice
         return $this->tags;
     }
 
-    public function addTag(Keyword $tag): static
+    public function addTag(Keyword $tag): self
     {
         if (!$this->tags->contains($tag)) {
             $this->tags->add($tag);
@@ -509,7 +542,7 @@ class Notice
         return $this;
     }
 
-    public function removeTag(Keyword $tag): static
+    public function removeTag(Keyword $tag): self
     {
         $this->tags->removeElement($tag);
 
@@ -524,7 +557,7 @@ class Notice
         return $this->ressources;
     }
 
-    public function addRessource(self $ressource): static
+    public function addRessource(self $ressource): self
     {
         if (!$this->ressources->contains($ressource)) {
             $this->ressources->add($ressource);
@@ -533,15 +566,51 @@ class Notice
         return $this;
     }
 
-    public function removeRessource(self $ressource): static
+    public function removeRessource(self $ressource): self
     {
         $this->ressources->removeElement($ressource);
 
         return $this;
     }
 
+    public function isRessPayant(): ?bool
+    {
+        return $this->ressPayant;
+    }
+
+    public function setRessPayant(bool $ressPayant): static
+    {
+        $this->ressPayant = $ressPayant;
+
+        return $this;
+    }
+
+    public function isProprIntel(): ?bool
+    {
+        return $this->proprIntel;
+    }
+
+    public function setProprIntel(bool $proprIntel): static
+    {
+        $this->proprIntel = $proprIntel;
+
+        return $this;
+    }
+
+    public function isEditDemande(): ?bool
+    {
+        return $this->editDemande;
+    }
+
+    public function setEditDemande(?bool $editDemande): static
+    {
+        $this->editDemande = $editDemande;
+
+        return $this;
+    }
+
     public function __toString(): string
     {
-        return sprintf('%d#%s', $this->id, $this->titre);
+        return sprintf('%d|%s', $this->id, $this->titre);
     }
 }

@@ -2,10 +2,9 @@
 
 namespace App\Form;
 
-use App\Entity\{Discipline, Etablissement, Groupe, User};
+use App\Entity\{Etablissement, Groupe, Univerique, User};
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\{AbstractType,FormBuilderInterface};
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserType extends AbstractType
@@ -15,16 +14,9 @@ class UserType extends AbstractType
         $builder->add('name')->add('email');
 
         if(!$options['owner']) $builder
-            ->add('group', EntityType::class, [
-                'class'  => Groupe::class,
-            ])
-            ->add('school', EntityType::class, [
-                'class'  => Etablissement::class,
-            ])
-            ->add('fields', EntityType::class, [
-                'class'  => Discipline::class,
-                'multiple'=>true,
-            ])
+            ->add('group', EntityType::class, ['class'  => Groupe::class,])
+            ->add('school', EntityType::class, ['class'  => Etablissement::class,])
+            ->add('untheme', EntityType::class, ['class'  => Univerique::class,])
         ;
     }
 

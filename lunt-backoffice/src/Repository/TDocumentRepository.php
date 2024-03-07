@@ -21,28 +21,18 @@ class TDocumentRepository extends ServiceEntityRepository
         parent::__construct($registry, TDocument::class);
     }
 
-//    /**
-//     * @return TDocument[] Returns an array of TDocument objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('t.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function add(TDocument $u=null): ?TDocument
+    {
+        if($u) $this->_em->persist($u);
+        $this->_em->flush();
+        return $u;
+    }
 
-//    public function findOneBySomeField($value): ?TDocument
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function del(TDocument $u): TDocument
+    {
+        $this->_em->remove($u);
+        $this->_em->flush();
+
+        return $u;
+    }
 }

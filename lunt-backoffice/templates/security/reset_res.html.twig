@@ -1,0 +1,43 @@
+{% extends '@EasyAdmin/page/login_minimal.html.twig' %}
+
+{% block body_class 'page-login' %}
+
+{% block page_title %} Réinitialisation de mot de passe {% endblock %}
+
+{% block head_favicon %}<link rel="shortcut icon" href="/images/favicon.ico">{% endblock %}
+
+{% block wrapper_wrapper %}
+
+    {% include '@EasyAdmin/flash_messages.html.twig' %}
+
+    <div class="login-wrapper">
+        <header class="main-header">
+            <div id="header-logo">
+                {% block header_logo %}
+                    <a class="logo" title="{{ 'Réinitialisation de mot de passe'|striptags }}" href="{{ path('app_home') }}">
+                        Formulaire de réinitialisation de mot de passe
+                    </a>
+                {% endblock header_logo %}
+            </div>
+        </header>
+
+        <section class="content">
+
+            {% if error|default(false) %}
+                <div class="w-100 alert alert-danger rounded mb-3">
+                    <i class="fas fa-times-circle mr-1"></i>
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
+
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-check" aria-hidden="true"></i> Valider
+            </button>
+            {{ form_end(form) }}
+
+        </section>
+    </div>
+{% endblock %}

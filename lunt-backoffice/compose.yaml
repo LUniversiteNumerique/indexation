@@ -1,0 +1,53 @@
+version: '3'
+
+services:
+  ###> app/web ###
+  web_app:
+    build: . #context: ./ dockerfile: Dockerfile
+    container_name: notice_unt
+    depends_on:
+      - db_app
+      - mailer
+    environment:
+      - DATABASE_URL=mysql://root:${MARIADB_PASS}@db_app:3306/${MARIADB_DB}
+      - MAILER_DSN=smtp://mailer:1025
+    ports:
+      - "${APP_PORT:80}:8000"
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - net-unt
+  ###> app/web ###
+
+  ###> app/db ###
+  db_app:
+    image: mariadb:${MARIADB_VERSION:latest}
+    container_name: maria_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${MARIADB_DB}
+      MYSQL_ROOT_PASSWORD: ${MARIADB_PASS} #MYSQL_USER: ${MARIADB_USER:root} MYSQL_PASS
+    ports:
+      - "${DB_PORT:3306}:3306"
+    networks:
+      - net-unt
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./docker/db/mariadb/my.cnf:/etc/mysql/conf.d/my.cnf # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
+  ###< app/db ###
+
+  ###> app/mailer ###
+  mailer:
+    image: mailhog/mailhog
+    container_name: mailer_sv
+    restart: on-failure
+    ports: ["1025", "8025"]
+    networks:
+      - net-unt
+  ###< app/mailer ###
+
+networks:
+  net-unt:
+
+volumes:
+  db_data:

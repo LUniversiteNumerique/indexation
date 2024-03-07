@@ -1,6 +1,6 @@
 
 ###> symfony/framework-bundle ###
-#/.env
+/.env
 /.env.local.php
 /.env.*.local
 /config/secrets/prod/prod.decrypt.private.php
@@ -20,7 +20,7 @@
 ###< symfony/phpunit-bridge ###
 
 ###> symfony/asset-mapper ###
-/public/assets/
+/public/images/
 /assets/vendor
 ###< symfony/asset-mapper ###
 .idea/
