@@ -3,37 +3,47 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
-use Doctrine\Common\Collections\{Collection,ArrayCollection};
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\{UserInterface,PasswordAuthenticatedUserInterface};
 
-#[ORM\Table(name: '`user`'),
+#[ORM\Table(name: '`user`'), UniqueEntity("email"),
     ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     const ROLE_DEFAULT = 'ROLE_USER';
 
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    use Timestamps;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255),
+        Assert\NotBlank, Assert\Type('string')]
     private ?string $name = null;
 
-    #[ORM\Column(length: 180, unique: true)]
+    #[ORM\Column(length: 180, unique: true),
+        Assert\NotNull, Assert\Email]
     private ?string $email;
 
-    #[ORM\Column] private ?string $password;
+    #[ORM\Column(nullable: true)]
+    private ?string $password;
 
-    #[ORM\ManyToOne(targetEntity: Groupe::class)]
+    #[ORM\Column(nullable: true)]
+    private ?bool $enabled = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $reseToken = null;
+
+    #[ORM\ManyToOne(targetEntity: Groupe::class, inversedBy: 'users'),
+        Assert\Valid, Assert\Type(Groupe::class)]
     private ?Groupe $group;
 
-    #[ORM\ManyToOne]
-    private ?Etablissement $school = null;
+    #[ORM\ManyToOne, Assert\Valid,
+        Assert\Type(Univerique::class)]
+    private ?Univerique $untheme = null;
 
-    #[ORM\ManyToMany(targetEntity: Discipline::class)]
-    private Collection $fields;
+    #[ORM\ManyToOne, Assert\Valid,
+        Assert\Type(Etablissement::class)]
+    private ?Etablissement $school = null;
     private array $roles = [self::ROLE_DEFAULT];
 
     public function __construct(string $email=null, string $password=null, array $roles=[])
@@ -41,17 +51,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->email = $email;
         $this->password = $password;
         if(!empty($roles)) $this->roles = $roles;
-        $this->fields = new ArrayCollection();
+        $this->creeLe = new \DateTimeImmutable();
     }
 
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getName(): ?string
@@ -78,14 +83,38 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
         return $this->password;
     }
 
-    public function setPassword(string $password): static
+    public function setPassword(?string $password): static
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function isEnabled(): ?bool
+    {
+        return $this->enabled;
+    }
+
+    public function setEnabled(?bool $enabled): static
+    {
+        $this->enabled = $enabled;
+
+        return $this;
+    }
+
+    public function getReseToken(): ?string
+    {
+        return $this->reseToken;
+    }
+
+    public function setReseToken(?string $token): static
+    {
+        $this->reseToken = $token;
 
         return $this;
     }
@@ -114,33 +143,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, Discipline>
-     */
-    public function getFields(): Collection
+    public function getUntheme(): ?Univerique
     {
-        return $this->fields;
+        return $this->untheme;
     }
 
-    public function addField(Discipline $field): static
+    public function setUntheme(?Univerique $unt): static
     {
-        if (!$this->fields->contains($field)) {
-            $this->fields->add($field);
-        }
-
-        return $this;
-    }
-
-    public function removeField(Discipline $field): static
-    {
-        $this->fields->removeElement($field);
+        $this->untheme = $unt;
 
         return $this;
     }
 
     public function getRoles(): array
     {
-        $roles = $this->group ? array_merge($this->roles, $this->group->getRights()) : $this->roles; //array_map(fn($value): string => Groupe::PERMISSIONS[$value],
+        $roles = $this->group ? array_merge($this->roles, $this->group->getRights()) : $this->roles;
 
         return array_values(array_unique($roles));
     }

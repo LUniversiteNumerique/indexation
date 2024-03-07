@@ -2,38 +2,31 @@
 
 namespace App\Entity;
 
-use App\Repository\AuteurRepository;
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Repository\AuteurRepository;
+use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AuteurRepository::class)]
 class Auteur
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    use Timestamps;
 
     #[ORM\Column(length: 255), Assert\NotBlank]
     private ?string $nom = null;
 
-    #[ORM\Column(length: 255), Assert\NotBlank]
+    #[ORM\Column(length: 255),
+        Assert\NotBlank, Assert\Length(max: 225)]
     private ?string $prenom = null;
 
-    #[ORM\Column(length: 255), Assert\Email]
+    #[ORM\Column(length: 255),
+        Assert\NotNull, Assert\Email]
     private ?string $email = null;
 
-    #[ORM\Column(type: Types::SIMPLE_ARRAY, nullable: true)]
-    private ?array $roles = null;
-
-    #[ORM\ManyToOne]
-    private ?Etablissement $ecole = null;
-
-    public function getId(): ?int
+    public function __construct()
     {
-        return $this->id;
+        $this->creeLe = new \DateTimeImmutable();
     }
+
     public function getNomComplet(): string
     {
         return $this->getPrenom().' '.$this->getNom();
@@ -44,7 +37,7 @@ class Auteur
         return $this->nom;
     }
 
-    public function setNom(string $nom): static
+    public function setNom(?string $nom): static
     {
         $this->nom = $nom;
 
@@ -56,7 +49,7 @@ class Auteur
         return $this->prenom;
     }
 
-    public function setPrenom(string $prenom): static
+    public function setPrenom(?string $prenom): static
     {
         $this->prenom = $prenom;
 
@@ -68,33 +61,9 @@ class Auteur
         return $this->email;
     }
 
-    public function setEmail(string $email): static
+    public function setEmail(?string $email): static
     {
         $this->email = $email;
-
-        return $this;
-    }
-
-    public function getRoles(): ?array
-    {
-        return $this->roles;
-    }
-
-    public function setRoles(?array $roles): static
-    {
-        $this->roles = $roles;
-
-        return $this;
-    }
-
-    public function getEcole(): ?Etablissement
-    {
-        return $this->ecole;
-    }
-
-    public function setEcole(?Etablissement $ecole): static
-    {
-        $this->ecole = $ecole;
 
         return $this;
     }

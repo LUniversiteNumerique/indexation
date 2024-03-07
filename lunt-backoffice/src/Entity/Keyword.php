@@ -4,19 +4,20 @@ namespace App\Entity;
 
 use App\Repository\KeywordRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ORM\Entity(repositoryClass: KeywordRepository::class)]
 class Keyword
 {
-    #[ORM\Id,ORM\Column]
-    #[ORM\GeneratedValue]
-    private ?int $id = null;
+    use Timestamps;
 
-    #[ORM\Column(length: 255), SerializedName('text')]
+    #[ORM\Column(length: 255),
+        Assert\NotBlank, SerializedName('text')]
     private ?string $nom;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(nullable: true),
+        Assert\Type('bool')]
     private ?bool $valide;
 
     #[SerializedName('value')]
@@ -29,11 +30,7 @@ class Keyword
     {
         $this->nom = $name;
         $this->valide = $valid;
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
+        $this->creeLe = new \DateTimeImmutable();
     }
 
     public function getNom(): ?string
@@ -41,7 +38,7 @@ class Keyword
         return $this->nom;
     }
 
-    public function setNom(string $nom): static
+    public function setNom(?string $nom): static
     {
         $this->nom = $nom;
 

@@ -1,0 +1,30 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+
+{% extends ea.templatePath('layout') %}
+{% form_theme form with ea.crud.formThemes only %}
+
+{% trans_default_domain ea.i18n.translationDomain %}
+
+{% block head_javascript %}
+    {{ parent() }}
+    <script src="{{ asset('form.js', ea.assets.defaultAssetPackageName) }}"></script>
+{% endblock head_javascript %}
+
+{% block content_title %}
+    {%- apply spaceless -%}
+        {% set custom_page_title = ea.crud.customPageTitle('new', null, ea.i18n.translationParameters) %}
+        {{ custom_page_title is null
+        ? ea.crud.defaultPageTitle('new', null, ea.i18n.translationParameters)|trans|raw
+        : custom_page_title|trans|raw }}
+    {%- endapply -%}
+{% endblock %}
+
+{% block main %}
+    {% block form %}
+        {{ form_start(form) }}
+
+        {{ form_row(form.file) }}
+
+        {{ form_end(form) }}
+    {% endblock form %}
+{% endblock %}

@@ -9,17 +9,38 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: TDocumentRepository::class)]
 class TDocument
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    use Timestamps;
 
     #[ORM\Column(length: 255), Assert\NotBlank]
-    private ?string $nom = null;
+    private ?string $code, $nom;
+
+    public function __construct($code=null,$nom=null)
+    {
+        $this->creeLe = new \DateTimeImmutable();
+        $this->code = $code;
+        $this->nom = $nom;
+    }
+
+    public static function create(array $o): self
+    {
+        return new self($o['id'],$o['libelle_uoh']);
+    }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    public function setCode(string $code): static
+    {
+        $this->code = $code;
+
+        return $this;
     }
 
     public function getNom(): ?string

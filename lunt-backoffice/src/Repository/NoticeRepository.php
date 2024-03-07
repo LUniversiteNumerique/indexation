@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\{Etablissement,Notice};
+use App\Entity\{Etablissement, Notice, Univerique};
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -46,5 +46,14 @@ class NoticeRepository extends ServiceEntityRepository
         $this->_em->remove($n);
         $this->_em->flush();
         return $n;
+    }
+
+    public function countByEtat(?Univerique $unt, ?string $date = null)
+    {
+        $qb = $this->createQueryBuilder('n')->select('n.etat, COUNT(n.id) as nombre');
+        if ($unt) $qb->join('n.specialite','d')->join('d.parent','c')
+            ->where('c.parent in (:champs)')->setParameter('champs',$unt->getFields());
+        if($date) $qb->andWhere('n.creeLe > :date')->setParameter('date', new \DateTIME("-1 $date"));
+        return $qb->groupBy('n.etat')->getQuery()->getResult();
     }
 }

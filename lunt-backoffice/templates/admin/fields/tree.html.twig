@@ -1,0 +1,10 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
+{# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
+
+{% if ea.crud.currentPage is same as ('index') %}<span class="badge badge-secondary">{{ field.formattedValue }}</span>{% else %}
+    {% set url = ea_url().setController(field.customOptions.get('crudControllerFqcn')).setAction('detail') %}
+    <ul>{% for child in field.value %}
+        <li><a href="{{ url.setEntityId(child.id) }}">{{ child }}</a></li>
+    {% endfor %}</ul>
+{% endif %}

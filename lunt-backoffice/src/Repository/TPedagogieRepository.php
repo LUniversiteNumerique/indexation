@@ -21,28 +21,18 @@ class TPedagogieRepository extends ServiceEntityRepository
         parent::__construct($registry, TPedagogie::class);
     }
 
-//    /**
-//     * @return TPedagogie[] Returns an array of TPedagogie objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('t.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function add(TPedagogie $u=null): ?TPedagogie
+    {
+        if($u) $this->_em->persist($u);
+        $this->_em->flush();
+        return $u;
+    }
 
-//    public function findOneBySomeField($value): ?TPedagogie
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function del(TPedagogie $u): TPedagogie
+    {
+        $this->_em->remove($u);
+        $this->_em->flush();
+
+        return $u;
+    }
 }

@@ -5,7 +5,7 @@ namespace App\Security;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\NonUniqueResultException;
-use Symfony\Component\Security\Core\Exception\{UnsupportedUserException,UserNotFoundException};
+use Symfony\Component\Security\Core\Exception\{UnsupportedUserException, UserNotFoundException};
 use Symfony\Component\Security\Core\User\{PasswordAuthenticatedUserInterface,PasswordUpgraderInterface,UserInterface,UserProviderInterface};
 
 readonly class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
@@ -20,11 +20,11 @@ readonly class UserProvider implements UserProviderInterface, PasswordUpgraderIn
      * @throws UserNotFoundException if the user is not found
      * @throws NonUniqueResultException
      */
-    public function loadUserByIdentifier(string $identifier): UserInterface
+    public function loadUserByIdentifier(string $identifier): User
     {
         return $this->repository->createQueryBuilder('u')
-            ->select('u,g,e,f')->join('u.group', 'g')
-            ->leftJoin('u.school','e')->leftJoin('u.fields','f')
+            ->select('u,g,e,unt,f')->join('u.group', 'g')
+            ->leftJoin('u.school','e')->leftJoin('u.untheme','unt')->leftJoin('unt.fields','f')
             ->where('u.email = :username')->setParameter('username', $identifier)
             ->getQuery()->getOneOrNullResult();
     }
@@ -40,7 +40,7 @@ readonly class UserProvider implements UserProviderInterface, PasswordUpgraderIn
      * If your firewall is "stateless: true" (for a pure API), this
      * method is not called.
      */
-    public function refreshUser(UserInterface $user): UserInterface
+    public function refreshUser(UserInterface $user): User
     {
         if (!$user instanceof User) throw new UnsupportedUserException(sprintf('Invalid user class "%s".', get_class($user)));
         try {

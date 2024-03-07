@@ -1,10 +1,9 @@
 {% extends '@EasyAdmin/page/content.html.twig' %}
 
-{% block content_title 'Edition de profile' %}
+{% block content_title 'Édition de profile' %}
 
 {% block main %}
-
-    {{ form_start(form, {'att': {'class':'col-6'}}) }}
+    {{ form_start(form) }}
         {{ form_widget(form) }}
 
         <button type="submit" class="btn btn-primary">

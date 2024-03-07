@@ -12,31 +12,32 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: DisciplineRepository::class)]
 class Discipline
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    use Timestamps;
 
     #[ORM\Column(length: 255), Assert\NotBlank]
-    private ?string $nom = null;
+    private ?string $nom;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $description = null;
+    private ?string $description;
 
-    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children')]
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children'),
+        Assert\Valid, Assert\Type(self::class)]
     private ?self $parent = null;
 
     #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]
     private Collection $children;
 
-    public function __construct()
+    public function __construct($code=null,$nom=null)
     {
+        $this->creeLe = new \DateTimeImmutable();
+        $this->description = $code;
+        $this->nom = $nom;
         $this->children = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public static function create(array $o): self
     {
-        return $this->id;
+        return new self($o['id'],$o['libelle_uoh']);
     }
 
     public function getNom(): ?string

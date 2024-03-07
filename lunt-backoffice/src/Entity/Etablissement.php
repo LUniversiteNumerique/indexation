@@ -3,30 +3,29 @@
 namespace App\Entity;
 
 use App\Repository\EtablissementRepository;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: EtablissementRepository::class)]
 class Etablissement
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    use Timestamps;
 
     #[ORM\Column(length: 255), Assert\NotBlank]
-    private ?string $nom = null;
+    private ?string $nom;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $description = null;
+    #[ORM\Column(length: 225), Assert\NotBlank]
+    private ?string $abrege;
 
-    #[ORM\Column(length: 255, nullable: true), Assert\Email]
-    private ?string $email = null;
-
-    public function getId(): ?int
+    public function __construct($abrege=null, $nom=null)
     {
-        return $this->id;
+        $this->creeLe = new \DateTimeImmutable();
+        $this->abrege = $abrege;
+        $this->nom = $nom;
+    }
+    public static function create(array $o): self
+    {
+        return new self($o['id'],$o['libelle_uoh']);
     }
 
     public function getNom(): ?string
@@ -34,39 +33,27 @@ class Etablissement
         return $this->nom;
     }
 
-    public function setNom(string $nom): static
+    public function setNom(?string $nom): static
     {
         $this->nom = $nom;
 
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getAbrege(): ?string
     {
-        return $this->description;
+        return $this->abrege;
     }
 
-    public function setDescription(?string $description): static
+    public function setAbrege(?string $abrege): static
     {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(?string $email): static
-    {
-        $this->email = $email;
+        $this->abrege = $abrege;
 
         return $this;
     }
 
     public function __toString(): string
     {
-        return $this->nom;
+        return $this->abrege;
     }
 }

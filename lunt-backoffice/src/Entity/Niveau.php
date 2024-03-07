@@ -4,17 +4,21 @@ namespace App\Entity;
 
 use App\Repository\NiveauRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: NiveauRepository::class)]
 class Niveau
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    use Timestamps;
 
-    #[ORM\Column(length: 255)]
-    private ?string $nom = null;
+    #[ORM\Column(length: 255), Assert\NotBlank]
+    private ?string $nom;
+
+    public function __construct($nom=null)
+    {
+        $this->creeLe = new \DateTimeImmutable();
+        $this->nom = $nom;
+    }
 
     public function getId(): ?int
     {

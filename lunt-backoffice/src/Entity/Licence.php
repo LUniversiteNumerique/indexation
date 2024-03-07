@@ -5,24 +5,29 @@ namespace App\Entity;
 use App\Repository\LicenceRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: LicenceRepository::class)]
 class Licence
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    use Timestamps;
 
-    #[ORM\Column(length: 255)]
-    private ?string $code = null;
+    #[ORM\Column(length: 255), Assert\NotBlank]
+    private ?string $code;
 
-    #[ORM\Column(type: Types::TEXT)]
-    private ?string $valeur = null;
+    #[ORM\Column(type: Types::TEXT), Assert\NotBlank]
+    private ?string $valeur;
 
-    public function getId(): ?int
+    public function __construct($code=null, $valeur=null)
     {
-        return $this->id;
+        $this->creeLe = new \DateTimeImmutable();
+        $this->code = $code;
+        $this->valeur = $valeur;
+    }
+
+    public static function create(array $o): self
+    {
+        return new self($o['id'],$o['libelle_uoh']);
     }
 
     public function getCode(): ?string
@@ -51,6 +56,6 @@ class Licence
 
     public function __toString(): string
     {
-        return $this->code;
+        return $this->valeur;
     }
 }

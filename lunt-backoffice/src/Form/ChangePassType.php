@@ -14,30 +14,22 @@ class ChangePassType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder
+        if($options['user_logged']) $builder
             ->add('currentPassword', PasswordType::class, [
                 'constraints' => [new UserPassword(),],
-                'label' => 'label.current_password',
+                'label' => 'Mot de passe actuel',
                 'mapped' => false,
                 'attr' => ['autocomplete' => 'off',],
-            ])
+            ]);
+        $builder
             ->add('newPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
-                'constraints' => [
-                    new NotBlank(),
-                    new Length(
-                        min: 5,
-                        max: 128,
-                    ),
-                ],
+                'constraints' => [new NotBlank(), new Length(min: 5, max: 128,),],
+                'second_options' => ['label' => 'Confirmer le mot de passe',],
                 'first_options' => [
                     'hash_property_path' => 'password',
-                    'label' => 'label.new_password',
-                ],
-                'mapped' => false,
-                'second_options' => [
-                    'label' => 'label.new_password_confirm',
-                ],
+                    'label' => 'Nouveau mot de passe',
+                ], 'mapped' => false,
             ]);
     }
 
@@ -45,6 +37,7 @@ class ChangePassType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'user_logged' => true,
         ]);
     }
 }
