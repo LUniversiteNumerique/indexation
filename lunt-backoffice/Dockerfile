@@ -20,6 +20,7 @@ COPY ./resources/default.conf.template /etc/nginx/conf.d/templates/default.conf.
 COPY ./resources/nginx-start.sh /root/nginx-start.sh
 
 RUN chmod +x /root/nginx-start.sh
+RUN chmod a+rw /public/images/uploads
 
 WORKDIR /var/www/site
 
