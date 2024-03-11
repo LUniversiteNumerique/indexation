@@ -138,9 +138,9 @@ class NoticeCrudController extends AbstractCrudController
 
             yield FormField::addColumn(6);
             yield FormField::addFieldset('Liens de la ressource')->setIcon('fa fa-folder-open');
-            yield ImageField::new('vignette')->setUploadDir('public/images')
-                ->setUploadedFileNamePattern('[timestamp]-[contenthash].[extension]')->setBasePath('/images')
-                ->setFormTypeOption('constraints', [new Assert\Image(['maxSize' => '1024k', 'maxWidth' => 620, 'maxHeight' => 390])]);
+            yield ImageField::new('vignette')->setUploadDir('assets/images')
+                ->setUploadedFileNamePattern('[timestamp]-[contenthash].[extension]')->setBasePath('../assets/images');
+                //->setFormTypeOption('constraints', [new Assert\Image(['maxWidth' => 620, 'maxHeight' => 390])])
             yield IntegerField::new('taille','Taille (Mo)')->setColumns(6)->hideOnIndex();
             yield DurationField::new('dureExec',"Durée d'exécution")->setColumns(6)->hideOnIndex();
             yield UrlField::new('formEvalUrl', 'URL formulaire évaluation ressource')->hideOnIndex();
