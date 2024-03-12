@@ -35,5 +35,3 @@ RUN mkdir -p /var/log/ngninx
 
 
 CMD ["/usr/bin/supervisord"]
-
-VOLUME /public/images

@@ -19,8 +19,6 @@ services:
       - "80:80"
     depends_on:
       - mariadb
-    volumes:
-      - db_data:/public/images
 
   mariadb:
     image: mariadb:latest
