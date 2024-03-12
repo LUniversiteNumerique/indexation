@@ -20,13 +20,14 @@ COPY ./resources/default.conf.template /etc/nginx/conf.d/templates/default.conf.
 COPY ./resources/nginx-start.sh /root/nginx-start.sh
 
 RUN chmod +x /root/nginx-start.sh
-RUN chmod a+rw /public/images/uploads
 
 WORKDIR /var/www/site
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 COPY . /var/www/site/
+
+RUN chmod a+rw /public/images/uploads
 
 RUN ["composer","install","-v"]
 
