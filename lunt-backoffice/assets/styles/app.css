@@ -26,7 +26,6 @@
     --color-secondary: rgb(22, 130, 125);
 
     --gray-300: rgb(70, 78, 79);
-    --text-muted: var(--color-secondary);
     --secondary-bg: var(--color-secondary);
     --primary-bg: var(--gray-300);
     --body-bg: var(--white);

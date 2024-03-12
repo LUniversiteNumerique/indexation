@@ -2,23 +2,22 @@
 
 namespace App\Controller;
 
-use App\Form\{AuteurAutoField, TagType};
-use App\Field\{EntityField,DurationField};
-use App\{Event\AfterNoticeStateSetEvent,Repository\NoticeRepository,Service\MailerService,Security\Voter\NoticeActionVoter};
+use App\{Event\AfterNoticeStateSetEvent,Repository\NoticeRepository,Security\Voter\NoticeActionVoter,Service\MailerService,Validator\UploadImage};
 use App\Entity\{Dewey, Discipline, Etablissement, Notice, NoticEtat, Univerique, User};
+use App\Field\{DurationField, EntityField};
+use App\Form\{AuteurAutoField, TagType};
 use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\{Context\AdminContext,Event\AfterEntityPersistedEvent,Factory\FormFactory,Filter\ChoiceFilter,Router\AdminUrlGenerator};
+use EasyCorp\Bundle\EasyAdminBundle\Collection\{FieldCollection, FilterCollection};
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Actions, Asset, Assets, Crud, Filters, KeyValueStore};
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\{ArrayField, AssociationField, BooleanField, ChoiceField, CollectionField, DateField, DateTimeField, FormField, IdField, ImageField, IntegerField, TextEditorField, TextField, UrlField};
-use EasyCorp\Bundle\EasyAdminBundle\Collection\{FieldCollection,FilterCollection};
 use EasyCorp\Bundle\EasyAdminBundle\Dto\{EntityDto, SearchDto};
-use EasyCorp\Bundle\EasyAdminBundle\{Context\AdminContext, Event\AfterEntityPersistedEvent, Factory\FormFactory, Filter\ChoiceFilter, Router\AdminUrlGenerator};
-use Psr\Container\{ContainerExceptionInterface,NotFoundExceptionInterface};
+use EasyCorp\Bundle\EasyAdminBundle\Field as Field;
+use Psr\Container\{ContainerExceptionInterface, NotFoundExceptionInterface};
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\{FormBuilderInterface,FormEvent,FormEvents,FormInterface};
-use Symfony\Component\HttpFoundation\{RedirectResponse,Response};
+use Symfony\Component\Form\{FormBuilderInterface, FormEvent, FormEvents, FormInterface};
+use Symfony\Component\HttpFoundation\{RedirectResponse, Response};
 use Symfony\Component\Intl\Languages;
-use Symfony\Component\Validator\Constraints as Assert;
 
 class NoticeCrudController extends AbstractCrudController
 {
@@ -87,75 +86,75 @@ class NoticeCrudController extends AbstractCrudController
         /** @var User $user */ $user = $this->getUser();
         $valdoc = $this->isGranted('ROLE_VALI_NOTI');
         $langList = Languages::getAlpha3Names('fr');
-        if ($valdoc) yield FormField::addTab('Soumission')->setHelp("Infos renseignées par la contribution des établissements");
+        if ($valdoc) yield Field\FormField::addTab('Soumission')->setHelp("Infos renseignées par la contribution des établissements");
 
-        yield FormField::addColumn(6);
-        yield FormField::addFieldset('Description générale')->setIcon('fa fa-pencil');
-        yield IdField::new('id')->onlyOnDetail();
-        yield TextField::new('titre');
-        yield TextEditorField::new('description')->hideOnIndex();
+        yield Field\FormField::addColumn(6);
+        yield Field\FormField::addFieldset('Description générale')->setIcon('fa fa-pencil');
+        yield Field\IdField::new('id')->onlyOnDetail();
+        yield Field\TextField::new('titre');
+        yield Field\TextEditorField::new('description')->hideOnIndex();
         yield EntityField::new('porteurs', 'Établissement(s) porteur(s)')->setRequired(true)->hideOnIndex();
         yield EntityField::new('auteurs')->setFormType(AuteurAutoField::class)->setRequired(true);
-        //yield CollectionField::new('auteurs')->setEntryType(AuteurType::class)->formatValue(fn ($value, Auteur $entity) => $entity->getNom() ?? '');
+        //yield Field\CollectionField::new('auteurs')->setEntryType(AuteurType::class)->formatValue(fn ($value, Auteur $entity) => $entity->getNom() ?? '');
         yield EntityField::new('tags', 'Mots-clés')->setFormType(TagType::class)
             ->setFormTypeOptions(['autocomplete' => true, 'autocomplete_url' => $this->generateUrl('app_tags'),
                 'tom_select_options' => ['create' => true, 'createOnBlur' => true, 'preload' => true],
             ])->hideOnIndex()->setRequired(true);
-        yield DateField::new('ressDate', "Date de création")->setFormat('yyyy')->hideOnIndex();
+        yield Field\DateField::new('ressDate', "Date de création")->setFormat('yyyy')->hideOnIndex();
 
-        yield FormField::addFieldset('Liens de la ressource')->setIcon('fa fa-paperclip');
-        yield UrlField::new('ressUrl', 'URL Contenu');
+        yield Field\FormField::addFieldset('Liens de la ressource')->setIcon('fa fa-paperclip');
+        yield Field\UrlField::new('ressUrl', 'URL Contenu');
         yield EntityField::new('ressources','Ressource(s) liée(s)')->autocomplete()->hideOnIndex();
-        yield ChoiceField::new('etat')->setChoices(NoticEtat::getValues())->renderAsBadges(['En travail' => 'dark', 'Soumise' => 'danger', 'Validée' => 'success'])->hideOnForm();
+        yield Field\ChoiceField::new('etat')->setChoices(NoticEtat::getValues())->renderAsBadges(['En travail' => 'dark', 'Soumise' => 'danger', 'Validée' => 'success'])->hideOnForm();
 
-        yield FormField::addFieldset('Droits attachés à la ressource')->setIcon('fa fa-gavel');
-        yield AssociationField::new('droit',"Licence et conditions d'utilisation")->hideOnIndex();
-        yield BooleanField::new('ressPayant','Ressource payante')->renderAsSwitch(false)->hideOnIndex()->setColumns(6);
-        yield BooleanField::new('proprIntel','Propriété intellectuelle')->renderAsSwitch(false)->hideOnIndex()->setColumns(6);
+        yield Field\FormField::addFieldset('Droits attachés à la ressource')->setIcon('fa fa-gavel');
+        yield Field\AssociationField::new('droit',"Licence et conditions d'utilisation")->hideOnIndex();
+        yield Field\BooleanField::new('ressPayant','Ressource payante')->renderAsSwitch(false)->hideOnIndex()->setColumns(6);
+        yield Field\BooleanField::new('proprIntel','Propriété intellectuelle')->renderAsSwitch(false)->hideOnIndex()->setColumns(6);
 
 
-        yield FormField::addColumn(6);
-        yield FormField::addFieldset('Indications pédagogiques')->setIcon('fa fa-th-list');
-        yield ChoiceField::new('ressLang', 'Langue(s) de la resource')->setChoices(array_flip($langList))
+        yield Field\FormField::addColumn(6);
+        yield Field\FormField::addFieldset('Indications pédagogiques')->setIcon('fa fa-th-list');
+        yield Field\ChoiceField::new('ressLang', 'Langue(s) de la resource')->setChoices(array_flip($langList))
             ->allowMultipleChoices()->renderAsBadges()->hideOnIndex()->setRequired(true)->setColumns(6);
         yield DurationField::new('dureAppr', "Durée d'apprentissage")->setColumns(6)->hideOnIndex();
         yield EntityField::new('pedTypes', 'Type pédagogique')->hideOnIndex()->setRequired(true);
-        yield ArrayField::new('propUser', "Proposition d'utilisation")->hideOnIndex();
+        yield Field\ArrayField::new('propUser', "Proposition d'utilisation")->hideOnIndex();
         yield EntityField::new('docTypes', 'Type documentaire')->setFormTypeOptions(['multiple' => true, 'expanded' => true])->setColumns(6)->hideOnIndex()->setRequired(true);
         yield EntityField::new('niveaux', 'Niveau du public cible')->setFormTypeOptions(['multiple' => true, 'expanded' => true])->setColumns(6)->hideOnIndex()->setRequired(true);
 
-        yield FormField::addFieldset('Classification thématique')->setIcon('fa fa-book');
+        yield Field\FormField::addFieldset('Classification thématique')->setIcon('fa fa-book');
         yield EntityField::new('champDisc', 'Domaine de connaissance')->onlyOnForms()->setFormTypeOptions(['class' => Discipline::class, 'mapped' => false, 'required' => false])
             ->setQueryBuilder(fn(QueryBuilder $qb) => ($valdoc && $user->getUntheme() instanceof Univerique)? $qb->where('entity IN (:champs)')->setParameter('champs', $user->getUntheme()->getFields()) : $qb->where('entity.parent is null'));
         yield EntityField::new('discipline')->setFormTypeOptions([
             'class' => Discipline::class, 'auto_initialize' => false, 'mapped' => false, 'required' => false
         ])->onlyOnForms();
         yield EntityField::new('specialite','Sous-discipline')->setFormTypeOptions(['class' => Discipline::class]);
-        yield DateTimeField::new('editeLe')->hideOnForm();
+        yield Field\DateTimeField::new('editeLe')->hideOnForm();
 
         if ($valdoc) {
-            yield FormField::addTab('Validation')->setHelp("Infos techniques complémentaires de validation");
+            yield Field\FormField::addTab('Validation')->setHelp("Infos techniques complémentaires de validation");
 
-            yield FormField::addColumn(6);
-            yield FormField::addFieldset('Liens de la ressource')->setIcon('fa fa-folder-open');
-            yield ImageField::new('vignette')->setUploadDir('public/images')
-                ->setUploadedFileNamePattern('[timestamp]-[contenthash].[extension]')->setBasePath('/images')
-                ->setFormTypeOption('constraints', [new Assert\Image(['maxSize' => '1024k', 'maxWidth' => 620, 'maxHeight' => 390])]);
-            yield IntegerField::new('taille','Taille (Mo)')->setColumns(6)->hideOnIndex();
+            yield Field\FormField::addColumn(6);
+            yield Field\FormField::addFieldset('Liens de la ressource')->setIcon('fa fa-folder-open');
+            yield Field\ImageField::new('vignette')->setUploadDir('public/images/uploads')
+                ->setUploadedFileNamePattern('[timestamp]-[contenthash].[extension]')->setBasePath('/images/uploads')
+                ->setFormTypeOption('constraints', [new UploadImage(['maxWidth'=>620, 'maxHeight'=>390])]);
+            yield Field\IntegerField::new('taille','Taille (Mo)')->setColumns(6)->hideOnIndex();
             yield DurationField::new('dureExec',"Durée d'exécution")->setColumns(6)->hideOnIndex();
-            yield UrlField::new('formEvalUrl', 'URL formulaire évaluation ressource')->hideOnIndex();
-            yield ChoiceField::new('userLang',"Langues de l'utilisateur")->setChoices(array_flip($langList))->allowMultipleChoices()->renderExpanded(false)->renderAsBadges()->hideOnIndex();
-            yield TextEditorField::new('objectif','Objectif pédagogique')->hideOnIndex();
-            yield BooleanField::new('exportOAI', 'Export OAI')->renderAsSwitch(false)->hideOnIndex();
+            yield Field\UrlField::new('formEvalUrl', 'URL formulaire évaluation ressource')->hideOnIndex();
+            yield Field\ChoiceField::new('userLang',"Langues de l'utilisateur")->setChoices(array_flip($langList))->allowMultipleChoices()->renderExpanded(false)->renderAsBadges()->hideOnIndex();
+            yield Field\TextEditorField::new('objectif','Objectif pédagogique')->hideOnIndex();
+            yield Field\BooleanField::new('exportOAI', 'Export OAI')->renderAsSwitch(false)->hideOnIndex();
 
-            yield FormField::addColumn(6);
-            yield FormField::addFieldset('Classification thématique')->setIcon('fa fa-book');
+            yield Field\FormField::addColumn(6);
+            yield Field\FormField::addFieldset('Classification thématique')->setIcon('fa fa-book');
             yield EntityField::new('disciFond','Discipline fondamentale')->onlyOnForms()
                 ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->where('entity.parent is null'))->setFormTypeOptions(['class' => Dewey::class,'mapped' => false,'required' => false]);
             yield EntityField::new('division')->setFormTypeOptions(['class' => Dewey::class,'auto_initialize' => false,'mapped' => false,'required' => false])->onlyOnForms();
             yield EntityField::new('codewey','Code Dewey')->setFormTypeOptions(['class' => Dewey::class])->setRequired(true);
-            yield TextField::new('label','Catégorie')->onlyOnDetail();
-            yield DateTimeField::new('creeLe')->onlyOnDetail();
+            yield Field\TextField::new('label','Catégorie')->onlyOnDetail();
+            yield Field\DateTimeField::new('creeLe')->onlyOnDetail();
         }
     }
 
