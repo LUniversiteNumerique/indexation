@@ -27,7 +27,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 COPY . /var/www/site/
 
-RUN chmod a+rw /public/images/uploads
+RUN ls -la
 
 RUN ["composer","install","-v"]
 
