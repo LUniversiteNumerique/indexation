@@ -1,0 +1,61 @@
+{% extends '@!EasyAdmin/crud/detail.html.twig' %}
+
+{% set curritem = entity.instance %}
+
+
+{% block page_actions %}
+  <a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('new').setEntityId(curritem.id) }}" class="btn btn-sm btn-primary">Créer Dossier</a>
+  {% for action in entity.actions %}
+    {{ include(action.templatePath, { action: action }, with_context = false) }}
+  {% endfor %}
+  {% if curritem.parent %}
+    <a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('detail').setEntityId(curritem.parent.id) }}" class="btn btn-secondary"><i class="fa fa-arrow-up" aria-hidden="true"></i> Retourner</a>
+  {% else %}
+    <a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('index') }}" class="btn btn-secondary"><i class="fa fa-arrow-up" aria-hidden="true"></i> Retourner</a>
+  {% endif %}
+{% endblock %}
+
+
+{% block detail_fields %}
+  {% set bcrumb = getCurrentParents(curritem) %}
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      {% if bcrumb %}
+        <li class="breadcrumb-item"><a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('index') }}"> Référentiel</a></li>
+        {% for breadcrumb_item in bcrumb %}
+          {% if not loop.last %}
+            <li class="breadcrumb-item"><a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('detail').setEntityId(breadcrumb_item.id) }}">{{ breadcrumb_item.nom }}</a></li>
+          {% else %}
+            <li class="breadcrumb-item active" aria-current="page"><i class="fa fa-folder-open" aria-hidden="true"></i> {{ breadcrumb_item.nom }}</li>
+          {% endif %}
+        {% endfor %}
+      {% else %}<li class="breadcrumb-item active" aria-current="page"><i class="fa fa-folder-open" aria-hidden="true"></i> Référentiel</li>{% endif %}
+    </ol>
+  </nav>
+
+  <table class="table datagrid">
+    <tbody>
+    {% for d in curritem.children %}
+      <tr>
+        <th scope="row"><i class="fa fa-folder fa-2x" aria-hidden="true"></i></th>
+        <td>
+          <a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('detail').setEntityId(d.id) }}">{{ d.nom }}</a>
+          <p>Modifié le : {{ d.creeLe|date('d/m/Y') }} Par : {{ app.user }}</p>
+        </td>
+        <td><a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('edit').setEntityId(d.id) }}" class="btn btn-sm btn-link-danger"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>
+      </tr>
+    {% endfor %}
+    {% for n in curritem.notices %}
+      <tr>
+        <th scope="row"><i class="fa fa-sticky-note-o fa-2x" aria-hidden="true"></i></th>
+        <td>
+          <a href="{{ ea_url().setController('App\\Controller\\NoticeCrudController').setAction('detail').setEntityId(n.id) }}">{{ n.titre }}</a>
+          <p>Modifié le : {{ n.editeLe|date('d/m/Y') }} <span class="badge badge-dark">{{ n.etat.value }}</span>
+        </td>
+        <td><a href="#" class="btn btn-sm btn-light"><i class="fa fa-arrow-circle-right" aria-hidden="true"></i></a></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock detail_fields %}

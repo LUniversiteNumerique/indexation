@@ -8,6 +8,11 @@ enum NoticEtat: string
     case Forward = 'Soumise';
     case Approved = 'Validée'; //case Published = 'Publiée';
 
+    public static function getColors(): array
+    {
+      return [self::Working->value => 'dark', self::Forward->value => 'danger', self::Approved->value => 'success'];
+    }
+
     public static function getValues(): array
     {
         return array_column(self::cases(), 'value','value');

@@ -14,10 +14,10 @@ class Dewey
     use Timestamps;
 
     #[ORM\Column(length: 255), Assert\NotBlank]
-    private ?string $code = null;
+    private ?string $code;
 
     #[ORM\Column(length: 255), Assert\NotBlank]
-    private ?string $nom = null;
+    private ?string $nom;
 
     #[ORM\ManyToOne(targetEntity: self::class, fetch: 'EXTRA_LAZY', inversedBy: 'children'),
         Assert\Valid, Assert\Type(self::class)]

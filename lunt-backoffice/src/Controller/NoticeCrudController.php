@@ -37,7 +37,7 @@ class NoticeCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         $crud = $crud->setAutofocusSearch()->setSearchFields(['titre','description'])->setPageTitle(Crud::PAGE_DETAIL, static fn (Notice $n) => $n->getTitre());
-        if($this->isGranted('ROLE_VALI_NOTI')) $crud->renderSidebarMinimized()->overrideTemplate('crud/detail', 'admin/actions/detail.html.twig');//->setHelp(Action::EDIT, '...')
+        if($this->isGranted('ROLE_VALI_NOTI')) $crud->renderSidebarMinimized()->overrideTemplate('crud/detail', 'admin/actions/notice.html.twig');
         return $crud;
     }
 

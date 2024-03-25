@@ -10,11 +10,10 @@
                 Ces chiffres sont issus des différents statuts des notices et sont mis à jour au fur à mesure que cette page est actualisée.
                 Pour consulter ces notices, voire effectuer des traitements spécifiques.
             </p>
-            {% if is_granted('ROLE_READ_NOTI') %}
-            <a href="{{ ea_url()
-                .setController('App\\Controller\\NoticeCrudController')
-                .setAction('index') }}" class="btn btn-primary btn-lg">Les notices</a>
-            {% endif %}
+            <div>{% if is_granted('ROLE_READ_NOTI') %}
+            <a href="{{ ea_url().setController('App\\Controller\\NoticeCrudController').setAction('index') }}" class="btn btn-primary btn-lg">Les notices</a>
+            <a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('index') }}" class="btn btn-primary btn-lg">Les repertoires</a>
+            {% endif %}</div>
         </div>
 
         <div class="col">
