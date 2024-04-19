@@ -20,12 +20,12 @@
 
     --body-max-width: 1960px;
     /*--sidebar-max-width: 210px;
-    --white: rgb(240, 241, 252); hsl(30, 1%, 90%);*/
+    --white: rgb(240, 241, 252); hsl(30, 1%, 90%);
+    --gray-300: rgb(70, 78, 79);*/
     --color-primary: rgb(26, 35, 126);
     --bs-blue: rgb(26, 35, 126);
     --color-secondary: rgb(22, 130, 125);
 
-    --gray-300: rgb(70, 78, 79);
     --secondary-bg: var(--color-secondary);
     --primary-bg: var(--gray-300);
     --body-bg: var(--white);

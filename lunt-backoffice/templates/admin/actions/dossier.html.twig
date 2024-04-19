@@ -4,6 +4,7 @@
 
 
 {% block page_actions %}
+  <a href="{{ ea_url().setController('App\\Controller\\NoticeCrudController').setAction('new').set('folderId', curritem.id) }}" class="btn btn-sm btn-success">Créer Notice</a>
   <a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('new').setEntityId(curritem.id) }}" class="btn btn-sm btn-primary">Créer Dossier</a>
   {% for action in entity.actions %}
     {{ include(action.templatePath, { action: action }, with_context = false) }}
@@ -17,27 +18,13 @@
 
 
 {% block detail_fields %}
-  {% set bcrumb = getCurrentParents(curritem) %}
-  <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-      {% if bcrumb %}
-        <li class="breadcrumb-item"><a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('index') }}"> Référentiel</a></li>
-        {% for breadcrumb_item in bcrumb %}
-          {% if not loop.last %}
-            <li class="breadcrumb-item"><a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('detail').setEntityId(breadcrumb_item.id) }}">{{ breadcrumb_item.nom }}</a></li>
-          {% else %}
-            <li class="breadcrumb-item active" aria-current="page"><i class="fa fa-folder-open" aria-hidden="true"></i> {{ breadcrumb_item.nom }}</li>
-          {% endif %}
-        {% endfor %}
-      {% else %}<li class="breadcrumb-item active" aria-current="page"><i class="fa fa-folder-open" aria-hidden="true"></i> Référentiel</li>{% endif %}
-    </ol>
-  </nav>
+  {{ include('breadcrumb.html.twig', {bcrumb: getCurrentParents(curritem)}, with_context = false) }}
 
   <table class="table datagrid">
     <tbody>
     {% for d in curritem.children %}
       <tr>
-        <th scope="row"><i class="fa fa-folder fa-2x" aria-hidden="true"></i></th>
+        <th scope="row"><i class="fa fa-folder fa-xl" aria-hidden="true"></i></th>
         <td>
           <a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('detail').setEntityId(d.id) }}">{{ d.nom }}</a>
           <p>Modifié le : {{ d.creeLe|date('d/m/Y') }} Par : {{ app.user }}</p>
@@ -47,15 +34,56 @@
     {% endfor %}
     {% for n in curritem.notices %}
       <tr>
-        <th scope="row"><i class="fa fa-sticky-note-o fa-2x" aria-hidden="true"></i></th>
+        <th scope="row"><i class="fa fa-sticky-note-o fa-xl" aria-hidden="true"></i></th>
         <td>
-          <a href="{{ ea_url().setController('App\\Controller\\NoticeCrudController').setAction('detail').setEntityId(n.id) }}">{{ n.titre }}</a>
-          <p>Modifié le : {{ n.editeLe|date('d/m/Y') }} <span class="badge badge-dark">{{ n.etat.value }}</span>
+          <a href="{{ ea_url().setController('App\\Controller\\NoticeCrudController').setAction('detail').setEntityId(n.id).set('folderId', curritem.id) }}">{{ n.titre }}</a>
+          <p>Modifié le : {{ n.editeLe|date('d/m/Y') }} <span class="badge badge-{{ n.etat.color }}">{{ n.etat.label }}</span>
         </td>
-        <td><a href="#" class="btn btn-sm btn-light"><i class="fa fa-arrow-circle-right" aria-hidden="true"></i></a></td>
+        <td>
+          <button type="button" class="btn btn-sm btn-light move-action" data-bs-toggle="modal" data-bs-target="#moveModal" value="{{ n.id }}">
+            <i class="fa fa-arrow-circle-right" aria-hidden="true"></i>
+          </button>
+        </td>
       </tr>
     {% endfor %}
     </tbody>
   </table>
 
+  <div id="moveModal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <form method="post" class="modal-content" action="{{ ea_url().setController('App\\Controller\\NoticeCrudController').setAction('moveNotice').setEntityId(entity) }}">
+        <div class="modal-header"><h4>Déplacer Notice</h4></div>
+        <div class="modal-body">
+          <input type="text" id="label" name="label" class="form-control" placeholder="Entrer la catégorie" required autofocus>
+          <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+        </div>
+        <div class="modal-footer">
+          <button type="button" data-bs-dismiss="modal" class="btn btn-secondary">
+            <span class="btn-label">{{ 'action.cancel'|trans([], 'EasyAdminBundle') }}</span>
+          </button>
+
+          <button type="submit" class="btn btn-primary" id="move-button">
+            <i class="fa fa-send" aria-hidden="true"></i> Sauvegarder
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".move-action").forEach(action => {
+        action.addEventListener("click", e => {
+          e.preventDefault();
+          document.querySelector("#move-button").addEventListener("click",() => {
+            console.log('action', action.getAttribute("href"))
+            //location.replace(action.getAttribute("href"));
+          });
+        });
+      });
+    });
+  </script>
+
 {% endblock detail_fields %}
+
+

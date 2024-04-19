@@ -2,16 +2,17 @@
 
 namespace App\Controller;
 
-use App\{Event\AfterNoticeStateSetEvent,Repository\NoticeRepository,Security\Voter\NoticeActionVoter,Service\MailerService,Validator\UploadImage};
+use App\{Event\AfterNoticeStateSetEvent, Security\Voter\NoticeActionVoter, Service\MailerService, Validator\UploadImage};
 use App\Entity\{Dewey, Discipline, Etablissement, Notice, NoticEtat, Univerique, User};
+use App\Repository\{DossierRepository,NoticeRepository};
 use App\Field\{DurationField, EntityField};
 use App\Form\{AuteurAutoField, TagType};
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\{Context\AdminContext,Event\AfterEntityPersistedEvent,Factory\FormFactory,Filter\ChoiceFilter,Router\AdminUrlGenerator};
-use EasyCorp\Bundle\EasyAdminBundle\Collection\{FieldCollection, FilterCollection};
+use EasyCorp\Bundle\EasyAdminBundle\Collection\{ActionCollection, FieldCollection, FilterCollection};
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Actions, Asset, Assets, Crud, Filters, KeyValueStore};
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\{EntityDto, SearchDto};
+use EasyCorp\Bundle\EasyAdminBundle\Dto\{ActionDto, EntityDto, SearchDto};
 use EasyCorp\Bundle\EasyAdminBundle\Field as Field;
 use Psr\Container\{ContainerExceptionInterface, NotFoundExceptionInterface};
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -25,6 +26,7 @@ class NoticeCrudController extends AbstractCrudController
     const FORWARD_ACTION = 'forwardNotice';
 
     public function __construct(
+        private readonly DossierRepository $rep,
         private readonly NoticeRepository $repository,
         private readonly AdminUrlGenerator $generator,
         private readonly MailerService $mailer) {}
@@ -37,7 +39,10 @@ class NoticeCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         $crud = $crud->setAutofocusSearch()->setSearchFields(['titre','description'])->setPageTitle(Crud::PAGE_DETAIL, static fn (Notice $n) => $n->getTitre());
-        if($this->isGranted('ROLE_VALI_NOTI')) $crud->renderSidebarMinimized()->overrideTemplate('crud/detail', 'admin/actions/notice.html.twig');
+        if($this->isGranted('ROLE_VALI_NOTI')) $crud->renderSidebarMinimized()->overrideTemplates([
+            'crud/detail'=>'admin/actions/notice_show.html.twig',
+            'crud/new'=>'admin/actions/notice_new.html.twig'
+        ]);
         return $crud;
     }
 
@@ -71,13 +76,14 @@ class NoticeCrudController extends AbstractCrudController
             ->update(Crud::PAGE_DETAIL, Action::DELETE, static fn(Action $a) => $a->addCssClass('btn btn-outline-danger')->displayIf(static fn (Notice $n) => $fwdoc($n,NoticeActionVoter::DROP)))
             ->remove(Crud::PAGE_INDEX, Action::EDIT)
             ->remove(Crud::PAGE_INDEX, Action::DELETE)
+            ->remove(Crud::PAGE_DETAIL, Action::INDEX)
             ->setPermission(Action::NEW, 'ROLE_CREA_NOTI');
     }
 
     public function configureFilters(Filters $filters): Filters
     {
         return $filters->add(ChoiceFilter::new('etat')
-            ->setChoices(array_flip(NoticEtat::getValues()))->renderExpanded())
+            ->setChoices(NoticEtat::getLabels())->renderExpanded())
             ->add('specialite')->add('creeLe');
     }
 
@@ -105,7 +111,7 @@ class NoticeCrudController extends AbstractCrudController
         yield Field\FormField::addFieldset('Liens de la ressource')->setIcon('fa fa-paperclip');
         yield Field\UrlField::new('ressUrl', 'URL Contenu');
         yield EntityField::new('ressources','Ressource(s) liée(s)')->autocomplete()->hideOnIndex();
-        yield Field\ChoiceField::new('etat')->setChoices(NoticEtat::getValues())->renderAsBadges(['En travail' => 'dark', 'Soumise' => 'danger', 'Validée' => 'success'])->hideOnForm();
+        yield Field\ChoiceField::new('etat')->setChoices(NoticEtat::getLabels())->renderAsBadges(NoticEtat::getColors())->hideOnForm();
 
         yield Field\FormField::addFieldset('Droits attachés à la ressource')->setIcon('fa fa-gavel');
         yield Field\AssociationField::new('droit',"Licence et conditions d'utilisation")->hideOnIndex();
@@ -207,18 +213,23 @@ class NoticeCrudController extends AbstractCrudController
         return $this->addFormEvent($builder);
     }
 
-    /** @throws NotFoundExceptionInterface|ContainerExceptionInterface */
     protected function getRedirectResponseAfterSave(AdminContext $context, string $action): RedirectResponse
     {
-        $submitButtonName = $context->getRequest()->request->all()['ea']['newForm']['btn'];
-        if (self::SAVE_AND_FORWARD === $submitButtonName) {
-            $url = $this->container->get(AdminUrlGenerator::class)->setController(self::class)
-                ->setAction(self::FORWARD_ACTION)->setEntityId($context->getEntity()->getPrimaryKeyValue());
+        $request = $context->getRequest();
+        $entityId = $context->getEntity()->getPrimaryKeyValue();
+        $submitButtonName = $request->request->all()['ea']['newForm']['btn'];
 
-            return $this->redirect($url->generateUrl());
-        }
+        $entityUrl = $this->generator->setAction(Action::DETAIL)->setEntityId($entityId);
+        if($folderId = $request->get('folderId')) $entityUrl->set('folderId', $folderId);
+        $url = match ($submitButtonName) {
+            self::SAVE_AND_FORWARD => $this->generator->setAction(self::FORWARD_ACTION)->setEntityId($entityId)->generateUrl(),
+            Action::SAVE_AND_CONTINUE => $this->generator->setAction(Action::EDIT)->setEntityId($entityId)->generateUrl(),
+            Action::SAVE_AND_ADD_ANOTHER => $this->generator->setAction(Action::NEW)->generateUrl(),
+            Action::SAVE_AND_RETURN => $context->getReferrer() ?? $entityUrl->generateUrl(),
+            default => $this->generateUrl($context->getDashboardRouteName()),
+        };
 
-        return parent::getRedirectResponseAfterSave($context, $action);
+        return $this->redirect($url);
     }
 
     /** @throws NotFoundExceptionInterface|ContainerExceptionInterface */
@@ -335,7 +346,7 @@ class NoticeCrudController extends AbstractCrudController
             $this->addFlash('success', $note);
         } catch (NotFoundExceptionInterface|ContainerExceptionInterface $e) {}
 
-        return $url->generateUrl();
+        return $url->generateUrl(); // $this->getRedirectResponseAfterSave($context, Action::EDIT);
     }
 
     private function addDisc(FormInterface $form, ?Discipline $child): void
@@ -384,10 +395,6 @@ class NoticeCrudController extends AbstractCrudController
         ]);
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @return FormBuilderInterface
-     */
     private function addFormEvent(FormBuilderInterface $builder): FormBuilderInterface
     {
         $builder->get('champDisc')->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
@@ -427,5 +434,33 @@ class NoticeCrudController extends AbstractCrudController
                 }
             }
         });
+    }
+
+    public function new(AdminContext $context)
+    {
+        $resParams = parent::new($context);
+        if ($resParams instanceof KeyValueStore && $folderId = $context->getRequest()->get('folderId')) {
+            /** @var Notice $entity */
+            $entity = $context->getEntity()->getInstance();
+            $folder = $this->rep->findOneForAll($folderId);
+            $context->getEntity()->setInstance($entity->setRepertoire($folder));
+            $resParams->set('curritem', $folder);
+        }
+        return $resParams;
+    }
+
+    public function detail(AdminContext $context): KeyValueStore
+    {
+        $resParams = parent::detail($context);
+        if ($folderId = $context->getRequest()->get('folderId')) {
+            $folder = $this->rep->findOneForAll($folderId);
+            $context->getEntity()->setActions(ActionCollection::new(array_map(function(ActionDto $action) use($folderId) {
+                if($action->getName() === Action::EDIT)
+                    $action->setLinkUrl(sprintf("%s&folderId=%d",$action->getLinkUrl(),$folderId));
+                return $action;
+            }, $context->getEntity()->getActions()->all())));
+            $resParams->set('curritem', $folder);
+        }
+        return $resParams;
     }
 }
