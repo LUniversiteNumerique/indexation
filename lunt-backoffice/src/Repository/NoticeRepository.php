@@ -21,7 +21,7 @@ class NoticeRepository extends ServiceEntityRepository
         parent::__construct($registry, Notice::class);
     }
 
-    public function findAllorBy(int $page,Etablissement $etab = null): array
+    public function findAllorBy(int $etab = null): array
     {
          $qr = $this->createQueryBuilder('n')
              ->select('n,a,d,p,u,t,l,s,q')->leftJoin('n.ressources', 'r')
@@ -29,7 +29,7 @@ class NoticeRepository extends ServiceEntityRepository
              ->join('n.specialite', 's')->join('n.auteurs', 'a')
             ->join('n.docTypes', 'd')->join('n.pedTypes', 'p')
             ->join('n.niveaux', 'u')->join('n.tags', 't');
-        if($etab) $qr->andWhere(":etab MEMBER OF n.porteurs")->setParameter("etab", $etab);
+      if($etab) $qr->andWhere("n.repertoire = :etab")->setParameter("etab", $etab);
 
         return $qr->getQuery()->getResult();
     }

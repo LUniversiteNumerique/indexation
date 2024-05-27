@@ -2,23 +2,23 @@
 
 namespace App\Repository;
 
-use App\Entity\Discipline;
+use App\Entity\Dossier;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Discipline>
+ * @extends ServiceEntityRepository<Dossier>
  *
- * @method Discipline|null find($id, $lockMode = null, $lockVersion = null)
- * @method Discipline|null findOneBy(array $criteria, array $orderBy = null)
- * @method Discipline[]    findAll()
- * @method Discipline[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Dossier|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Dossier|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Dossier[]    findAll()
+ * @method Dossier[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class DisciplineRepository extends ServiceEntityRepository
+class DossierRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Discipline::class);
+        parent::__construct($registry, Dossier::class);
     }
 
     public function rootQB(): \Doctrine\ORM\QueryBuilder
@@ -50,14 +50,14 @@ class DisciplineRepository extends ServiceEntityRepository
       else return $qb->where('s.parent is null')->getQuery()->getResult();
     }
 
-    public function add(Discipline $d=null): ?Discipline
+    public function add(Dossier $d=null): ?Dossier
     {
         if($d) $this->_em->persist($d);
         $this->_em->flush();
         return $d;
     }
 
-    public function del(Discipline $d): Discipline
+    public function del(Dossier $d): Dossier
     {
         $this->_em->remove($d);
         $this->_em->flush();

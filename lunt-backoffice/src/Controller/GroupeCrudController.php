@@ -37,7 +37,7 @@ class GroupeCrudController extends AbstractCrudController
                 ->setChoices(Groupe::PERMISSIONS)
                 ->allowMultipleChoices()->renderAsBadges(),
             AssociationField::new('users','Utilisateurs')
-                ->setFormTypeOption('by_reference', false)->hideWhenCreating(),
+                ->setFormTypeOption('by_reference', false)->hideOnForm(),
             DateTimeField::new('creeLe')->hideOnForm(),
             DateTimeField::new('editeLe')->onlyOnDetail()
         ];

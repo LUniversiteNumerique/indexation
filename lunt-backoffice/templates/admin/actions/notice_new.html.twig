@@ -1,0 +1,22 @@
+{% extends '@!EasyAdmin/crud/new.html.twig' %}
+
+{% block page_actions %}
+    {% for action in entity.actions %}
+        {{ include(action.templatePath, { action: action }, with_context = false) }}
+    {% endfor %}
+
+    {% if curritem is defined %}
+        <a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('detail').setEntityId(curritem.id) }}" class="btn btn-secondary"><i class="fa fa-arrow-up" aria-hidden="true"></i> Retourner</a>
+    {% else %}
+        <a href="{{ ea_url().setController('App\\Controller\\NoticeCrudController').setAction('index') }}" class="btn btn-secondary"><i class="fa fa-arrow-up" aria-hidden="true"></i> Retourner</a>
+    {% endif %}
+
+{% endblock %}
+
+{% block main %}
+    {% if curritem is defined %}
+        {{ include('breadcrumb.html.twig', {bcrumb: getCurrentParents(curritem)}, with_context = false) }}
+    {% endif %}
+
+    {{ parent() }}
+{% endblock main %}

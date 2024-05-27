@@ -81,6 +81,8 @@ class Notice
         Assert\Valid, Assert\Type(Discipline::class)]
     private ?Discipline $specialite = null;
 
+    #[ORM\ManyToOne] private ?Dossier $repertoire = null;
+
     #[ORM\ManyToOne] private ?Etablissement $publisher;
 
     #[ORM\ManyToMany(targetEntity: Etablissement::class),
@@ -391,6 +393,18 @@ class Notice
         $this->specialite = $specialite;
 
         return $this;
+    }
+
+    public function getRepertoire(): ?Dossier
+    {
+      return $this->repertoire;
+    }
+
+    public function setRepertoire(?Dossier $repertoire): static
+    {
+      $this->repertoire = $repertoire;
+
+      return $this;
     }
 
     public function getPublisher(): ?Etablissement
