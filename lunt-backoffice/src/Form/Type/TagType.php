@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Form;
+namespace App\Form\Type;
 
 use App\Entity\Keyword;
-use App\Repository\KeywordRepository;
-use Symfony\Component\Form\AbstractType;
 use App\Form\DataTransformer\TagTransformer;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use App\Repository\KeywordRepository;
 use Symfony\Bridge\Doctrine\Form\DataTransformer\CollectionToArrayTransformer;
+use Symfony\Component\Form\{AbstractType, FormBuilderInterface};
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TagType extends AbstractType
 {
@@ -27,11 +26,8 @@ class TagType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'required' => false,
-            'class' => Keyword::class,'multiple' => true,
-            'query_builder' =>  function (string $query) {
-                dd($query);
-            },
+            'required' => false,'multiple' => true,
+            'class' => Keyword::class,'query_builder' =>  fn(string $query) => dump($query),
         ]);
     }
 

@@ -2,20 +2,32 @@
 
 {% block content_title 'Tableau de bord' %}
 
-{% block page_actions %}
-    <a class="btn btn-primary" href="{{ ea_url()
-        .setController('App\\Controller\\NoticeCrudController')
-        .setAction('index') }}">Les notices</a>
-{% endblock %}
-
 {% block main %}
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-            <a href="#">Tableau de bord</a>
-        </li>
-        <li class="breadcrumb-item active">{{ app.user.userIdentifier }} </li>
-    </ol>
-    <div class="container">
+    <div class="row row-cols-1 row-cols-md-2 align-items-md-center g-5">
+        <div class="col d-flex flex-column align-items-start gap-2">
+            <h2 class="fw-bold text-body-emphasis">Statistiques des notices disponibles</h2>
+            <p class="text-body-secondary">
+                Ces chiffres sont issus des différents statuts des notices et sont mis à jour au fur à mesure que cette page est actualisée.
+                Pour consulter ces notices, voire effectuer des traitements spécifiques.
+            </p>
+            <div>{% if is_granted('ROLE_READ_NOTI') %}
+            <a href="{{ ea_url().setController('App\\Controller\\NoticeCrudController').setAction('index') }}" class="btn btn-primary btn-lg">Les notices</a>
+            <a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('detail').setEntityId(1) }}" class="btn btn-primary btn-lg">Les repertoires</a>
+            {% endif %}</div>
+        </div>
 
+        <div class="col">
+            <div class="row row-cols-1 row-cols-sm-3 g-6">
+                {% set icons = ['ban', 'bell', 'check-circle'] %}
+                {% for key, s in noEtats %}
+                <div class="col d-flex flex-column gap-2">
+                    <div class="feature-icon-small d-inline-flex align-items-center justify-content-center text-bg-light bg-gradient fs-4 rounded-5">
+                        <h1 class="fw-bold mb-0">{{ s.nombre }}</h1> <svg class="bi" width="1em" height="1em"><i class="fa fa-{{ icons[key] }} fa-2x"></i></svg>
+                    </div>
+                    <p class="text-body-secondary">{{ s.etat.label }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 {% endblock %}

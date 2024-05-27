@@ -6,7 +6,8 @@ use App\Repository\NoticeRepository;
 use Doctrine\Common\Collections\{ArrayCollection, Collection};
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\{Uid\Uuid,Validator\Constraints as Assert};
 
 #[ORM\Entity(repositoryClass: NoticeRepository::class)]
 class Notice
@@ -15,6 +16,11 @@ class Notice
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
+
+    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    private ?Uuid $uuid;
 
     #[ORM\Column(length: 255), Assert\NotBlank]
     private ?string $titre = null;
@@ -118,6 +124,16 @@ class Notice
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getUuid(): ?Uuid
+    {
+        return $this->uuid;
+    }
+
+    public function setUuid(?Uuid $uuid): void
+    {
+        $this->uuid = $uuid;
     }
 
     public function getTitre(): ?string

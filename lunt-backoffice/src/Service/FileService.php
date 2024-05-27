@@ -1,0 +1,90 @@
+<?php
+
+namespace App\Service;
+
+use Symfony\Component\{DependencyInjection\Attribute\Autowire, Filesystem\Filesystem, Finder\Finder};
+use Symfony\Component\Filesystem\Exception\{IOException,IOExceptionInterface};
+
+readonly class FileService
+{
+    private Finder $finder;
+    private Filesystem $filesystem;
+    public function __construct(
+        #[Autowire('%kernel.project_dir%/var/files')]
+        private string $directory
+    )
+    {
+        $this->filesystem = new Filesystem();
+        if (!$this->filesystem->exists($this->directory))
+            $this->filesystem->mkdir($this->directory);
+        $this->finder = new Finder();
+    }
+
+    public function writeFile(string $filename, string $content): bool
+    {
+        try {
+            // Chemin complet du fichier
+            $filePath = $this->directory . DIRECTORY_SEPARATOR . $filename;
+
+            // Écrire le contenu dans le fichier
+            $this->filesystem->dumpFile($filePath, $content);
+
+            return true;
+        } catch (IOExceptionInterface) {
+            return false;
+        }
+    }
+
+    public function readFile(string $filePath): ?string
+    {
+        try {
+            // Vérifier si le fichier existe
+            if (!$this->filesystem->exists($filePath))
+                throw new IOException("Le fichier n'existe pas : $filePath");
+
+            // Lire le contenu du fichier
+            return file_get_contents($filePath);
+        } catch (IOExceptionInterface) { return null; }
+    }
+
+    public function writeFilesTo(array $filesContent,string $relativePath = ''): array
+    {
+        $path = $this->directory .DIRECTORY_SEPARATOR. $relativePath;
+        if (!$this->filesystem->exists($path)) $this->filesystem->mkdir($path);
+        return array_map(fn ($fileName) => $this->writeFile($relativePath.$fileName, $filesContent[$fileName]), array_keys($filesContent));
+    }
+
+    public function readFilesFrom(\DateTime $since = null, string $relativePath = '', $names = ['*.xml']): ?Finder
+    {
+        $path = $this->directory .DIRECTORY_SEPARATOR. $relativePath;
+        try {
+            // Vérifier si le répertoire existe
+            if (!$this->filesystem->exists($path))
+                throw new IOException("Le répertoire n'existe pas : $path");
+            $this->finder->files()->in($path)->name($names);
+
+            if ($since) $this->finder->date('>= ' . $since->format('Y-m-d H:i:s'));
+            //foreach ($this->finder as $file) $filesContent[$file->getFilename()] = file_get_contents($file->getRealPath());
+
+            return $this->finder;
+
+        }catch (IOExceptionInterface) { return null; }
+
+    }
+
+    public function removeFilesFrom(string $relativePath = ''): bool
+    {
+        $path = $this->directory .DIRECTORY_SEPARATOR. $relativePath;
+        try {
+            if (!$this->filesystem->exists($path))
+                throw new IOException("Le répertoire n'existe pas : $path");
+            $this->finder->files()->in($path);
+
+            foreach ($this->finder as $file) $this->filesystem->remove($file->getRealPath());
+
+            return true;
+        } catch (IOExceptionInterface) {
+            return false;
+        }
+    }
+}
