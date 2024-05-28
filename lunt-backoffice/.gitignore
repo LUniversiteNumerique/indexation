@@ -22,5 +22,7 @@
 ###> symfony/asset-mapper ###
 /public/images/uploads/
 /assets/vendor
+/migrations
+/imports
 ###< symfony/asset-mapper ###
 .idea/

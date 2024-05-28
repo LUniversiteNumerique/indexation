@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Dossier;
 use App\Field\EntityField;
+use App\Form\DossierType;
 use App\Repository\DossierRepository;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
@@ -16,9 +17,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class DossierCrudController extends AbstractCrudController
 {
-  public function __construct(private readonly DossierRepository $repository){}
+    public function __construct(private readonly DossierRepository $repository){}
 
-  public static function getEntityFqcn(): string
+    public static function getEntityFqcn(): string
     {
         return Dossier::class;
     }
@@ -64,4 +65,10 @@ class DossierCrudController extends AbstractCrudController
       return parent::createNewFormBuilder($entityDto, $formOptions, $context);
     }
 
+    public function detail(AdminContext $context): KeyValueStore|\Symfony\Component\HttpFoundation\Response
+    {
+        $resParams = parent::detail($context);
+        $resParams->set('form', $this->createForm(DossierType::class));
+        return $resParams;
+    }
 }

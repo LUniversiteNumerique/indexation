@@ -30,7 +30,7 @@ readonly class MailerService
         if(!empty($variables)) $email->context($variables);
 
         try { $this->mailer->send($email); }
-        catch (TransportExceptionInterface $e) {}
+        catch (TransportExceptionInterface) {}
     }
 
 }

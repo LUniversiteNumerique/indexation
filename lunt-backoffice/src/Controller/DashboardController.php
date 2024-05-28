@@ -49,8 +49,8 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Les Auteurs', 'fa fa-users', Auteur::class)->setPermission('ROLE_READ_ACTE');
         yield MenuItem::section('Configurations');
         yield MenuItem::linkToCrud('Etablissement', 'fa fa-university', Etablissement::class)->setPermission('ROLE_READ_ETAB');
-        yield MenuItem::linkToCrud('Code Dewey', 'fa fa-sitemap', Dewey::class)->setPermission('ROLE_READ_DEWE');
-        yield MenuItem::linkToCrud('Discipline', 'fa fa-book', Discipline::class)->setPermission('ROLE_READ_DISC');
+        //yield MenuItem::linkToCrud('Code Dewey', 'fa fa-sitemap', Dewey::class)->setPermission('ROLE_READ_DEWE');
+        //yield MenuItem::linkToCrud('Discipline', 'fa fa-book', Discipline::class)->setPermission('ROLE_READ_DISC');
         yield MenuItem::linkToCrud('Mots clés', 'fa fa-tags', Keyword::class)->setPermission('ROLE_READ_KEYW');
         yield MenuItem::linkToCrud("Annuaire", 'fa fa-user-group', User::class)->setPermission('ROLE_READ_USER');
         yield MenuItem::linkToCrud("Groupe d'utilisateurs", 'fa fa-cog', Groupe::class)->setPermission('ROLE_READ_GROU');

@@ -7,28 +7,35 @@ services:
     # Variante pour le développement local
     build:
       context: ./lunt-backoffice
-    environment:
-      DATABASE_URL: "mysql://root:${MARIADB_ADMIN_PASSWORD}@mariadb:3306/${MARIADB_DB}?serverVersion=10.11.2-MariaDB&charset=utf8mb4"
-      MESSENGER_TRANSPORT_DSN: "doctrine://default?auto_setup=0"
-      MAILER_DSN: "smtp://mailer:1025"
-      MARIADB_PASS: ${MARIADB_ADMIN_PASSWORD}
-      MARIADB_DB: ${MARIADB_DB}
-      APP_PORT: "80"
-      SERVER_NAME: ${SERVER_NAME}
+    env_file:
+      - ./lunt-backoffice/.env
     ports:
       - "80:80"
     depends_on:
       - mariadb
+      - mailer
+      - solr
+    volumes:
+      - ./lunt-backoffice:/var/www/site
 
   mariadb:
     image: mariadb:latest
     environment:
       MYSQL_DATABASE: ${MARIADB_DB}
-      MYSQL_ROOT_PASSWORD: ${MARIADB_ADMIN_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MARIADB_PASS}
     ports:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
+
+  myadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: mariadb
+      MYSQL_ROOT_PASSWORD: ${MARIADB_PASS}
+    ports: ["8080:80"]
+    depends_on:
+      - mariadb
 
   mailer:
     image: mailhog/mailhog:latest
@@ -36,5 +43,16 @@ services:
       - "1025:1025"
       - "8025:8025"
 
+  solr:
+    image: solr:latest
+    ports:
+      - "8983:8983"
+    volumes:
+      - solr_data:/var/solr
+    command:
+      - solr-precreate
+      - notices
+
 volumes:
   db_data:
+  solr_data:

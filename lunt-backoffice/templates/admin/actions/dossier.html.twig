@@ -51,33 +51,34 @@
 
   <div id="moveModal" class="modal fade" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-      <form method="post" class="modal-content" action="{{ ea_url().setController('App\\Controller\\NoticeCrudController').setAction('moveNotice').setEntityId(entity) }}">
+      {{ form_start(form, {'attr':{'id':"formove", 'class':"modal-content"}}) }}
         <div class="modal-header"><h4>Déplacer Notice</h4></div>
-        <div class="modal-body">
-          <input type="text" id="label" name="label" class="form-control" placeholder="Entrer la catégorie" required autofocus>
-          <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-        </div>
+
+        <div class="modal-body">{{ form_widget(form) }}</div>
         <div class="modal-footer">
           <button type="button" data-bs-dismiss="modal" class="btn btn-secondary">
             <span class="btn-label">{{ 'action.cancel'|trans([], 'EasyAdminBundle') }}</span>
           </button>
 
-          <button type="submit" class="btn btn-primary" id="move-button">
+          <button type="submit" class="btn btn-primary">
             <i class="fa fa-send" aria-hidden="true"></i> Sauvegarder
           </button>
         </div>
-      </form>
+      {{ form_end(form) }}
     </div>
   </div>
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
+      const url = '?crudAction=moveNotice&crudControllerFqcn=App%5CController%5CNoticeCrudController&entityId=';
       document.querySelectorAll(".move-action").forEach(action => {
-        action.addEventListener("click", e => {
-          e.preventDefault();
-          document.querySelector("#move-button").addEventListener("click",() => {
-            console.log('action', action.getAttribute("href"))
-            //location.replace(action.getAttribute("href"));
+        action.addEventListener("click", () => {
+          const form = document.getElementById("formove");
+          form.addEventListener("submit", e => {
+            e.preventDefault();
+            form.action = url+action.value;
+            console.log(form);
+            form.submit(); //form.reset()
           });
         });
       });
@@ -85,5 +86,4 @@
   </script>
 
 {% endblock detail_fields %}
-
 

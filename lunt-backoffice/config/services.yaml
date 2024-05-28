@@ -23,3 +23,6 @@ services:
     App\Field\Configurator\EntityConfigurator:
         tags:
             - { name: 'ea.field_configurator', priority: 0 }
+
+    Symfony\Component\Serializer\NameConverter\NameConverterInterface:
+        alias: "serializer.name_converter.camel_case_to_snake_case"

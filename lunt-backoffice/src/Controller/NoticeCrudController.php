@@ -4,11 +4,11 @@ namespace App\Controller;
 
 use App\{Event\AfterNoticeStateSetEvent, Security\Voter\NoticeActionVoter, Service\MailerService, Validator\UploadImage};
 use App\Entity\{Dewey, Discipline, Etablissement, Notice, NoticEtat, Univerique, User};
-use App\Repository\{DossierRepository,NoticeRepository};
 use App\Field\{DurationField, EntityField};
-use App\Form\{AuteurAutoField, TagType};
+use App\Form\Type\{AuteurAutoField, TagType, TreeChoiceType};
+use App\Repository\{DossierRepository, NoticeRepository};
 use Doctrine\ORM\QueryBuilder;
-use EasyCorp\Bundle\EasyAdminBundle\{Context\AdminContext,Event\AfterEntityPersistedEvent,Factory\FormFactory,Filter\ChoiceFilter,Router\AdminUrlGenerator};
+use EasyCorp\Bundle\EasyAdminBundle\{Context\AdminContext, Event\AfterEntityPersistedEvent, Factory\FormFactory, Filter\ChoiceFilter, Router\AdminUrlGenerator};
 use EasyCorp\Bundle\EasyAdminBundle\Collection\{ActionCollection, FieldCollection, FilterCollection};
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Actions, Asset, Assets, Crud, Filters, KeyValueStore};
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -48,12 +48,12 @@ class NoticeCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        $duplicate = Action::new('dupliquer',null,'fa fa-copy')->linkToCrudAction('duplicateNotice');
-        $forward = Action::new('soumettre',null,'fa fa-send')->linkToCrudAction(self::FORWARD_ACTION);
-        $approve = Action::new('valider',null,'fa fa-check')->linkToCrudAction('approveNotice');
-        $reject = Action::new('rejeter',null,'fa fa-close')->linkToCrudAction('rejectNotice');
-        $publish = Action::new('dépublier',null,'fa fa-step-backward')->linkToCrudAction('publishNotice');
-        $allowed = Action::new('autoriser',null,'fa fa-fast-backward')->linkToCrudAction('allowedNotice');
+        $duplicate = Action::new('dupliquer',null,'fa fa-copy')->linkToCrudAction('duplicateNotice')->setHtmlAttributes(['data-toggle' => 'tooltip', 'title' => 'Dupliquer cette notice']);
+        $forward = Action::new('soumettre',null,'fa fa-send')->linkToCrudAction(self::FORWARD_ACTION)->setHtmlAttributes(['data-toggle' => 'tooltip', 'title' => 'Soumettre cette notice']);
+        $approve = Action::new('valider',null,'fa fa-check')->linkToCrudAction('approveNotice')->setHtmlAttributes(['data-toggle' => 'tooltip', 'title' => 'Valider la notice pour publication']);
+        $reject = Action::new('rejeter',null,'fa fa-close')->linkToCrudAction('rejectNotice')->setHtmlAttributes(['data-toggle' => 'tooltip', 'title' => 'Rejeter la notice pour correction']);
+        $publish = Action::new('dépublier',null,'fa fa-step-backward')->linkToCrudAction('publishNotice')->setHtmlAttributes(['data-toggle' => 'tooltip', 'title' => 'Dépublier cette notice publiée']);
+        $allowed = Action::new('autoriser',null,'fa fa-fast-backward')->linkToCrudAction('allowedNotice')->setHtmlAttributes(['data-toggle' => 'tooltip', 'title' => 'Autoriser la notice pour modification']);
         $saward = Action::new(self::SAVE_AND_FORWARD, 'Créer et soumettre la notice', 'fa fa-send')->linkToCrudAction(Action::NEW)->setHtmlAttributes(['type' => 'submit', 'name' => 'ea[newForm][btn]', 'value' => self::SAVE_AND_FORWARD]);
         $adjust = Action::new('rectifier',null,'fa fa-share-square')->linkToCrudAction('adjustNotice');
         $category = Action::new('catégoriser',null,'fa fa-tag')->linkToCrudAction('labelNotice')
@@ -97,7 +97,7 @@ class NoticeCrudController extends AbstractCrudController
         yield Field\FormField::addColumn(6);
         yield Field\FormField::addFieldset('Description générale')->setIcon('fa fa-pencil');
         yield Field\IdField::new('id')->onlyOnDetail();
-        yield Field\TextField::new('titre');
+        yield Field\TextField::new('titre')->setHelp('Le titre de cette notice');
         yield Field\TextEditorField::new('description')->hideOnIndex();
         yield EntityField::new('porteurs', 'Établissement(s) porteur(s)')->setRequired(true)->hideOnIndex();
         yield EntityField::new('auteurs')->setFormType(AuteurAutoField::class)->setRequired(true);
@@ -161,6 +161,7 @@ class NoticeCrudController extends AbstractCrudController
             yield EntityField::new('codewey','Code Dewey')->setFormTypeOptions(['class' => Dewey::class])->setRequired(true);
             yield Field\TextField::new('label','Catégorie')->onlyOnDetail();
             yield Field\DateTimeField::new('creeLe')->onlyOnDetail();
+            yield EntityField::new('repertoire')->setFormType(TreeChoiceType::class);
         }
     }
 
@@ -235,8 +236,10 @@ class NoticeCrudController extends AbstractCrudController
     /** @throws NotFoundExceptionInterface|ContainerExceptionInterface */
     public function duplicateNotice(): Response
     {
+        $ctx = $this->getContext();
+
         /** @var Notice $notice */
-        $notice = $this->getContext()->getEntity()->getInstance();
+        $notice = $ctx->getEntity()->getInstance();
         $dupNot = (clone $notice)->setCreeLe(new \DateTimeImmutable());
 
         $this->repository->add($dupNot->setCreateur($this->getUser()));
@@ -244,9 +247,9 @@ class NoticeCrudController extends AbstractCrudController
         $this->addFlash('success', "Cette notice dupliquée vient d'être créé avec succès !");
 
         /** @var AdminUrlGenerator $genUrl */
-        $genUrl = $this->generator->setController(self::class)
-            ->setAction(Action::DETAIL)->setEntityId($dupNot->getId())->removeReferrer();
-        return $this->redirect($genUrl->generateUrl());
+        $genUrl = $this->generator->setController(self::class)->setAction(Action::DETAIL)->setEntityId($dupNot->getId());
+        if($folderId = $ctx->getRequest()->get('folderId')) $genUrl->set('folderId',$folderId);
+        return $this->redirect($genUrl->removeReferrer()->generateUrl());
     }
 
     public function forwardNotice(): Response
@@ -255,10 +258,7 @@ class NoticeCrudController extends AbstractCrudController
 
         /** @var Notice|null $notice */
         $notice = $ctx->getEntity()->getInstance(); //Working
-        return $this->redirect($this->changEtatNotice(
-            ['Soumettre', NoticEtat::Forward->value, 'Soummision'],
-            $notice->setEtat(NoticEtat::Forward))
-        );
+        return $this->changEtatNotice(['Soumettre', NoticEtat::Forward->getLabel(), 'Soummision', true], $notice->setEtat(NoticEtat::Forward),$ctx->getRequest()->get('folderId'));
     }
 
     public function approveNotice(): Response
@@ -267,10 +267,7 @@ class NoticeCrudController extends AbstractCrudController
 
         /** @var Notice|null $notice */
         $notice = $ctx->getEntity()->getInstance(); //Forward
-        return $this->redirect($this->changEtatNotice(
-            ['Valider', NoticEtat::Approved->value, 'Validation'],
-            $notice->setEtat(NoticEtat::Approved))
-        );
+        return $this->changEtatNotice(['Valider', NoticEtat::Approved->getLabel(), 'Validation', true], $notice->setEtat(NoticEtat::Approved),$ctx->getRequest()->get('folderId'));
     }
 
     public function rejectNotice(): Response
@@ -279,10 +276,7 @@ class NoticeCrudController extends AbstractCrudController
 
         /** @var Notice|null $notice */
         $notice = $ctx->getEntity()->getInstance(); //Forward
-        return $this->redirect($this->changEtatNotice(
-            array('Rejeter', 'Rejetée', 'Rejet'),
-            $notice->setEtat(NoticEtat::Working))
-        );
+        return $this->changEtatNotice(['Rejeter', 'Rejetée', 'Rejet', true], $notice->setEtat(NoticEtat::Working),$ctx->getRequest()->get('folderId'));
     }
 
     public function publishNotice(): Response
@@ -291,10 +285,7 @@ class NoticeCrudController extends AbstractCrudController
 
         /** @var Notice|null $notice */
         $notice = $ctx->getEntity()->getInstance(); //Approved
-        return $this->redirect($this->changEtatNotice(
-            ['Dépublier', 'Dépubliée', 'Dépublication'],
-            $notice->setEtat(NoticEtat::Forward))
-        );
+        return $this->changEtatNotice(['Dépublier', 'Dépubliée', 'Dépublication', false], $notice->setEtat(NoticEtat::Forward),$ctx->getRequest()->get('folderId'));
     }
 
     public function allowedNotice(): Response
@@ -303,10 +294,7 @@ class NoticeCrudController extends AbstractCrudController
 
         /** @var Notice|null $notice */
         $notice = $ctx->getEntity()->getInstance(); //Approved
-        return $this->redirect($this->changEtatNotice(
-            ['Autoriser', 'Autorisée', 'Autorisation'],
-            $notice->setEtat(NoticEtat::Working)->setEditDemande(false))
-        );
+        return $this->changEtatNotice(['Autoriser', 'Autorisée', 'Autorisation', false], $notice->setEtat(NoticEtat::Working)->setEditDemande(false),$ctx->getRequest()->get('folderId'));
     }
 
     public function adjustNotice(): Response
@@ -315,38 +303,41 @@ class NoticeCrudController extends AbstractCrudController
 
         /** @var Notice|null $notice */
         $notice = $ctx->getEntity()->getInstance(); //Approved
-        return $this->redirect($this->changEtatNotice(
-            array('Rectifier', 'Signalée', 'Rectification'),
-            $notice->setEditDemande(true))
-        );
+        return $this->changEtatNotice(['Rectifier', 'Signalée', 'Rectification', true], $notice->setEditDemande(true),$ctx->getRequest()->get('folderId'));
     }
 
-    public function labelNotice(AdminContext $ctx): Response
+    public function labelNotice(): Response
     {
+        $ctx = $this->getContext();
         $label = $ctx->getRequest()->get('label');
 
         /** @var Notice $notice */
         $notice = $ctx->getEntity()->getInstance();
-        return $this->redirect($this->changEtatNotice(
-            array('Catégoriser', 'Labellisée', 'Catégorisation'),
-            $notice->setLabel($label))
-        );
+        return $this->changEtatNotice(['Catégoriser', 'Labellisée', 'Catégorisation', false], $notice->setLabel($label),$ctx->getRequest()->get('folderId'));
     }
 
-    private function changEtatNotice(array $transition,Notice $notice): string
+    private function changEtatNotice(array $transition, Notice $notice, ?int $folderId = null): Response
     {
-        $url = $this->generator->setController(self::class)
-            ->setAction(Action::INDEX)->removeReferrer();
-        $note = sprintf("La notice est bien %s avec succès !",$transition[1]);
+        $url = $folderId ?
+            $this->generator->setController(DossierCrudController::class)->setAction(Action::DETAIL)->setEntityId($folderId):
+            $this->generator->setController(self::class)->setAction(Action::INDEX);
 
         $this->repository->add($notice);
-        $this->mailer->sendEmail($notice->getCreateur()?->getEmail(),sprintf("Notice %d en statut %s",$notice->getId(),$notice->getEtat()?->value), $note);
+        /** @var User $user */ $user = $this->getUser();
+        $group = $this->isGranted("ROLE_VALI_NOTI");
+        if($transition[3]) $this->mailer->sendTwig(($group?$notice->getCreateur():$notice->getValidateur())?->getEmail(),
+            sprintf("Notice %d en statut %s", $notice->getId(), $notice->getEtat()?->getLabel()), 'emails/notif.html.twig',
+            ['notice' => $notice->getTitre(), 'url' => $url->removeReferrer()->generateUrl(), 'message' => $group ?
+                sprintf("La notice <<%s>> a été %s par le %s %s", $notice, lcfirst($transition[1]), $user->getGroup(), $user):
+                sprintf("Une demande de modification vous a été transmise concernant la notice <<%s>> par le %s %s", $notice, $user->getGroup(),  $user)
+            ]
+        );
         try {
             $this->container->get('event_dispatcher')->dispatch(new AfterNoticeStateSetEvent($notice, $transition));
-            $this->addFlash('success', $note);
-        } catch (NotFoundExceptionInterface|ContainerExceptionInterface $e) {}
+            $this->addFlash('success', sprintf("La notice est bien %s avec succès !",$transition[1]));
+        } catch (NotFoundExceptionInterface|ContainerExceptionInterface) {}
 
-        return $url->generateUrl(); // $this->getRedirectResponseAfterSave($context, Action::EDIT);
+        return $this->redirect($url->removeReferrer()->generateUrl());
     }
 
     private function addDisc(FormInterface $form, ?Discipline $child): void
@@ -455,12 +446,21 @@ class NoticeCrudController extends AbstractCrudController
         if ($folderId = $context->getRequest()->get('folderId')) {
             $folder = $this->rep->findOneForAll($folderId);
             $context->getEntity()->setActions(ActionCollection::new(array_map(function(ActionDto $action) use($folderId) {
-                if($action->getName() === Action::EDIT)
-                    $action->setLinkUrl(sprintf("%s&folderId=%d",$action->getLinkUrl(),$folderId));
+                $action->setLinkUrl(sprintf("%s&folderId=%d",$action->getLinkUrl(),$folderId));
                 return $action;
             }, $context->getEntity()->getActions()->all())));
             $resParams->set('curritem', $folder);
         }
         return $resParams;
+    }
+
+    public function moveNotice(AdminContext $ctx): Response
+    {
+        $request = $ctx->getRequest()->get("dossier");
+
+        /** @var Notice $notice */
+        $notice = $ctx->getEntity()->getInstance();
+        if($request["dossier"] && $dossier = $this->rep->find($request["dossier"])) $notice->setRepertoire($dossier);
+        return $this->changEtatNotice(['Déplacer', 'Déplacée', 'Déplacement', false], $notice, $ctx->getRequest()->get('folderId'));
     }
 }

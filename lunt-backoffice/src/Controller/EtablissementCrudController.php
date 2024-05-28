@@ -61,7 +61,7 @@ class EtablissementCrudController extends AbstractCrudController
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var UploadedFile $xmlFile */
             $xmlFile = $form->get('file')->getData();
-            $etabs = $loader->parseXML($xmlFile->getRealPath());
+            $etabs = $loader->parse($xmlFile->getRealPath());
 
             $keys = array_keys($etabs);
             $olds = $repository->findBy(['abrege' => $keys]);

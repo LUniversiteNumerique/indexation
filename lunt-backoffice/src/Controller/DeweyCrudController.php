@@ -81,7 +81,7 @@ class DeweyCrudController extends AbstractCrudController
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var UploadedFile $xmlFile */
             $xmlFile = $form->get('file')->getData();
-            $loader->parseXML($xmlFile->getRealPath()); //$repository->add();
+            $loader->parse($xmlFile->getRealPath()); //$repository->add();
             $targetUrl = $generator->setController(self::class)->setAction(Crud::PAGE_INDEX);
 
             return $this->redirect($targetUrl->generateUrl());

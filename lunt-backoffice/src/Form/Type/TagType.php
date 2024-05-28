@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Form;
+namespace App\Form\Type;
 
 use App\Entity\Keyword;
-use App\Repository\KeywordRepository;
 use App\Form\DataTransformer\TagTransformer;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\{AbstractType,FormBuilderInterface};
+use App\Repository\KeywordRepository;
 use Symfony\Bridge\Doctrine\Form\DataTransformer\CollectionToArrayTransformer;
+use Symfony\Component\Form\{AbstractType, FormBuilderInterface};
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TagType extends AbstractType
 {

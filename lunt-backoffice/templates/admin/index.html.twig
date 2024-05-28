@@ -12,7 +12,7 @@
             </p>
             <div>{% if is_granted('ROLE_READ_NOTI') %}
             <a href="{{ ea_url().setController('App\\Controller\\NoticeCrudController').setAction('index') }}" class="btn btn-primary btn-lg">Les notices</a>
-            <a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('index') }}" class="btn btn-primary btn-lg">Les repertoires</a>
+            <a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('detail').setEntityId(1) }}" class="btn btn-primary btn-lg">Les repertoires</a>
             {% endif %}</div>
         </div>
 
@@ -24,7 +24,7 @@
                     <div class="feature-icon-small d-inline-flex align-items-center justify-content-center text-bg-light bg-gradient fs-4 rounded-5">
                         <h1 class="fw-bold mb-0">{{ s.nombre }}</h1> <svg class="bi" width="1em" height="1em"><i class="fa fa-{{ icons[key] }} fa-2x"></i></svg>
                     </div>
-                    <p class="text-body-secondary">{{ s.etat.value }}</p>
+                    <p class="text-body-secondary">{{ s.etat.label }}</p>
                 </div>
                 {% endfor %}
             </div>

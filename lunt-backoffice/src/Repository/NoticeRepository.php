@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\{Etablissement, Notice, Univerique};
+use App\Entity\{Etablissement, Notice, NoticEtat, Univerique};
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -21,15 +21,26 @@ class NoticeRepository extends ServiceEntityRepository
         parent::__construct($registry, Notice::class);
     }
 
+    public function findFrom(int $offset,int $limit, \DateTime $from = null): array
+    {
+        $qr = $this->createQueryBuilder('n')
+            ->where('n.etat = :etat')->setParameter("etat", NoticEtat::Approved);
+        if($from) $qr->andWhere("n.creeLe >= :date")->setParameter("date", $from);
+        $qr->setFirstResult($offset)->setMaxResults($limit);
+        return $qr->select('n.id')->getQuery()->getResult();
+    }
+
+    public function findByIds(array $uuids): array
+    {
+        $qr = $this->getJoin()
+            ->where('n.id IN (:uuids)')->setParameter('uuids', $uuids);
+        return $qr->getQuery()->getResult();
+    }
+
     public function findAllorBy(int $etab = null): array
     {
-         $qr = $this->createQueryBuilder('n')
-             ->select('n,a,d,p,u,t,l,s,q')->leftJoin('n.ressources', 'r')
-             ->join('n.droit', 'l')->join('n.porteurs', 'q')
-             ->join('n.specialite', 's')->join('n.auteurs', 'a')
-            ->join('n.docTypes', 'd')->join('n.pedTypes', 'p')
-            ->join('n.niveaux', 'u')->join('n.tags', 't');
-      if($etab) $qr->andWhere("n.repertoire = :etab")->setParameter("etab", $etab);
+        $qr = $this->getJoin();
+        if($etab) $qr->andWhere("n.repertoire = :etab")->setParameter("etab", $etab);
 
         return $qr->getQuery()->getResult();
     }
@@ -55,5 +66,15 @@ class NoticeRepository extends ServiceEntityRepository
             ->where('c.parent in (:champs)')->setParameter('champs',$unt->getFields());
         if($date) $qb->andWhere('n.creeLe > :date')->setParameter('date', new \DateTIME("-1 $date"));
         return $qb->groupBy('n.etat')->getQuery()->getResult();
+    }
+
+    private function getJoin(): \Doctrine\ORM\QueryBuilder
+    {
+        return $this->createQueryBuilder('n')
+            ->select('n,a,d,p,u,t,l,s,q')->leftJoin('n.ressources', 'r')
+            ->join('n.droit', 'l')->join('n.porteurs', 'q')
+            ->join('n.specialite', 's')->join('n.auteurs', 'a')
+            ->join('n.docTypes', 'd')->join('n.pedTypes', 'p')
+            ->join('n.niveaux', 'u')->join('n.tags', 't');
     }
 }
