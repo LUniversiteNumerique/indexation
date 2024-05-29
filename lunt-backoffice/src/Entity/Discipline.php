@@ -3,9 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\DisciplineRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
+use Doctrine\Common\Collections\{ArrayCollection,Collection};
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -14,11 +12,11 @@ class Discipline
 {
     use Timestamps;
 
+    #[ORM\Column(length: 255, unique: false), Assert\NotBlank]
+    private ?string $code;
+
     #[ORM\Column(length: 255), Assert\NotBlank]
     private ?string $nom;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $description;
 
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children'),
         Assert\Valid, Assert\Type(self::class)]
@@ -30,7 +28,7 @@ class Discipline
     public function __construct($code=null,$nom=null)
     {
         $this->creeLe = new \DateTimeImmutable();
-        $this->description = $code;
+        $this->code = $code;
         $this->nom = $nom;
         $this->children = new ArrayCollection();
     }
@@ -38,6 +36,18 @@ class Discipline
     public static function create(array $o): self
     {
         return new self($o['id'],$o['libelle_uoh']);
+    }
+
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    public function setCode(?string $code): static
+    {
+        $this->code = $code;
+
+        return $this;
     }
 
     public function getNom(): ?string
@@ -48,18 +58,6 @@ class Discipline
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
-
-        return $this;
-    }
-
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    public function setDescription(?string $description): static
-    {
-        $this->description = $description;
 
         return $this;
     }

@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Repository\{KeywordRepository, NoticeRepository};
 use App\Form\{ChangePassType,UserType};
 use App\Repository\UserRepository;
-use App\Entity\{Auteur, Dewey, Discipline, Dossier, Etablissement, Groupe, Keyword, User};
+use App\Entity\{Auteur, Etablissement, Groupe, Keyword, User};
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Crud, Dashboard, MenuItem, UserMenu};
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;

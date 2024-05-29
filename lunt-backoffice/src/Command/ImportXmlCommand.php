@@ -4,23 +4,23 @@ namespace App\Command;
 
 use App\Message\ImportXmlMessage;
 use App\Service\FileService;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\{Attribute\AsCommand,Command\Command,Output\OutputInterface,Style\SymfonyStyle};
+use Symfony\Component\Console\{Attribute\AsCommand,Command\Command,Input\InputInterface,Output\OutputInterface,Style\SymfonyStyle};
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Scheduler\Attribute\AsCronTask;
+use Symfony\Component\Scheduler\Attribute\AsPeriodicTask;
 
 #[AsCommand(
     name: 'app:import-xml-data',
     description: "Exécute le processus d'importation des données XML du serveur",
 )]
-#[AsCronTask(expression: '14 */12 * * *')] //#[AsPeriodicTask(frequency: '1 day', from: '00:26')]
+#[AsPeriodicTask(frequency: '1 day', from: '00:26')]
 class ImportXmlCommand extends Command
 {
     private FileService $fileService;
 
     public function __construct(
-        #[Autowire('%kernel.project_dir%/imports')] private string $directory,
+        #[Autowire('%kernel.project_dir%/imports')]
+        private readonly string              $directory,
         private readonly MessageBusInterface $eventBus
     )
     {

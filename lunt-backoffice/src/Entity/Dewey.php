@@ -2,9 +2,9 @@
 
 namespace App\Entity;
 
+use App\Entity\Dto\DeweyDto;
 use App\Repository\DeweyRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\{ArrayCollection,Collection};
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -13,7 +13,7 @@ class Dewey
 {
     use Timestamps;
 
-    #[ORM\Column(length: 255), Assert\NotBlank]
+    #[ORM\Column(length: 255, unique: true), Assert\NotBlank]
     private ?string $code;
 
     #[ORM\Column(length: 255), Assert\NotBlank]
@@ -34,9 +34,9 @@ class Dewey
         $this->children = new ArrayCollection();
     }
 
-    public static function create(array $o): self
+    public static function create(DeweyDto $dto): self
     {
-        return new self($o['id'],$o['libelle_uoh']);
+        return new self($dto->notation, $dto->label);
     }
 
     public function getCode(): ?string

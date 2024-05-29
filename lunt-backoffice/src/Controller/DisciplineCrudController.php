@@ -38,8 +38,8 @@ class DisciplineCrudController extends AbstractCrudController
     {
         return [
             IdField::new('id')->onlyOnDetail(),
+            TextEditorField::new('code'),
             TextField::new('nom'),
-            TextEditorField::new('description'),
             EntityField::new('parent')->onlyOnForms(),
             EntityField::new('children','Sous-Discipline')->hideOnForm()->setTemplatePath('admin/fields/tree.html.twig'),
             DateTimeField::new('creeLe')->onlyOnDetail(),

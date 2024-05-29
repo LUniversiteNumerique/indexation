@@ -13,7 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\{FieldCollection,FilterCollection};
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\{DateTimeField, TextField};
+use EasyCorp\Bundle\EasyAdminBundle\Field\{DateTimeField, IdField, TextField};
 use EasyCorp\Bundle\EasyAdminBundle\Dto\{EntityDto, SearchDto};
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
@@ -53,6 +53,7 @@ class DeweyCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
+            IdField::new('id')->onlyOnDetail(),
             TextField::new('code'),
             TextField::new('nom'),
             EntityField::new('parent')->onlyOnForms(),

@@ -3,19 +3,13 @@
 namespace App\Service;
 
 use App\Entity\Dto\IndexingNotice;
+use JMS\Serializer\SerializerInterface;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\Serializer\{Encoder\XmlEncoder,
-    NameConverter\NameConverterInterface,
-    Normalizer\ObjectNormalizer,
-    Serializer, SerializerInterface};
 
 readonly class XmlDataLoader
 {
-
-    private SerializerInterface $serializer;
-    public function __construct(NameConverterInterface $converter) {
-        $this->serializer = new Serializer([new ObjectNormalizer(null, $converter)], [new XmlEncoder()]);
-    }
+    public function __construct(private SerializerInterface $serializer)
+    {}
 
     private function getCrawler($domDoc): Crawler
     {
@@ -38,11 +32,11 @@ readonly class XmlDataLoader
 
     public function encode(array $data, string $rootXml): string
     {
-        return $this->serializer->serialize($data, XmlEncoder::FORMAT, [XmlEncoder::FORMAT_OUTPUT => true, XmlEncoder::ENCODING => 'UTF-8', XmlEncoder::ROOT_NODE_NAME => $rootXml,]);
+        return $this->serializer->serialize($data, 'xml');//XmlEncoder::FORMAT, [XmlEncoder::FORMAT_OUTPUT => true, XmlEncoder::ENCODING => 'UTF-8', XmlEncoder::ROOT_NODE_NAME => $rootXml,]);
     }
 
     public function decode($item, string $type = IndexingNotice::class)
     {
-        return $this->serializer->deserialize($item, $type.'[]', XmlEncoder::FORMAT);
+        return $this->serializer->deserialize($item, $type, 'xml');
     }
 }
