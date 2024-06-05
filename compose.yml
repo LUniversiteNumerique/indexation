@@ -10,23 +10,30 @@ services:
     env_file:
       - ./lunt-backoffice/.env
     ports:
-      - "80:80"
+      - "8000:80"
     depends_on:
       - mariadb
       - mailer
-      - solr
     volumes:
       - ./lunt-backoffice:/var/www/site
 
-  mariadb:
-    image: mariadb:latest
+  wordpress:
+    image: wordpress:5.2.0-php7.3-apache
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
     environment:
-      MYSQL_DATABASE: ${MARIADB_DB}
-      MYSQL_ROOT_PASSWORD: ${MARIADB_PASS}
+      WORDPRESS_DB_HOST: mariadb
+      WORDPRESS_DB_USER: ${WORDPRESS_USER}
+      WORDPRESS_DB_PASSWORD: ${MARIADB_PASS}
+      WORDPRESS_DB_NAME: unt_wp
+      WORDPRESS_TABLE_PREFIX: uoh_
     ports:
-      - "3306:3306"
+      - "80:80"
+    depends_on:
+      - mariadb
     volumes:
-      - db_data:/var/lib/mysql
+      - ./lunt-backoffice/imports/wdps-data:/var/www/html
 
   myadmin:
     image: phpmyadmin/phpmyadmin
@@ -37,6 +44,17 @@ services:
     depends_on:
       - mariadb
 
+  mariadb:
+    image: mariadb:latest
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${MARIADB_DB}
+      MYSQL_ROOT_PASSWORD: ${MARIADB_PASS}
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
   mailer:
     image: mailhog/mailhog:latest
     ports:
@@ -45,14 +63,20 @@ services:
 
   solr:
     image: solr:latest
+    restart: on-failure
+    environment:
+      - SOLR_HOME=/var/solr/data
+      - SOLR_LOG_LEVEL=INFO
     ports:
       - "8983:8983"
     volumes:
       - solr_data:/var/solr
+      - ./lunt-backoffice/imports/solr-data:/var/solr/data
     command:
       - solr-precreate
-      - notices
+      - unt1
 
 volumes:
   db_data:
   solr_data:
+  wp_data:

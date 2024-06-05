@@ -1,4 +1,4 @@
-insert into unt.tdocument (id, nom, code, cree_le, edite_le)
+insert into unt_db.tdocument (id, nom, code, cree_le, edite_le)
 values  (1, 'Texte', '', '2024-03-07 12:42:07', null),
         (2, 'Image', '', '2024-03-07 12:42:12', null),
         (3, 'Son', '', '2024-03-07 12:42:16', null),

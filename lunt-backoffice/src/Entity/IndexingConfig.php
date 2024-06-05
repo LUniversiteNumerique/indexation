@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
+use Symfony\Component\Validator\Constraints as Assert;
 use App\Repository\IndexingConfigRepository;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: IndexingConfigRepository::class)]
@@ -20,22 +20,17 @@ class IndexingConfig
     #[ORM\Column]
     private ?\DateTime $scheduleAt;
 
-    #[ORM\Column(type: Types::SMALLINT)]
-    private ?int $filesIn = null;
+    #[ORM\Column]
+    private ?int $batchSize = 10; //filesIn,filesOut
 
-    #[ORM\Column(type: Types::SMALLINT)]
-    private ?int $filesOut = null;
+    #[ORM\Column(length: 255), Assert\NotBlank]
+    private ?string $frequency;//inDuration
 
-    #[ORM\Column(type: Types::INTEGER)]
-    private ?int $inDuration = null;
+    #[ORM\ManyToOne, Assert\Type(Univerique::class)]
+    private ?Univerique $indexCore = null;
 
-    public function __construct(?bool $mode = false, ?bool $type = false, ?int $fIn = null, ?int $fOut = null, ?int $inDur = null)
+    public function __construct()
     {
-        $this->fullMode = $mode;
-        $this->indexType = $type; //0=intern, 1=extern
-        $this->filesIn = $fIn;
-        $this->filesOut = $fOut;
-        $this->inDuration = $inDur;
         $this->scheduleAt = new \DateTime();
     }
 
@@ -80,38 +75,38 @@ class IndexingConfig
         return $this;
     }
 
-    public function getFilesIn(): ?int
+    public function getBatchSize(): ?int
     {
-        return $this->filesIn;
+        return $this->batchSize;
     }
 
-    public function setFilesIn(int $filesIn): static
+    public function setBatchSize(int $batchSize): static
     {
-        $this->filesIn = $filesIn;
+        $this->batchSize = $batchSize;
 
         return $this;
     }
 
-    public function getFilesOut(): ?int
+    public function getFrequency(): ?string
     {
-        return $this->filesOut;
+        return $this->frequency;
     }
 
-    public function setFilesOut(int $filesOut): static
+    public function setFrequency(?string $frequency): static
     {
-        $this->filesOut = $filesOut;
+        $this->frequency = $frequency;
 
         return $this;
     }
 
-    public function getInDuration(): ?int
+    public function getIndexCore(): ?Univerique
     {
-        return $this->inDuration;
+        return $this->indexCore;
     }
 
-    public function setInDuration(?int $inDuration): static
+    public function setIndexCore(?Univerique $core): static
     {
-        $this->inDuration = $inDuration;
+        $this->indexCore = $core;
 
         return $this;
     }

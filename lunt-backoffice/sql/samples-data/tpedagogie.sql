@@ -1,4 +1,4 @@
-insert into unt.tpedagogie (id, nom, cree_le, edite_le, code)
+insert into unt_db.tpedagogie (id, nom, cree_le, edite_le, code)
 values  (1, 'Essentiel (type UOH)', '2024-02-27 10:41:34', null, ''),
         (2, 'Grande Leçon (type UOH)', '2024-02-27 10:41:37', null, ''),
         (3, 'Etude et document (type UOH)', '2024-02-27 10:41:39', null, ''),

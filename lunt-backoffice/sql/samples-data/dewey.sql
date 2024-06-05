@@ -1,4 +1,4 @@
-insert into unt.dewey (id, parent_id, nom, cree_le, edite_le, code)
+insert into unt_db.dewey (id, parent_id, nom, cree_le, edite_le, code)
 values  (1, null, 'Informatique, information, ouvrages généraux', '2024-01-25 10:07:23', null, '0'),
         (2, null, 'Philosophie, Parapsychologie et Occultisme, Psychologie', '2024-01-25 10:07:46', null, '1'),
         (3, null, 'Religions', '2024-01-25 10:08:06', null, '2'),
@@ -9,10 +9,10 @@ values  (1, null, 'Informatique, information, ouvrages généraux', '2024-01-25 
         (8, null, 'Arts, Loisirs et Sports', '2024-01-25 10:09:51', null, '7'),
         (9, null, 'Littérature', '2024-01-25 10:10:27', null, '8'),
         (10, null, 'Géographie, Histoire', '2024-01-25 10:10:53', null, '9'),
-        (11, 1, 'Généralités sur l’informatique, l’information, les ouvrages généraux', '2024-01-25 10:12:18', null, '04'),
-        (12, 1, 'Bibliographies', '2024-01-25 10:12:42', null, '01'),
-        (13, 1, 'Sciences de l''information et des bibliothèques', '2024-01-25 10:13:20', null, '02'),
-        (14, 1, 'Encyclopédies générales', '2024-01-25 10:13:46', null, '03'),
+        (11, 1, 'Généralités sur l’informatique, l’information, les ouvrages généraux', '2024-01-25 10:12:18', null, '01'),
+        (12, 1, 'Bibliographies', '2024-01-25 10:12:42', null, '02'),
+        (13, 1, 'Sciences de l''information et des bibliothèques', '2024-01-25 10:13:20', null, '03'),
+        (14, 1, 'Encyclopédies générales', '2024-01-25 10:13:46', null, '04'),
         (15, 1, 'Publications en série d’ordre général', '2024-01-25 10:14:13', null, '05'),
         (16, 1, 'Organisations générales et muséologie', '2024-01-25 10:14:34', null, '06'),
         (17, 1, 'Médias documentaires, journalisme, édition', '2024-01-25 10:14:56', null, '07'),

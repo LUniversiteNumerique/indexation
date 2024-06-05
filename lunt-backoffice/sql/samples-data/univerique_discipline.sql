@@ -1,3 +1,3 @@
-insert into unt.univerique_discipline (univerique_id, discipline_id)
+insert into unt_db.univerique_discipline (univerique_id, discipline_id)
 values  (1, 1),
-        (1, 14);
+        (1, 5);

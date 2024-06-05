@@ -267,7 +267,7 @@ class NoticeCrudController extends AbstractCrudController
 
         /** @var Notice|null $notice */
         $notice = $ctx->getEntity()->getInstance(); //Forward
-        return $this->changEtatNotice(['Valider', NoticEtat::Approved->getLabel(), 'Validation', true], $notice->setEtat(NoticEtat::Approved),$ctx->getRequest()->get('folderId'));
+        return $this->changEtatNotice(['Valider', NoticEtat::Approved->getLabel(), 'Validation', true], $notice->setEtat(NoticEtat::Approved)->setValidateur($this->getUser()),$ctx->getRequest()->get('folderId'));
     }
 
     public function rejectNotice(): Response

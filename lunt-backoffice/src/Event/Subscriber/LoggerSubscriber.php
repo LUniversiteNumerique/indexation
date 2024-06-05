@@ -4,26 +4,29 @@ namespace App\Event\Subscriber;
 
 use EasyCorp\Bundle\EasyAdminBundle\Event\{AbstractLifecycleEvent, AfterEntityDeletedEvent, AfterEntityPersistedEvent, AfterEntityUpdatedEvent, BeforeEntityUpdatedEvent};
 use App\Event\AfterNoticeStateSetEvent;
-use App\Entity\{Notice,User};
+use App\Entity\{IndexingConfig, Notice, User};
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\{EventSubscriberInterface,Attribute\AsEventListener};
+use Symfony\Component\Console\Messenger\RunCommandMessage;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
 
 readonly class LoggerSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private LoggerInterface $untLogger,
-        private Security        $security,
+        private MessageBusInterface $messageBus,
+        private LoggerInterface     $untLogger,
+        private Security            $security,
     ) {}
 
     public static function getSubscribedEvents(): array
     {
         return [
             AfterNoticeStateSetEvent::class => 'logChanging',
-            AfterEntityDeletedEvent::class => 'logDeleting',
-            AfterEntityPersistedEvent::class => 'logCreating',
-            AfterEntityUpdatedEvent::class => 'logUpdating',
+            AfterEntityDeletedEvent::class => [['logDeleting', 0], ['schTrigging', 10],],
+            AfterEntityPersistedEvent::class => [['logCreating', 0], ['schTrigging', 10],],
+            AfterEntityUpdatedEvent::class => [['logUpdating', 0], ['schTrigging', 10],],
             BeforeEntityUpdatedEvent::class => ['onDateSetting'],
             LoginSuccessEvent::class => 'onLoginSuccess',
         ];
@@ -96,5 +99,13 @@ readonly class LoggerSubscriber implements EventSubscriberInterface
         $this->untLogger->debug(sprintf("%s vient de se connecter au système",$user), [
             'userId' => $user->getId(), 'remoteIp' => $clientIp,
         ]);
+    }
+
+    public function schTrigging(AfterEntityDeletedEvent|AfterEntityPersistedEvent|AfterEntityUpdatedEvent $event): void
+    {
+        $entity = $event->getEntityInstance();
+        if (!($entity instanceof IndexingConfig)) return;
+
+        //$this->messageBus->dispatch(new RunCommandMessage('app:exec-scheduler'));
     }
 }

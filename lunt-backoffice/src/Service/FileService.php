@@ -72,15 +72,25 @@ readonly class FileService
 
     }
 
-    public function removeFilesFrom(string $relativePath = ''): bool
+    public function removeFilesFrom(string $relativePath = '', $filenames = null): bool
     {
         $path = $this->directory .DIRECTORY_SEPARATOR. $relativePath;
         try {
             if (!$this->filesystem->exists($path))
                 throw new IOException("Le répertoire n'existe pas : $path");
-            $this->finder->files()->in($path);
 
-            foreach ($this->finder as $file) $this->filesystem->remove($file->getRealPath());
+            if($filenames) {
+                foreach ($filenames as $file) {
+                    $filePath = sprintf("%s_%s/%s.xml", $relativePath, $path ,$file);
+                    if ($this->filesystem->exists($filePath))
+                        $this->filesystem->remove($filePath);
+                    dump($filePath);
+                }
+            } else {
+                $this->finder->files()->in($path);
+                foreach ($this->finder as $file)
+                    $this->filesystem->remove($file->getRealPath());
+            }
 
             return true;
         } catch (IOExceptionInterface) {

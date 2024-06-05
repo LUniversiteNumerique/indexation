@@ -2,57 +2,85 @@
 
 namespace App\Message\Handler;
 
-use App\Repository\NoticeRepository;
-use App\Entity\Dto\IndexingNotice;
-use App\Service\{Converter\PrefixNameConverter, FileService, SolrApiService, XmlDataLoader};
+use App\Entity\{IndexingConfig, Notice, NoticEtat};
+use Doctrine\ORM\{EntityManagerInterface,EntityRepository};
+use App\Entity\Dto\{OaidcDto,SuplomDto,IndexingNotice};
+use App\Service\{FileService, SolrApiService};
 use App\Message\IntexingConfigMessage;
+use JMS\Serializer\SerializerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
 readonly class InterIndexingHandler
 {
-    const PREFIX_SF = 'lom', PREFIX_DC = 'dc';
-    private XmlDataLoader $sfLoader, $dcLoader;
+    private EntityRepository $configRep, $noticeRep;
     public function __construct(
-        private NoticeRepository $nr,
+        private EntityManagerInterface $em,
+        private SerializerInterface $js,
         private SolrApiService $sm,
-        private FileService $fs
-    ){
-        $this->sfLoader = new XmlDataLoader(new PrefixNameConverter(self::PREFIX_SF.":"));
-        $this->dcLoader = new XmlDataLoader(new PrefixNameConverter(self::PREFIX_DC.":"));
+        private FileService $fs,
+    ) {
+        $this->noticeRep = $this->em->getRepository(Notice::class);
+        $this->configRep = $this->em->getRepository(IndexingConfig::class);
     }
 
     public function __invoke(IntexingConfigMessage $message): void
     {
-        if ($message->isFullExec && $this->fs->removeFilesFrom('dc/') && $this->fs->removeFilesFrom('sf/'))
-            $this->sm->delDocuments("<query>external_resource:false</query>");
-        $sources = $this->nr->findBy(['id' => $message->itemIds]);
+        /** @var IndexingConfig $task */
+        $task = $this->configRep->find($message->taskId);
+        if (!$task) throw new \Exception("Aucun planificateur d'identifant ".$message->taskId);
+        $urlSolr = sprintf("unt%s/update?commit=true", $task->getIndexCore()?->getId());
 
-        //Itération sur les items de la source => iterateOverSource();
-        $itemSF = []; $itemSP = ""; $itemDC = [];
+        if ($task->isFullMode() && $this->fs->removeFilesFrom('dc') && $this->fs->removeFilesFrom('sf'))
+            $this->sm->delDocuments("<query>external_resource:false</query>",$urlSolr);
+        $offset = 0;
+
+        do {
+            /** @var Notice[] $data */
+            $data = $this->noticeRep->findFrom(
+                $task->getIndexCore()?->getId(),
+                $task->isFullMode() ?null: $task->getScheduleAt(),
+                $task->getBatchSize(), $offset
+            );
+
+            $news = []; $olds = [];
+            foreach ($data as $d) {
+                if ($d->getEtat() === NoticEtat::Approved) $news[] = $d->setPublieLe(new \DateTime()); // publié
+                elseif($d->getPublieLe()) $olds[] = $d->setPublieLe(null)->getUuid(); // dépublié
+            }
+
+            $this->push($news, $urlSolr);
+            $this->pop($olds, $urlSolr);
+            $this->em->flush(); $this->em->clear();
+
+            $offset += $task->getBatchSize();
+        } while (!empty($data));
+
+        $task->setScheduleAt(new \DateTime());
+        $this->em->flush();
+    }
+
+    private function pop(array $sources, string $url): void
+    {
+        $itemSP = array_reduce($sources,fn(string $acc, string $uuid): string => $acc."<uuid>$uuid</uuid>","");
+
+        $this->sm->delDocuments($itemSP, $url);
+        $this->fs->removeFilesFrom('dc', $sources);
+        $this->fs->removeFilesFrom('sf', $sources);
+    }
+    private function push(array $sources, string $url): void
+    {
+        $itemSF = []; $itemDC = []; $itemSP = "";
         foreach ($sources as $notice) {
             $item = IndexingNotice::create($notice);
-            $itemSP .= "<doc>$item</doc>";                                                               //SolrPivotBuildingAnalyzer
+            $itemSP .= "<doc>$item</doc>";                                                                                    //SolrPivotBuildingAnalyzer
 
-            $itemDC[sprintf("dc_%s.xml",$item->getUuid())] = $this->dcLoader->encode([
-                "@xmlns:oai_dc" => "http://www.openarchives.org/OAI/2.0/oai_dc/",
-                "@xmlns:dc" => "http://purl.org/dc/elements/1.1/",
-                "@xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance",
-                "@xsi:schemaLocation" => "http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd",
-                '#' => $item
-            ],sprintf("oai_%s:%s",self::PREFIX_DC,self::PREFIX_DC));//DublinCoreExportAnalyzer
-            $itemSF[sprintf("sf_%s.xml",$item->getUuid())] = $this->sfLoader->encode([
-                '@xmlns:lom' => "http://ltsc.ieee.org/xsd/LOM",
-                '@xmlns:lomfr' => "http://www.lom-fr.fr/xsd/LOMFR",
-                '@xmlns:xsi' => "http://www.w3.org/2001/XMLSchema-instance",
-                '@xsi:schemaLocation' => "http://ltsc.ieee.org/xsd/LOM http://lom-fr.fr/xsd/lomfrv1.0/std/lomfr.xsd",
-                '#' => $item
-            ],self::PREFIX_SF.":".self::PREFIX_SF); //SuplomfrExportAnalyzer
+            $itemDC[sprintf("dc_%s.xml", $item->uuid)] = $this->js->serialize(OaidcDto::create($notice), 'xml'); //DublinCoreExportAnalyzer
+            $itemSF[sprintf("sf_%s.xml", $item->uuid)] = $this->js->serialize(SuplomDto::create($notice), 'xml'); //SuplomfrExportAnalyzer
         }
 
-        // Enregistrement des différents documents dans solr et sur les disques
-        $this->sm->addDocuments($itemSP);                  //Indexation dans Solr
-        $this->fs->writeFilesTo($itemDC,'dc/'); // Write the XML to the file
-        $this->fs->writeFilesTo($itemSF,'sf/'); //$this->messageBus->dispatch(new RunCommandMessage($itemDC,$itemSF));
+        $this->sm->addDocuments($itemSP, $url);
+        $this->fs->writeFilesTo($itemDC, 'dc/');
+        $this->fs->writeFilesTo($itemSF, 'sf/');
     }
 }

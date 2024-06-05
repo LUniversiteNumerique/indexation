@@ -2,49 +2,48 @@
 
 namespace App\Message\Handler;
 
-use App\Entity\IndexingConfig;
+use Doctrine\ORM\{EntityManagerInterface,EntityRepository};
+use App\Entity\{IndexingConfig,Dto\SuplomDto};
 use App\Message\ExtexingConfigMessage;
-use App\Repository\IndexingConfigRepository;
-use App\Service\{FileService, SolrApiService, XmlDataLoader};
+use App\Service\{FileService, SolrApiService};
+use JMS\Serializer\SerializerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
 readonly class ExterIndexingHandler
 {
-    const EXTERNAL_RESOURCE = "external_resource:true";
     private FileService $fileService;
+    private EntityRepository $configRep;
     public function __construct(
-        private XmlDataLoader $dataLoader,
         private SolrApiService $solrManager,
-        private IndexingConfigRepository $configRep,
+        private SerializerInterface $serializer,
+        private EntityManagerInterface $manager,
         #[Autowire('%kernel.project_dir%/var/files')] private string $directory,
     ){
         $this->fileService = new FileService($this->directory);
+        $this->configRep = $this->manager->getRepository(IndexingConfig::class);
     }
 
     public function __invoke(ExtexingConfigMessage $message): void
     {
-        $oldConfig = $this->configRep->findLatest(true);
-        if(!$oldConfig) $oldConfig = new IndexingConfig($message->isFullExec, true);
-        $newConfig = new IndexingConfig($message->isFullExec, true);
+        /** @var IndexingConfig $task */
+        $task = $this->configRep->find($message->taskId);
+        if (!$task) throw new \Exception("Aucun planificateur d'identifant ".$message->taskId);
+        $coreIndex = "unt".$task->getIndexCore()?->getId();
 
-        if ($message->isFullExec) $this->solrManager->delDocuments(sprintf("<query>%s</query>",self::EXTERNAL_RESOURCE));
-        $sources = $this->fileService->readFilesFrom($message->isFullExec ?null: $oldConfig->getScheduleAt());
+        if ($task->isFullMode()) $this->solrManager->delDocuments("<query>external_resource:true</query>","$coreIndex/update?commit=true");
+        $sources = $this->fileService->readFilesFrom($task->isFullMode() ?null: $task->getScheduleAt(), $coreIndex);
 
         $itemSF = "";
         foreach ($sources as $file) {
             $content = $this->fileService->readFile($file->getRealPath());
-            $item = $this->dataLoader->decode($content);
+            $item = $this->serializer->deserialize($content,SuplomDto::class,'xml');
             $itemSF .= "<doc>$item</doc>"; //dump($file->getFilename());
         }
-        $this->solrManager->addDocuments($itemSF); //Indexation dans Solr
-        $di = $newConfig->getScheduleAt()->diff(new \DateTime());
+        $this->solrManager->addDocuments($itemSF,"$coreIndex/update?commit=true");
 
-        // Mise à jour des statistiques de l'indexation
-        $indexedFiles = $this->solrManager->getDocuments(self::EXTERNAL_RESOURCE);
-        if($indexedFiles) $newConfig->setFilesOut($indexedFiles['numFound']);
-        $newConfig->setInDuration($di->s+($di->i*60)+($di->h*3600)+($di->days*86400));
-        $this->configRep->add($newConfig->setFilesIn(count($sources)));
+        $task->setScheduleAt(new \DateTime());
+        $this->manager->flush();;
     }
 }

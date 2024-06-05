@@ -1,4 +1,4 @@
-insert into unt.niveau (id, nom, cree_le, edite_le)
+insert into unt_db.niveau (id, nom, cree_le, edite_le)
 values  (1, 'Enseignement supérieur', '2024-03-07 12:40:41', null),
         (2, 'L1', '2024-03-07 12:40:48', null),
         (3, 'L2', '2024-03-07 12:40:52', null),

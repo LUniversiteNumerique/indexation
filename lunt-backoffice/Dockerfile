@@ -14,6 +14,7 @@ RUN apt update \
 RUN apt install -y nginx
 RUN apt install -y supervisor
 
+RUN rm /etc/nginx/sites-enabled/default
 RUN mkdir -p /var/log/supervisor
 COPY ./resources/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY ./resources/default.conf.template /etc/nginx/conf.d/templates/default.conf.template

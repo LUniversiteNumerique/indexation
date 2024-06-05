@@ -1,4 +1,4 @@
-insert into unt.etablissement (id, nom, abrege, cree_le, edite_le)
+insert into unt_db.etablissement (id, nom, abrege, cree_le, edite_le)
 values  (3, 'Ecole des hautes études en sciences sociales', 'EHESS', '2024-02-14 16:02:31', null),
         (4, 'URFIST de Paris', 'URFIST de Paris', '2024-02-14 16:02:31', null),
         (5, 'Institut National des Langues et Civilisations Orientales', 'INALCO', '2024-02-14 16:02:31', null),
