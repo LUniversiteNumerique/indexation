@@ -89,8 +89,6 @@ class Notice
 
     #[ORM\ManyToOne] private ?Dossier $repertoire = null;
 
-    #[ORM\ManyToOne] private ?Etablissement $publisher;
-
     #[ORM\ManyToMany(targetEntity: Etablissement::class),
         Assert\Count(min: 1)]
     private Collection $porteurs;
@@ -421,18 +419,6 @@ class Notice
       $this->repertoire = $repertoire;
 
       return $this;
-    }
-
-    public function getPublisher(): ?Etablissement
-    {
-        return $this->publisher;
-    }
-
-    public function setPublisher(?Etablissement $publisher): self
-    {
-        $this->publisher = $publisher;
-
-        return $this;
     }
 
     /**

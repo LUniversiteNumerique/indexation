@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\{Etablissement, Notice, NoticEtat, Univerique};
+use App\Entity\{Notice, NoticEtat, Univerique};
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -21,14 +21,12 @@ class NoticeRepository extends ServiceEntityRepository
         parent::__construct($registry, Notice::class);
     }
 
-    public function findFrom(int $core, ?\DateTime $from, int $offset,int $limit): array
+    public function findFrom(int $core, ?\DateTime $from, int $limit, int $offset): array
     {
-        $qr = $this->createQueryBuilder('n')->join('n.createur', 'u')->where("u.untheme = :core")->setParameter("core", $core);
-        $qr->andWhere($qr->expr()->orX(
-            $qr->expr()->isNotNull('n.publieLe'),
-            $qr->expr()->eq('n.etat', NoticEtat::Approved)
-        )); //->andWhere('n.etat = :etat')->setParameter("etat", NoticEtat::Approved)->orWhere('n.publieLe is not null');
-        if($from) $qr->andWhere("n.creeLe >= :date")->setParameter("date", $from);
+        $qr = $this->createQueryBuilder('n')->join('n.validateur', 'u')
+            ->where("u.untheme = :core")->setParameter("core", $core)
+            ->andWhere('n.etat != :etat AND n.publieLe is not null')->setParameter("etat", NoticEtat::Approved);
+        $qr->orWhere(sprintf("n.etat = :etat%s", $from?' AND n.publieLe is null' : ''))->setParameter("etat", NoticEtat::Approved);
 
         $qr->setFirstResult($offset)->setMaxResults($limit);
         return $qr->getQuery()->getResult();

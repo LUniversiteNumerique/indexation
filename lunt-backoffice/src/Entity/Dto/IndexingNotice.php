@@ -2,128 +2,97 @@
 
 namespace App\Entity\Dto;
 
-use App\Entity\{Auteur, Etablissement, Niveau, Notice};
-use JMS\Serializer\Annotation\{SerializedName,
-    Type,
-    XmlAttribute,
-    XmlElement,
-    XmlList,
-    XmlNamespace,
-    XmlRoot,
-    XmlValue};
+use App\Entity\{Auteur, Notice};
+use JMS\Serializer\Annotation as Jms;
 
-readonly class IndexingNotice
+#[Jms\XmlRoot("doc")]
+class IndexingNotice
 {
-    public function __construct(
-        public ?string $uuid = null,
-        public ?string $title = null,
-        public ?string $description = null,
-        public ?string $formEvalUrl = null,
-        public ?string $entrepot_logo = null,
-        public ?string $vignette = null,
-        public ?string $dewey = null,
-        public ?string $specialite = null,
-        public ?string $correspondant = null,
-        public ?string $dureeApprentissage = null,
-        public ?string $objectifsPedagogiques = null,
-        public ?string $propositionUtilisation = null,
-        public ?string $motsCles = null,
-        public ?string $niveaux = null,
-        public ?string $typesDocumentaires = null,
-        public ?string $typesPedagogiques = null,
-        public ?string $contributions = null,
-        public ?string $etablissementPorteur = null,
-        public ?string $languesUtilisateur = null,
-        public ?string $languesPessource = null,
-        public ?string $datePublication = null,
-        public ?string $dateModification = null,
-        public ?bool $ressourcePayante = null,
-        public ?bool $proprieteIntellectuelle = null,
-        public ?bool $exportOai = null,
-        public bool $externalResource = true){}
+    public function __construct(#[Jms\XmlList(entry: "field", inline: true), Jms\Type("array<".Field::class.">")] public array $fields = []){}
 
     static function create(Notice $notice): IndexingNotice
     {
-        return new self(
-            $notice->getUuid(),
-            $notice->getTitre(),
-            $notice->getDescription(),
-            $notice->getFormEvalUrl(),
-            "none",
-            $notice->getVignette(),
-            $notice->getCodewey(),
-            $notice->getSpecialite(),
-            $notice->getCreateur(),
-            $notice->getDureAppr(),
-            $notice->getObjectif(),
-            implode(", ", (array)$notice->getPropUser()),
-            implode(", ", $notice->getTags()->toArray()),
-            array_reduce($notice->getNiveaux()->toArray(),fn(string $tmp, Niveau $etab): string => $tmp.sprintf("%s, ",$etab->getNom()),""),
-            implode(", ", $notice->getDocTypes()->toArray()),
-            implode(", ", $notice->getPedTypes()->toArray()),
-            array_reduce($notice->getAuteurs()->toArray(),fn(string $tmp, Auteur $etab): string => $tmp.sprintf("{nom=%s %s, email=%s}, ",$etab->getPrenom(),$etab->getNom(),$etab->getEmail()),""),
-            array_reduce($notice->getPorteurs()->toArray(),fn(string $tmp, Etablissement $etab): string => $tmp.sprintf("%s, ",$etab->getNom()),""),
-            implode(", ", (array)$notice->getUserLang()),
-            implode(", ", (array)$notice->getRessLang()),
-            $notice->getPublieLe()?->format('Y-m-d H:i:s'),
-            $notice->getEditeLe()?->format('Y-m-d H:i:s'),
-            $notice->isRessPayant(), $notice->isProprIntel(),
-            $notice->isExportOai(), false,
-        );
-    }
-
-    public function __toString(): string
-    {
-        $field = "";
-        foreach ($this as $key => $value) {
-            if ($key==='description') $value = strip_tags($value);
-            $field .= sprintf("<field name='%s'>%s</field>", $key, $value===false ? 0 : $value);
-        }
-        return $field;
+        $core = $notice->getValidateur()?->getUntheme();
+        $etab = $notice->getCreateur()?->getSchool();
+        return new self([
+            new Field('uuid', $notice->getUuid()),
+            new Field('titre', $notice->getTitre()),
+            new Field('vignette', $notice->getVignette()),
+            new Field('specialite', $notice->getSpecialite()),
+            new Field('correspondant', $notice->getCreateur()),
+            new Field('description', $notice->getDescription()),
+            new Field('dure_apprentissage', $notice->getDureAppr()),
+            new Field('objectifs_pedagogiques', $notice->getObjectif()),
+            new Field('evaluation_form_url', $notice->getFormEvalUrl()),
+            new Field('etablissement_porteur', $etab??''),
+            new Field('entrepot_nom',$core->getLabel()),
+            new Field('dewey', $notice->getCodewey()),
+            new Field('droit', $notice->getDroit()),
+            new Field('entrepot_logo', $core->getName()),
+            new Field('entrepot_url',"http://www.uoh.fr"),
+            new Field('ressource_lien', $notice->getRessUrl()),
+            new Field('estampillage', $notice->getLabel()??''),
+            new Field('date_creation', $notice->getRessDate()?->format('Y')),
+            new Field('mots_cles', implode(", ", $notice->getTags()->toArray())),
+            new Field('niveaux', implode(", ", $notice->getNiveaux()->toArray())),
+            new Field('proposition_utilisation', implode(", ", (array)$notice->getPropUser())),
+            new Field('types_pedagogiques', implode(", ", $notice->getPedTypes()->toArray())),
+            new Field('types_documentaires', implode(", ", $notice->getDocTypes()->toArray())),
+            new Field('etablissements_co_editeurs', implode(", ", $notice->getPorteurs()->toArray())),
+            new Field('date_modification', ($notice->getEditeLe()??$notice->getCreeLe())->format('Y-m-d H:i:s')),
+            new Field('date_publication', ($notice->getPublieLe() ?? new \DateTime())->format('Y-m-d H:i:s')),
+            new Field('associations_associate', implode(", ", $notice->getRessources()->toArray())),
+            new Field('langues_utilisateur', implode(", ", (array)$notice->getUserLang())),
+            new Field('langues_ressource', implode(", ", (array)$notice->getRessLang())),
+            new Field('contributions', implode(", ", $notice->getAuteurs()->toArray())),
+            new Field('propriete_intellectuelle', $notice->isProprIntel()),
+            new Field('ressource_payante', $notice->isRessPayant()),
+            new Field('exposition_oai', $notice->isExportOai()),
+            new Field('external_resource', false),
+            //new Field('fichiers_attaches', []),
+        ]);
     }
 }
 
 #[
-    XmlRoot("dc", namespace:"http://www.openarchives.org/OAI/2.0/oai_dc/", prefix: 'oai_dc'),
-    XmlNamespace(uri:"http://www.w3.org/2001/XMLSchema-instance", prefix:"xsi"),
-    XmlNamespace(uri:"http://purl.org/dc/elements/1.1/", prefix:"dc")
+    Jms\XmlRoot("dc", namespace:"http://www.openarchives.org/OAI/2.0/oai_dc/", prefix: 'oai_dc'),
+    Jms\XmlNamespace(uri:"http://www.w3.org/2001/XMLSchema-instance", prefix:"xsi"),
+    Jms\XmlNamespace(uri:"http://purl.org/dc/elements/1.1/", prefix:"dc")
 ]
 class OaidcDto
 {
-    #[XmlAttribute(namespace:"http://www.w3.org/2001/XMLSchema-instance"),Type('string'),SerializedName('schemaLocation')]
+    #[Jms\XmlAttribute(namespace:"http://www.w3.org/2001/XMLSchema-instance"),Jms\Type('string'),Jms\SerializedName('schemaLocation')]
     public ?string $schemaLocation;
 
     public function __construct(
-        #[XmlElement(cdata:false, namespace:"http://purl.org/dc/elements/1.1/"),Type('string')]
+        #[Jms\XmlElement(cdata:false, namespace:"http://purl.org/dc/elements/1.1/"),Jms\Type('string')]
         public ?string $uuid = null,
-        #[XmlElement(cdata:false, namespace:"http://purl.org/dc/elements/1.1/"),Type('string')]
+        #[Jms\XmlElement(cdata:false, namespace:"http://purl.org/dc/elements/1.1/"),Jms\Type('string')]
         public ?string $identifier = null,
-        #[XmlElement(cdata:false, namespace:"http://purl.org/dc/elements/1.1/"),Type('string')]
+        #[Jms\XmlElement(cdata:false, namespace:"http://purl.org/dc/elements/1.1/"),Jms\Type('string')]
         public ?string $title = null,
-        #[XmlElement(cdata:false, namespace:"http://purl.org/dc/elements/1.1/"),Type('string')]
+        #[Jms\XmlElement(cdata:false, namespace:"http://purl.org/dc/elements/1.1/"),Jms\Type('string')]
         public ?string $description = null,
-        #[XmlElement(cdata:false, namespace:"http://purl.org/dc/elements/1.1/"), Type('string')]
+        #[Jms\XmlElement(cdata:false, namespace:"http://purl.org/dc/elements/1.1/"), Jms\Type('string')]
         public ?string $source = null,
-        #[XmlElement(cdata:false, namespace:"http://purl.org/dc/elements/1.1/"), Type('string')]
+        #[Jms\XmlElement(cdata:false, namespace:"http://purl.org/dc/elements/1.1/"), Jms\Type('string')]
         public ?string $rights = null,
-        #[XmlElement(cdata:false, namespace:"http://purl.org/dc/elements/1.1/"), Type('string')]
+        #[Jms\XmlElement(cdata:false, namespace:"http://purl.org/dc/elements/1.1/"), Jms\Type('string')]
         public ?string $date = null,
 
-        #[XmlList(entry: "language", inline: true, namespace: "http://purl.org/dc/elements/1.1/"), Type("array<string>"),XmlElement(cdata: false)]
+        #[Jms\XmlList(entry: "language", inline: true, namespace: "http://purl.org/dc/elements/1.1/"), Jms\Type("array<string>"),Jms\XmlElement(cdata: false)]
         public array $reslangs = [],
-        #[XmlList(entry: "subject", inline: true, namespace: "http://purl.org/dc/elements/1.1/"), Type("array<string>"),XmlElement(cdata: false)]
+        #[Jms\XmlList(entry: "subject", inline: true, namespace: "http://purl.org/dc/elements/1.1/"), Jms\Type("array<string>"),Jms\XmlElement(cdata: false)]
         public array $keywords = [],
-        #[XmlList(entry: "creator", inline: true, namespace: "http://purl.org/dc/elements/1.1/"), Type("array<string>"),XmlElement(cdata: false)]
+        #[Jms\XmlList(entry: "creator", inline: true, namespace: "http://purl.org/dc/elements/1.1/"), Jms\Type("array<string>"),Jms\XmlElement(cdata: false)]
         public array $auteurs = [],
-        #[XmlList(entry: "publisher", inline: true, namespace: "http://purl.org/dc/elements/1.1/"), Type("array<string>"),XmlElement(cdata: false)]
+        #[Jms\XmlList(entry: "publisher", inline: true, namespace: "http://purl.org/dc/elements/1.1/"), Jms\Type("array<string>"),Jms\XmlElement(cdata: false)]
         public array $porteurs = [],
-        #[XmlList(entry: "format", inline: true, namespace: "http://purl.org/dc/elements/1.1/"), Type("array<string>"),XmlElement(cdata: false)]
+        #[Jms\XmlList(entry: "format", inline: true, namespace: "http://purl.org/dc/elements/1.1/"), Jms\Type("array<string>"),Jms\XmlElement(cdata: false)]
         public array $doctypes = [],
-        #[XmlList(entry: "type", inline: true, namespace: "http://purl.org/dc/elements/1.1/"), Type("array<string>"),XmlElement(cdata: false)]
+        #[Jms\XmlList(entry: "type", inline: true, namespace: "http://purl.org/dc/elements/1.1/"), Jms\Type("array<string>"),Jms\XmlElement(cdata: false)]
         public array $pedtypes = [],
-    ) {
-        $this->schemaLocation = "http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd";
-    }
+    ) { $this->schemaLocation = "http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd"; }
 
 
     static function create(Notice $n): OaidcDto
@@ -146,47 +115,85 @@ class OaidcDto
     }
 }
 
-#[XmlRoot("lom", namespace:"http://ltsc.ieee.org/xsd/LOM", prefix: 'lom'),
-    XmlNamespace(uri:"http://www.w3.org/2001/XMLSchema-instance", prefix:"xsi"),
-    XmlNamespace(uri:"http://www.lom-fr.fr/xsd/LOMFR", prefix:"lomfr")]
+#[
+    Jms\XmlRoot("lom", namespace:"http://ltsc.ieee.org/xsd/LOM", prefix: 'lom'),
+    Jms\XmlNamespace(uri:"http://www.w3.org/2001/XMLSchema-instance", prefix:"xsi"),
+    Jms\XmlNamespace(uri:"http://www.lom-fr.fr/xsd/LOMFR", prefix:"lomfr")]
 class SuplomDto
 {
-    #[XmlAttribute(namespace:"http://www.w3.org/2001/XMLSchema-instance"),Type('string'),SerializedName('schemaLocation')]
+    #[Jms\XmlAttribute(namespace:"http://www.w3.org/2001/XMLSchema-instance"),Jms\Type('string'),Jms\SerializedName('schemaLocation')]
     public ?string $schemaLocation;
     public function __construct(
-        #[XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Type('string')]
+        #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type('string')]
         public ?string $uuid = null,
-        #[XmlList(entry: "language", inline: true, namespace: "http://purl.org/dc/elements/1.1/"), Type("array<string>"),XmlElement(cdata: false)]
+        #[Jms\XmlList(entry: "language", inline: true, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<string>"),Jms\XmlElement(cdata: false)]
         public array $language = [],
-        #[XmlList(entry: "string", namespace: "http://ltsc.ieee.org/xsd/LOM"), Type("array<".Item::class.">"), XmlElement(cdata: false,namespace: "http://ltsc.ieee.org/xsd/LOM")]
+        #[Jms\XmlList(entry: "string", namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Field::class.">"), Jms\XmlElement(cdata: false,namespace: "http://ltsc.ieee.org/xsd/LOM")]
         public array $title = [],
-        #[XmlList(entry: "string", namespace: "http://ltsc.ieee.org/xsd/LOM"), Type("array<".Item::class.">"), XmlElement(cdata: false,namespace: "http://ltsc.ieee.org/xsd/LOM")]
+        #[Jms\XmlList(entry: "string", namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Field::class.">"), Jms\XmlElement(cdata: false,namespace: "http://ltsc.ieee.org/xsd/LOM")]
         public array $description = [],
-        #[XmlList(entry: "keyword", namespace: "http://ltsc.ieee.org/xsd/LOM"), Type("array<".Item::class.">"),XmlElement(cdata: false)]
-        public array $keywords = [],
-    ){
-        $this->schemaLocation = "http://ltsc.ieee.org/xsd/LOM http://lom-fr.fr/xsd/lomfrv1.0/std/lomfr.xsd";
-    }
+        #[Jms\XmlList(entry: "keyword", inline: true, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Items::class.">")] public array $keywords = [],
+        #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(Catalog::class)] public ?Catalog $identifier = null,
+        #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(Source::class), Jms\SerializedName('documentType')] public ?Source $documentType = null,
+    ){ $this->schemaLocation = "http://ltsc.ieee.org/xsd/LOM http://lom-fr.fr/xsd/lomfrv1.0/std/lomfr.xsd"; }
 
     static function create(Notice $n): SuplomDto
     {
         $items = [];
         foreach ($n->getRessLang() as $lang) {
-            $items[0][] =  new Item($lang, $n->getTitre());
-            $items[1][] =  new Item($lang, $n->getDescription());
-            $items[2][] =  array_map(fn(string $tag) => new Item($lang, $tag), $n->getTags()->toArray());
+            $items[0][] = new Field($lang, $n->getTitre());
+            $items[1][] = new Field($lang, $n->getDescription());
+            $items[2][] = new Items(array_map(fn(string $tag) => new Field($lang, $tag), $n->getTags()->toArray()));
         }
         return new self(
             $n->getUuid(), $n->getRessLang(),
-            $items[0], $items[1],$items[2]
+            $items[0], $items[1],$items[2],
+            new Catalog('URI',"http://orioai.univ-valenciennes.fr/uid/uvhc-ori-oai-wf-1-97"),
+            new Source('LOMFRv1.0',"image en mouvement"),
         );
     }
 }
 
-class Item
+class Field
 {
     public function __construct(
-        #[XmlAttribute, SerializedName('language')] public string $key,
-        #[XmlValue(cdata: false)] public string $value
+        #[Jms\XmlAttribute, Jms\SerializedName('name')] public string $key,
+        #[Jms\XmlValue(cdata: false)] public null|string|bool|array $value
+    ){}
+}
+class Items
+{
+    public function __construct(
+        #[Jms\XmlList(entry: "string", inline: true, namespace: "http://ltsc.ieee.org/xsd/LOM"),
+            Jms\XmlElement(cdata: false,namespace: "http://ltsc.ieee.org/xsd/LOM"),
+            Jms\Type("array<".Field::class.">")] public array $item = [],
+    ){}
+}
+
+class Source
+{
+    public function __construct(
+        #[Jms\Type('string'), Jms\XmlElement(cdata:false, namespace:"http://ltsc.ieee.org/xsd/LOM"),]
+        public ?string $source = null,
+        #[Jms\Type('string'), Jms\XmlElement(cdata:false, namespace:"http://ltsc.ieee.org/xsd/LOM"),]
+        public ?string $value = null,
+    ){}
+}
+class Catalog
+{
+    public function __construct(
+        #[Jms\Type('string'), Jms\XmlElement(cdata:false, namespace:"http://ltsc.ieee.org/xsd/LOM"),]
+        public ?string $catalog = null,
+        #[Jms\Type('string'), Jms\XmlElement(cdata:false, namespace:"http://ltsc.ieee.org/xsd/LOM"),]
+        public ?string $entry = null,
+    ){}
+}
+
+class Sources
+{
+    public function __construct(
+        #[Jms\XmlList(entry: "string", inline: true, namespace: "http://ltsc.ieee.org/xsd/LOM"),
+            Jms\XmlElement(cdata: false,namespace: "http://ltsc.ieee.org/xsd/LOM"),
+            Jms\Type("array<".Source::class.">")] public array $sources = [],
     ){}
 }

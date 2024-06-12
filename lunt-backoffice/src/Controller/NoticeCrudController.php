@@ -112,6 +112,8 @@ class NoticeCrudController extends AbstractCrudController
         yield Field\UrlField::new('ressUrl', 'URL Contenu');
         yield EntityField::new('ressources','Ressource(s) liée(s)')->autocomplete()->hideOnIndex();
         yield Field\ChoiceField::new('etat')->setChoices(NoticEtat::getLabels())->renderAsBadges(NoticEtat::getColors())->hideOnForm();
+        yield Field\AssociationField::new('validateur','Validé par')->onlyOnDetail();
+        yield Field\DateTimeField::new('publieLe','Publié depuis')->onlyOnDetail();
 
         yield Field\FormField::addFieldset('Droits attachés à la ressource')->setIcon('fa fa-gavel');
         yield Field\AssociationField::new('droit',"Licence et conditions d'utilisation")->hideOnIndex();
@@ -263,11 +265,13 @@ class NoticeCrudController extends AbstractCrudController
 
     public function approveNotice(): Response
     {
+        /** @var User $user */ $user = $this->getUser();
         $ctx = $this->getContext();
 
         /** @var Notice|null $notice */
         $notice = $ctx->getEntity()->getInstance(); //Forward
-        return $this->changEtatNotice(['Valider', NoticEtat::Approved->getLabel(), 'Validation', true], $notice->setEtat(NoticEtat::Approved)->setValidateur($this->getUser()),$ctx->getRequest()->get('folderId'));
+        $notice->setValidateur($user);
+        return $this->changEtatNotice(['Valider', NoticEtat::Approved->getLabel(), 'Validation', true], $notice->setEtat(NoticEtat::Approved),$ctx->getRequest()->get('folderId'));
     }
 
     public function rejectNotice(): Response

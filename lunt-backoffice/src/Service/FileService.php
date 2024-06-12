@@ -78,20 +78,13 @@ readonly class FileService
         try {
             if (!$this->filesystem->exists($path))
                 throw new IOException("Le répertoire n'existe pas : $path");
-
-            if($filenames) {
-                foreach ($filenames as $file) {
-                    $filePath = sprintf("%s_%s/%s.xml", $relativePath, $path ,$file);
-                    if ($this->filesystem->exists($filePath))
-                        $this->filesystem->remove($filePath);
-                    dump($filePath);
-                }
-            } else {
+            if($filenames === null) {
                 $this->finder->files()->in($path);
-                foreach ($this->finder as $file)
-                    $this->filesystem->remove($file->getRealPath());
+                foreach ($this->finder as $file) $this->filesystem->remove($file->getRealPath());
+            } else foreach ($filenames as $file) {
+                $filePath = sprintf("%s%s_%s.xml", $path, DIRECTORY_SEPARATOR.(str_starts_with($relativePath,'oai') ?'dc':'sf'), $file);
+                if ($this->filesystem->exists($filePath)) $this->filesystem->remove($filePath);
             }
-
             return true;
         } catch (IOExceptionInterface) {
             return false;

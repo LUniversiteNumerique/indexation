@@ -29,10 +29,13 @@ readonly class InterIndexingHandler
         /** @var IndexingConfig $task */
         $task = $this->configRep->find($message->taskId);
         if (!$task) throw new \Exception("Aucun planificateur d'identifant ".$message->taskId);
-        $urlSolr = sprintf("unt%s/update?commit=true", $task->getIndexCore()?->getId());
+        $core = $task->getIndexCore()?->getName();
 
-        if ($task->isFullMode() && $this->fs->removeFilesFrom('dc') && $this->fs->removeFilesFrom('sf'))
-            $this->sm->delDocuments("<query>external_resource:false</query>",$urlSolr);
+        if ($task->isFullMode()) {
+            $this->sm->delDocuments("<query>external_resource:false</query>", "$core/update?commit=true");
+            $this->fs->removeFilesFrom("oai/$core");
+            $this->fs->removeFilesFrom("suplom/$core");
+        }
         $offset = 0;
 
         do {
@@ -49,38 +52,39 @@ readonly class InterIndexingHandler
                 elseif($d->getPublieLe()) $olds[] = $d->setPublieLe(null)->getUuid(); // dépublié
             }
 
-            $this->push($news, $urlSolr);
-            $this->pop($olds, $urlSolr);
+            if (!(empty($news) && empty($olds)))
+                $this->sm->editDocuments($this->push($news, $core).$this->pop($olds, $core), "$core/update?commit=true");
             $this->em->flush(); $this->em->clear();
 
-            $offset += $task->getBatchSize();
-        } while (!empty($data));
+            $offset += $task->getBatchSize(); dump(count($news), count($olds));
+        } while (count($data) > 0);
 
         $task->setScheduleAt(new \DateTime());
         $this->em->flush();
     }
 
-    private function pop(array $sources, string $url): void
+    private function pop(array $sources, string $index): string
     {
-        $itemSP = array_reduce($sources,fn(string $acc, string $uuid): string => $acc."<uuid>$uuid</uuid>","");
+        $itemSP = array_reduce($sources,fn(string $acc, string $uuid): string => $acc."<query>uuid:$uuid</query>","");
 
-        $this->sm->delDocuments($itemSP, $url);
-        $this->fs->removeFilesFrom('dc', $sources);
-        $this->fs->removeFilesFrom('sf', $sources);
+        $this->fs->removeFilesFrom("oai/$index", $sources);
+        $this->fs->removeFilesFrom("suplom/$index", $sources);
+        //$this->sm->delDocuments($itemSP, "$index/update?commit=true");
+        return "<delete>$itemSP</delete>";
     }
-    private function push(array $sources, string $url): void
+
+    private function push(array $sources, string $index): string
     {
         $itemSF = []; $itemDC = []; $itemSP = "";
         foreach ($sources as $notice) {
-            $item = IndexingNotice::create($notice);
-            $itemSP .= "<doc>$item</doc>";                                                                                    //SolrPivotBuildingAnalyzer
-
-            $itemDC[sprintf("dc_%s.xml", $item->uuid)] = $this->js->serialize(OaidcDto::create($notice), 'xml'); //DublinCoreExportAnalyzer
-            $itemSF[sprintf("sf_%s.xml", $item->uuid)] = $this->js->serialize(SuplomDto::create($notice), 'xml'); //SuplomfrExportAnalyzer
+            $item = $this->js->serialize(IndexingNotice::create($notice), 'xml'); $itemSP .= preg_replace('/<\?xml.*?\?>/', '', $item); //SolrPivotBuildingAnalyzer
+            $itemDC[sprintf("dc_%s.xml", $notice->getUuid())] = $this->js->serialize(OaidcDto::create($notice), 'xml'); //DublinCoreExportAnalyzer
+            $itemSF[sprintf("sf_%s.xml", $notice->getUuid())] = $this->js->serialize(SuplomDto::create($notice), 'xml'); //SuplomfrExportAnalyzer
         }
 
-        $this->sm->addDocuments($itemSP, $url);
-        $this->fs->writeFilesTo($itemDC, 'dc/');
-        $this->fs->writeFilesTo($itemSF, 'sf/');
+        $this->fs->writeFilesTo($itemDC, "oai/$index/");
+        $this->fs->writeFilesTo($itemSF, "suplom/$index/");
+        //$this->sm->addDocuments($itemSP, "$index/update?commit=true");
+        return "<add>$itemSP</add>";
     }
 }

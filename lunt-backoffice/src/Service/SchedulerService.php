@@ -7,7 +7,7 @@ use App\Repository\IndexingConfigRepository;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Scheduler\{Attribute\AsSchedule, RecurringMessage, Schedule, ScheduleProviderInterface};
 
-#[AsSchedule]
+#[AsSchedule('default')]
 class SchedulerService implements ScheduleProviderInterface
 {
     const SCHEDULER_LOCK = 'scheduler-default';
@@ -20,7 +20,7 @@ class SchedulerService implements ScheduleProviderInterface
     public function getSchedule(): Schedule
     {
         $schedule = $this->schedule ??= (new Schedule());
-        $tasks = $this->repository->findAll();dump($tasks);
+        $tasks = $this->repository->findAll();
 
         foreach ($tasks as $task)
             $schedule->add(RecurringMessage::every($task->getFrequency(), $task->isIndexType() ?
