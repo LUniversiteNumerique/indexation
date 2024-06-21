@@ -331,7 +331,7 @@ class NoticeCrudController extends AbstractCrudController
         $group = $this->isGranted("ROLE_VALI_NOTI");
         if($transition[3]) $this->mailer->sendTwig(($group?$notice->getCreateur():$notice->getValidateur())?->getEmail(),
             sprintf("Notice %d en statut %s", $notice->getId(), $notice->getEtat()?->getLabel()), 'emails/notif.html.twig',
-            ['notice' => $notice->getTitre(), 'url' => $url->removeReferrer()->generateUrl(), 'message' => $group ?
+            ['notice' => $notice->getTitre(), 'url' => $url->generateUrl(), 'message' => $group ?
                 sprintf("La notice <<%s>> a été %s par le %s %s", $notice, lcfirst($transition[1]), $user->getGroup(), $user):
                 sprintf("Une demande de modification vous a été transmise concernant la notice <<%s>> par le %s %s", $notice, $user->getGroup(),  $user)
             ]

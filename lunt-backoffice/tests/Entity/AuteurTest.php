@@ -55,7 +55,7 @@ class AuteurTest extends KernelTestCase
         self::bootKernel();
         $reqAuteur = $this->getAuteur();
         $repAuteur = $this->getMockingRep($reqAuteur,'find');
-        $this->assertEquals($reqAuteur->getNomComplet(), $repAuteur->getNomComplet());
+        $this->assertEquals($reqAuteur->getName(), $repAuteur->getName());
     }
 
     public function testValidFindByEmail(): void

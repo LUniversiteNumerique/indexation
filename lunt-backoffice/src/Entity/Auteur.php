@@ -27,7 +27,7 @@ class Auteur
         $this->creeLe = new \DateTimeImmutable();
     }
 
-    public function getNomComplet(): string
+    public function getName(): string
     {
         return $this->getPrenom().' '.$this->getNom();
     }

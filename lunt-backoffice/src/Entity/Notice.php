@@ -51,7 +51,7 @@ class Notice
     private ?array $ressLang = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $taille = null;
+    private ?int $ressSize = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $ressDate;
@@ -181,14 +181,14 @@ class Notice
         return $this;
     }
 
-    public function getTaille(): ?int
+    public function getRessSize(): ?int
     {
-        return $this->taille;
+        return $this->ressSize;
     }
 
-    public function setTaille(int $taille): self
+    public function setRessSize(int $ressSize): self
     {
-        $this->taille = $taille;
+        $this->ressSize = $ressSize;
 
         return $this;
     }
@@ -627,6 +627,6 @@ class Notice
 
     public function __toString(): string
     {
-        return sprintf('%d|%s', $this->id, $this->titre);
+        return sprintf('%s|%s', $this->uuid, $this->titre);
     }
 }
