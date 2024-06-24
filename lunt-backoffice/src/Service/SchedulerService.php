@@ -26,11 +26,10 @@ class SchedulerService implements ScheduleProviderInterface
         foreach ($tasks as $task) {
             $key = new Key(sprintf("index-%d#%d",$task->getIndexCore()?->getId(),$task->isIndexType()));
             $lock = $this->factory->createLockFromKey($key,500,false); // 5 seconds
-            if (!$lock->acquire()) {dump("lock failed on $key");}
+            if (!$lock->acquire(true)) {dump("lock failed on $key");}
             $schedule->add(RecurringMessage::every($task->getFrequency(), $task->isIndexType() ?
-                new ExtexingConfigMessage(serialize($key),$task->getId()) : new IntexingConfigMessage(serialize($key),$task->getId())));
-        }
-        //$schedule->lock($this->factory->createLock(self::SCHEDULER_LOCK));
+                new ExtexingConfigMessage(serialize($key),$task->getId()) : new IntexingConfigMessage($key,$task->getId())));
+        }//$schedule->lock($this->factory->createLock(self::SCHEDULER_LOCK));
 
         return $schedule;
     }

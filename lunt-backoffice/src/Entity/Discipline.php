@@ -22,7 +22,7 @@ class Discipline
         Assert\Valid, Assert\Type(self::class)]
     private ?self $parent = null;
 
-    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]
+    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class, cascade: ["persist"])]
     private Collection $children;
 
     public function __construct($code=null,$nom=null)
@@ -35,7 +35,7 @@ class Discipline
 
     public static function create(array $o): self
     {
-        return new self($o['id'],$o['libelle_uoh']);
+        return new self($o['id'],$o['libelle_import']);
     }
 
     public function getCode(): ?string

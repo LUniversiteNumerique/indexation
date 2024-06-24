@@ -3,7 +3,7 @@
 namespace App\Message\Handler;
 
 use App\Entity\{Dewey, Discipline};
-use App\Entity\Dto\{DeweyData, DeweyDto, DisciplineData, PropertyDto};
+use App\Entity\Dto\{DeweyData, DeweyDto, DisciplineData, PropertyDto, SpecialiteDto};
 use App\Message\ImportXmlMessage;
 use App\Service\FileService;
 use Doctrine\ORM\{EntityRepository,EntityManagerInterface};
@@ -38,15 +38,28 @@ readonly class ImportXmlHandler
      */
     private function getDewe(string $content): array
     {
-        $objs = array();
         /** @var DeweyData $data */
         $data = $this->js->deserialize($content, DeweyData::class, 'xml');
+        $objs = array();
+
         foreach ($data->concepts as $value) {
-            $dewe = $this->setDewe($value);
-            $objs[$value->notation] = $dewe;
-            $this->em->persist($dewe);
+            $node = $this->setDewe($value);
+            $parentUri = $this->getParentUri($value->uri);
+            if (isset($objs[$parentUri]))
+                $objs[$parentUri]->getChildren()->add($node->setParent($objs[$parentUri]));
+            $objs[$value->uri] = $node;
+            $this->em->persist($node);
         }
         return $objs;
+    }
+
+    private function getParentUri($uri): string
+    {
+        $parts = explode('class/', trim($uri,'/'));
+        $pos = strpos($parts[1], '.');
+
+        $parts[1] = substr($parts[1], 0, $pos-1);
+        return implode('class/', $parts) . '/';
     }
 
     /**
@@ -55,29 +68,39 @@ readonly class ImportXmlHandler
      */
     private function getDisc(string $content): array
     {
-        $objs = array();
         /** @var DisciplineData $data */
         $data = $this->js->deserialize($content, DisciplineData::class, 'xml');
+        $objs = array();
         foreach ($data->items as $value) {
-            $prop = array_reduce($value->properties, fn($tmp, PropertyDto $prop) => $tmp + [$prop->key => $prop->value], []);
-            $disc = $this->setDisc($prop);
+            $node = $this->processNode($value, null);
 
-            $objs[$prop['id']] = $disc;
-            $this->em->persist($disc);
+            $objs[$node->getCode()] = $node;
+            $this->em->persist($node);
         }
         return $objs;
+    }
+
+    private function processNode(SpecialiteDto $value, ?Discipline $parent): Discipline
+    {
+        $prop = array_reduce($value->properties, fn($tmp, PropertyDto $prop) => $tmp + [$prop->key => $prop->value], []);
+        $node = $this->setDisc($prop);
+        $parent?->getChildren()->add($node->setParent($parent));
+
+        foreach ($value->children as $childNode)
+            $this->processNode($childNode, $node);
+        return $node;
     }
 
     private function setDisc(array $prop): Discipline
     {
         $disc = $this->discRep->findOneBy(['code' => $prop['id']]);
         if(!$disc) $disc = Discipline::create($prop);
-        return $disc->setNom($prop['libelle_uoh']);
+        return $disc->setNom($prop['libelle_import']);
     }
 
     private function setDewe(DeweyDto $dto): Dewey
     {
-        $dewe = $this->deweRep->findOneBy(['code' => $dto->notation]);
+        $dewe = $this->deweRep->findOneBy(['code' => $dto->uri]);
         if(!$dewe) $dewe = Dewey::create($dto);
         return $dewe->setNom($dto->label);
     }

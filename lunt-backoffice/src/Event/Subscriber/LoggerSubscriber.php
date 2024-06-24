@@ -3,7 +3,11 @@
 namespace App\Event\Subscriber;
 
 use EasyCorp\Bundle\EasyAdminBundle\Event\{AbstractLifecycleEvent, AfterEntityDeletedEvent, AfterEntityPersistedEvent, AfterEntityUpdatedEvent, BeforeEntityUpdatedEvent};
+use App\Controller\NoticeCrudController;
 use App\Event\AfterNoticeStateSetEvent;
+use App\Service\MailerService;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use App\Entity\{IndexingConfig, Notice, User};
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -15,18 +19,19 @@ use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
 readonly class LoggerSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private MessageBusInterface $messageBus,
-        private LoggerInterface     $untLogger,
-        private Security            $security,
+        private MailerService   $mailer,
+        private LoggerInterface $untLogger,
+        private Security        $security,
+        private AdminUrlGenerator $generator
     ) {}
 
     public static function getSubscribedEvents(): array
     {
         return [
             AfterNoticeStateSetEvent::class => 'logChanging',
-            AfterEntityDeletedEvent::class => [['logDeleting', 0], ['schTrigging', 10],],
-            AfterEntityPersistedEvent::class => [['logCreating', 0], ['schTrigging', 10],],
-            AfterEntityUpdatedEvent::class => [['logUpdating', 0], ['schTrigging', 10],],
+            AfterEntityDeletedEvent::class => 'logDeleting',
+            AfterEntityPersistedEvent::class => 'logCreating',
+            AfterEntityUpdatedEvent::class => 'logUpdating',
             BeforeEntityUpdatedEvent::class => ['onDateSetting'],
             LoginSuccessEvent::class => 'onLoginSuccess',
         ];
@@ -38,10 +43,24 @@ readonly class LoggerSubscriber implements EventSubscriberInterface
         if (!$entity instanceof Notice) return;
         $action = $event->getAction();
 
-        /** @var User $user */
         $user = $this->security->getUser();
         $this->untLogger->notice(sprintf("%s vient d'être <<%s>> par %s", $entity, $action[1], $user),
             ['actionType'=> $action[2], 'ressType'=>Notice::class, 'ressInstance'=>$entity->getId(), 'userInstance'=>$user->getId(),'userGroup'=>$user->getGroup()]);
+
+        if($action[3]) {
+            $url = $this->generator
+                ->setController(NoticeCrudController::class)
+                ->setAction(Action::DETAIL)->setEntityId($entity->getId())
+                ->generateUrl();
+
+            $this->mailer->sendTwig($user->getEmail(),
+                sprintf("Notice %d en statut %s", $entity->getId(), $entity->getEtat()?->getLabel()), 'emails/notif.html.twig',
+                ['notice' => $entity->getTitre(), 'url' => $url, 'message' => $user->getSchool() ?
+                    sprintf("Une demande de modification vous a été transmise concernant la notice <<%s>> par le %s %s", $entity, $user->getGroup(),  $user):
+                    sprintf("La notice <<%s>> a été %s par le %s %s", $entity, lcfirst($action[1]), $user->getGroup(), $user)
+                ]
+            );
+        }
     }
 
     public function logDeleting(AbstractLifecycleEvent $event): void
@@ -99,13 +118,5 @@ readonly class LoggerSubscriber implements EventSubscriberInterface
         $this->untLogger->debug(sprintf("%s vient de se connecter au système",$user), [
             'userId' => $user->getId(), 'remoteIp' => $clientIp,
         ]);
-    }
-
-    public function schTrigging(AfterEntityDeletedEvent|AfterEntityPersistedEvent|AfterEntityUpdatedEvent $event): void
-    {
-        $entity = $event->getEntityInstance();
-        if (!($entity instanceof IndexingConfig)) return;
-
-        //$this->messageBus->dispatch(new RunCommandMessage('app:exec-scheduler'));
     }
 }

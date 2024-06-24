@@ -36,7 +36,7 @@ class Dewey
 
     public static function create(DeweyDto $dto): self
     {
-        return new self($dto->notation, $dto->label);
+        return new self($dto->uri, $dto->label);
     }
 
     public function getCode(): ?string

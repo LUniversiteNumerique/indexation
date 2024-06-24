@@ -54,14 +54,14 @@ readonly class FileService
         return array_map(fn ($fileName) => $this->writeFile($relativePath.$fileName, $filesContent[$fileName]), array_keys($filesContent));
     }
 
-    public function readFilesFrom(\DateTime $since = null, string $relativePath = '', $names = ['*.xml']): ?Finder
+    public function readFilesFrom(\DateTime $since = null, string $relativePath = '', $names = ['*.xml'], $deep = 0): ?Finder
     {
         $path = $this->directory .DIRECTORY_SEPARATOR. $relativePath;
         try {
             // Vérifier si le répertoire existe
             if (!$this->filesystem->exists($path))
                 throw new IOException("Le répertoire n'existe pas : $path");
-            $this->finder->files()->in($path)->name($names);
+            $this->finder->files()->in($path)->name($names)->depth($deep);
 
             if ($since) $this->finder->date('>= ' . $since->format('Y-m-d H:i:s'));
             //foreach ($this->finder as $file) $filesContent[$file->getFilename()] = file_get_contents($file->getRealPath());

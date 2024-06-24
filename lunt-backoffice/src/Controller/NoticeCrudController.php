@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\{Event\AfterNoticeStateSetEvent, Security\Voter\NoticeActionVoter, Service\MailerService, Validator\UploadImage};
+use App\{Event\AfterNoticeStateSetEvent, Security\Voter\NoticeActionVoter, Validator\UploadImage};
 use App\Entity\{Dewey, Discipline, Etablissement, Notice, NoticEtat, Univerique, User};
 use App\Field\{DurationField, EntityField};
 use App\Form\Type\{AuteurAutoField, TagType, TreeChoiceType};
@@ -15,6 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\{ActionDto, EntityDto, SearchDto};
 use EasyCorp\Bundle\EasyAdminBundle\Field as Field;
 use Psr\Container\{ContainerExceptionInterface, NotFoundExceptionInterface};
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\{FormBuilderInterface, FormEvent, FormEvents, FormInterface};
 use Symfony\Component\HttpFoundation\{RedirectResponse, Response};
@@ -29,7 +30,8 @@ class NoticeCrudController extends AbstractCrudController
         private readonly DossierRepository $rep,
         private readonly NoticeRepository $repository,
         private readonly AdminUrlGenerator $generator,
-        private readonly MailerService $mailer) {}
+        private readonly EventDispatcherInterface $dispatcher,
+    ) {}
 
     public static function getEntityFqcn(): string
     {
@@ -327,19 +329,8 @@ class NoticeCrudController extends AbstractCrudController
             $this->generator->setController(self::class)->setAction(Action::INDEX);
 
         $this->repository->add($notice);
-        /** @var User $user */ $user = $this->getUser();
-        $group = $this->isGranted("ROLE_VALI_NOTI");
-        if($transition[3]) $this->mailer->sendTwig(($group?$notice->getCreateur():$notice->getValidateur())?->getEmail(),
-            sprintf("Notice %d en statut %s", $notice->getId(), $notice->getEtat()?->getLabel()), 'emails/notif.html.twig',
-            ['notice' => $notice->getTitre(), 'url' => $url->generateUrl(), 'message' => $group ?
-                sprintf("La notice <<%s>> a été %s par le %s %s", $notice, lcfirst($transition[1]), $user->getGroup(), $user):
-                sprintf("Une demande de modification vous a été transmise concernant la notice <<%s>> par le %s %s", $notice, $user->getGroup(),  $user)
-            ]
-        );
-        try {
-            $this->container->get('event_dispatcher')->dispatch(new AfterNoticeStateSetEvent($notice, $transition));
-            $this->addFlash('success', sprintf("La notice est bien %s avec succès !",$transition[1]));
-        } catch (NotFoundExceptionInterface|ContainerExceptionInterface) {}
+        $this->dispatcher->dispatch(new AfterNoticeStateSetEvent($notice, $transition));
+        $this->addFlash('success', sprintf("La notice est bien %s avec succès !",$transition[1]));
 
         return $this->redirect($url->removeReferrer()->generateUrl());
     }
