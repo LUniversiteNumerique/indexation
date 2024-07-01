@@ -13,7 +13,7 @@ class IndexingNotice
     static function fromNotice(Notice $notice): IndexingNotice
     {
         $user = $notice->getCreateur();
-        $dewe = $notice->getCodewey(); $disc = $notice->getCodewey();
+        $dewe = $notice->getCodewey(); $disc = $notice->getSpecialite();
         $core = $notice->getValidateur()?->getUntheme();
         return new self([
             new Field('uuid', $notice->getUuid()),
@@ -21,16 +21,16 @@ class IndexingNotice
             new Field('vignette', $notice->getVignette()),
             new Field('description', $notice->getDescription()),
             new Field('dure_apprentissage', $notice->getDureAppr()),
-//            new Field('objectifs_pedagogiques', $notice->getObjectif()),
-//            new Field('evaluation_form_url', $notice->getFormEvalUrl()),
+            new Field('objectifs_pedagogiques', $notice->getObjectif()),
+            new Field('evaluation_form_url', $notice->getFormEvalUrl()),
             new Field('etablissement_porteur', $user?->getSchool()??''),
             new Field('droit', $notice->getDroit()),
             new Field('entrepot_nom',$core?->getLabel()),
             new Field('entrepot_logo', $core?->getName()),
             new Field('entrepot_url',"http://www.uoh.fr"),
             new Field('ressource_lien', $notice->getRessUrl()),
-//            new Field('estampillage', $notice->getLabel()??''),
-//            new Field('date_creation', $notice->getRessDate()?->format('Y')),
+            new Field('estampillage', $notice->getLabel()??''),
+            new Field('date_creation', $notice->getRessDate()?->format('Y')),
             new Field('mots_cles', implode(", ", $notice->getTags()->toArray())),
             new Field('niveaux', implode(", ", $notice->getNiveaux()->toArray())),
             new Field('proposition_utilisation', implode(", ", (array)$notice->getPropUser())),
@@ -38,8 +38,8 @@ class IndexingNotice
             new Field('types_documentaires', implode(", ", $notice->getDocTypes()->toArray())),
             new Field('dewey', sprintf("{id=%s, libelle=%s}, ",$dewe?->getCode(),$dewe?->getNom())),
             new Field('specialite', sprintf("{id=%s, libelle=%s}, ",$disc?->getCode(),$disc?->getNom())),
-            new Field('correspondant', sprintf("{nom=%s, email=%s, etablissement=%s}, ",$user?->getName(),$user?->getEmail(),$user?->getSchool())),
-            new Field('contributions', array_reduce($notice->getAuteurs()->toArray(),fn(string $tmp, Auteur $etab): string => $tmp.sprintf("{prenom=%s, nom=%s, email=%s}, ",$etab->getPrenom(),$etab->getNom(),$etab->getEmail()),"")),
+            new Field('correspondant', sprintf("{nom:%s, email:%s, etablissement:%s}, ",$user?->getName(),$user?->getEmail(),$user?->getSchool())),
+            new Field('contributions', array_reduce($notice->getAuteurs()->toArray(),fn(string $tmp, Auteur $etab): string => $tmp.sprintf("{prenom:%s, nom:%s, email:%s}, ",$etab->getPrenom(),$etab->getNom(),$etab->getEmail()),"")),
             new Field('etablissements_co_editeurs', array_reduce($notice->getPorteurs()->toArray(),fn(string $tmp, Etablissement $etab): string => $tmp.sprintf("%s, ",$etab->getNom()),"")),
             new Field('date_modification', ($notice->getEditeLe()??$notice->getCreeLe())->format('Y-m-d H:i:s')),
             new Field('date_publication', ($notice->getPublieLe() ?? new \DateTime())->format('Y-m-d H:i:s')),

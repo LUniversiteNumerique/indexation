@@ -33,7 +33,6 @@ class DurationField implements FieldInterface
     public function setCustomOption(string $optionName, $optionValue): self
     {
         $this->setFormTypeOption($optionName,$optionValue);
-        //$this->setCustomOption($optionName,$optionValue);
 
         return $this;
     }

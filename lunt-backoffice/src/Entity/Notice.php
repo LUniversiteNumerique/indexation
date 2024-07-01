@@ -69,7 +69,7 @@ class Notice
     #[ORM\ManyToOne]
     private ?User $createur,$validateur;
 
-    #[ORM\Column(length: 255),Assert\Url]
+    #[ORM\Column(length: 255)]
     private ?string $ressUrl = null;
 
     #[ORM\Column(length: 255, nullable: true),Assert\Url]
@@ -124,14 +124,15 @@ class Notice
 
     public function __construct()
     {
+        $this->uuid = Uuid::v4();
+        $this->etat = NoticEtat::Working;
         $this->niveaux = new ArrayCollection();
         $this->docTypes = new ArrayCollection();
         $this->pedTypes = new ArrayCollection();
         $this->ressources = new ArrayCollection();
         $this->porteurs = new ArrayCollection();
-        $this->tags = new ArrayCollection();
         $this->auteurs = new ArrayCollection();
-        $this->etat = NoticEtat::Working;
+        $this->tags = new ArrayCollection();
         $this->creeLe = new \DateTimeImmutable();
     }
 

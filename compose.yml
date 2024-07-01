@@ -16,6 +16,7 @@ services:
       - mailer
     volumes:
       - ./lunt-backoffice:/var/www/site
+      #- ./lunt-backoffice/php.ini:/usr/local/etc/php/php.ini
 
   wordpress:
     image: wordpress:5.2.0-php7.3-apache

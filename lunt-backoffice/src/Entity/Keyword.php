@@ -4,8 +4,8 @@ namespace App\Entity;
 
 use App\Repository\KeywordRepository;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\{SerializedName, VirtualProperty};
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ORM\Entity(repositoryClass: KeywordRepository::class)]
 class Keyword
@@ -16,21 +16,20 @@ class Keyword
         Assert\NotBlank, SerializedName('text')]
     private ?string $nom;
 
-    #[ORM\Column(nullable: true),
-        Assert\Type('bool')]
+    #[ORM\Column(nullable: true), Assert\Type('bool')]
     private ?bool $valide;
-
-    #[SerializedName('value')]
-    public function getValue(): ?string
-    {
-        return $this->nom;
-    }
 
     public function __construct(string $name = null,bool $valid = false)
     {
         $this->nom = $name;
         $this->valide = $valid;
         $this->creeLe = new \DateTimeImmutable();
+    }
+
+    #[VirtualProperty]
+    public function getValue(): ?string
+    {
+        return $this->nom;
     }
 
     public function getNom(): ?string

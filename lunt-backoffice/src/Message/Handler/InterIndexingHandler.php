@@ -8,8 +8,7 @@ use App\Entity\Dto\{OaidcDto,SuplomDto,IndexingNotice};
 use App\Service\{FileService, SolrApiService};
 use App\Message\IntexingConfigMessage;
 use JMS\Serializer\SerializerInterface;
-use Symfony\Component\Lock\Key;
-use Symfony\Component\Lock\LockFactory;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -21,7 +20,7 @@ readonly class InterIndexingHandler
         private SerializerInterface    $js,
         private SolrApiService         $sm,
         private FileService            $fs,
-        private LockFactory            $lf,
+        private LoggerInterface $logger
     ) {
         $this->noticeRep = $this->em->getRepository(Notice::class);
         $this->configRep = $this->em->getRepository(IndexingConfig::class);
@@ -29,25 +28,21 @@ readonly class InterIndexingHandler
 
     public function __invoke(IntexingConfigMessage $message): void
     {
-        $curKey = unserialize($message->indexKey);
-        if (!$curKey instanceof Key) throw new \RuntimeException("Mauvaise clé fournie: ".$curKey);
-        $lock = $this->lf->createLockFromKey($curKey);
 
         /** @var IndexingConfig $task */
         $task = $this->configRep->find($message->taskId);
         if (!$task) throw new \RuntimeException("Aucun planificateur d'identifant ".$message->taskId);
         $core = $task->getIndexCore()?->getName(); $offset = 0;
+        $this->logger->warning(sprintf("Début d'indexation %s de %s", $task->isFullMode()?'complète':'différentielle', $core));
 
-        $lock->refresh();
         if ($task->isFullMode()) {
             $this->sm->delDocuments("<query>external_resource:false</query>", "$core/update?commit=true");
             $this->fs->removeFilesFrom("oai/$core");
             $this->fs->removeFilesFrom("suplom/$core");
         }
-
         do {
             /** @var Notice[] $data */
-            $data = $this->noticeRep->findFrom($task->getIndexCore()?->getId(), $task->isFullMode(), $task->getBatchSize(), $offset);
+            $data = $this->noticeRep->findFrom($task->getIndexCore()?->getId(), !$task->isFullMode(), $task->getBatchSize(), $offset);
 
             $news = []; $olds = [];
             foreach ($data as $d) {
@@ -55,17 +50,17 @@ readonly class InterIndexingHandler
                 elseif($d->getPublieLe()) $olds[] = $d->setPublieLe(null)->getUuid(); // A dépublier
             }
 
-            if (!(empty($news) && empty($olds))) {
+            if (!empty($data)) {
                 $this->sm->editDocuments($this->push($news, $core) . $this->pop($olds, $core), "$core/update?commit=true");
                 $task->setScheduleAt(new \DateTime());
                 $this->em->flush(); $this->em->clear();
+                $this->logger->info(sprintf("Notices concernées %d:  %d (indexées) + %d (dépubliées)", count($data), count($news), count($olds)));
             }
 
-            $lock->refresh();
-            $offset += $task->getBatchSize(); dump(count($news), count($olds));
+            $offset += $task->getBatchSize();
         } while (count($data) > 0);
 
-        $lock->release();
+        $this->logger->warning(sprintf("Fin d'indexation %s de %s", $task->isFullMode()?'complète':'différentielle', $core));
     }
 
     private function pop(array $sources, string $index): string

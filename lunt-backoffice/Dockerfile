@@ -19,6 +19,7 @@ RUN mkdir -p /var/log/supervisor
 COPY ./resources/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY ./resources/default.conf.template /etc/nginx/conf.d/templates/default.conf.template
 COPY ./resources/nginx-start.sh /root/nginx-start.sh
+COPY custom-php.ini /usr/local/etc/php/conf.d/
 
 RUN chmod +x /root/nginx-start.sh
 
@@ -28,7 +29,9 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 COPY . /var/www/site/
 
-RUN chmod a+rw public/images/uploads
+RUN chmod a+rw public/uploads
+
+RUN sed -i 's/client_max_body_size 25M;/client_max_body_size 128M;/g' /etc/nginx/nginx.conf
 
 RUN ["composer","install","-v"]
 

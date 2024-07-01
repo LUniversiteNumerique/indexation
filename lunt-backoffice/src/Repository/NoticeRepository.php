@@ -21,16 +21,17 @@ class NoticeRepository extends ServiceEntityRepository
         parent::__construct($registry, Notice::class);
     }
 
-    public function findFrom(int $core, bool $from, int $limit, int $offset): array
+    public function findFrom(int $core, bool $diff, int $limit, int $offset): array
     {
-        $state = "n.etat = :etat"; if ($from) $state .= " AND n.publieLe is null";
+        $state = "n.etat = :etat"; if ($diff) $state .= " AND n.publieLe is null";
 
-        $qr = $this->createQueryBuilder('n')->join('n.validateur', 'u')
-            ->where("u.untheme = :core")->setParameter("core", $core)
-            ->andWhere('n.etat != :etat AND n.publieLe is not null')->orWhere($state)
-            ->setParameter("etat", NoticEtat::Approved);
-
-        return $qr->setFirstResult($offset)->setMaxResults($limit)->getQuery()->getResult();
+        return $this->createQueryBuilder('n')
+            ->join('n.validateur', 'u')
+            ->where("u.untheme = :core")
+            ->andWhere("(n.etat != :etat AND n.publieLe is not null) OR $state")
+            ->setParameters(["core" => $core, "etat" => NoticEtat::Approved])
+            ->setFirstResult($offset)->setMaxResults($limit)
+            ->getQuery()->getResult();
     }
 
     public function findByIds(array $uuids): array

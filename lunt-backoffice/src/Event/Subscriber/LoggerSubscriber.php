@@ -8,20 +8,18 @@ use App\Event\AfterNoticeStateSetEvent;
 use App\Service\MailerService;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use App\Entity\{IndexingConfig, Notice, User};
+use App\Entity\{Notice, User};
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\{EventSubscriberInterface,Attribute\AsEventListener};
-use Symfony\Component\Console\Messenger\RunCommandMessage;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
 
 readonly class LoggerSubscriber implements EventSubscriberInterface
 {
     public function __construct(
+        private Security        $security,
         private MailerService   $mailer,
         private LoggerInterface $untLogger,
-        private Security        $security,
         private AdminUrlGenerator $generator
     ) {}
 

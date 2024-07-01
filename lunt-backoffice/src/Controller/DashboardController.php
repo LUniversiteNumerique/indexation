@@ -2,14 +2,12 @@
 
 namespace App\Controller;
 
-use App\Repository\{KeywordRepository, NoticeRepository};
+use JMS\Serializer\SerializerInterface;
+use App\Repository\{KeywordRepository, NoticeRepository, UserRepository};
 use App\Form\{ChangePassType,UserType};
-use App\Repository\UserRepository;
 use App\Entity\{Auteur, Etablissement, Groupe, IndexingConfig, Keyword, User};
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Crud, Dashboard, MenuItem, UserMenu};
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use EasyCorp\Bundle\EasyAdminBundle\{Context\AdminContext,Controller\AbstractDashboardController,Router\AdminUrlGenerator};
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\{JsonResponse, Request, Response};
 use Symfony\Component\Routing\Attribute\Route;
@@ -18,12 +16,15 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class DashboardController extends AbstractDashboardController
 {
-    public function __construct(private readonly NoticeRepository $repository, private readonly UserRepository $userRep) {}
+    public function __construct(
+        private readonly AdminUrlGenerator $generator,
+        private readonly NoticeRepository $repository,
+        private readonly UserRepository $userRep,
+    ) {}
 
     public function configureDashboard(): Dashboard
     {
-        return Dashboard::new()->setFaviconPath('/images/favicon.ico')
-            ->setTitle('<img src="/images/logo-UN.svg" alt="logo"> Indexation de  <span class="text-small">UNoTice.</span');
+        return Dashboard::new()->setFaviconPath('/uploads/favicon.ico')->setTitle('<img src="/uploads/logo-UN.svg" alt="logo"> Indexation de  <span class="text-small">UNoTice.</span');
     }
 
     public function configureCrud(): Crud
@@ -59,10 +60,9 @@ class DashboardController extends AbstractDashboardController
     public function index(): Response
     {
         /** @var User $user */ $user = $this->getUser();
-        $br = $this->container->get(AdminUrlGenerator::class);
         return $this->isGranted("ROLE_VALI_NOTI") ?
             $this->render('admin/index.html.twig', ['noEtats' => $this->repository->countByEtat($user->getUntheme()),]):
-            $this->redirect($br->setController(NoticeCrudController::class)->generateUrl());
+            $this->redirect($this->generator->setController(NoticeCrudController::class)->generateUrl());
     }
 
     #[Route('/profile', name: 'app_profile')]
@@ -109,9 +109,10 @@ class DashboardController extends AbstractDashboardController
     }
 
     #[Route(path: '/tag', name: 'app_tags', methods: ['GET'])]
-    public function tags(Request $request, KeywordRepository $repository): JsonResponse
+    public function tags(Request $request, KeywordRepository $repository, SerializerInterface $serializer): JsonResponse
     {
-        $q = $request->query->get('query');
-        return $this->json(array('results' => $repository->search($q)));
+        $result = $repository->search($request->query->get('query'));
+
+        return new JsonResponse($serializer->serialize(['results' => $result],'json'), Response::HTTP_OK, [], true);
     }
 }

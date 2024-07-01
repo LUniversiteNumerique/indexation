@@ -2,9 +2,9 @@
 
 namespace App\Controller;
 
-use App\{Event\AfterNoticeStateSetEvent, Security\Voter\NoticeActionVoter, Validator\UploadImage};
+use App\{Event\AfterNoticeStateSetEvent, Security\Voter\NoticeActionVoter};
 use App\Entity\{Dewey, Discipline, Etablissement, Notice, NoticEtat, Univerique, User};
-use App\Field\{DurationField, EntityField};
+use App\Field\{DurationField, EntityField, FileField};
 use App\Form\Type\{AuteurAutoField, TagType, TreeChoiceType};
 use App\Repository\{DossierRepository, NoticeRepository};
 use Doctrine\ORM\QueryBuilder;
@@ -20,6 +20,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\{FormBuilderInterface, FormEvent, FormEvents, FormInterface};
 use Symfony\Component\HttpFoundation\{RedirectResponse, Response};
 use Symfony\Component\Intl\Languages;
+use Symfony\Component\Validator\Constraints\{File, Image, Url};
 
 class NoticeCrudController extends AbstractCrudController
 {
@@ -99,73 +100,75 @@ class NoticeCrudController extends AbstractCrudController
         yield Field\FormField::addColumn(6);
         yield Field\FormField::addFieldset('Description générale')->setIcon('fa fa-pencil');
         yield Field\IdField::new('id')->onlyOnDetail();
-        yield Field\TextField::new('titre')->setHelp('Le titre de cette notice');
-        yield Field\TextEditorField::new('description')->hideOnIndex();
-        yield EntityField::new('porteurs', 'Établissement(s) porteur(s)')->setRequired(true)->hideOnIndex();
-        yield EntityField::new('auteurs')->setFormType(AuteurAutoField::class)->setRequired(true);
+        yield Field\TextField::new('titre')->setHelp('notice_titre_help');
+        yield Field\TextEditorField::new('description')->setHelp('notice_description_help')->hideOnIndex();
+        yield EntityField::new('porteurs', 'notice_porteurs')->setHelp('notice_porteurs_help')->setRequired(true)->hideOnIndex();
+        yield EntityField::new('auteurs','notice_auteurs')->setFormType(AuteurAutoField::class)->setHelp('notice_auteurs_help')->setRequired(true);
         //yield Field\CollectionField::new('auteurs')->setEntryType(AuteurType::class)->formatValue(fn ($value, Auteur $entity) => $entity->getNom() ?? '');
-        yield EntityField::new('tags', 'Mots-clés')->setFormType(TagType::class)
+        yield EntityField::new('tags', 'notice_tags')->setFormType(TagType::class)->setHelp('notice_tags_help')
             ->setFormTypeOptions(['autocomplete' => true, 'autocomplete_url' => $this->generateUrl('app_tags'),
                 'tom_select_options' => ['create' => true, 'createOnBlur' => true, 'preload' => true],
             ])->hideOnIndex()->setRequired(true);
-        yield Field\DateField::new('ressDate', "Date de création")->setFormat('yyyy')->hideOnIndex();
+        yield Field\DateField::new('ressDate', 'notice_date')->setFormat('yyyy')->setHelp('notice_date_help')->hideOnIndex();
 
         yield Field\FormField::addFieldset('Liens de la ressource')->setIcon('fa fa-paperclip');
-        yield Field\UrlField::new('ressUrl', 'URL Contenu');
-        yield EntityField::new('ressources','Ressource(s) liée(s)')->autocomplete()->hideOnIndex();
+        yield Field\UrlField::new('ressUrl', 'notice_ressurl')->setFormTypeOption('constraints', [new Url()])->hideOnForm();
+        yield FileField::new('ressUrl', 'notice_ressurl')->setUploadDir('public/uploads/files')->setHelp('notice_ressurl_help')->onlyOnForms()
+            ->setUploadedFileNamePattern('[timestamp]-[contenthash].[extension]')->setBasePath('/uploads/files')->setRequired(false)
+            ->setFileConstraints([new File(maxSize: '64M', mimeTypes: ["application/zip", "application/x-zip-compressed", "multipart/x-zip"])]);
+        yield EntityField::new('ressources','notice_notices')->autocomplete()->setHelp('notice_notices_help')->hideOnIndex();
         yield Field\ChoiceField::new('etat')->setChoices(NoticEtat::getLabels())->renderAsBadges(NoticEtat::getColors())->hideOnForm();
-        yield Field\AssociationField::new('validateur','Validé par')->onlyOnDetail();
-        yield Field\DateTimeField::new('publieLe','Publié depuis')->onlyOnDetail();
+        yield Field\AssociationField::new('validateur','notice_validateur')->onlyOnDetail();
+        yield Field\DateTimeField::new('publieLe','notice_publiele')->onlyOnDetail();
 
         yield Field\FormField::addFieldset('Droits attachés à la ressource')->setIcon('fa fa-gavel');
-        yield Field\AssociationField::new('droit',"Licence et conditions d'utilisation")->hideOnIndex();
-        yield Field\BooleanField::new('ressPayant','Ressource payante')->renderAsSwitch(false)->hideOnIndex()->setColumns(6);
-        yield Field\BooleanField::new('proprIntel','Propriété intellectuelle')->renderAsSwitch(false)->hideOnIndex()->setColumns(6);
+        yield Field\AssociationField::new('droit','notice_droit')->setHelp('notice_droit_help')->hideOnIndex();
+        yield Field\BooleanField::new('ressPayant','notice_resspayant')->setHelp('notice_resspayant_help')->renderAsSwitch(false)->hideOnIndex()->setColumns(6);
+        yield Field\BooleanField::new('proprIntel','notice_proprintel')->setHelp('notice_proprintel_help')->renderAsSwitch(false)->hideOnIndex()->setColumns(6);
 
 
         yield Field\FormField::addColumn(6);
         yield Field\FormField::addFieldset('Indications pédagogiques')->setIcon('fa fa-th-list');
-        yield Field\ChoiceField::new('ressLang', 'Langue(s) de la resource')->setChoices(array_flip($langList))
+        yield Field\ChoiceField::new('ressLang', 'notice_resslang')->setChoices(array_flip($langList))->setHelp('notice_resslang_help')
             ->allowMultipleChoices()->renderAsBadges()->hideOnIndex()->setRequired(true)->setColumns(6);
-        yield DurationField::new('dureAppr', "Durée d'apprentissage")->setColumns(6)->hideOnIndex();
-        yield EntityField::new('pedTypes', 'Type pédagogique')->hideOnIndex()->setRequired(true);
-        yield Field\ArrayField::new('propUser', "Proposition d'utilisation")->hideOnIndex();
-        yield EntityField::new('docTypes', 'Type documentaire')->setFormTypeOptions(['multiple' => true, 'expanded' => true])->setColumns(6)->hideOnIndex()->setRequired(true);
-        yield EntityField::new('niveaux', 'Niveau du public cible')->setFormTypeOptions(['multiple' => true, 'expanded' => true])->setColumns(6)->hideOnIndex()->setRequired(true);
+        yield DurationField::new('dureAppr', 'notice_dureappr')->setColumns(6)->setHelp('notice_dureappr_help')->hideOnIndex();
+        yield EntityField::new('pedTypes', 'notice_pedtypes')->setHelp('notice_pedtypes_help')->hideOnIndex()->setRequired(true);
+        yield Field\ArrayField::new('propUser', 'notice_propuser')->setHelp('notice_propuser_help')->hideOnIndex();
+        yield EntityField::new('docTypes', 'notice_doctypes')->setHelp('notice_doctypes_help')->setFormTypeOptions(['multiple' => true, 'expanded' => true])->setColumns(6)->hideOnIndex()->setRequired(true);
+        yield EntityField::new('niveaux', 'notice_niveaux')->setFormTypeOptions(['multiple' => true, 'expanded' => true])->setHelp('notice_niveaux_help')->setColumns(6)->hideOnIndex()->setRequired(true);
 
         yield Field\FormField::addFieldset('Classification thématique')->setIcon('fa fa-book');
-        yield EntityField::new('champDisc', 'Domaine de connaissance')->onlyOnForms()->setFormTypeOptions(['class' => Discipline::class, 'mapped' => false, 'required' => false])
+        yield EntityField::new('champDisc', 'notice_champdisc')->setFormTypeOptions(['class' => Discipline::class, 'mapped' => false, 'required' => false])->setHelp('notice_champdisc_help')->onlyOnForms()
             ->setQueryBuilder(fn(QueryBuilder $qb) => ($valdoc && $user->getUntheme() instanceof Univerique)? $qb->where('entity IN (:champs)')->setParameter('champs', $user->getUntheme()->getFields()) : $qb->where('entity.parent is null'));
-        yield EntityField::new('discipline')->setFormTypeOptions([
-            'class' => Discipline::class, 'auto_initialize' => false, 'mapped' => false, 'required' => false
-        ])->onlyOnForms();
-        yield EntityField::new('specialite','Sous-discipline')->setFormTypeOptions(['class' => Discipline::class]);
-        yield Field\DateTimeField::new('editeLe')->hideOnForm();
+        yield EntityField::new('discipline')->setFormTypeOptions(['class' => Discipline::class, 'auto_initialize' => false, 'mapped' => false, 'required' => false])->setHelp('notice_discipline_help')->onlyOnForms();
+        yield EntityField::new('specialite')->setFormTypeOptions(['class' => Discipline::class]);
+        yield Field\DateTimeField::new('editeLe', 'notice_editele')->hideOnForm();
 
         if ($valdoc) {
             yield Field\FormField::addTab('Validation')->setHelp("Infos techniques complémentaires de validation");
 
             yield Field\FormField::addColumn(6);
             yield Field\FormField::addFieldset('Liens de la ressource')->setIcon('fa fa-folder-open');
-            yield Field\ImageField::new('vignette')->setUploadDir('public/images/uploads')
-                ->setUploadedFileNamePattern('[timestamp]-[contenthash].[extension]')->setBasePath('/images/uploads')
-                ->setFormTypeOption('constraints', [new UploadImage(['maxWidth'=>620, 'maxHeight'=>390])]);
-            yield Field\IntegerField::new('taille','Taille (Mo)')->setColumns(6)->hideOnIndex();
-            yield DurationField::new('dureExec',"Durée d'exécution")->setColumns(6)->hideOnIndex();
-            yield Field\UrlField::new('formEvalUrl', 'URL formulaire évaluation ressource')->hideOnIndex();
-            yield Field\ChoiceField::new('userLang',"Langues de l'utilisateur")->setChoices(array_flip($langList))->allowMultipleChoices()->renderExpanded(false)->renderAsBadges()->hideOnIndex();
-            yield Field\TextEditorField::new('objectif','Objectif pédagogique')->hideOnIndex();
-            yield Field\BooleanField::new('exportOAI', 'Export OAI')->renderAsSwitch(false)->hideOnIndex();
+            yield Field\ImageField::new('vignette')->setUploadDir('public/uploads/images')
+                ->setUploadedFileNamePattern('[timestamp]-[contenthash].[extension]')->setBasePath('/uploads/images')
+                ->setFileConstraints([new Image(['maxWidth' => 620, 'maxHeight' => 390])])->setHelp('notice_vignette_help');
+            yield Field\IntegerField::new('ressSize','notice_resssize')->setHelp('notice_resssize_help')->setColumns(6)->hideOnIndex();
+            yield DurationField::new('dureExec','notice_dureexec')->setHelp('notice_dureexec_help')->setColumns(6)->hideOnIndex();
+            yield Field\UrlField::new('formEvalUrl', 'notice_formevalurl')->setHelp('notice_formevalurl_help')->hideOnIndex();
+            yield Field\ChoiceField::new('userLang','notice_userlang')->setHelp('notice_userlang_help')->hideOnIndex()
+                ->setChoices(array_flip($langList))->allowMultipleChoices()->renderExpanded(false)->renderAsBadges();
+            yield Field\TextEditorField::new('objectif','notice_objectif')->setHelp('notice_objectif_help')->hideOnIndex();
+            yield Field\BooleanField::new('exportOAI', 'notice_exportoai')->setHelp('notice_exportoai_help')->renderAsSwitch(false)->hideOnIndex();
 
             yield Field\FormField::addColumn(6);
             yield Field\FormField::addFieldset('Classification thématique')->setIcon('fa fa-book');
-            yield EntityField::new('disciFond','Discipline fondamentale')->onlyOnForms()
+            yield EntityField::new('disciFond','notice_discifond')->setHelp('notice_discifond_help')->onlyOnForms()
                 ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->where('entity.parent is null'))->setFormTypeOptions(['class' => Dewey::class,'mapped' => false,'required' => false]);
             yield EntityField::new('division')->setFormTypeOptions(['class' => Dewey::class,'auto_initialize' => false,'mapped' => false,'required' => false])->onlyOnForms();
             yield EntityField::new('codewey','Code Dewey')->setFormTypeOptions(['class' => Dewey::class])->setRequired(true);
-            yield Field\TextField::new('label','Catégorie')->onlyOnDetail();
-            yield Field\DateTimeField::new('creeLe')->onlyOnDetail();
-            yield EntityField::new('repertoire')->setFormType(TreeChoiceType::class);
+            yield Field\TextField::new('label','notice_label')->setHelp('notice_label_help')->onlyOnDetail();
+            yield Field\DateTimeField::new('creeLe','notice_creele')->onlyOnDetail();
+            yield EntityField::new('repertoire','notice_repertoire')->setFormType(TreeChoiceType::class)->setHelp('notice_repertoire_help');
         }
     }
 
@@ -186,9 +189,9 @@ class NoticeCrudController extends AbstractCrudController
         /** @var User $user */$user = $this->getUser();
         $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)
             ->select('entity,r,e,a,n,p,dd,pp,k,l,s')
-            ->leftJoin('entity.ressources','r')->leftJoin('entity.codewey','e')
-            ->join('entity.tags','k')->join('entity.auteurs','a')
-            ->join('entity.niveaux','n')->join('entity.porteurs','p')
+            ->leftJoin('entity.codewey','e')->leftJoin('entity.ressources','r')
+            ->join('entity.tags','k')->join('entity.porteurs','p')
+            ->join('entity.auteurs','a')->join('entity.niveaux','n')
             ->join('entity.docTypes','dd')->join('entity.pedTypes','pp')
             ->join('entity.droit','l')->join('entity.specialite','s');
 
@@ -338,8 +341,8 @@ class NoticeCrudController extends AbstractCrudController
     private function addDisc(FormInterface $form, ?Discipline $child): void
     {
         $builder = $form->getConfig()->getFormFactory()->createNamedBuilder('discipline', EntityType::class, null, [
-            'class' => Discipline::class, 'mapped' => false, 'auto_initialize' => false,
-            'required' => false, 'choices' => $child ? $child->getChildren() : [],
+            'class' => Discipline::class, 'mapped' => false, 'auto_initialize' => false, 'required' => false,
+            'label' => 'notice_discipline', 'choices' => $child ? $child->getChildren() : [], 'help' => 'notice_discipline_help',
             'placeholder' => $child ? 'Sélectionnez la discipline' : 'Sélectionnez le champ disciplinaire',
         ]);
 
@@ -353,8 +356,8 @@ class NoticeCrudController extends AbstractCrudController
     private function addDivi(FormInterface $form, ?Dewey $child): void
     {
         $builder = $form->getConfig()->getFormFactory()->createNamedBuilder('division', EntityType::class, null, [
-            'class' => Dewey::class, 'mapped' => false, 'auto_initialize' => false,
-            'required' => false, 'choices' => $child ? $child->getChildren() : [],
+            'class' => Dewey::class, 'mapped' => false, 'auto_initialize' => false, 'required' => false,
+            'label' => 'notice_division', 'choices' => $child ? $child->getChildren() : [], 'help' => 'notice_division_help',
             'placeholder' => $child ? 'Sélectionnez la division' : 'Sélectionnez la discipline fondamentale',
         ]);
 
@@ -368,15 +371,15 @@ class NoticeCrudController extends AbstractCrudController
 
     private function addSpec(FormInterface $form, ?Discipline $child): void {
         $form->add('specialite', EntityType::class, [
-            'label' => 'Spécialité', 'class' => Discipline::class,
-            'choices' => $child ? $child->getChildren() : [],
+            'label' => 'notice_specialite', 'class' => Discipline::class,
+            'choices' => $child ? $child->getChildren() : [], 'help' => 'notice_specialite_help',
             'placeholder' => $child ? 'Sélectionnez la spécialité' : 'Sélectionnez la discipline',
         ]);
     }
     private function addCode(FormInterface $form, ?Dewey $child): void {
         $form->add('codewey', EntityType::class, [
-            'label' => 'Code Dewey', 'class' => Dewey::class,
-            'required' => false, 'choices' => $child ? $child->getChildren() : [],
+            'label' => 'notice_codewey', 'class' => Dewey::class, 'required' => false,
+            'choices' => $child ? $child->getChildren() : [], 'help' => 'notice_codewey_help',
             'placeholder' => $child ? 'Sélectionnez le code dewey' : 'Sélectionnez la division',
         ]);
     }
