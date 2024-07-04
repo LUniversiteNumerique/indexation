@@ -5,11 +5,11 @@ notice_porteurs_help: La liste des établissements co-édités
 notice_auteurs: Auteurs
 notice_auteurs_help: Les professeurs ayant contribué
 notice_tags: Mots-clés
-notice_tags_help: Les mots clés rattachés à cette ressource
+notice_tags_help: Préférer 5 mots-clés en moyenne
 notice_date: Date de création
-notice_date_help: L'année de création de cette ressource
+notice_date_help: Année à laquelle la ressource a été conçue (au format AAAA)
 notice_ressurl: Contenu
-notice_ressurl_help: L'URL de la ressource ou le fichier zip
+notice_ressurl_help: Adresse URL de la ressource externe
 notice_notices: Ressource(s) liée(s)
 notice_notices_help: Les notices associées à celle-ci
 notice_validateur: Validé par
@@ -23,11 +23,11 @@ notice_proprintel_help: Cette notice est-elle une propriété intellectuelle ?
 notice_resslang: Langue(s) de la resource
 notice_resslang_help: La(Les) langue(s) de la ressource/notice
 notice_dureappr: Durée d'apprentissage
-notice_dureappr_help: La durée d'apprentissage de la notice
+notice_dureappr_help: 'Codification: PT00H00M00S'
 notice_pedtypes: Type pédagogique
 notice_pedtypes_help: Les types pédagogiques propres de cette notice
 notice_propuser: Proposition d'utilisation
-notice_propuser_help: Les propositions d'utilisation de la notice
+notice_propuser_help: Usages pédagogiques avérés et potentiels de la ressource pédagogique numérique
 notice_doctypes: Type documentaire
 notice_doctypes_help: Les types documentaires propres de cette notice
 notice_niveaux: Niveau du public cible
@@ -37,7 +37,7 @@ notice_champdisc_help: Le premier niveau de classification discipline
 notice_discipline: Discipline
 notice_discipline_help: Le second niveau de classification
 notice_specialite: Sous-discipline
-notice_specialite_help: Le dernier niveau équivaut à la spécialité
+notice_specialite_help: Champ disciplinaire auquel est rattachée la ressource pédagogique numérique
 notice_editele: Modifié le
 notice_vignette_help: Une image, vignette de la notice au format png,jpg ...
 notice_resssize: Taille (Mo)

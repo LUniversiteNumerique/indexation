@@ -70,9 +70,14 @@ readonly class TagTransformer implements DataTransformerInterface
     public function reverseTransform(mixed $value): mixed
     {
         $codes = array_unique(array_filter(array_map('trim', explode(',', $value))));
-        $tags = $this->repository->findBy(['nom' => $codes]);
-        $nodes = array_diff($codes, $tags);
-        foreach ($nodes as $code) $tags[] = new Keyword($code);
+        $olds = []; $news = [];
+        foreach ($codes as $elt) {
+            if (ctype_digit($elt)) $olds[] = $elt;
+            else $news[] = $elt; //is_numeric
+        }
+
+        $tags = $this->repository->findBy(['id' => $olds]);
+        foreach ($news as $elt) $tags[] = new Keyword($elt);
         return $tags;
     }
 }

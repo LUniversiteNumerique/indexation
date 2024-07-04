@@ -141,9 +141,11 @@ class Notice
         return $this->uuid;
     }
 
-    public function setUuid(?Uuid $uuid): void
+    public function setUuid(?Uuid $uuid): self
     {
         $this->uuid = $uuid;
+
+        return $this;
     }
 
     public function getTitre(): ?string
@@ -628,6 +630,6 @@ class Notice
 
     public function __toString(): string
     {
-        return sprintf('%s|%s', $this->uuid, $this->titre);
+        return sprintf('%s|%s', $this->id, $this->titre);
     }
 }

@@ -2,14 +2,13 @@
 
 namespace App\Controller;
 
-use JMS\Serializer\SerializerInterface;
-use App\Repository\{KeywordRepository, NoticeRepository, UserRepository};
+use App\Repository\{NoticeRepository, UserRepository};
 use App\Form\{ChangePassType,UserType};
 use App\Entity\{Auteur, Etablissement, Groupe, IndexingConfig, Keyword, User};
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Crud, Dashboard, MenuItem, UserMenu};
 use EasyCorp\Bundle\EasyAdminBundle\{Context\AdminContext,Controller\AbstractDashboardController,Router\AdminUrlGenerator};
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\{JsonResponse, Request, Response};
+use Symfony\Component\HttpFoundation\{Request, Response};
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
@@ -106,13 +105,5 @@ class DashboardController extends AbstractDashboardController
         }
 
         return $this->render('security/change.html.twig', ['form' => $form->createView(),]);
-    }
-
-    #[Route(path: '/tag', name: 'app_tags', methods: ['GET'])]
-    public function tags(Request $request, KeywordRepository $repository, SerializerInterface $serializer): JsonResponse
-    {
-        $result = $repository->search($request->query->get('query'));
-
-        return new JsonResponse($serializer->serialize(['results' => $result],'json'), Response::HTTP_OK, [], true);
     }
 }

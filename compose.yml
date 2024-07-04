@@ -34,7 +34,7 @@ services:
     depends_on:
       - mariadb
     volumes:
-      - ./lunt-backoffice/imports/wdps-data:/var/www/html
+      - ./lunt-backoffice/data/wdps:/var/www/html
 
   myadmin:
     image: phpmyadmin/phpmyadmin
@@ -72,7 +72,7 @@ services:
       - "8983:8983"
     volumes:
       - solr_data:/var/solr
-      - ./lunt-backoffice/imports/solr-data:/var/solr/data
+      - ./lunt-backoffice/data/solr:/var/solr/data
     command:
       - solr-precreate
       - unt1

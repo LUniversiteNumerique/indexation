@@ -19,7 +19,7 @@ class ImportXmlCommand extends Command
     private FileService $fileService;
 
     public function __construct(
-        #[Autowire('%kernel.project_dir%/imports')]
+        #[Autowire('%kernel.project_dir%/data')]
         private readonly string              $directory,
         private readonly MessageBusInterface $eventBus
     )
