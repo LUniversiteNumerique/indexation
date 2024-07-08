@@ -103,7 +103,7 @@ pipeline {
         withCredentials([string(credentialsId: 'jenkins-lunt-ssh-development-user-pwd', variable: 'VAR')]) {
           script {
             // Mise à jour de l'environnement avec la nouvelle version
-            sh 'sshpass -p ${VAR} ssh -oStrictHostKeyChecking=no user@sslv-lunt-develop.lyon-dev2.local VERSION=${tagName} docker-compose -f /home/user/lunt-indexation-notice/docker-compose.yml up -d'
+            sh 'sshpass -p ${VAR} ssh -oStrictHostKeyChecking=no user@sslv-lunt-develop.lyon-dev2.local VERSION=${tagName} docker-compose -f /home/user/lunt-indexation-notice/compose.yml up -d'
 
             // Réinitialisation des données
             sh 'sshpass -p ${VAR} ssh -oStrictHostKeyChecking=no user@sslv-lunt-develop.lyon-dev2.local sh /home/user/lunt-indexation-notice/reset-backoffice-db.sh'
