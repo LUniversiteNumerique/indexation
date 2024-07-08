@@ -19,6 +19,9 @@ class Univerique
     #[ORM\ManyToMany(targetEntity: Discipline::class)]
     private Collection $fields;
 
+    #[ORM\Column(length: 255)]
+    private ?string $name = null;
+
     public function __construct()
     {
         $this->creeLe = new \DateTimeImmutable();
@@ -65,5 +68,17 @@ class Univerique
     public function __toString(): string
     {
         return $this->label;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
     }
 }

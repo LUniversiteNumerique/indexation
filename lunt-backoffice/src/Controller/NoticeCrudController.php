@@ -2,23 +2,28 @@
 
 namespace App\Controller;
 
-use App\{Event\AfterNoticeStateSetEvent, Security\Voter\NoticeActionVoter, Service\MailerService, Validator\UploadImage};
+use Doctrine\ORM\EntityManagerInterface;
+use App\{Event\AfterNoticeStateSetEvent, Security\Voter\NoticeActionVoter};
 use App\Entity\{Dewey, Discipline, Etablissement, Notice, NoticEtat, Univerique, User};
-use App\Field\{DurationField, EntityField};
-use App\Form\Type\{AuteurAutoField, TagType, TreeChoiceType};
+use App\Field\{DurationField, EntityField, FileField};
+use App\Form\Type\{AuteurAutoField, NoticeAutoField, TagAutoField, TreeChoiceType};
 use App\Repository\{DossierRepository, NoticeRepository};
 use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Form\Type\{FileUploadType, Model\FileUploadState};
 use EasyCorp\Bundle\EasyAdminBundle\{Context\AdminContext, Event\AfterEntityPersistedEvent, Factory\FormFactory, Filter\ChoiceFilter, Router\AdminUrlGenerator};
 use EasyCorp\Bundle\EasyAdminBundle\Collection\{ActionCollection, FieldCollection, FilterCollection};
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Actions, Asset, Assets, Crud, Filters, KeyValueStore};
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\{ActionDto, EntityDto, SearchDto};
 use EasyCorp\Bundle\EasyAdminBundle\Field as Field;
-use Psr\Container\{ContainerExceptionInterface, NotFoundExceptionInterface};
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\{FormBuilderInterface, FormEvent, FormEvents, FormInterface};
-use Symfony\Component\HttpFoundation\{RedirectResponse, Response};
+use Symfony\Component\HttpFoundation\{File\Exception\FileException, File\UploadedFile, RedirectResponse, Response};
 use Symfony\Component\Intl\Languages;
+use Symfony\Component\Validator\Constraints\{File, Image, Url};
+use Symfony\Component\Uid\Uuid;
+use function Symfony\Component\String\u;
 
 class NoticeCrudController extends AbstractCrudController
 {
@@ -26,10 +31,12 @@ class NoticeCrudController extends AbstractCrudController
     const FORWARD_ACTION = 'forwardNotice';
 
     public function __construct(
+        private readonly FormFactory $factory,
         private readonly DossierRepository $rep,
         private readonly NoticeRepository $repository,
         private readonly AdminUrlGenerator $generator,
-        private readonly MailerService $mailer) {}
+        private readonly EventDispatcherInterface $dispatcher,
+    ) {}
 
     public static function getEntityFqcn(): string
     {
@@ -97,71 +104,72 @@ class NoticeCrudController extends AbstractCrudController
         yield Field\FormField::addColumn(6);
         yield Field\FormField::addFieldset('Description générale')->setIcon('fa fa-pencil');
         yield Field\IdField::new('id')->onlyOnDetail();
-        yield Field\TextField::new('titre')->setHelp('Le titre de cette notice');
-        yield Field\TextEditorField::new('description')->hideOnIndex();
-        yield EntityField::new('porteurs', 'Établissement(s) porteur(s)')->setRequired(true)->hideOnIndex();
-        yield EntityField::new('auteurs')->setFormType(AuteurAutoField::class)->setRequired(true);
-        //yield Field\CollectionField::new('auteurs')->setEntryType(AuteurType::class)->formatValue(fn ($value, Auteur $entity) => $entity->getNom() ?? '');
-        yield EntityField::new('tags', 'Mots-clés')->setFormType(TagType::class)
-            ->setFormTypeOptions(['autocomplete' => true, 'autocomplete_url' => $this->generateUrl('app_tags'),
-                'tom_select_options' => ['create' => true, 'createOnBlur' => true, 'preload' => true],
-            ])->hideOnIndex()->setRequired(true);
-        yield Field\DateField::new('ressDate', "Date de création")->setFormat('yyyy')->hideOnIndex();
+        yield Field\TextField::new('titre')->setHelp('notice_titre_help');
+        yield Field\TextEditorField::new('description')->setHelp('notice_description_help')->hideOnIndex();
+        yield EntityField::new('porteurs', 'notice_porteurs')->setHelp('notice_porteurs_help')->setRequired(true)->hideOnIndex();
+        yield EntityField::new('auteurs','notice_auteurs')->setFormType(AuteurAutoField::class)->setHelp('notice_auteurs_help')->setRequired(true);
+        yield EntityField::new('tags', 'notice_tags')->setFormType(TagAutoField::class)->setHelp('notice_tags_help')->hideOnIndex()->setRequired(true);
+        yield Field\DateField::new('ressDate', 'notice_date')->setFormat('yyyy')->setHelp('notice_date_help')->hideOnIndex();
 
         yield Field\FormField::addFieldset('Liens de la ressource')->setIcon('fa fa-paperclip');
-        yield Field\UrlField::new('ressUrl', 'URL Contenu');
-        yield EntityField::new('ressources','Ressource(s) liée(s)')->autocomplete()->hideOnIndex();
+        yield Field\BooleanField::new('zipFile')->setFormTypeOptions(['mapped' => false]);
+        yield Field\UrlField::new('ressUrl', 'notice_ressurl')->setHelp('notice_ressurl_help')->setFormTypeOptions(['attr' => ['class' => 'isUrl'],'constraints'=>[new Url()],'required'=>false]);
+        yield FileField::new('ressZip', 'Contenu Zip')->setUploadDir('public/uploads/files')->setHelp('notice_ressurl_help')->onlyOnForms()
+            ->setUploadedFileNamePattern('[timestamp]-[randomhash].[extension]')->setBasePath('/uploads/files')->setFormTypeOptions(['attr' => ['class' => 'isZip'],'required'=>false])
+            ->setFileConstraints([new File(maxSize: '64M', mimeTypes: ["application/zip", "application/x-zip-compressed", "multipart/x-zip"])]);
+        yield EntityField::new('ressources','notice_notices')->setFormType(NoticeAutoField::class)->setHelp('notice_notices_help')->hideOnIndex();
         yield Field\ChoiceField::new('etat')->setChoices(NoticEtat::getLabels())->renderAsBadges(NoticEtat::getColors())->hideOnForm();
+        yield Field\AssociationField::new('validateur','notice_validateur')->onlyOnDetail();
+        yield Field\DateTimeField::new('publieLe','notice_publiele')->onlyOnDetail();
 
         yield Field\FormField::addFieldset('Droits attachés à la ressource')->setIcon('fa fa-gavel');
-        yield Field\AssociationField::new('droit',"Licence et conditions d'utilisation")->hideOnIndex();
-        yield Field\BooleanField::new('ressPayant','Ressource payante')->renderAsSwitch(false)->hideOnIndex()->setColumns(6);
-        yield Field\BooleanField::new('proprIntel','Propriété intellectuelle')->renderAsSwitch(false)->hideOnIndex()->setColumns(6);
+        yield Field\AssociationField::new('droit','notice_droit')->setHelp('notice_droit_help')->hideOnIndex();
+        yield Field\BooleanField::new('ressPayant','notice_resspayant')->setHelp('notice_resspayant_help')->renderAsSwitch(false)->hideOnIndex()->setColumns(6);
+        yield Field\BooleanField::new('proprIntel','notice_proprintel')->setHelp('notice_proprintel_help')->renderAsSwitch(false)->hideOnIndex()->setColumns(6);
 
 
         yield Field\FormField::addColumn(6);
         yield Field\FormField::addFieldset('Indications pédagogiques')->setIcon('fa fa-th-list');
-        yield Field\ChoiceField::new('ressLang', 'Langue(s) de la resource')->setChoices(array_flip($langList))
+        yield Field\ChoiceField::new('ressLang', 'notice_resslang')->setChoices(array_flip($langList))->setHelp('notice_resslang_help')
             ->allowMultipleChoices()->renderAsBadges()->hideOnIndex()->setRequired(true)->setColumns(6);
-        yield DurationField::new('dureAppr', "Durée d'apprentissage")->setColumns(6)->hideOnIndex();
-        yield EntityField::new('pedTypes', 'Type pédagogique')->hideOnIndex()->setRequired(true);
-        yield Field\ArrayField::new('propUser', "Proposition d'utilisation")->hideOnIndex();
-        yield EntityField::new('docTypes', 'Type documentaire')->setFormTypeOptions(['multiple' => true, 'expanded' => true])->setColumns(6)->hideOnIndex()->setRequired(true);
-        yield EntityField::new('niveaux', 'Niveau du public cible')->setFormTypeOptions(['multiple' => true, 'expanded' => true])->setColumns(6)->hideOnIndex()->setRequired(true);
+        yield DurationField::new('dureAppr', 'notice_dureappr')->setColumns(6)->setHelp('notice_dureappr_help')->hideOnIndex();
+        yield EntityField::new('pedTypes', 'notice_pedtypes')->setHelp('notice_pedtypes_help')->hideOnIndex()->setRequired(true);
+        yield Field\ArrayField::new('propUser', 'notice_propuser')->setHelp('notice_propuser_help')->hideOnIndex();
+        yield EntityField::new('docTypes', 'notice_doctypes')->setHelp('notice_doctypes_help')->setFormTypeOptions(['multiple' => true, 'expanded' => true])->setColumns(6)->hideOnIndex()->setRequired(true);
+        yield EntityField::new('niveaux', 'notice_niveaux')->setFormTypeOptions(['multiple' => true, 'expanded' => true])->setHelp('notice_niveaux_help')->setColumns(6)->hideOnIndex()->setRequired(true);
 
         yield Field\FormField::addFieldset('Classification thématique')->setIcon('fa fa-book');
-        yield EntityField::new('champDisc', 'Domaine de connaissance')->onlyOnForms()->setFormTypeOptions(['class' => Discipline::class, 'mapped' => false, 'required' => false])
+        yield EntityField::new('champDisc', 'notice_champdisc')->setFormTypeOptions(['class' => Discipline::class, 'mapped' => false, 'required' => false])->setHelp('notice_champdisc_help')->onlyOnForms()
             ->setQueryBuilder(fn(QueryBuilder $qb) => ($valdoc && $user->getUntheme() instanceof Univerique)? $qb->where('entity IN (:champs)')->setParameter('champs', $user->getUntheme()->getFields()) : $qb->where('entity.parent is null'));
-        yield EntityField::new('discipline')->setFormTypeOptions([
-            'class' => Discipline::class, 'auto_initialize' => false, 'mapped' => false, 'required' => false
-        ])->onlyOnForms();
-        yield EntityField::new('specialite','Sous-discipline')->setFormTypeOptions(['class' => Discipline::class]);
-        yield Field\DateTimeField::new('editeLe')->hideOnForm();
+        yield EntityField::new('discipline')->setFormTypeOptions(['class' => Discipline::class, 'auto_initialize' => false, 'mapped' => false, 'required' => false])->setHelp('notice_discipline_help')->onlyOnForms();
+        yield EntityField::new('specialite')->setFormTypeOptions(['class' => Discipline::class]);
+        yield Field\DateTimeField::new('editeLe', 'notice_editele')->hideOnForm();
 
         if ($valdoc) {
             yield Field\FormField::addTab('Validation')->setHelp("Infos techniques complémentaires de validation");
 
             yield Field\FormField::addColumn(6);
             yield Field\FormField::addFieldset('Liens de la ressource')->setIcon('fa fa-folder-open');
-            yield Field\ImageField::new('vignette')->setUploadDir('public/images/uploads')
-                ->setUploadedFileNamePattern('[timestamp]-[contenthash].[extension]')->setBasePath('/images/uploads')
-                ->setFormTypeOption('constraints', [new UploadImage(['maxWidth'=>620, 'maxHeight'=>390])]);
-            yield Field\IntegerField::new('taille','Taille (Mo)')->setColumns(6)->hideOnIndex();
-            yield DurationField::new('dureExec',"Durée d'exécution")->setColumns(6)->hideOnIndex();
-            yield Field\UrlField::new('formEvalUrl', 'URL formulaire évaluation ressource')->hideOnIndex();
-            yield Field\ChoiceField::new('userLang',"Langues de l'utilisateur")->setChoices(array_flip($langList))->allowMultipleChoices()->renderExpanded(false)->renderAsBadges()->hideOnIndex();
-            yield Field\TextEditorField::new('objectif','Objectif pédagogique')->hideOnIndex();
-            yield Field\BooleanField::new('exportOAI', 'Export OAI')->renderAsSwitch(false)->hideOnIndex();
+            yield Field\ImageField::new('vignette')->setUploadDir('public/uploads/images')
+                ->setUploadedFileNamePattern('[timestamp]-[contenthash].[extension]')->setBasePath('/uploads/images')
+                ->setFileConstraints([new Image(['maxWidth' => 620, 'maxHeight' => 390])])->setHelp('notice_vignette_help');
+            yield Field\IntegerField::new('ressSize','notice_resssize')->setHelp('notice_resssize_help')->setColumns(6)->hideOnIndex();
+            yield DurationField::new('dureExec','notice_dureexec')->setHelp('notice_dureexec_help')->setColumns(6)->hideOnIndex();
+            yield Field\UrlField::new('formEvalUrl', 'notice_formevalurl')->setHelp('notice_formevalurl_help')->hideOnIndex();
+            yield Field\ChoiceField::new('userLang','notice_userlang')->setHelp('notice_userlang_help')->hideOnIndex()
+                ->setChoices(array_flip($langList))->allowMultipleChoices()->renderExpanded(false)->renderAsBadges();
+            yield Field\TextEditorField::new('objectif','notice_objectif')->setHelp('notice_objectif_help')->hideOnIndex();
+            yield Field\BooleanField::new('exportOAI', 'notice_exportoai')->setHelp('notice_exportoai_help')->renderAsSwitch(false)->hideOnIndex();
 
             yield Field\FormField::addColumn(6);
             yield Field\FormField::addFieldset('Classification thématique')->setIcon('fa fa-book');
-            yield EntityField::new('disciFond','Discipline fondamentale')->onlyOnForms()
+            yield EntityField::new('disciFond','notice_discifond')->setHelp('notice_discifond_help')->onlyOnForms()
                 ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->where('entity.parent is null'))->setFormTypeOptions(['class' => Dewey::class,'mapped' => false,'required' => false]);
             yield EntityField::new('division')->setFormTypeOptions(['class' => Dewey::class,'auto_initialize' => false,'mapped' => false,'required' => false])->onlyOnForms();
             yield EntityField::new('codewey','Code Dewey')->setFormTypeOptions(['class' => Dewey::class])->setRequired(true);
-            yield Field\TextField::new('label','Catégorie')->onlyOnDetail();
-            yield Field\DateTimeField::new('creeLe')->onlyOnDetail();
-            yield EntityField::new('repertoire')->setFormType(TreeChoiceType::class);
+            yield Field\TextField::new('label','notice_label')->setHelp('notice_label_help')->onlyOnDetail();
+            yield Field\DateTimeField::new('creeLe','notice_creele')->onlyOnDetail();
+            yield EntityField::new('repertoire','notice_repertoire')->setFormType(TreeChoiceType::class)->setHelp('notice_repertoire_help');
         }
     }
 
@@ -182,9 +190,9 @@ class NoticeCrudController extends AbstractCrudController
         /** @var User $user */$user = $this->getUser();
         $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)
             ->select('entity,r,e,a,n,p,dd,pp,k,l,s')
-            ->leftJoin('entity.ressources','r')->leftJoin('entity.codewey','e')
-            ->join('entity.tags','k')->join('entity.auteurs','a')
-            ->join('entity.niveaux','n')->join('entity.porteurs','p')
+            ->leftJoin('entity.codewey','e')->leftJoin('entity.ressources','r')
+            ->join('entity.tags','k')->join('entity.porteurs','p')
+            ->join('entity.auteurs','a')->join('entity.niveaux','n')
             ->join('entity.docTypes','dd')->join('entity.pedTypes','pp')
             ->join('entity.droit','l')->join('entity.specialite','s');
 
@@ -196,21 +204,19 @@ class NoticeCrudController extends AbstractCrudController
         return $qb->orderBy('entity.creeLe', 'DESC');
     }
 
-    /** @throws NotFoundExceptionInterface|ContainerExceptionInterface */
     public function createNewFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
     {
-        $builder = $this->container->get(FormFactory::class)->createNewFormBuilder($entityDto, $formOptions, $context);
+        $builder = $this->factory->createNewFormBuilder($entityDto, $formOptions, $context);
         return $this->addFormEvent($builder);
     }
 
-    /** @throws NotFoundExceptionInterface|ContainerExceptionInterface */
     public function createEditFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
     {
         /** @var Notice $notice */
         $notice = $context->getEntity()->getInstance();
         $this->denyAccessUnlessGranted(NoticeActionVoter::EDIT, $notice);
 
-        $builder = $this->container->get(FormFactory::class)->createEditFormBuilder($entityDto, $formOptions, $context);
+        $builder = $this->factory->createEditFormBuilder($entityDto, $formOptions, $context);
         return $this->addFormEvent($builder);
     }
 
@@ -233,17 +239,64 @@ class NoticeCrudController extends AbstractCrudController
         return $this->redirect($url);
     }
 
-    /** @throws NotFoundExceptionInterface|ContainerExceptionInterface */
+    protected function processUploadedFiles(FormInterface $form): void
+    {
+        /** @var FormInterface $child */
+        foreach ($form as $child) {
+            $config = $child->getConfig();
+
+            if (!$config->getType()->getInnerType() instanceof FileUploadType) {
+                if ($config->getCompound()) $this->processUploadedFiles($child);
+
+                continue;
+            }
+
+            /** @var FileUploadState $state */
+            $state = $config->getAttribute('state');
+
+            if (!$state->isModified()) continue;
+
+            $uploadDelete = $config->getOption('upload_delete');
+
+            if ($state->hasCurrentFiles() && ($state->isDelete() || (!$state->isAddAllowed() && $state->hasUploadedFiles()))) {
+                foreach ($state->getCurrentFiles() as $file)
+                    $uploadDelete($file); // supprimer son dossier si zip
+                $state->setCurrentFiles([]);
+            }
+
+            $filePaths = (array) $child->getData();
+            $uploadDir = $config->getOption('upload_dir');
+            $uploadNew = $config->getOption('upload_new');
+            $extractNew = function (UploadedFile $file, string $uploadDir, string $fileName) {
+                $target = $uploadDir .DIRECTORY_SEPARATOR. pathinfo($fileName, PATHINFO_FILENAME);
+                $zip = new \ZipArchive();
+                try {
+                    if ($zip->open($file->getRealPath()) === true)
+                        $zip->extractTo($target);
+                    $zip->close();
+                }catch (\Exception $error){
+                    throw new FileException(sprintf('Could not extract the file "%s" to "%s" (%s).', $file->getRealPath(), $target, $error->getMessage()));
+                }
+            };
+
+            foreach ($state->getUploadedFiles() as $index => $file) {
+                $fileName = u($filePaths[$index])->replace($uploadDir, '')->toString();
+                if ("zip" === $file->guessExtension()) $extractNew($file, $uploadDir, $fileName);
+                else $uploadNew($file, $uploadDir, $fileName);
+            }
+        }
+    }
+
     public function duplicateNotice(): Response
     {
         $ctx = $this->getContext();
 
         /** @var Notice $notice */
         $notice = $ctx->getEntity()->getInstance();
-        $dupNot = (clone $notice)->setCreeLe(new \DateTimeImmutable());
+        $dupNot = (clone $notice)->setCreeLe(new \DateTimeImmutable())->setUuid(Uuid::v4());
 
         $this->repository->add($dupNot->setCreateur($this->getUser()));
-        $this->container->get('event_dispatcher')->dispatch(new AfterEntityPersistedEvent($dupNot));
+        $this->dispatcher->dispatch(new AfterEntityPersistedEvent($dupNot));
         $this->addFlash('success', "Cette notice dupliquée vient d'être créé avec succès !");
 
         /** @var AdminUrlGenerator $genUrl */
@@ -263,10 +316,12 @@ class NoticeCrudController extends AbstractCrudController
 
     public function approveNotice(): Response
     {
+        /** @var User $user */ $user = $this->getUser();
         $ctx = $this->getContext();
 
         /** @var Notice|null $notice */
         $notice = $ctx->getEntity()->getInstance(); //Forward
+        $notice->setValidateur($user);
         return $this->changEtatNotice(['Valider', NoticEtat::Approved->getLabel(), 'Validation', true], $notice->setEtat(NoticEtat::Approved),$ctx->getRequest()->get('folderId'));
     }
 
@@ -323,19 +378,8 @@ class NoticeCrudController extends AbstractCrudController
             $this->generator->setController(self::class)->setAction(Action::INDEX);
 
         $this->repository->add($notice);
-        /** @var User $user */ $user = $this->getUser();
-        $group = $this->isGranted("ROLE_VALI_NOTI");
-        if($transition[3]) $this->mailer->sendTwig(($group?$notice->getCreateur():$notice->getValidateur())?->getEmail(),
-            sprintf("Notice %d en statut %s", $notice->getId(), $notice->getEtat()?->getLabel()), 'emails/notif.html.twig',
-            ['notice' => $notice->getTitre(), 'url' => $url->removeReferrer()->generateUrl(), 'message' => $group ?
-                sprintf("La notice <<%s>> a été %s par le %s %s", $notice, lcfirst($transition[1]), $user->getGroup(), $user):
-                sprintf("Une demande de modification vous a été transmise concernant la notice <<%s>> par le %s %s", $notice, $user->getGroup(),  $user)
-            ]
-        );
-        try {
-            $this->container->get('event_dispatcher')->dispatch(new AfterNoticeStateSetEvent($notice, $transition));
-            $this->addFlash('success', sprintf("La notice est bien %s avec succès !",$transition[1]));
-        } catch (NotFoundExceptionInterface|ContainerExceptionInterface) {}
+        $this->dispatcher->dispatch(new AfterNoticeStateSetEvent($notice, $transition));
+        $this->addFlash('success', sprintf("La notice est bien %s avec succès !",$transition[1]));
 
         return $this->redirect($url->removeReferrer()->generateUrl());
     }
@@ -343,8 +387,8 @@ class NoticeCrudController extends AbstractCrudController
     private function addDisc(FormInterface $form, ?Discipline $child): void
     {
         $builder = $form->getConfig()->getFormFactory()->createNamedBuilder('discipline', EntityType::class, null, [
-            'class' => Discipline::class, 'mapped' => false, 'auto_initialize' => false,
-            'required' => false, 'choices' => $child ? $child->getChildren() : [],
+            'class' => Discipline::class, 'mapped' => false, 'auto_initialize' => false, 'required' => false,
+            'label' => 'notice_discipline', 'choices' => $child ? $child->getChildren() : [], 'help' => 'notice_discipline_help',
             'placeholder' => $child ? 'Sélectionnez la discipline' : 'Sélectionnez le champ disciplinaire',
         ]);
 
@@ -358,8 +402,8 @@ class NoticeCrudController extends AbstractCrudController
     private function addDivi(FormInterface $form, ?Dewey $child): void
     {
         $builder = $form->getConfig()->getFormFactory()->createNamedBuilder('division', EntityType::class, null, [
-            'class' => Dewey::class, 'mapped' => false, 'auto_initialize' => false,
-            'required' => false, 'choices' => $child ? $child->getChildren() : [],
+            'class' => Dewey::class, 'mapped' => false, 'auto_initialize' => false, 'required' => false,
+            'label' => 'notice_division', 'choices' => $child ? $child->getChildren() : [], 'help' => 'notice_division_help',
             'placeholder' => $child ? 'Sélectionnez la division' : 'Sélectionnez la discipline fondamentale',
         ]);
 
@@ -373,15 +417,15 @@ class NoticeCrudController extends AbstractCrudController
 
     private function addSpec(FormInterface $form, ?Discipline $child): void {
         $form->add('specialite', EntityType::class, [
-            'label' => 'Spécialité', 'class' => Discipline::class,
-            'choices' => $child ? $child->getChildren() : [],
+            'label' => 'notice_specialite', 'class' => Discipline::class,
+            'choices' => $child ? $child->getChildren() : [], 'help' => 'notice_specialite_help',
             'placeholder' => $child ? 'Sélectionnez la spécialité' : 'Sélectionnez la discipline',
         ]);
     }
     private function addCode(FormInterface $form, ?Dewey $child): void {
         $form->add('codewey', EntityType::class, [
-            'label' => 'Code Dewey', 'class' => Dewey::class,
-            'required' => false, 'choices' => $child ? $child->getChildren() : [],
+            'label' => 'notice_codewey', 'class' => Dewey::class, 'required' => false,
+            'choices' => $child ? $child->getChildren() : [], 'help' => 'notice_codewey_help',
             'placeholder' => $child ? 'Sélectionnez le code dewey' : 'Sélectionnez la division',
         ]);
     }
@@ -392,10 +436,11 @@ class NoticeCrudController extends AbstractCrudController
             $form = $event->getForm();
             $this->addDisc($form->getParent(), $form->getData());
         });
-        if($builder->has('disciFond')) $builder->get('disciFond')->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+        if ($builder->has('disciFond')) $builder->get('disciFond')->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             $form = $event->getForm();
             $this->addDivi($form->getParent(), $form->getData());
         });
+
         return $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
             $data = $event->getData();
             $form = $event->getForm();
@@ -463,4 +508,17 @@ class NoticeCrudController extends AbstractCrudController
         if($request["dossier"] && $dossier = $this->rep->find($request["dossier"])) $notice->setRepertoire($dossier);
         return $this->changEtatNotice(['Déplacer', 'Déplacée', 'Déplacement', false], $notice, $ctx->getRequest()->get('folderId'));
     }
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @var Notice $entityInstance
+     */
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if($zipDir = $entityInstance->getRessZip())
+            $entityInstance->setRessUrl(pathinfo($zipDir, PATHINFO_FILENAME));
+        parent::persistEntity($entityManager, $entityInstance);
+    }
+
+
 }

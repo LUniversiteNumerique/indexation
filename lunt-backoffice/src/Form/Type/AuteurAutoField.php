@@ -16,7 +16,7 @@ class AuteurAutoField extends AbstractType
             'class' => Auteur::class,
             'placeholder' => 'Choisir un Auteur',
             'security' => 'ROLE_READ_ACTE',
-            //'query_builder' => fn (AuteurRepository $rp) => $rp->createQueryBuilder('keyword'),
+            'preload' => true
         ]);
     }
 

@@ -10,7 +10,7 @@ readonly class FileService
     private Finder $finder;
     private Filesystem $filesystem;
     public function __construct(
-        #[Autowire('%kernel.project_dir%/var/files')]
+        #[Autowire('%kernel.project_dir%/data/files')]
         private string $directory
     )
     {
@@ -54,14 +54,14 @@ readonly class FileService
         return array_map(fn ($fileName) => $this->writeFile($relativePath.$fileName, $filesContent[$fileName]), array_keys($filesContent));
     }
 
-    public function readFilesFrom(\DateTime $since = null, string $relativePath = '', $names = ['*.xml']): ?Finder
+    public function readFilesFrom(\DateTime $since = null, string $relativePath = '', $names = ['*.xml'], $deep = 0): ?Finder
     {
         $path = $this->directory .DIRECTORY_SEPARATOR. $relativePath;
         try {
             // Vérifier si le répertoire existe
             if (!$this->filesystem->exists($path))
                 throw new IOException("Le répertoire n'existe pas : $path");
-            $this->finder->files()->in($path)->name($names);
+            $this->finder->files()->in($path)->name($names)->depth($deep);
 
             if ($since) $this->finder->date('>= ' . $since->format('Y-m-d H:i:s'));
             //foreach ($this->finder as $file) $filesContent[$file->getFilename()] = file_get_contents($file->getRealPath());
@@ -72,16 +72,19 @@ readonly class FileService
 
     }
 
-    public function removeFilesFrom(string $relativePath = ''): bool
+    public function removeFilesFrom(string $relativePath = '', $filenames = null): bool
     {
         $path = $this->directory .DIRECTORY_SEPARATOR. $relativePath;
         try {
             if (!$this->filesystem->exists($path))
                 throw new IOException("Le répertoire n'existe pas : $path");
-            $this->finder->files()->in($path);
-
-            foreach ($this->finder as $file) $this->filesystem->remove($file->getRealPath());
-
+            if($filenames === null) {
+                $this->finder->files()->in($path);
+                foreach ($this->finder as $file) $this->filesystem->remove($file->getRealPath());
+            } else foreach ($filenames as $file) {
+                $filePath = sprintf("%s%s_%s.xml", $path, DIRECTORY_SEPARATOR.(str_starts_with($relativePath,'oai') ?'dc':'sf'), $file);
+                if ($this->filesystem->exists($filePath)) $this->filesystem->remove($filePath);
+            }
             return true;
         } catch (IOExceptionInterface) {
             return false;

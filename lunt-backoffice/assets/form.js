@@ -34,4 +34,21 @@ document.addEventListener('DOMContentLoaded', function initEventListener() {
         if(null !== document.getElementById('Notice_disciFond'))
             changeOptions(form,'Notice_disciFond','Notice_division','Notice_codewey')
     })
+
+    const isZipFile = document.getElementById('Notice_zipFile');
+    const ressZip = document.getElementById('Notice_ressZip_file');
+    const ressUrl = document.getElementById('Notice_ressUrl');
+
+    const toggleContenu = () => {
+        if (isZipFile.checked) {
+            ressZip.closest('.form-group').style.display = '';
+            ressUrl.closest('.form-group').style.display = 'none';
+        } else {
+            ressZip.closest('.form-group').style.display = 'none';
+            ressUrl.closest('.form-group').style.display = '';
+        }
+    };
+
+    toggleContenu();
+    isZipFile.addEventListener('change', toggleContenu);
 });

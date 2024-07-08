@@ -2,28 +2,28 @@
 
 namespace App\Controller;
 
-use App\Repository\{KeywordRepository, NoticeRepository};
+use App\Repository\{NoticeRepository, UserRepository};
 use App\Form\{ChangePassType,UserType};
-use App\Repository\UserRepository;
-use App\Entity\{Auteur, Dewey, Discipline, Dossier, Etablissement, Groupe, Keyword, User};
+use App\Entity\{Auteur, Etablissement, Groupe, IndexingConfig, Keyword, User};
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Crud, Dashboard, MenuItem, UserMenu};
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use EasyCorp\Bundle\EasyAdminBundle\{Context\AdminContext,Controller\AbstractDashboardController,Router\AdminUrlGenerator};
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\{JsonResponse, Request, Response};
+use Symfony\Component\HttpFoundation\{Request, Response};
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class DashboardController extends AbstractDashboardController
 {
-    public function __construct(private readonly NoticeRepository $repository, private readonly UserRepository $userRep) {}
+    public function __construct(
+        private readonly AdminUrlGenerator $generator,
+        private readonly NoticeRepository $repository,
+        private readonly UserRepository $userRep,
+    ) {}
 
     public function configureDashboard(): Dashboard
     {
-        return Dashboard::new()->setFaviconPath('/images/favicon.ico')
-            ->setTitle('<img src="/images/logo-UN.svg" alt="logo"> Indexation de  <span class="text-small">UNoTice.</span');
+        return Dashboard::new()->setFaviconPath('/uploads/favicon.ico')->setTitle('<img src="/uploads/logo-UN.svg" alt="logo"> Indexation de  <span class="text-small">UNoTice.</span');
     }
 
     public function configureCrud(): Crud
@@ -49,8 +49,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Les Auteurs', 'fa fa-users', Auteur::class)->setPermission('ROLE_READ_ACTE');
         yield MenuItem::section('Configurations');
         yield MenuItem::linkToCrud('Etablissement', 'fa fa-university', Etablissement::class)->setPermission('ROLE_READ_ETAB');
-        //yield MenuItem::linkToCrud('Code Dewey', 'fa fa-sitemap', Dewey::class)->setPermission('ROLE_READ_DEWE');
-        //yield MenuItem::linkToCrud('Discipline', 'fa fa-book', Discipline::class)->setPermission('ROLE_READ_DISC');
+        yield MenuItem::linkToCrud('Indexation', 'fa fa-book', IndexingConfig::class)->setPermission('ROLE_READ_CORE');
         yield MenuItem::linkToCrud('Mots clés', 'fa fa-tags', Keyword::class)->setPermission('ROLE_READ_KEYW');
         yield MenuItem::linkToCrud("Annuaire", 'fa fa-user-group', User::class)->setPermission('ROLE_READ_USER');
         yield MenuItem::linkToCrud("Groupe d'utilisateurs", 'fa fa-cog', Groupe::class)->setPermission('ROLE_READ_GROU');
@@ -60,10 +59,9 @@ class DashboardController extends AbstractDashboardController
     public function index(): Response
     {
         /** @var User $user */ $user = $this->getUser();
-        $br = $this->container->get(AdminUrlGenerator::class);
         return $this->isGranted("ROLE_VALI_NOTI") ?
             $this->render('admin/index.html.twig', ['noEtats' => $this->repository->countByEtat($user->getUntheme()),]):
-            $this->redirect($br->setController(NoticeCrudController::class)->generateUrl());
+            $this->redirect($this->generator->setController(NoticeCrudController::class)->generateUrl());
     }
 
     #[Route('/profile', name: 'app_profile')]
@@ -107,12 +105,5 @@ class DashboardController extends AbstractDashboardController
         }
 
         return $this->render('security/change.html.twig', ['form' => $form->createView(),]);
-    }
-
-    #[Route(path: '/tag', name: 'app_tags', methods: ['GET'])]
-    public function tags(Request $request, KeywordRepository $repository): JsonResponse
-    {
-        $q = $request->query->get('query');
-        return $this->json(array('results' => $repository->search($q)));
     }
 }

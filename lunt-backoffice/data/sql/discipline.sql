@@ -1,0 +1,15 @@
+insert into unt_db.discipline (id, parent_id, code, nom, cree_le, edite_le)
+values  (1, null, 'lettres_classiques_langue_litterature_francaises', 'Lettres classiques, Langues et Littératures françaises et de France', '2024-01-25 16:17:15', null),
+        (2, null, 'langues_litteratures_civilisations_etrangeres', 'Langues, Littératures et Civilisations étrangères', '2024-01-25 16:17:15', null),
+        (3, null, 'sciences_homme', 'Sciences de l''homme', '2024-01-25 16:17:48', null),
+        (4, null, 'sciences_societe', 'Sciences de la société', '2024-01-25 16:18:17', null),
+        (5, null, 'arts', 'Arts', '2024-01-25 16:18:46', null),
+        (6, 1, 'lettres_approches_transversales_methodologie', 'Lettres-Approches transversales et méthodologie', '2024-01-25 16:17:15', null),
+        (7, 1, 'langue_française', 'Langue française', '2024-01-25 16:17:15', null),
+        (8, 6, 'lettres_approches_transversales_methodologie_approches_transversales', 'Approches transversales', '2024-01-25 16:17:15', null),
+        (9, 6, 'lettres_approches_transversales_methodologie_methodologie', 'Méthodologie', '2024-01-25 16:17:15', null),
+        (10, 7, 'langue_française_langage', 'Langage', '2024-01-25 16:17:15', null),
+        (11, 7, 'langue_française_linguistique', 'Linguistique', '2024-01-25 16:17:15', null),
+        (12, 7, 'langue_française_langue_des_signes', 'Langue des signes', '2024-01-25 16:17:15', null),
+        (13, 7, 'langue_française_francais', 'Français', '2024-01-25 16:17:15', null),
+        (14, 7, 'langue_française_FLE', 'FLE - Français langue étrangère', '2024-01-25 16:17:15', null);

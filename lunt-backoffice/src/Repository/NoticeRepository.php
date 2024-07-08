@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\{Etablissement, Notice, NoticEtat, Univerique};
+use App\Entity\{Notice, NoticEtat, Univerique};
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -21,13 +21,17 @@ class NoticeRepository extends ServiceEntityRepository
         parent::__construct($registry, Notice::class);
     }
 
-    public function findFrom(int $offset,int $limit, \DateTime $from = null): array
+    public function findFrom(int $core, bool $diff, int $limit, int $offset): array
     {
-        $qr = $this->createQueryBuilder('n')
-            ->where('n.etat = :etat')->setParameter("etat", NoticEtat::Approved);
-        if($from) $qr->andWhere("n.creeLe >= :date")->setParameter("date", $from);
-        $qr->setFirstResult($offset)->setMaxResults($limit);
-        return $qr->select('n.id')->getQuery()->getResult();
+        $state = "n.etat = :etat"; if ($diff) $state .= " AND n.publieLe is null";
+
+        return $this->createQueryBuilder('n')
+            ->join('n.validateur', 'u')
+            ->where("u.untheme = :core")
+            ->andWhere("(n.etat != :etat AND n.publieLe is not null) OR $state")
+            ->setParameters(["core" => $core, "etat" => NoticEtat::Approved])
+            ->setFirstResult($offset)->setMaxResults($limit)
+            ->getQuery()->getResult();
     }
 
     public function findByIds(array $uuids): array

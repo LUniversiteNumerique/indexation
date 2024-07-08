@@ -25,8 +25,8 @@ class SecurityController extends AbstractController
             'last_username' => $authUtils->getLastUsername(),
             'error' => $authUtils->getLastAuthenticationError(),
 
-            'favicon_path' => 'images/favicon.ico',
-            'page_title' => '<img src="images/logo-1000px.png" alt="logo">',
+            'favicon_path' => 'uploads/favicon.ico',
+            'page_title' => '<img src="uploads/logo-1000px.png" alt="logo">',
             'csrf_token_intention' => 'authenticate',
             'target_path' => $this->generateUrl('app_home'),
 

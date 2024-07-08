@@ -2,57 +2,87 @@
 
 namespace App\Message\Handler;
 
-use App\Repository\NoticeRepository;
-use App\Entity\Dto\IndexingNotice;
-use App\Service\{Converter\PrefixNameConverter, FileService, SolrApiService, XmlDataLoader};
+use App\Entity\{IndexingConfig, Notice, NoticEtat};
+use Doctrine\ORM\{EntityManagerInterface,EntityRepository};
+use App\Entity\Dto\{OaidcDto,SuplomDto,IndexingNotice};
+use App\Service\{FileService, SolrApiService};
 use App\Message\IntexingConfigMessage;
+use JMS\Serializer\SerializerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
 readonly class InterIndexingHandler
 {
-    const PREFIX_SF = 'lom', PREFIX_DC = 'dc';
-    private XmlDataLoader $sfLoader, $dcLoader;
+    private EntityRepository $configRep, $noticeRep;
     public function __construct(
-        private NoticeRepository $nr,
-        private SolrApiService $sm,
-        private FileService $fs
-    ){
-        $this->sfLoader = new XmlDataLoader(new PrefixNameConverter(self::PREFIX_SF.":"));
-        $this->dcLoader = new XmlDataLoader(new PrefixNameConverter(self::PREFIX_DC.":"));
+        private EntityManagerInterface $em,
+        private SerializerInterface    $js,
+        private SolrApiService         $sm,
+        private FileService            $fs,
+        private LoggerInterface $logger
+    ) {
+        $this->noticeRep = $this->em->getRepository(Notice::class);
+        $this->configRep = $this->em->getRepository(IndexingConfig::class);
     }
 
     public function __invoke(IntexingConfigMessage $message): void
     {
-        if ($message->isFullExec && $this->fs->removeFilesFrom('dc/') && $this->fs->removeFilesFrom('sf/'))
-            $this->sm->delDocuments("<query>external_resource:false</query>");
-        $sources = $this->nr->findBy(['id' => $message->itemIds]);
 
-        //Itération sur les items de la source => iterateOverSource();
-        $itemSF = []; $itemSP = ""; $itemDC = [];
+        /** @var IndexingConfig $task */
+        $task = $this->configRep->find($message->taskId);
+        if (!$task) throw new \RuntimeException("Aucun planificateur d'identifant ".$message->taskId);
+        $core = $task->getIndexCore()?->getName(); $offset = 0;
+        $this->logger->warning(sprintf("Début d'indexation %s de %s", $task->isFullMode()?'complète':'différentielle', $core));
+
+        if ($task->isFullMode()) {
+            $this->sm->delDocuments("<query>external_resource:false</query>", "$core/update?commit=true");
+            $this->fs->removeFilesFrom("oai/$core");
+            $this->fs->removeFilesFrom("suplom/$core");
+        }
+        do {
+            /** @var Notice[] $data */
+            $data = $this->noticeRep->findFrom($task->getIndexCore()?->getId(), !$task->isFullMode(), $task->getBatchSize(), $offset);
+
+            $news = []; $olds = [];
+            foreach ($data as $d) {
+                if ($d->getEtat() === NoticEtat::Approved) $news[] = $d->setPublieLe(new \DateTime()); // A publier
+                elseif($d->getPublieLe()) $olds[] = $d->setPublieLe(null)->getUuid(); // A dépublier
+            }
+
+            if (!empty($data)) {
+                $this->sm->editDocuments($this->push($news, $core) . $this->pop($olds, $core), "$core/update?commit=true");
+                $task->setScheduleAt(new \DateTime());
+                $this->em->flush(); $this->em->clear();
+                $this->logger->info(sprintf("Notices concernées %d:  %d (indexées) + %d (dépubliées)", count($data), count($news), count($olds)));
+            }
+
+            $offset += $task->getBatchSize();
+        } while (count($data) > 0);
+
+        $this->logger->warning(sprintf("Fin d'indexation %s de %s", $task->isFullMode()?'complète':'différentielle', $core));
+    }
+
+    private function pop(array $sources, string $index): string
+    {
+        $itemSP = array_reduce($sources,fn(string $acc, string $uuid): string => $acc."<query>uuid:$uuid</query>","");
+
+        $this->fs->removeFilesFrom("oai/$index", $sources);
+        $this->fs->removeFilesFrom("suplom/$index", $sources);
+        return "<delete>$itemSP</delete>";
+    }
+
+    private function push(array $sources, string $index): string
+    {
+        $itemSF = []; $itemDC = []; $itemSP = "";
         foreach ($sources as $notice) {
-            $item = IndexingNotice::create($notice);
-            $itemSP .= "<doc>$item</doc>";                                                               //SolrPivotBuildingAnalyzer
-
-            $itemDC[sprintf("dc_%s.xml",$item->getUuid())] = $this->dcLoader->encode([
-                "@xmlns:oai_dc" => "http://www.openarchives.org/OAI/2.0/oai_dc/",
-                "@xmlns:dc" => "http://purl.org/dc/elements/1.1/",
-                "@xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance",
-                "@xsi:schemaLocation" => "http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd",
-                '#' => $item
-            ],sprintf("oai_%s:%s",self::PREFIX_DC,self::PREFIX_DC));//DublinCoreExportAnalyzer
-            $itemSF[sprintf("sf_%s.xml",$item->getUuid())] = $this->sfLoader->encode([
-                '@xmlns:lom' => "http://ltsc.ieee.org/xsd/LOM",
-                '@xmlns:lomfr' => "http://www.lom-fr.fr/xsd/LOMFR",
-                '@xmlns:xsi' => "http://www.w3.org/2001/XMLSchema-instance",
-                '@xsi:schemaLocation' => "http://ltsc.ieee.org/xsd/LOM http://lom-fr.fr/xsd/lomfrv1.0/std/lomfr.xsd",
-                '#' => $item
-            ],self::PREFIX_SF.":".self::PREFIX_SF); //SuplomfrExportAnalyzer
+            $item = $this->js->serialize(IndexingNotice::fromNotice($notice), 'xml'); $itemSP .= preg_replace('/<\?xml.*?\?>/', '', $item); //SolrPivotBuildingAnalyzer
+            $itemDC[sprintf("dc_%s.xml", $notice->getUuid())] = $this->js->serialize(OaidcDto::create($notice), 'xml'); //DublinCoreExportAnalyzer
+            $itemSF[sprintf("sf_%s.xml", $notice->getUuid())] = $this->js->serialize(SuplomDto::create($notice), 'xml'); //SuplomfrExportAnalyzer
         }
 
-        // Enregistrement des différents documents dans solr et sur les disques
-        $this->sm->addDocuments($itemSP);                  //Indexation dans Solr
-        $this->fs->writeFilesTo($itemDC,'dc/'); // Write the XML to the file
-        $this->fs->writeFilesTo($itemSF,'sf/'); //$this->messageBus->dispatch(new RunCommandMessage($itemDC,$itemSF));
+        $this->fs->writeFilesTo($itemDC, "oai/$index/");
+        $this->fs->writeFilesTo($itemSF, "suplom/$index/");
+        return "<add>$itemSP</add>";
     }
 }

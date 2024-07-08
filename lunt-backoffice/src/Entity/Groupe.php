@@ -21,6 +21,7 @@ class Groupe
         'Lire_Licenc'=>'ROLE_READ_LICE', 'Créer_Licenc'=>'ROLE_CREA_LICE', 'Editer_Licenc'=>'ROLE_EDIT_LICE', 'Supprimer_Licenc'=>'ROLE_DROP_LICE',
         'Lire_Pédago'=>'ROLE_READ_TPED', 'Créer_Pédago'=>'ROLE_CREA_TPED', 'Editer_Pédago'=>'ROLE_EDIT_TPED', 'Supprimer_Pédago'=>'ROLE_DROP_TPED',
         'Lire_Notice'=>'ROLE_READ_NOTI', 'Créer_Notice'=>'ROLE_CREA_NOTI', 'Editer_Notice'=>'ROLE_EDIT_NOTI', 'Supprimer_Notice'=>'ROLE_DROP_NOTI', 'Valider_Notice'=>'ROLE_VALI_NOTI',
+        'Lire_Indexe'=>'ROLE_READ_CORE', 'Créer_Indexe'=>'ROLE_CREA_CORE', 'Editer_Indexe'=>'ROLE_EDIT_CORE', 'Supprimer_Indexe'=>'ROLE_DROP_CORE',
     );
 
     use Timestamps;

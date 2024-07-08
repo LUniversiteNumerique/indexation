@@ -51,7 +51,7 @@ class Notice
     private ?array $ressLang = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $taille = null;
+    private ?int $ressSize = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $ressDate;
@@ -69,8 +69,10 @@ class Notice
     #[ORM\ManyToOne]
     private ?User $createur,$validateur;
 
-    #[ORM\Column(length: 255),Assert\Url]
+    #[ORM\Column(length: 255)]
     private ?string $ressUrl = null;
+    //#[ORM\Column(insertable: false, updatable: false)]
+    private ?string $ressZip = null;
 
     #[ORM\Column(length: 255, nullable: true),Assert\Url]
     private ?string $formEvalUrl = null;
@@ -88,8 +90,6 @@ class Notice
     private ?Discipline $specialite = null;
 
     #[ORM\ManyToOne] private ?Dossier $repertoire = null;
-
-    #[ORM\ManyToOne] private ?Etablissement $publisher;
 
     #[ORM\ManyToMany(targetEntity: Etablissement::class),
         Assert\Count(min: 1)]
@@ -126,14 +126,15 @@ class Notice
 
     public function __construct()
     {
+        $this->uuid = Uuid::v4();
+        $this->etat = NoticEtat::Working;
         $this->niveaux = new ArrayCollection();
         $this->docTypes = new ArrayCollection();
         $this->pedTypes = new ArrayCollection();
         $this->ressources = new ArrayCollection();
         $this->porteurs = new ArrayCollection();
-        $this->tags = new ArrayCollection();
         $this->auteurs = new ArrayCollection();
-        $this->etat = NoticEtat::Working;
+        $this->tags = new ArrayCollection();
         $this->creeLe = new \DateTimeImmutable();
     }
 
@@ -142,9 +143,11 @@ class Notice
         return $this->uuid;
     }
 
-    public function setUuid(?Uuid $uuid): void
+    public function setUuid(?Uuid $uuid): self
     {
         $this->uuid = $uuid;
+
+        return $this;
     }
 
     public function getTitre(): ?string
@@ -183,14 +186,14 @@ class Notice
         return $this;
     }
 
-    public function getTaille(): ?int
+    public function getRessSize(): ?int
     {
-        return $this->taille;
+        return $this->ressSize;
     }
 
-    public function setTaille(int $taille): self
+    public function setRessSize(int $ressSize): self
     {
-        $this->taille = $taille;
+        $this->ressSize = $ressSize;
 
         return $this;
     }
@@ -332,9 +335,21 @@ class Notice
         return $this->ressUrl;
     }
 
-    public function setRessUrl(?string $contenu): self
+    public function setRessUrl(?string $url): self
     {
-        $this->ressUrl = $contenu;
+        $this->ressUrl = $url;
+
+        return $this;
+    }
+
+    public function getRessZip(): ?string
+    {
+        return $this->ressZip;
+    }
+
+    public function setRessZip(?string $zip): self
+    {
+        $this->ressZip = $zip;
 
         return $this;
     }
@@ -421,18 +436,6 @@ class Notice
       $this->repertoire = $repertoire;
 
       return $this;
-    }
-
-    public function getPublisher(): ?Etablissement
-    {
-        return $this->publisher;
-    }
-
-    public function setPublisher(?Etablissement $publisher): self
-    {
-        $this->publisher = $publisher;
-
-        return $this;
     }
 
     /**
@@ -641,6 +644,6 @@ class Notice
 
     public function __toString(): string
     {
-        return sprintf('%d|%s', $this->id, $this->titre);
+        return sprintf('%s|%s', $this->id, $this->titre);
     }
 }

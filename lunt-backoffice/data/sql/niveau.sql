@@ -1,0 +1,15 @@
+insert into unt_db.niveau (id, nom, cree_le, edite_le)
+values  (1, 'Enseignement supérieur', '2024-03-07 12:40:41', null),
+        (2, 'L1', '2024-03-07 12:40:48', null),
+        (3, 'L2', '2024-03-07 12:40:52', null),
+        (4, 'L3', '2024-03-07 12:40:55', null),
+        (5, 'Licence', '2024-03-07 12:40:58', null),
+        (6, 'M1', '2024-03-07 12:41:02', null),
+        (7, 'M2', '2024-03-07 12:41:05', null),
+        (8, 'Master', '2024-03-07 12:41:09', null),
+        (9, 'bac>=6', '2024-03-07 12:41:10', null),
+        (10, 'Doctorat', '2024-03-07 12:41:16', null),
+        (11, 'Formation continue', '2024-03-07 12:41:21', null),
+        (12, 'Formation en entreprise', '2024-03-07 12:41:24', null),
+        (13, 'Formation professionnelle', '2024-03-07 12:41:28', null),
+        (14, 'Autres', '2024-03-07 12:41:31', null);

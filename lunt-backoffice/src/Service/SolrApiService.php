@@ -9,45 +9,49 @@ use Symfony\Component\HttpFoundation\Response;
 class SolrApiService
 {
     public function __construct(
+        private HttpClientInterface $client,
         #[Autowire(env: 'SOLR_BASE_URL')]
-        private readonly string     $solrBaseUrl,
-    private HttpClientInterface $client)
+        private readonly string     $solrUrl)
     {
         $this->client = $client->withOptions([
-            'base_uri' => $this->solrBaseUrl,
-            'headers' => [
-                'Accept' => 'application/xml',
-                'Content-Type' => 'application/xml'
-            ],
+            'base_uri' => $this->solrUrl,
+            'headers' => ['Content-Type' => 'application/xml'],
         ]);
     }
 
-    public function getDocuments($data = '*:*'): ?array
+    public function getDocuments($data = ['q'=>'*:*'], string $url = 'unt1/select'): ?array
     {
-        $resp = $this->handleApi([], 'GET',"select?q=$data");
+        $resp = $this->handleApi($url, ['query' => $data], 'GET');
         if($resp && $resp->getStatusCode() === Response::HTTP_OK)
             return $resp->toArray()["response"];
         return null;
     }
-    public function addDocuments($data): ?string
+    public function addDocuments($data, string $url='unt1/update?commit=true'): ?string
     {
-        $resp = $this->handleApi(['body' => "<add>$data</add>",]);
+        $resp = $this->handleApi($url, ['body' => "<add>$data</add>",]);
         if($resp && $resp->getStatusCode() === Response::HTTP_OK)
             return $resp->getContent();
         return null;
     }
-    public function delDocuments($data = '<query>*:*</query>'): ?string //'<id>eddae4db-7ceb-4d26-97e6-0cf35cb8bc25</id>'
+    public function editDocuments($data, string $url='unt1/update?commit=true'): ?string
     {
-        $resp = $this->handleApi(['body' => "<delete>$data</delete>"]);
+        $resp = $this->handleApi($url, ['body' => "<update>$data</update>",]);
+        if($resp && $resp->getStatusCode() === Response::HTTP_OK)
+            return $resp->getContent();
+        return null;
+    }
+    public function delDocuments($data = '<query>*:*</query>', string $url='unt1/update?commit=true'): ?string //'<id>eddae4db-7ceb-4d26-97e6-0cf35cb8bc25</id>'
+    {
+        $resp = $this->handleApi($url, ['body' => "<delete>$data</delete>"]);
         if($resp && $resp->getStatusCode() === Response::HTTP_OK)
             return $resp->getContent();
         return null;
     }
 
-    private function handleApi(array $options = [], string $method = 'POST', string $url='update?commit=true'): ?ResponseInterface
+    private function handleApi(string $url, array $options = [], string $method = 'POST'): ?ResponseInterface
     {
         try { return $this->client->request($method, $url, $options); }catch (ExceptionInterface $e) {
-            dump($e->getMessage());
+            dump($e);
             return null;
         }
     }

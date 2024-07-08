@@ -31,8 +31,8 @@ docker-compose exec backoffice php bin/console doctrine:database:drop --force
 docker-compose exec backoffice php bin/console doctrine:database:create
 docker-compose exec backoffice php bin/console m:mi -n
 docker-compose exec backoffice php bin/console d:m:mi -n
-docker-compose exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat /var/www/site/sql/samples-data/groupe.sql)"'
-docker-compose exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat /var/www/site/sql/samples-data/user.sql)"'
+docker-compose exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat /var/www/site/data/sql/groupe.sql)"'
+docker-compose exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat /var/www/site/data/sql/user.sql)"'
 ```
 
 ## Initialisation données de test

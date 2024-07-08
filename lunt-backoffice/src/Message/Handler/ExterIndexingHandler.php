@@ -2,49 +2,71 @@
 
 namespace App\Message\Handler;
 
-use App\Entity\IndexingConfig;
+use Doctrine\ORM\{EntityManagerInterface,EntityRepository};
+use App\Entity\{Dto\IndexingNotice, IndexingConfig, Dto\SuplomDto, Notice, Univerique};
 use App\Message\ExtexingConfigMessage;
-use App\Repository\IndexingConfigRepository;
-use App\Service\{FileService, SolrApiService, XmlDataLoader};
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use App\Service\{FileService, SolrApiService};
+use JMS\Serializer\SerializerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
 readonly class ExterIndexingHandler
 {
-    const EXTERNAL_RESOURCE = "external_resource:true";
-    private FileService $fileService;
+    private EntityRepository $noticeRep,$configRep;
     public function __construct(
-        private XmlDataLoader $dataLoader,
+        private FileService $fileService,
         private SolrApiService $solrManager,
-        private IndexingConfigRepository $configRep,
-        #[Autowire('%kernel.project_dir%/var/files')] private string $directory,
+        private SerializerInterface $serializer,
+        private EntityManagerInterface $manager,
     ){
-        $this->fileService = new FileService($this->directory);
+        $this->noticeRep = $this->manager->getRepository(Notice::class);
+        $this->configRep = $this->manager->getRepository(IndexingConfig::class);
     }
 
     public function __invoke(ExtexingConfigMessage $message): void
     {
-        $oldConfig = $this->configRep->findLatest(true);
-        if(!$oldConfig) $oldConfig = new IndexingConfig($message->isFullExec, true);
-        $newConfig = new IndexingConfig($message->isFullExec, true);
+        /** @var IndexingConfig $task */
+        $task = $this->configRep->find($message->taskId);
+        if (!$task) throw new \Exception("Aucun planificateur d'identifant ".$message->taskId);
+        $coreIndex = $task->getIndexCore()?->getName();
 
-        if ($message->isFullExec) $this->solrManager->delDocuments(sprintf("<query>%s</query>",self::EXTERNAL_RESOURCE));
-        $sources = $this->fileService->readFilesFrom($message->isFullExec ?null: $oldConfig->getScheduleAt());
+        if ($task->isFullMode()) $this->solrManager->delDocuments("<query>external_resource:true</query>","$coreIndex/update?commit=true");
+        $sources = $this->fileService->readFilesFrom($task->isFullMode() ?null: $task->getScheduleAt(), "suplom_externe/$coreIndex") ?? [];
 
-        $itemSF = "";
+        $suploms = []; $uuids = [];
         foreach ($sources as $file) {
             $content = $this->fileService->readFile($file->getRealPath());
-            $item = $this->dataLoader->decode($content);
-            $itemSF .= "<doc>$item</doc>"; //dump($file->getFilename());
-        }
-        $this->solrManager->addDocuments($itemSF); //Indexation dans Solr
-        $di = $newConfig->getScheduleAt()->diff(new \DateTime());
+            /** @var SuplomDto $item */
+            $item = $this->serializer->deserialize($content,SuplomDto::class,'xml');
 
-        // Mise à jour des statistiques de l'indexation
-        $indexedFiles = $this->solrManager->getDocuments(self::EXTERNAL_RESOURCE);
-        if($indexedFiles) $newConfig->setFilesOut($indexedFiles['numFound']);
-        $newConfig->setInDuration($di->s+($di->i*60)+($di->h*3600)+($di->days*86400));
-        $this->configRep->add($newConfig->setFilesIn(count($sources)));
+            $uuids[] = substr($item?->general?->identifier?->entry, -36);
+            $suploms[] = $item;
+        }
+        if (!empty($uuids)) $this->solrManager->addDocuments($this->pushFromNotice($uuids),"$coreIndex/update?commit=true");
+        if (!empty($suploms)) $this->solrManager->addDocuments($this->pushFromSuplom($suploms, $task->getIndexCore()),"$coreIndex/update?commit=true");
+
+        $task->setScheduleAt(new \DateTime());
+        $this->manager->flush();
+    }
+
+    public function pushFromNotice(array $uuids): string
+    {
+        $itemSP = ""; $sources = $this->noticeRep->findBy(['uuid' => $uuids]);
+        foreach ($sources as $notice) {
+            $item = $this->serializer->serialize(IndexingNotice::fromNotice($notice), 'xml');
+            $itemSP .= preg_replace('/<\?xml.*?\?>/', '', $item);
+        }
+        return "<add>$itemSP</add>";
+    }
+
+    public function pushFromSuplom(array $sources, Univerique $unt): string
+    {
+        $itemSP = ""; /** @var SuplomDto $suplom */
+        foreach ($sources as $suplom) {
+            $notice = IndexingNotice::fromSuplom($suplom,$unt);
+            $item = $this->serializer->serialize($notice, 'xml');
+            $itemSP .= preg_replace('/<\?xml.*?\?>/', '', $item);
+        }
+        return "<add>$itemSP</add>";
     }
 }
