@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use App\{Event\AfterNoticeStateSetEvent, Security\Voter\NoticeActionVoter};
 use App\Entity\{Dewey, Discipline, Etablissement, Notice, NoticEtat, Univerique, User};
 use App\Field\{DurationField, EntityField, FileField};
@@ -18,7 +19,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field as Field;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\{FormBuilderInterface, FormEvent, FormEvents, FormInterface};
-use Symfony\Component\HttpFoundation\{File\UploadedFile, RedirectResponse, Response};
+use Symfony\Component\HttpFoundation\{File\Exception\FileException, File\UploadedFile, RedirectResponse, Response};
 use Symfony\Component\Intl\Languages;
 use Symfony\Component\Validator\Constraints\{File, Image, Url};
 use Symfony\Component\Uid\Uuid;
@@ -111,11 +112,11 @@ class NoticeCrudController extends AbstractCrudController
         yield Field\DateField::new('ressDate', 'notice_date')->setFormat('yyyy')->setHelp('notice_date_help')->hideOnIndex();
 
         yield Field\FormField::addFieldset('Liens de la ressource')->setIcon('fa fa-paperclip');
-        //yield Field\UrlField::new('ressUrl', 'notice_ressurl')->setFormTypeOption('constraints', [new Url()])->hideOnForm();
-        yield FileField::new('ressUrl', 'notice_ressurl')->setUploadDir('public/uploads/files')->setHelp('notice_ressurl_help')->onlyOnForms()
-            ->setUploadedFileNamePattern('[contenthash].[extension]')->setBasePath('/uploads/files')->setRequired(false)
-            ->setFileConstraints([new File(maxSize: '64M', mimeTypes: ["application/zip", "application/x-zip-compressed", "multipart/x-zip"])])->setColumns(6);
-        yield Field\BooleanField::new('zipFile','notice_resspayant')->setFormTypeOptions(['mapped' => false, 'required' => false])->setHelp('notice_resspayant_help')->onlyOnForms()->setColumns(6);
+        yield Field\BooleanField::new('zipFile')->setFormTypeOptions(['mapped' => false]);
+        yield Field\UrlField::new('ressUrl', 'notice_ressurl')->setHelp('notice_ressurl_help')->setFormTypeOptions(['attr' => ['class' => 'isUrl'],'constraints'=>[new Url()],'required'=>false]);
+        yield FileField::new('ressZip', 'Contenu Zip')->setUploadDir('public/uploads/files')->setHelp('notice_ressurl_help')->onlyOnForms()
+            ->setUploadedFileNamePattern('[timestamp]-[randomhash].[extension]')->setBasePath('/uploads/files')->setFormTypeOptions(['attr' => ['class' => 'isZip'],'required'=>false])
+            ->setFileConstraints([new File(maxSize: '64M', mimeTypes: ["application/zip", "application/x-zip-compressed", "multipart/x-zip"])]);
         yield EntityField::new('ressources','notice_notices')->setFormType(NoticeAutoField::class)->setHelp('notice_notices_help')->hideOnIndex();
         yield Field\ChoiceField::new('etat')->setChoices(NoticEtat::getLabels())->renderAsBadges(NoticEtat::getColors())->hideOnForm();
         yield Field\AssociationField::new('validateur','notice_validateur')->onlyOnDetail();
@@ -267,10 +268,14 @@ class NoticeCrudController extends AbstractCrudController
             $uploadDir = $config->getOption('upload_dir');
             $uploadNew = $config->getOption('upload_new');
             $extractNew = function (UploadedFile $file, string $uploadDir, string $fileName) {
+                $target = $uploadDir .DIRECTORY_SEPARATOR. pathinfo($fileName, PATHINFO_FILENAME);
                 $zip = new \ZipArchive();
-                if ($zip->open($file->getRealPath()) === true) {
-                    $zip->extractTo($uploadDir .DIRECTORY_SEPARATOR. pathinfo($fileName, PATHINFO_FILENAME));
+                try {
+                    if ($zip->open($file->getRealPath()) === true)
+                        $zip->extractTo($target);
                     $zip->close();
+                }catch (\Exception $error){
+                    throw new FileException(sprintf('Could not extract the file "%s" to "%s" (%s).', $file->getRealPath(), $target, $error->getMessage()));
                 }
             };
 
@@ -427,10 +432,6 @@ class NoticeCrudController extends AbstractCrudController
 
     private function addFormEvent(FormBuilderInterface $builder): FormBuilderInterface
     {
-        $builder->get('zipFile')->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
-            $form = $event->getForm();
-            $this->adjustForm($form->getParent(), false);
-        });
         $builder->get('champDisc')->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             $form = $event->getForm();
             $this->addDisc($form->getParent(), $form->getData());
@@ -468,32 +469,7 @@ class NoticeCrudController extends AbstractCrudController
                     $form->get('division')->setData($division);
                 }
             }
-        })
-            ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-            $form = $event->getForm();
-            $this->adjustForm($form->getParent(), false);
         });
-    }
-
-    private function adjustForm($form, $isAdmin)
-    {
-        /*$form->remove('dynamicField');
-
-        if ($isAdmin) {
-            $form->add('dynamicField', ChoiceType::class, [
-                'label' => 'Dynamic Field',
-                'required' => false,
-                'choices' => [
-                    'Choice 1' => 'choice1',
-                    'Choice 2' => 'choice2',
-                ],
-            ]);
-        } else {
-            $form->add('dynamicField', TextType::class, [
-                'label' => 'Dynamic Field',
-                'required' => false,
-            ]);
-        }*/
     }
 
     public function new(AdminContext $context)
@@ -532,4 +508,17 @@ class NoticeCrudController extends AbstractCrudController
         if($request["dossier"] && $dossier = $this->rep->find($request["dossier"])) $notice->setRepertoire($dossier);
         return $this->changEtatNotice(['Déplacer', 'Déplacée', 'Déplacement', false], $notice, $ctx->getRequest()->get('folderId'));
     }
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @var Notice $entityInstance
+     */
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if($zipDir = $entityInstance->getRessZip())
+            $entityInstance->setRessUrl(pathinfo($zipDir, PATHINFO_FILENAME));
+        parent::persistEntity($entityManager, $entityInstance);
+    }
+
+
 }

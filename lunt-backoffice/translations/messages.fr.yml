@@ -8,7 +8,7 @@ notice_tags: Mots-clés
 notice_tags_help: Préférer 5 mots-clés en moyenne
 notice_date: Date de création
 notice_date_help: Année à laquelle la ressource a été conçue (au format AAAA)
-notice_ressurl: Contenu
+notice_ressurl: Contenu Url
 notice_ressurl_help: Adresse URL de la ressource externe
 notice_notices: Ressource(s) liée(s)
 notice_notices_help: Les notices associées à celle-ci

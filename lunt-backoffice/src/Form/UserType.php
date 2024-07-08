@@ -4,7 +4,7 @@ namespace App\Form;
 
 use App\Entity\{Etablissement, Groupe, Univerique, User};
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\{AbstractType,FormBuilderInterface};
+use Symfony\Component\Form\{AbstractType, FormBuilderInterface};
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserType extends AbstractType

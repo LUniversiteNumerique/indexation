@@ -71,6 +71,8 @@ class Notice
 
     #[ORM\Column(length: 255)]
     private ?string $ressUrl = null;
+    //#[ORM\Column(insertable: false, updatable: false)]
+    private ?string $ressZip = null;
 
     #[ORM\Column(length: 255, nullable: true),Assert\Url]
     private ?string $formEvalUrl = null;
@@ -333,9 +335,21 @@ class Notice
         return $this->ressUrl;
     }
 
-    public function setRessUrl(?string $contenu): self
+    public function setRessUrl(?string $url): self
     {
-        $this->ressUrl = $contenu;
+        $this->ressUrl = $url;
+
+        return $this;
+    }
+
+    public function getRessZip(): ?string
+    {
+        return $this->ressZip;
+    }
+
+    public function setRessZip(?string $zip): self
+    {
+        $this->ressZip = $zip;
 
         return $this;
     }

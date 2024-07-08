@@ -20,6 +20,7 @@ class IndexingNotice
             new Field('titre', $notice->getTitre()),
             new Field('vignette', $notice->getVignette()),
             new Field('description', $notice->getDescription()),
+            new Field('description_text', strip_tags($notice->getDescription())),
             new Field('dure_apprentissage', $notice->getDureAppr()),
             new Field('objectifs_pedagogiques', $notice->getObjectif()),
             new Field('evaluation_form_url', $notice->getFormEvalUrl()),
@@ -50,7 +51,6 @@ class IndexingNotice
             new Field('ressource_payante', $notice->isRessPayant()),
             new Field('exposition_oai', $notice->isExportOai()),
             new Field('external_resource', false),
-//            new Field('fichiers_attaches', []),
         ]);
     }
     static function fromSuplom(SuplomDto $suplom, ?Univerique $core): IndexingNotice
@@ -63,8 +63,6 @@ class IndexingNotice
             $entities = self::getContribute($c->entities);
             if (!empty($entities)) list($auteurs[], $porteurs[]) = $entities;
         }
-
-        dump($auteurs, $porteurs);
 
         $inotice = new self([
             new Field('entrepot_nom',$core?->getLabel()),
