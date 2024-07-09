@@ -23,8 +23,5 @@
 ###> symfony/asset-mapper ###
 /assets/vendor
 /migrations
-/data/files
-/data/solr
-/data/wdps
 ###< symfony/asset-mapper ###
 .idea/

@@ -4,7 +4,7 @@ namespace App\Message\Handler;
 
 use App\Entity\{IndexingConfig, Notice, NoticEtat};
 use Doctrine\ORM\{EntityManagerInterface,EntityRepository};
-use App\Entity\Dto\{OaidcDto,SuplomDto,IndexingNotice};
+use App\Entity\Dto\{OaidcDto, SuplomDto, IndexingNotice};
 use App\Service\{FileService, SolrApiService};
 use App\Message\IntexingConfigMessage;
 use JMS\Serializer\SerializerInterface;
@@ -12,15 +12,15 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-readonly class InterIndexingHandler
+class InterIndexingHandler
 {
     private EntityRepository $configRep, $noticeRep;
     public function __construct(
-        private EntityManagerInterface $em,
-        private SerializerInterface    $js,
-        private SolrApiService         $sm,
-        private FileService            $fs,
-        private LoggerInterface $logger
+        private readonly EntityManagerInterface $em,
+        private readonly SerializerInterface    $js,
+        private readonly LoggerInterface        $lg,
+        private readonly SolrApiService         $sm,
+        private FileService                     $fs,
     ) {
         $this->noticeRep = $this->em->getRepository(Notice::class);
         $this->configRep = $this->em->getRepository(IndexingConfig::class);
@@ -28,18 +28,23 @@ readonly class InterIndexingHandler
 
     public function __invoke(IntexingConfigMessage $message): void
     {
-
         /** @var IndexingConfig $task */
         $task = $this->configRep->find($message->taskId);
         if (!$task) throw new \RuntimeException("Aucun planificateur d'identifant ".$message->taskId);
+        $task->setBasePath('%kernel.project_dir%/data/files');//$this->fs = new FileService($task->getBaseUri());
+
         $core = $task->getIndexCore()?->getName(); $offset = 0;
-        $this->logger->warning(sprintf("Début d'indexation %s de %s", $task->isFullMode()?'complète':'différentielle', $core));
+        $this->lg->warning(sprintf("Début d'indexation %s de %s", $task->isFullMode()?'complète':'différentielle', $core));
 
         if ($task->isFullMode()) {
             $this->sm->delDocuments("<query>external_resource:false</query>", "$core/update?commit=true");
             $this->fs->removeFilesFrom("oai/$core");
             $this->fs->removeFilesFrom("suplom/$core");
         }
+
+        //$content = $this->fs->readFile("facette.xml", true);
+        //$facettes = $this->js->deserialize($content, FacetteDto::class, 'xml');
+
         do {
             /** @var Notice[] $data */
             $data = $this->noticeRep->findFrom($task->getIndexCore()?->getId(), !$task->isFullMode(), $task->getBatchSize(), $offset);
@@ -54,13 +59,13 @@ readonly class InterIndexingHandler
                 $this->sm->editDocuments($this->push($news, $core) . $this->pop($olds, $core), "$core/update?commit=true");
                 $task->setScheduleAt(new \DateTime());
                 $this->em->flush(); $this->em->clear();
-                $this->logger->info(sprintf("Notices concernées %d:  %d (indexées) + %d (dépubliées)", count($data), count($news), count($olds)));
+                $this->lg->info(sprintf("Notices concernées %d:  %d (indexées) + %d (dépubliées)", count($data), count($news), count($olds)));
             }
 
             $offset += $task->getBatchSize();
         } while (count($data) > 0);
 
-        $this->logger->warning(sprintf("Fin d'indexation %s de %s", $task->isFullMode()?'complète':'différentielle', $core));
+        $this->lg->warning(sprintf("Fin d'indexation %s de %s", $task->isFullMode()?'complète':'différentielle', $core));
     }
 
     private function pop(array $sources, string $index): string

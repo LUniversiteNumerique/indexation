@@ -10,7 +10,7 @@ readonly class FileService
     private Finder $finder;
     private Filesystem $filesystem;
     public function __construct(
-        #[Autowire('%kernel.project_dir%/data/files')]
+        #[Autowire('%kernel.project_dir%/../lunt-resources/files')]
         private string $directory
     )
     {
@@ -35,15 +35,16 @@ readonly class FileService
         }
     }
 
-    public function readFile(string $filePath): ?string
+    public function readFile(string $filePath, $isRelative = false): ?string
     {
+        $path = $isRelative ? $this->directory .DIRECTORY_SEPARATOR. $filePath : $filePath;
         try {
             // Vérifier si le fichier existe
-            if (!$this->filesystem->exists($filePath))
-                throw new IOException("Le fichier n'existe pas : $filePath");
+            if (!$this->filesystem->exists($path))
+                throw new IOException("Le fichier n'existe pas : $path");
 
             // Lire le contenu du fichier
-            return file_get_contents($filePath);
+            return file_get_contents($path);
         } catch (IOExceptionInterface) { return null; }
     }
 

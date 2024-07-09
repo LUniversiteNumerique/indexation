@@ -47,6 +47,7 @@ class IndexingNotice
             new Field('associations_associate', implode(", ", $notice->getRessources()->toArray())),
             new Field('langues_utilisateur', implode(", ", (array)$notice->getUserLang())),
             new Field('langues_ressource', implode(", ", (array)$notice->getRessLang())),
+            new Field('facettes', implode(", ", (array)$notice->getFacettes())),
             new Field('propriete_intellectuelle', $notice->isProprIntel()),
             new Field('ressource_payante', $notice->isRessPayant()),
             new Field('exposition_oai', $notice->isExportOai()),
@@ -189,7 +190,6 @@ class Field
 {
     public function __construct(
         #[Jms\XmlAttribute, Jms\SerializedName('name')] public string $key,
-        #[Jms\XmlValue(cdata: false)] public null|string|bool|array $value
+        #[Jms\XmlValue(cdata: false)] public null|string|bool|array   $value
     ){}
 }
-

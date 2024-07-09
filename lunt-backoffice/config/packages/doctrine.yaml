@@ -21,12 +21,6 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Entity'
                 prefix: 'App\Entity'
                 alias: App
-            Tree:
-                type: attribute
-                is_bundle: false
-                prefix: Gedmo\Tree\Entity
-                dir: "%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Tree/Entity"
-                alias: GedmoTree
 
 when@test:
     doctrine:

@@ -50,6 +50,8 @@ notice_userlang: Langue(s) de l'utilisateur
 notice_userlang_help: La(Les) langue(s) des utilisateurs de la notice
 notice_objectif: Objectif pédagogique
 notice_objectif_help: L'objectif pédagogique de la notice/ressource
+notice_facettes: Les facettes
+notice_facettes_help: Ajout au max 5 champs de facettes
 notice_exportoai: Export OAI
 notice_exportoai_help: Exporter cette notice au format OAI ?
 notice_discifond: Discipline fondamentale

@@ -91,7 +91,7 @@ class NoticeCrudController extends AbstractCrudController
     {
         return $filters->add(ChoiceFilter::new('etat')
             ->setChoices(NoticEtat::getLabels())->renderExpanded())
-            ->add('specialite')->add('creeLe');
+            ->add('facettes')->add('creeLe');
     }
 
     public function configureFields(string $pageName): iterable
@@ -159,6 +159,7 @@ class NoticeCrudController extends AbstractCrudController
             yield Field\ChoiceField::new('userLang','notice_userlang')->setHelp('notice_userlang_help')->hideOnIndex()
                 ->setChoices(array_flip($langList))->allowMultipleChoices()->renderExpanded(false)->renderAsBadges();
             yield Field\TextEditorField::new('objectif','notice_objectif')->setHelp('notice_objectif_help')->hideOnIndex();
+            yield Field\ArrayField::new('facettes', 'notice_facettes')->setHelp('notice_facettes_help')->hideOnIndex();
             yield Field\BooleanField::new('exportOAI', 'notice_exportoai')->setHelp('notice_exportoai_help')->renderAsSwitch(false)->hideOnIndex();
 
             yield Field\FormField::addColumn(6);

@@ -71,7 +71,6 @@ class Notice
 
     #[ORM\Column(length: 255)]
     private ?string $ressUrl = null;
-    //#[ORM\Column(insertable: false, updatable: false)]
     private ?string $ressZip = null;
 
     #[ORM\Column(length: 255, nullable: true),Assert\Url]
@@ -123,6 +122,9 @@ class Notice
 
     #[ORM\Column(nullable: true)]
     private ?bool $editDemande = null;
+
+    #[ORM\Column(nullable: true), Assert\Count(max: 5)]
+    private ?array $facettes = null;
 
     public function __construct()
     {
@@ -641,6 +643,19 @@ class Notice
 
         return $this;
     }
+
+    public function getFacettes(): ?array
+    {
+        return $this->facettes;
+    }
+
+    public function setFacettes(?array $facettes): static
+    {
+        $this->facettes = $facettes;
+
+        return $this;
+    }
+
 
     public function __toString(): string
     {
