@@ -2,7 +2,6 @@ version: "3.8"
 
 services:
   backoffice:
-    # Début variante pour les environnements dev
     image: sslv-nexus.coexya.eu/lunt-backoffice:${VERSION:-latest}
     env_file:
       - ./.env
@@ -27,8 +26,6 @@ services:
       - "80:80"
     depends_on:
       - mariadb
-    # Début variante pour les environnements dev
-    # Note : Les données sont à copier manuellement.
     volumes:
       - /opt/lunt-wordpress:/var/www/html
 
