@@ -3,21 +3,14 @@ version: "3.8"
 services:
   backoffice:
     # Début variante pour les environnements dev
-    # image: sslv-nexus.coexya.eu/lunt-backoffice:${VERSION:-latest}
-    # Début variante pour le développement local
-    build:
-      context: ./lunt-backoffice
-    # Fin variantes
+    image: sslv-nexus.coexya.eu/lunt-backoffice:${VERSION:-latest}
+    env_file:
+      - ./.env
     ports:
       - "8000:80"
     depends_on:
       - mariadb
       - mailer
-    # Début variante pour les environnements local
-    volumes:
-      - ./lunt-backoffice:/var/www/site
-      #- ./lunt-backoffice/php.ini:/usr/local/etc/php/php.ini
-    # Fin variantes
 
   wordpress:
     image: wordpress:5.8.3-php7.3-apache
@@ -36,12 +29,8 @@ services:
       - mariadb
     # Début variante pour les environnements dev
     # Note : Les données sont à copier manuellement.
-    # volumes:
-    #  - /opt/lunt-wordpress:/var/www/html
-    # Début variante pour le développement local
     volumes:
-      - ./lunt-wordpress:/var/www/html
-    # Fin variantes
+      - /opt/lunt-wordpress:/var/www/html
 
   myadmin:
     image: phpmyadmin/phpmyadmin
@@ -77,16 +66,9 @@ services:
       - SOLR_LOG_LEVEL=INFO
     ports:
       - "8983:8983"
-    # Début variante pour les environnements dev
-    # Note : Les données sont à copier manuellement.
-    # volumes:
-    #  - solr_data:/var/solr
-    #  - /opt/lunt-solr:/var/solr/data
-    # Début variante pour le développement local
     volumes:
       - solr_data:/var/solr
-      - ./lunt-solr:/var/solr/data
-    # Fin variantes
+      - /opt/lunt-solr:/var/solr/data
     command:
       - solr-precreate
       - unt1
