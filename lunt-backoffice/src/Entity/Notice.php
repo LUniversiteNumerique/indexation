@@ -123,8 +123,8 @@ class Notice
     #[ORM\Column(nullable: true)]
     private ?bool $editDemande = null;
 
-    #[ORM\Column(nullable: true), Assert\Count(max: 5)]
-    private ?array $facettes = null;
+    #[ORM\Column(nullable: true)]
+    private ?string $champExt1, $champExt2, $champExt3, $champExt4, $champExt5;
 
     public function __construct()
     {
@@ -644,18 +644,65 @@ class Notice
         return $this;
     }
 
-    public function getFacettes(): ?array
+    public function getChampExt1(): ?string
     {
-        return $this->facettes;
+        return $this->champExt1;
     }
 
-    public function setFacettes(?array $facettes): static
+    public function setChampExt1(?string $champExt1): static
     {
-        $this->facettes = $facettes;
+        $this->champExt1 = $champExt1;
 
         return $this;
     }
 
+    public function getChampExt2(): ?string
+    {
+        return $this->champExt2;
+    }
+
+    public function setChampExt2(?string $champExt2): static
+    {
+        $this->champExt2 = $champExt2;
+
+        return $this;
+    }
+
+    public function getChampExt3(): ?string
+    {
+        return $this->champExt3;
+    }
+
+    public function setChampExt3(?string $champExt3): static
+    {
+        $this->champExt3 = $champExt3;
+
+        return $this;
+    }
+
+    public function getChampExt4(): ?string
+    {
+        return $this->champExt4;
+    }
+
+    public function setChampExt4(?string $champExt4): static
+    {
+        $this->champExt4 = $champExt4;
+
+        return $this;
+    }
+
+    public function getChampExt5(): ?string
+    {
+        return $this->champExt5;
+    }
+
+    public function setChampExt5(?string $champExt5): static
+    {
+        $this->champExt5 = $champExt5;
+
+        return $this;
+    }
 
     public function __toString(): string
     {

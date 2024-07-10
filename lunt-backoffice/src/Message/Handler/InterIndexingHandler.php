@@ -31,7 +31,7 @@ class InterIndexingHandler
         /** @var IndexingConfig $task */
         $task = $this->configRep->find($message->taskId);
         if (!$task) throw new \RuntimeException("Aucun planificateur d'identifant ".$message->taskId);
-        $task->setBasePath('%kernel.project_dir%/data/files');//$this->fs = new FileService($task->getBaseUri());
+        //$this->fs = new FileService($task->getBaseUri());
 
         $core = $task->getIndexCore()?->getName(); $offset = 0;
         $this->lg->warning(sprintf("Début d'indexation %s de %s", $task->isFullMode()?'complète':'différentielle', $core));
@@ -41,9 +41,6 @@ class InterIndexingHandler
             $this->fs->removeFilesFrom("oai/$core");
             $this->fs->removeFilesFrom("suplom/$core");
         }
-
-        //$content = $this->fs->readFile("facette.xml", true);
-        //$facettes = $this->js->deserialize($content, FacetteDto::class, 'xml');
 
         do {
             /** @var Notice[] $data */

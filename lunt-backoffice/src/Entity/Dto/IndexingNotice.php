@@ -15,7 +15,7 @@ class IndexingNotice
         $user = $notice->getCreateur();
         $dewe = $notice->getCodewey(); $disc = $notice->getSpecialite();
         $core = $notice->getValidateur()?->getUntheme();
-        return new self([
+        $indx = new self([
             new Field('uuid', $notice->getUuid()),
             new Field('titre', $notice->getTitre()),
             new Field('vignette', $notice->getVignette()),
@@ -47,12 +47,18 @@ class IndexingNotice
             new Field('associations_associate', implode(", ", $notice->getRessources()->toArray())),
             new Field('langues_utilisateur', implode(", ", (array)$notice->getUserLang())),
             new Field('langues_ressource', implode(", ", (array)$notice->getRessLang())),
-            new Field('facettes', implode(", ", (array)$notice->getFacettes())),
             new Field('propriete_intellectuelle', $notice->isProprIntel()),
             new Field('ressource_payante', $notice->isRessPayant()),
             new Field('exposition_oai', $notice->isExportOai()),
             new Field('external_resource', false),
         ]);
+
+        if ($notice->getChampExt1()) $indx->fields[] = new Field('champ_extension1', $notice->getChampExt1());
+        if ($notice->getChampExt2()) $indx->fields[] = new Field('champ_extension2', $notice->getChampExt2());
+        if ($notice->getChampExt3()) $indx->fields[] = new Field('champ_extension3', $notice->getChampExt3());
+        if ($notice->getChampExt4()) $indx->fields[] = new Field('champ_extension4', $notice->getChampExt4());
+        if ($notice->getChampExt5()) $indx->fields[] = new Field('champ_extension5', $notice->getChampExt5());
+        return $indx;
     }
     static function fromSuplom(SuplomDto $suplom, ?Univerique $core): IndexingNotice
     {

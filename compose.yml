@@ -10,6 +10,8 @@ services:
     depends_on:
       - mariadb
       - mailer
+    volumes:
+      - ${JOAI_BASE_URI:-/opt/lunt-resources}:/var/www/site/data
 
   wordpress:
     image: wordpress:5.8.3-php7.3-apache

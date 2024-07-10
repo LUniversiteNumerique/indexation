@@ -21,7 +21,7 @@ class IndexingConfigCrudController extends AbstractCrudController
             AssociationField::new('indexCore', 'UNT'),
             TextField::new('frequency','Fréquence')->setHelp("Exemples: '10 min' ou '2 hours' ou '1 day'"),
             IntegerField::new('batchSize','Taille du lot')->setHelp('Batch Size'),
-            IntegerField::new('baseUri','Chemin du dossier')->setHelp("Si vous définissez, assurez-vous qu'il existe et accessible en écriture sinon laissez par la valeur defaut"),
+            //IntegerField::new('baseUri','Chemin du dossier')->setHelp("Si vous définissez, assurez-vous qu'il existe et accessible en écriture sinon laissez par la valeur defaut"),
             BooleanField::new('indexType','Notices externes ?'),
             BooleanField::new('fullMode','Réindexation complète ?'),
         ];

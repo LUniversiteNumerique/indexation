@@ -22,5 +22,6 @@
 ###> symfony/asset-mapper ###
 /assets/vendor
 /migrations
+/data/files
 ###< symfony/asset-mapper ###
 .idea/

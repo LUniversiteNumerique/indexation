@@ -31,11 +31,11 @@ class IndexingConfig
     private ?Univerique $indexCore = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $basePath;
+    private ?string $baseUri;
 
     public function __construct()
     {
-        $this->basePath = '%kernel.project_dir%/../lunt-resources/files';
+        $this->baseUri = '%kernel.project_dir%/../lunt-resources/files';
         $this->scheduleAt = new \DateTime();
     }
 
@@ -116,14 +116,14 @@ class IndexingConfig
         return $this;
     }
 
-    public function getBasePath(): ?string
+    public function getBaseUri(): ?string
     {
-        return $this->basePath;
+        return $this->baseUri;
     }
 
-    public function setBasePath(?string $uri): static
+    public function setBaseUri(?string $uri): static
     {
-        $this->basePath = $uri;
+        $this->baseUri = $uri;
 
         return $this;
     }
