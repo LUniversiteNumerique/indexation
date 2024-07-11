@@ -693,10 +693,6 @@
 		<ns1:Notation>180</ns1:Notation>
 		<ns1:Label>Philosophies occidentales de l’Antiquité et du Moyen-Age</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="2" uri="http://dewey.info/class/18/">
-		<ns1:Notation>180</ns1:Notation>
-		<ns1:Label>Philosophies occidentales de l’Antiquité et du Moyen-Age</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/181/">
 		<ns1:Notation>181</ns1:Notation>
 		<ns1:Label>Philosophies de l’Orient</ns1:Label>
@@ -1840,10 +1836,6 @@
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/495.6/">
 		<ns1:Notation>495.6</ns1:Notation>
-		<ns1:Label>Langue</ns1:Label>
-	</ns1:Concept>
-		<ns1:Concept level="3" uri="http://dewey.info/class/495.1/">
-		<ns1:Notation>495.1</ns1:Notation>
 		<ns1:Label>Langue</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/496/">

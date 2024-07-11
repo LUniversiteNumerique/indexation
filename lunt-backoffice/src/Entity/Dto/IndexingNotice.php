@@ -80,27 +80,27 @@ class IndexingNotice
             new Field('uuid', substr($suplom->general?->identifier?->entry, -36)),
             new Field('titre', $suplom->general->title[0]?->value),
             new Field('description', $suplom->general->description[0]?->value),
-            new Field('langues_ressource', $suplom->general->languages),
-            new Field('mots_cles', array_map(fn(Field $f) => $f->value, $suplom->general?->keyword)),
-            new Field('types_documentaires', array_map(fn(Source $s) => $s->value, $suplom->general?->documentTypes)),
+            new Field('langues_ressource', implode(', ',$suplom->general->languages)),
+            new Field('mots_cles', array_reduce($suplom->general?->keyword, fn(string $acc, Field $s) => $acc.$s->value.", ", "")),
+            new Field('types_documentaires', array_reduce($suplom->general?->documentTypes, fn(string $acc, Source $s) => $acc.$s->value.", ", "")),
 
-            new Field('etablissements_co_editeurs', $porteurs),
-            new Field('contributions', $auteurs),
+            new Field('etablissements_co_editeurs', array_reduce($porteurs,fn(string $tmp, string $etab): string => $tmp.sprintf("%s, ",$etab),"")),
+            new Field('contributions', array_reduce($auteurs,fn(string $tmp, string $etab): string => $tmp.sprintf("%s, ",$etab),"")),
             new Field('date_modification', $creat?->date[0]),
             new Field('date_publication', $valid?->date[0]),
 
-            new Field('types_pedagogiques', array_map(fn(Source $s) => $s->value, $suplom->educational?->learningResourceTypes)),
-            new Field('niveaux', array_map(fn(Source $s) => $s->value, $suplom->educational?->contexts)),
-            new Field('proposition_utilisation', array_map(fn(Field $f) => $f->value, $suplom->educational?->description)),
-            new Field('dure_apprentissage', $suplom->educational?->date[0]),
-            new Field('langues_ressource', $suplom->educational->languages),
+            new Field('types_pedagogiques', array_reduce($suplom->educational?->learningResourceTypes, fn(string $acc, Source $s) => $acc.$s->value.", ", "")),
+            new Field('niveaux', array_reduce($suplom->educational?->contexts, fn(string $acc, Source $s) => $acc.$s->value.", ", '')),
+            new Field('proposition_utilisation', array_reduce($suplom->educational?->description, fn(string $acc, Field $f) => $acc.$f->value.", ", '')),
+            //new Field('dure_apprentissage', $suplom->educational?->date[0]),
+            new Field('langues_utilisateur', implode(', ',$suplom->educational->languages)),
 
             new Field('propriete_intellectuelle', $suplom->rights?->copyrightAndOtherRestrictions?->value!=='No'),
             new Field('ressource_payante', $suplom->rights?->cost?->value!=='No'),
             new Field('droit', $suplom->rights?->description[0]?->value),
 
             new Field('ressource_lien', $suplom->technical?->location),
-            new Field('associations_associate', array_map(fn(Resource $r) => sprintf('%s|%s', $r->identifier->entry, $r->description[0]?->value), $suplom->relation?->resources)),
+            //new Field('associations_associate', array_map(fn(Resource $r) => sprintf('%s|%s', $r->identifier->entry, $r->description[0]?->value), $suplom->relation?->resources)),
             new Field('exposition_oai', true),
             new Field('external_resource', true),
         ]);
@@ -120,13 +120,12 @@ class IndexingNotice
 
         /** @var Classification $class */
         foreach ($suplom->classifications as $class) {
-            if($class->purpose && count($class->taxonPath->taxons) >0) {
+            if($class->purpose && isset($class->taxonPath) && count($class->taxonPath->taxons) >0) {
                 /** @var Taxon $taxon */
                 $taxon = $class->taxonPath->taxons[0];
-                $inotice->fields[] = new Field($class->purpose->value, sprintf("{id=%s, libelle=%s}, ",$taxon?->id,$taxon?->entry));
+                $inotice->fields[] = new Field($class->purpose->value, sprintf("{id=%s, libelle=%s}, ",$taxon?->id??'',$taxon?->entry[0]?->value));
             }
         }
-
         return $inotice;
     }
 
@@ -134,14 +133,14 @@ class IndexingNotice
     {
         $entities = explode("ORG:", $c[0]);
         if (count($entities) == 2) {
-            $entity = str_replace('BEGIN:VCARD VERSION:3.0 N:','{nom=',$entities[0]);
-            $entity = str_replace(';; FN:',', email=',$entity);
+            $entity = str_replace("VERSION:3.0",'{nom:',$entities[0]);
+            $entity = str_replace("FN:",', email:',$entity);
+            $entity = str_replace(['BEGIN:VCARD',';;','N:', '\n'],'',$entity);
             $entity = str_replace(' UID:',', id=',$entity);
-            return [sprintf("%s}",$entity), str_replace(' END:vcard', '', $entities[1])];
+            return [sprintf("%s}",trim($entity)), str_replace('END:VCARD', '', trim($entities[1]))];
         }
         return array();
     }
-
 }
 
 #[
@@ -190,12 +189,4 @@ class OaidcDto
             $n->getPedTypes()->toArray(),
         );
     }
-}
-
-class Field
-{
-    public function __construct(
-        #[Jms\XmlAttribute, Jms\SerializedName('name')] public string $key,
-        #[Jms\XmlValue(cdata: false)] public null|string|bool|array   $value
-    ){}
 }

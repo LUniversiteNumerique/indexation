@@ -169,7 +169,7 @@ class Metadata {
 class Classification {
     public function __construct(
         #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(Source::class)] public ?Source $purpose = null,
-        #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(TaxonPath::class), Jms\SerializedName('TaxonPath')] public ?TaxonPath $taxonPath = null,
+        #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(TaxonPath::class), Jms\SerializedName('taxonPath')] public ?TaxonPath $taxonPath = null,
         #[Jms\XmlList(entry: "string", namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Field::class.">"), Jms\XmlElement(cdata: false)] public array $description = [],
     ){}
 }
