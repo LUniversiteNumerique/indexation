@@ -68,9 +68,9 @@ services:
     volumes:
       - solr_data:/var/solr
       - /opt/lunt-solr:/var/solr/data
-    command:
-      - solr-precreate
-      - unt1
+#    command:
+#      - solr-precreate
+#      - unt1
 
 volumes:
   db_data:
