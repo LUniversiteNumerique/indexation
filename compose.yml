@@ -15,7 +15,6 @@ services:
 
   wordpress:
     image: wordpress:5.8.3-php7.3-apache
-    restart: unless-stopped
     stdin_open: true
     tty: true
     environment:
@@ -42,7 +41,6 @@ services:
 
   mariadb:
     image: mariadb:latest
-    restart: always
     environment:
       MYSQL_DATABASE: ${MARIADB_DB}
       MYSQL_ROOT_PASSWORD: ${MARIADB_PASS}
@@ -59,7 +57,6 @@ services:
 
   solr:
     image: solr:latest
-    restart: on-failure
     environment:
       - SOLR_HOME=/var/solr/data
       - SOLR_LOG_LEVEL=INFO
@@ -68,9 +65,6 @@ services:
     volumes:
       - solr_data:/var/solr
       - /opt/lunt-solr:/var/solr/data
-#    command:
-#      - solr-precreate
-#      - unt1
 
 volumes:
   db_data:
