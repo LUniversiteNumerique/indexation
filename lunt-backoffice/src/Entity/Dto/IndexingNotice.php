@@ -47,10 +47,10 @@ class IndexingNotice
             new Field('associations_associate', implode(", ", $notice->getRessources()->toArray())),
             new Field('langues_utilisateur', implode(", ", (array)$notice->getUserLang())),
             new Field('langues_ressource', implode(", ", (array)$notice->getRessLang())),
-            new Field('propriete_intellectuelle', $notice->isProprIntel()),
-            new Field('ressource_payante', $notice->isRessPayant()),
-            new Field('exposition_oai', $notice->isExportOai()),
-            new Field('external_resource', false),
+            new Field('propriete_intellectuelle', $notice->isProprIntel()?:0),
+            new Field('ressource_payante', $notice->isRessPayant()?:0),
+            new Field('exposition_oai', $notice->isExportOai()?:0),
+            new Field('external_resource', 0),
         ]);
 
         if ($notice->getChampExt1()) $indx->fields[] = new Field('champ_extension1', $notice->getChampExt1());
@@ -101,8 +101,8 @@ class IndexingNotice
 
             new Field('ressource_lien', $suplom->technical?->location),
             //new Field('associations_associate', array_map(fn(Resource $r) => sprintf('%s|%s', $r->identifier->entry, $r->description[0]?->value), $suplom->relation?->resources)),
-            new Field('exposition_oai', true),
-            new Field('external_resource', true),
+            new Field('exposition_oai', 1),
+            new Field('external_resource', 1),
         ]);
 
         /** @var Contribute $c */

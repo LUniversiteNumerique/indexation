@@ -11,8 +11,9 @@ RUN apt update \
     && docker-php-ext-install zip
 
 
-RUN apt install -y nginx
-RUN apt install -y supervisor
+RUN apt install -y nginx &&  \
+    apt install -y vim && \
+    apt install -y supervisor
 
 RUN rm /etc/nginx/sites-enabled/default
 RUN mkdir -p /var/log/supervisor
