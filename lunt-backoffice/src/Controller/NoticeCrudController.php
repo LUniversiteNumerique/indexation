@@ -158,11 +158,9 @@ class NoticeCrudController extends AbstractCrudController
             yield Field\ChoiceField::new('userLang','notice_userlang')->setHelp('notice_userlang_help')->hideOnIndex()
                 ->setChoices(array_flip($langList))->allowMultipleChoices()->renderExpanded(false)->renderAsBadges();
             yield Field\TextEditorField::new('objectif','notice_objectif')->setHelp('notice_objectif_help')->hideOnIndex();
-            yield Field\TextField::new('champExt1',"Champ d'extension 1")->setHelp('Optionnel')->hideOnIndex();
-            yield Field\TextField::new('champExt2',"Champ d'extension 2")->setHelp('Optionnel')->hideOnIndex();
-            yield Field\TextField::new('champExt3',"Champ d'extension 3")->setHelp('Optionnel')->hideOnIndex();
-            yield Field\TextField::new('champExt4',"Champ d'extension 4")->setHelp('Optionnel')->hideOnIndex();
-            yield Field\TextField::new('champExt5',"Champ d'extension 5")->setHelp('Optionnel')->hideOnIndex();
+            yield Field\TextField::new('champExt1',"Champ d'extension 1")->hideOnIndex(); yield Field\TextField::new('champExt2',"Champ d'extension 2")->hideOnIndex();
+            yield Field\TextField::new('champExt3',"Champ d'extension 3")->hideOnIndex(); yield Field\TextField::new('champExt4',"Champ d'extension 4")->hideOnIndex();
+            yield Field\TextField::new('champExt5',"Champ d'extension 5")->hideOnIndex();
             yield Field\BooleanField::new('exportOAI', 'notice_exportoai')->setHelp('notice_exportoai_help')->renderAsSwitch(false)->hideOnIndex();
 
             yield Field\FormField::addColumn(6);
