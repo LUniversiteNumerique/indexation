@@ -12,15 +12,15 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class InterIndexingHandler
+readonly class InterIndexingHandler
 {
     private EntityRepository $configRep, $noticeRep;
     public function __construct(
-        private readonly EntityManagerInterface $em,
-        private readonly SerializerInterface    $js,
-        private readonly LoggerInterface        $lg,
-        private readonly SolrApiService         $sm,
-        private FileService                     $fs,
+        private EntityManagerInterface $em,
+        private SerializerInterface    $js,
+        private LoggerInterface        $lg,
+        private SolrApiService         $sm,
+        private FileService            $fs,
     ) {
         $this->noticeRep = $this->em->getRepository(Notice::class);
         $this->configRep = $this->em->getRepository(IndexingConfig::class);

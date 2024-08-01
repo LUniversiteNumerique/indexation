@@ -12,14 +12,14 @@ class Groupe
 {
     const PERMISSIONS = array(
         'Lire_Auteur'=>'ROLE_READ_ACTE', 'Créer_Auteur'=>'ROLE_CREA_ACTE', 'Editer_Auteur'=>'ROLE_EDIT_ACTE', 'Supprimer_Auteur'=>'ROLE_DROP_ACTE',
-        'Lire_Cdewey'=>'ROLE_READ_DEWE', 'Créer_Cdewey'=>'ROLE_CREA_DEWE', 'Editer_Cdewey'=>'ROLE_EDIT_DEWE', 'Supprimer_Cdewey'=>'ROLE_DROP_DEWE',
-        'Lire_Discip'=>'ROLE_READ_DISC', 'Créer_Discip'=>'ROLE_CREA_DISC', 'Editer_Discip'=>'ROLE_EDIT_DISC', 'Supprimer_Discip'=>'ROLE_DROP_DISC',
+        //'Lire_Cdewey'=>'ROLE_READ_DEWE', 'Créer_Cdewey'=>'ROLE_CREA_DEWE', 'Editer_Cdewey'=>'ROLE_EDIT_DEWE', 'Supprimer_Cdewey'=>'ROLE_DROP_DEWE',
+        //'Lire_Discip'=>'ROLE_READ_DISC', 'Créer_Discip'=>'ROLE_CREA_DISC', 'Editer_Discip'=>'ROLE_EDIT_DISC', 'Supprimer_Discip'=>'ROLE_DROP_DISC',
+        'Lire_Licenc'=>'ROLE_READ_LICE', 'Créer_Licenc'=>'ROLE_CREA_LICE', 'Editer_Licenc'=>'ROLE_EDIT_LICE', 'Supprimer_Licenc'=>'ROLE_DROP_LICE',
+        'Lire_Univer'=>'ROLE_READ_UNIV', 'Créer_Univer'=>'ROLE_CREA_UNIV', 'Editer_Univer'=>'ROLE_EDIT_UNIV', 'Supprimer_Univer'=>'ROLE_DROP_UNIV',
         'Lire_Etabli'=>'ROLE_READ_ETAB', 'Créer_Etabli'=>'ROLE_CREA_ETAB', 'Editer_Etabli'=>'ROLE_EDIT_ETAB', 'Supprimer_Etabli'=>'ROLE_DROP_ETAB',
         'Lire_Groupe'=>'ROLE_READ_GROU', 'Créer_Groupe'=>'ROLE_CREA_GROU', 'Editer_Groupe'=>'ROLE_EDIT_GROU', 'Supprimer_Groupe'=>'ROLE_DROP_GROU',
         'Lire_MotClé'=>'ROLE_READ_KEYW', 'Créer_MotClé'=>'ROLE_CREA_KEYW', 'Editer_MotClé'=>'ROLE_EDIT_KEYW', 'Supprimer_MotClé'=>'ROLE_DROP_KEYW',
         'Lire_Utilis'=>'ROLE_READ_USER', 'Créer_Utilis'=>'ROLE_CREA_USER', 'Editer_Utilis'=>'ROLE_EDIT_USER', 'Supprimer_Utilis'=>'ROLE_DROP_USER',
-        'Lire_Licenc'=>'ROLE_READ_LICE', 'Créer_Licenc'=>'ROLE_CREA_LICE', 'Editer_Licenc'=>'ROLE_EDIT_LICE', 'Supprimer_Licenc'=>'ROLE_DROP_LICE',
-        'Lire_Pédago'=>'ROLE_READ_TPED', 'Créer_Pédago'=>'ROLE_CREA_TPED', 'Editer_Pédago'=>'ROLE_EDIT_TPED', 'Supprimer_Pédago'=>'ROLE_DROP_TPED',
         'Lire_Notice'=>'ROLE_READ_NOTI', 'Créer_Notice'=>'ROLE_CREA_NOTI', 'Editer_Notice'=>'ROLE_EDIT_NOTI', 'Supprimer_Notice'=>'ROLE_DROP_NOTI', 'Valider_Notice'=>'ROLE_VALI_NOTI',
         'Lire_Indexe'=>'ROLE_READ_CORE', 'Créer_Indexe'=>'ROLE_CREA_CORE', 'Editer_Indexe'=>'ROLE_EDIT_CORE', 'Supprimer_Indexe'=>'ROLE_DROP_CORE',
     );
