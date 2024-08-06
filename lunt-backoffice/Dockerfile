@@ -1,5 +1,6 @@
 FROM php:8.3-fpm
 
+ENV APP_ENV=prod
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
 RUN apt update \
@@ -10,34 +11,28 @@ RUN apt update \
     && docker-php-ext-configure zip \
     && docker-php-ext-install zip
 
-
 RUN apt install -y nginx &&  \
     apt install -y vim && \
-    apt install -y supervisor
+    apt install -y supervisor && \
+    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
+    rm /etc/nginx/sites-enabled/default && \
+    mkdir -p /var/log/supervisor && \
+    sed -i 's/client_max_body_size 25M;/client_max_body_size 128M;/g' /etc/nginx/nginx.conf
 
-RUN rm /etc/nginx/sites-enabled/default
-RUN mkdir -p /var/log/supervisor
 COPY ./resources/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY ./resources/default.conf.template /etc/nginx/conf.d/templates/default.conf.template
 COPY ./resources/nginx-start.sh /root/nginx-start.sh
-COPY custom-php.ini /usr/local/etc/php/conf.d/
-
-RUN chmod +x /root/nginx-start.sh
+COPY ./custom-php.ini /usr/local/etc/php/conf.d/
 
 WORKDIR /var/www/site
-
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
 COPY . /var/www/site/
 
-RUN sed -i 's/client_max_body_size 25M;/client_max_body_size 128M;/g' /etc/nginx/nginx.conf
+RUN if [ "$APP_ENV" = "dev" ]; then  ["composer","install","-v"];  \
+    else composer install --no-dev --optimize-autoloader; fi
 
-RUN ["composer","install","--no-dev","--optimize-autoloader"]
-
-
-RUN chmod a+rw public/uploads &&  \
+RUN chmod +x /root/nginx-start.sh && \
+    chmod +rw public/uploads &&  \
     mkdir -p /var/log/php-fpm && \
     mkdir -p /var/log/ngninx
-
 
 CMD ["/usr/bin/supervisord"]
