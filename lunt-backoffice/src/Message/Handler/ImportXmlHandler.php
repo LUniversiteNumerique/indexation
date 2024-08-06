@@ -9,6 +9,7 @@ use App\Service\FileService;
 use Doctrine\ORM\{EntityRepository,EntityManagerInterface};
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Process\{Process,Exception\ProcessFailedException};
 
 #[AsMessageHandler]
 readonly class ImportXmlHandler
@@ -30,6 +31,10 @@ readonly class ImportXmlHandler
         if ($message->name === 'dewey') $objs = $this->getDewe($content);
         else if ($message->name === 'specialite') $objs = $this->getDisc($content);
         $this->em->flush(); dump(count($objs));
+
+        /*$process = new Process([]);
+        $process->run();
+        if (!$process->isSuccessful()) throw new ProcessFailedException($process);*/
     }
 
     /**

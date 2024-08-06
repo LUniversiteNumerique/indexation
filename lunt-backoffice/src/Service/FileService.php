@@ -10,7 +10,7 @@ readonly class FileService
     private Finder $finder;
     private Filesystem $filesystem;
     public function __construct(
-        #[Autowire('%kernel.project_dir%/data/files')]
+        #[Autowire('%kernel.project_dir%/data')]
         private string $directory
     )
     {

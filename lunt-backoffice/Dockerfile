@@ -34,7 +34,7 @@ RUN chmod a+rw public/uploads
 
 RUN sed -i 's/client_max_body_size 25M;/client_max_body_size 128M;/g' /etc/nginx/nginx.conf
 
-RUN ["composer","install","-v"]
+RUN ["composer","install","--no-dev","--optimize-autoloader"]
 
 RUN mkdir -p /var/log/php-fpm
 RUN mkdir -p /var/log/ngninx
