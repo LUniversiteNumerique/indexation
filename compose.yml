@@ -3,8 +3,6 @@ version: "3.8"
 services:
   backoffice:
     image: sslv-nexus.coexya.eu/lunt-backoffice:${VERSION:-latest}
-    env_file:
-      - ./.env
     ports:
       - "80:80"
     depends_on:
