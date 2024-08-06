@@ -30,14 +30,14 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 COPY . /var/www/site/
 
-RUN chmod a+rw public/uploads
-
 RUN sed -i 's/client_max_body_size 25M;/client_max_body_size 128M;/g' /etc/nginx/nginx.conf
 
 RUN ["composer","install","--no-dev","--optimize-autoloader"]
 
-RUN mkdir -p /var/log/php-fpm
-RUN mkdir -p /var/log/ngninx
+
+RUN chmod a+rw public/uploads &&  \
+    mkdir -p /var/log/php-fpm && \
+    mkdir -p /var/log/ngninx
 
 
 CMD ["/usr/bin/supervisord"]
