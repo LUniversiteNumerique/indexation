@@ -27,6 +27,8 @@ COPY ./custom-php.ini /usr/local/etc/php/conf.d/
 WORKDIR /var/www/site
 COPY . /var/www/site/
 
+RUN echo $APP_ENV
+
 RUN if [ "$APP_ENV" = "dev" ]; then  ["composer","install","-v"];  \
     else composer install --no-dev --optimize-autoloader; fi
 
