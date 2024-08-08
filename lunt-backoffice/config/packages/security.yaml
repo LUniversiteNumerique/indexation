@@ -3,7 +3,7 @@ security:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
     providers:
         app_user:
-            id: App\Security\UserProvider #entity: class: App\Entity\User
+            id: App\Security\UserProvider
     access_decision_manager:
         strategy: unanimous
     firewalls:

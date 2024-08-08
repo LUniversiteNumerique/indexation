@@ -34,7 +34,7 @@ class AuteurCrudController extends AbstractCrudController
         if (Crud::PAGE_NEW  === $pageName || $pageName === Crud::PAGE_EDIT) {
             yield TextField::new('prenom');
             yield TextField::new('nom');
-        } else yield TextField::new('nomComplet');
+        } else yield TextField::new('name');
         yield EmailField::new('email');
         yield DateTimeField::new('creeLe');
         yield DateTimeField::new('editeLe')->onlyOnDetail();

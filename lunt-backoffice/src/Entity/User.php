@@ -33,6 +33,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $reseToken = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $tokenExpiresAt = null;
+
     #[ORM\ManyToOne(targetEntity: Groupe::class, inversedBy: 'users'),
         Assert\Valid, Assert\Type(Groupe::class)]
     private ?Groupe $group;
@@ -115,6 +118,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setReseToken(?string $token): static
     {
         $this->reseToken = $token;
+
+        return $this;
+    }
+
+    public function getTokenExpiresAt(): ?\DateTimeImmutable
+    {
+        return $this->tokenExpiresAt;
+    }
+
+    public function setTokenExpiresAt(?\DateTimeImmutable $tokenExpiresAt): static
+    {
+        $this->tokenExpiresAt = $tokenExpiresAt;
 
         return $this;
     }

@@ -48,8 +48,8 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::linkToCrud('Les Auteurs', 'fa fa-users', Auteur::class)->setPermission('ROLE_READ_ACTE');
         yield MenuItem::section('Configurations');
-        yield MenuItem::linkToCrud("Université", 'fa fa-university', Univerique::class)->setPermission('ROLE_READ_UNIV');
         yield MenuItem::linkToCrud('Indexation', 'fa fa-book', IndexingConfig::class)->setPermission('ROLE_READ_CORE');
+        yield MenuItem::linkToCrud("Université", 'fa fa-university', Univerique::class)->setPermission('ROLE_READ_UNIV');
         yield MenuItem::linkToCrud('Etablissement', 'fa fa-university', Etablissement::class)->setPermission('ROLE_READ_ETAB');
         yield MenuItem::linkToCrud('Mots clés', 'fa fa-tags', Keyword::class)->setPermission('ROLE_READ_KEYW');
         yield MenuItem::linkToCrud("Annuaire", 'fa fa-user-group', User::class)->setPermission('ROLE_READ_USER');

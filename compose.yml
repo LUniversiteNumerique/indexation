@@ -32,9 +32,7 @@ services:
 
   mailer:
     image: mailhog/mailhog:latest
-    ports:
-      - "1025:1025"
-      - "8025:8025"
+    ports: ["8025:8025"]
 
   solr:
     image: solr:latest

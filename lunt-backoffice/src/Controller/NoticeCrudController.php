@@ -111,7 +111,7 @@ class NoticeCrudController extends AbstractCrudController
         yield Field\DateField::new('ressDate', 'notice_date')->setFormat('yyyy')->setHelp('notice_date_help')->hideOnIndex();
 
         yield Field\FormField::addFieldset('Liens de la ressource')->setIcon('fa fa-paperclip');
-        yield Field\BooleanField::new('zipFile')->setFormTypeOptions(['mapped' => false]);
+        yield Field\BooleanField::new('zipFile')->setFormTypeOptions(['mapped' => false])->onlyOnForms();
         yield Field\UrlField::new('ressUrl', 'notice_ressurl')->setHelp('notice_ressurl_help')->setFormTypeOptions(['attr' => ['class' => 'isUrl'],'constraints'=>[new Url()],'required'=>false]);
         yield FileField::new('ressZip', 'Contenu Zip')->setUploadDir('public/uploads/files')->setHelp('notice_ressurl_help')->onlyOnForms()
             ->setUploadedFileNamePattern('[timestamp]-[randomhash].[extension]')->setBasePath('/uploads/files')->setFormTypeOptions(['attr' => ['class' => 'isZip'],'required'=>false])
@@ -342,7 +342,7 @@ class NoticeCrudController extends AbstractCrudController
 
         /** @var Notice|null $notice */
         $notice = $ctx->getEntity()->getInstance(); //Approved
-        return $this->changEtatNotice(['Dépublier', 'Dépubliée', 'Dépublication', false], $notice->setEtat(NoticEtat::Forward),$ctx->getRequest()->get('folderId'));
+        return $this->changEtatNotice(['Dépublier', 'Dépubliée', 'Dépublication', false], $notice->setPublieLe(null)->setEtat(NoticEtat::Forward),$ctx->getRequest()->get('folderId'));
     }
 
     public function allowedNotice(): Response

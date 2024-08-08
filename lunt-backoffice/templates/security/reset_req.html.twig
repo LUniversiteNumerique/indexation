@@ -1,45 +1,50 @@
-{% extends '@EasyAdmin/page/login_minimal.html.twig' %}
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{% extends ea is defined ? ea.templatePath('layout') : '@EasyAdmin/page/login_minimal.html.twig' %}
 
 {% block body_class 'page-login' %}
 
 {% block page_title %} Réinitialisation de mot de passe {% endblock %}
 
-{% block head_favicon %}<link rel="shortcut icon" href="/uploads/favicon.ico">{% endblock %}
+{% block head_favicon %}<link rel="shortcut icon" href="uploads/favicon.ico">{% endblock %}
 
 {% block wrapper_wrapper %}
-<div class="login-wrapper">
-    <header class="main-header">
-        <div id="header-logo">
-            {% block header_logo %}
-                <a class="logo" title="{{ 'Réinitialisation de mot de passe'|striptags }}" href="{{ path('app_home') }}">
-                    Demande de réinitialisation de mot de passe
-                </a>
-            {% endblock header_logo %}
-        </div>
-    </header>
-
-    <section class="content">
-
-        {% include '@EasyAdmin/flash_messages.html.twig' %}
-
-        <form method="post">
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-            <div class="form-group">
-                <label class="form-control-label required" for="email">Votre adresse email</label>
-                <div class="form-widget">
-                    <input type="email" id="email" name="email" class="form-control" required autofocus>
-                </div>
-                <div class="form-text">
-                    <a href="{{ path('app_login') }}">vous connectez </a>
-                </div>
+    <div class="login-wrapper">
+        <header class="main-header">
+            <div id="header-logo">
+                {% block header_logo %}
+                    <a class="logo" title="{{ 'Réinitialisation de mot de passe'|striptags }}" href="{{ path('app_home') }}">
+                        Demande de réinitialisation de mot de passe
+                    </a>
+                {% endblock header_logo %}
             </div>
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary btn-lg btn-block">
-                    <i class="fa fa-send" aria-hidden="true"></i> Envoyer
-                </button>
-            </div>
-        </form>
+        </header>
 
-    </section>
-</div>
+        <section class="content">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="w-100 alert alert-{{ label }} alert-dismissible fade show mb-3" role="alert">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        {{ message|trans|raw }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            <form method="post">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                <div class="form-group">
+                    <label class="form-control-label required" for="email">Votre adresse email</label>
+                    <div class="form-widget">
+                        <input type="email" id="email" name="email" class="form-control" required autofocus>
+                    </div>
+                    <div class="form-text"><a href="{{ path('app_login') }}">vous connectez </a></div>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-lg btn-block">
+                        <i class="fa fa-send" aria-hidden="true"></i> Envoyer
+                    </button>
+                </div>
+            </form>
+
+        </section>
+    </div>
 {% endblock %}

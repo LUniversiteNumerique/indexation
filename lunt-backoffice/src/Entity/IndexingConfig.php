@@ -35,7 +35,7 @@ class IndexingConfig
 
     public function __construct()
     {
-        $this->baseUri = '%kernel.project_dir%/../lunt-resources/files';
+        //$this->baseUri = '%kernel.project_dir%/../lunt-resources/files';
         $this->scheduleAt = new \DateTime();
     }
 
