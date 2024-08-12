@@ -1,10 +1,7 @@
-version: "3.8"
-
 services:
   backoffice:
     image: sslv-nexus.coexya.eu/lunt-backoffice:${VERSION:-latest}
-    ports:
-      - "80:80"
+    ports: ["80:80"]
     depends_on:
       - mariadb
       - mailer
@@ -25,8 +22,7 @@ services:
     environment:
       MYSQL_DATABASE: ${MARIADB_DB}
       MYSQL_ROOT_PASSWORD: ${MARIADB_PASS}
-    ports:
-      - "3306:3306"
+    ports: ["3306:3306"]
     volumes:
       - db_data:/var/lib/mysql
 
@@ -39,8 +35,7 @@ services:
     environment:
       - SOLR_HOME=/var/solr/data
       - SOLR_LOG_LEVEL=INFO
-    ports:
-      - "8983:8983"
+    ports: ["8983:8983"]
     volumes:
       - solr_data:/var/solr
       - /opt/lunt-solr:/var/solr/data

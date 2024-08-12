@@ -1,5 +1,6 @@
 FROM php:8.3-fpm
 
+ENV APP_ENV=prod
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
 RUN apt update \
@@ -24,13 +25,15 @@ COPY ./resources/nginx-start.sh /root/nginx-start.sh
 COPY ./custom-php.ini /usr/local/etc/php/conf.d/
 
 WORKDIR /var/www/site
-COPY . /var/www/site/
+COPY . /var/www/site
 
-#RUN if [ "$APP_ENV" = "dev" ]; then  ["composer","install","-v"]; else composer install --no-dev --optimize-autoloader; fi
+RUN if [ "$APP_ENV" = "dev" ]; then  ["composer","install","-v"];  \
+    else composer install --no-dev --optimize-autoloader; fi
 
 RUN chmod +x /root/nginx-start.sh && \
-    chmod +rw public/uploads &&  \
+    chmod a+rw public/uploads &&  \
     mkdir -p /var/log/php-fpm && \
-    mkdir -p /var/log/ngninx
+    mkdir -p /var/log/ngninx && \
+    php bin/console ca:c && php bin/console as:c
 
 CMD ["/usr/bin/supervisord"]
