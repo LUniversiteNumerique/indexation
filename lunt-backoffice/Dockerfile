@@ -31,10 +31,8 @@ RUN if [ "$APP_ENV" = "dev" ]; then  ["composer","install","-v"];  \
     else composer install --no-dev --optimize-autoloader; fi
 
 RUN chmod +x /root/nginx-start.sh && \
-    chown -R www-data:www-data . &&  \
-    mkdir -p /var/log/php-fpm && \
-    mkdir -p /var/log/ngninx && \
-    php bin/console ca:c &&  \
-    php bin/console as:c && php bin/console ca:w
+    mkdir -p /var/log/php-fpm && mkdir -p /var/log/ngninx && \
+    php bin/console ca:c && php bin/console ca:w &&  \
+    php bin/console as:c && chown -R www-data:www-data .
 
 CMD ["/usr/bin/supervisord"]
