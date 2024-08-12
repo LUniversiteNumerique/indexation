@@ -7,9 +7,6 @@ services:
       - mailer
     volumes:
       - ${JOAI_BASE_URI:-/opt/lunt-resources}:/var/www/site/data
-    command:
-      - chown -R www-data:www-data var
-      - php bin/console ap:i
 
   myadmin:
     image: phpmyadmin/phpmyadmin
