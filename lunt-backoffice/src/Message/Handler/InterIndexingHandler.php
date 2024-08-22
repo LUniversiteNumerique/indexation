@@ -32,28 +32,23 @@ readonly class InterIndexingHandler
         $task = $this->configRep->find($message->taskId);
         if (!$task) throw new \RuntimeException("Aucun planificateur d'identifant ".$message->taskId);
         //$this->fs = new FileService($task->getBaseUri());
-
         $core = $task->getIndexCore()?->getName(); $offset = 0;
         $this->lg->warning(sprintf("Début d'indexation %s de %s", $task->isFullMode()?'complète':'différentielle', $core));
-
-        if ($task->isFullMode()) {
-            $this->sm->delDocuments("<query>external_resource:false</query>", "$core/update?commit=true");
-            $this->fs->removeFilesFrom("oai/$core");
-            $this->fs->removeFilesFrom("suplom/$core");
-        }
 
         do {
             /** @var Notice[] $data */
             $data = $this->noticeRep->findFrom($task->getIndexCore()?->getId(), !$task->isFullMode(), $task->getBatchSize(), $offset);
-
             $news = []; $olds = [];
+
             foreach ($data as $d) {
-                if ($d->getEtat() === NoticEtat::Approved) $news[] = $d->setPublieLe(new \DateTime()); // A publier
-                elseif($d->getPublieLe()) $olds[] = $d->setPublieLe(null)->getUuid(); // A dépublier
+                if($d->getEtat() === NoticEtat::Approved) { //&& !$d->isDeleted()
+                    if(empty($d->getPublieLe())) $news[] = $d->setPublieLe(new \DateTime()); // A publier
+                    elseif($task->isFullMode()) { $olds[] = $d->getUuid(); $news[] = $d; }// A republier
+                } elseif($d->getPublieLe())  $olds[] = $d->setPublieLe(null)->getUuid();// A dépublier //if (($d->getEditeLe() <= $task->getScheduleAt()) || $d->isDeleted()) elseif ($task->isFullMode()) $news[] = $d; //Reindex
             }
 
             if (!empty($data)) {
-                $this->sm->editDocuments($this->push($news, $core) . $this->pop($olds, $core), "$core/update?commit=true");
+                $this->sm->editDocuments($this->pop($olds, $core) . $this->push($news, $core), "$core/update?commit=true");
                 $task->setScheduleAt(new \DateTime());
                 $this->em->flush(); $this->em->clear();
                 $this->lg->info(sprintf("Notices concernées %d:  %d (indexées) + %d (dépubliées)", count($data), count($news), count($olds)));

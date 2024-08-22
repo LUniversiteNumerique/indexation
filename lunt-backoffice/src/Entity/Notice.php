@@ -118,7 +118,7 @@ class Notice
     private Collection $ressources;
 
     #[ORM\Column]
-    private ?bool $ressPayant = false, $proprIntel = false;
+    private ?bool $ressPayant = false, $proprIntel = false, $deleted = false;
 
     #[ORM\Column(nullable: true)]
     private ?bool $editDemande = null;
@@ -287,13 +287,6 @@ class Notice
     public function getRessDate(): ?\DateTimeInterface
     {
         return $this->ressDate;
-    }
-
-    public function setRessDate(?\DateTimeInterface $ressDate): self
-    {
-        $this->ressDate = $ressDate;
-
-        return $this;
     }
 
     public function getPublieLe(): ?\DateTimeInterface
@@ -628,6 +621,18 @@ class Notice
     public function setProprIntel(bool $proprIntel): static
     {
         $this->proprIntel = $proprIntel;
+
+        return $this;
+    }
+
+    public function isDeleted(): ?bool
+    {
+        return $this->deleted;
+    }
+
+    public function setDeleted(bool $deleted): static
+    {
+        $this->deleted = $deleted;
 
         return $this;
     }

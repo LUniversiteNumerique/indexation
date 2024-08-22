@@ -3,21 +3,11 @@
 namespace App\Service;
 
 use Symfony\Contracts\HttpClient\{Exception\ExceptionInterface, HttpClientInterface, ResponseInterface};
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Response;
 
-class SolrApiService
+readonly class SolrApiService
 {
-    public function __construct(
-        private HttpClientInterface $client,
-        #[Autowire(env: 'SOLR_BASE_URL')]
-        private readonly string     $solrUrl)
-    {
-        $this->client = $client->withOptions([
-            'base_uri' => $this->solrUrl,
-            'headers' => ['Content-Type' => 'application/xml'],
-        ]);
-    }
+    public function __construct(private HttpClientInterface $solrClient){}
 
     public function getDocuments($data = ['q'=>'*:*'], string $url = 'unt1/select'): ?array
     {
@@ -50,7 +40,7 @@ class SolrApiService
 
     private function handleApi(string $url, array $options = [], string $method = 'POST'): ?ResponseInterface
     {
-        try { return $this->client->request($method, $url, $options); }catch (ExceptionInterface $e) {
+        try { return $this->solrClient->request($method, $url, $options); }catch (ExceptionInterface $e) {
             dump($e);
             return null;
         }

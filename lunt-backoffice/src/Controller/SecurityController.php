@@ -46,7 +46,7 @@ class SecurityController extends AbstractController
             //** @var User $user */
             $user = $this->repository->findOneBy(['email' => $email]);
             if ($user) {
-                $resetoken = $generator->generateToken(); if(null === $user->getReseToken()) $user->setReseToken($resetoken);
+                $resetoken = $generator->generateToken(); $user->setReseToken($resetoken);
                 $url = $this->generateUrl('app_reset_response', ['token' => $resetoken], UrlGeneratorInterface::ABSOLUTE_URL);
                 $this->repository->add($user->setTokenExpiresAt(new \DateTimeImmutable(self::VALIDATIME_TOKEN)));
 

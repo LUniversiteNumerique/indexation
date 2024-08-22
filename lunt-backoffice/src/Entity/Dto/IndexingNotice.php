@@ -2,7 +2,7 @@
 
 namespace App\Entity\Dto;
 
-use App\Entity\{Auteur, Notice, Univerique};
+use App\Entity\{Auteur, Notice, NoticEtat, Univerique};
 use JMS\Serializer\Annotation as Jms;
 
 #[Jms\XmlRoot("doc")]
@@ -40,7 +40,7 @@ class IndexingNotice
             new Field('domaines', sprintf("%s/%s/%s",$disc?->getParent()?->getParent(),$disc?->getParent(), $disc)),
             new Field('correspondant', json_encode(["nom"=>$user?->getName(), "email"=>$user?->getEmail(), "etablissement"=>$user?->getSchool()])),
             new Field('contributions', json_encode(array_map(fn(Auteur $a) => ["prenom"=>$a->getPrenom(), "nom"=>$a->getNom(), "email"=>$a->getEmail()],$notice->getAuteurs()->toArray()))),
-            new Field('associations_associate', json_encode(array_map(fn(Notice $n) => ["id"=>$n->getId(),"uuid"=>$n->getUuid(),"titre"=>$n->getTitre()], $notice->getRessources()->toArray()))),
+            new Field('associations_associate', json_encode(array_map(fn(Notice $n) => ["id"=>$n->getId(),"uuid"=>$n->getUuid(),"titre"=>$n->getTitre()], $notice->getRessources()->filter(fn(Notice $n) => !$n->isDeleted() && $n->getEtat()===NoticEtat::Approved)->toArray()))),
             new Field('etablissement_porteur', $user?->getSchool()? json_encode(["id"=>$user?->getSchool()->getId(), "libelle"=>$user?->getSchool()->getNom()]):""),
             new Field('etablissements_co_editeurs', json_encode(array_map("strval",$notice->getPorteurs()->toArray()))),
             new Field('date_modification', ($notice->getEditeLe()??$notice->getCreeLe())->format('Y-m-d H:i:s')),

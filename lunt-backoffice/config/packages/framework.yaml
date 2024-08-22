@@ -11,6 +11,14 @@ framework:
         cookie_secure: auto
         cookie_samesite: lax
 
+    http_client:
+        scoped_clients:
+            solr.client:
+                base_uri: '%env(SOLR_BASE_URL)%'
+                headers:
+                    Accept: 'application/xml'
+                    Content-Type: 'application/xml'
+
     #esi: true
     #fragments: true
     php_errors:

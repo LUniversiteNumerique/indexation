@@ -65,17 +65,17 @@ class NoticeRepository extends ServiceEntityRepository
 
     public function countByEtat(?Univerique $unt, ?string $date = null)
     {
-        $qb = $this->createQueryBuilder('n')->select('n.etat, COUNT(n.id) as nombre');
+        $qb = $this->createQueryBuilder('n')->select('n.etat, COUNT(n.id) as nombre')->where('n.deleted = 0');
         if ($unt) $qb->join('n.specialite','d')->join('d.parent','c')
-            ->where('c.parent in (:champs)')->setParameter('champs',$unt->getFields());
+            ->andWhere('c.parent in (:champs)')->setParameter('champs',$unt->getFields());
         if($date) $qb->andWhere('n.creeLe > :date')->setParameter('date', new \DateTIME("-1 $date"));
         return $qb->groupBy('n.etat')->getQuery()->getResult();
     }
 
     private function getJoin(): \Doctrine\ORM\QueryBuilder
     {
-        return $this->createQueryBuilder('n')
-            ->select('n,a,d,p,u,t,l,s,q')->leftJoin('n.ressources', 'r')
+        return $this->createQueryBuilder('n')->select('n,a,d,p,u,t,l,s,q')
+            ->where('n.deleted = 0')->leftJoin('n.ressources', 'r')
             ->join('n.droit', 'l')->join('n.porteurs', 'q')
             ->join('n.specialite', 's')->join('n.auteurs', 'a')
             ->join('n.docTypes', 'd')->join('n.pedTypes', 'p')

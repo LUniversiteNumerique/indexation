@@ -190,8 +190,7 @@ class NoticeCrudController extends AbstractCrudController
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
         /** @var User $user */$user = $this->getUser();
-        $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)
-            ->select('entity,r,e,a,n,p,dd,pp,k,l,s')
+        $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)->select('entity,r,e,a,n,p,dd,pp,k,l,s')
             ->leftJoin('entity.codewey','e')->leftJoin('entity.ressources','r')
             ->join('entity.tags','k')->join('entity.porteurs','p')
             ->join('entity.auteurs','a')->join('entity.niveaux','n')
@@ -203,7 +202,7 @@ class NoticeCrudController extends AbstractCrudController
         elseif($this->isGranted('ROLE_VALI_NOTI') && $user->getUntheme() instanceof Univerique)
             $qb->join('s.parent','d')->addSelect('d')
                 ->andWhere('d.parent in (:champs)')->setParameter('champs',$user->getUntheme()->getFields());
-        return $qb->orderBy('entity.creeLe', 'DESC');
+        return $qb->andWhere('entity.deleted = 0')->orderBy('entity.creeLe', 'DESC');
     }
 
     public function createNewFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
@@ -342,7 +341,7 @@ class NoticeCrudController extends AbstractCrudController
 
         /** @var Notice|null $notice */
         $notice = $ctx->getEntity()->getInstance(); //Approved
-        return $this->changEtatNotice(['Dépublier', 'Dépubliée', 'Dépublication', false], $notice->setPublieLe(null)->setEtat(NoticEtat::Forward),$ctx->getRequest()->get('folderId'));
+        return $this->changEtatNotice(['Dépublier', 'Dépubliée', 'Dépublication', false], $notice->setEtat(NoticEtat::Forward),$ctx->getRequest()->get('folderId'));
     }
 
     public function allowedNotice(): Response
@@ -520,5 +519,16 @@ class NoticeCrudController extends AbstractCrudController
         if($zipDir = $entityInstance->getRessZip())
             $entityInstance->setRessUrl(pathinfo($zipDir, PATHINFO_FILENAME));
         parent::persistEntity($entityManager, $entityInstance);
+    }
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @param Notice $entityInstance
+     * @return void
+     */
+    public function deleteEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        $entityInstance->setDeleted(true);
+        $entityManager->flush();
     }
 }

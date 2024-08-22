@@ -5,13 +5,17 @@ namespace App\Service;
 use App\Message\{ExtexingConfigMessage, IntexingConfigMessage};
 use App\Repository\IndexingConfigRepository;
 use Symfony\Component\Scheduler\{Attribute\AsSchedule, RecurringMessage, Schedule, ScheduleProviderInterface};
+use Symfony\Component\Lock\LockFactory;
 
 #[AsSchedule('default')]
 class SchedulerService implements ScheduleProviderInterface
 {
     const SCHEDULER_LOCK = 'scheduler_default';
 
-    public function __construct(private readonly IndexingConfigRepository $repository){}
+    public function __construct(
+        private readonly LockFactory $factory,
+        private readonly IndexingConfigRepository $repository
+    ){}
 
     public function getSchedule(): Schedule
     {
