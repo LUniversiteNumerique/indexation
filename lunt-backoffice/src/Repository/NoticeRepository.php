@@ -21,6 +21,15 @@ class NoticeRepository extends ServiceEntityRepository
         parent::__construct($registry, Notice::class);
     }
 
+    public function clean(\DateTime $before): int
+    {
+        return $this->createQueryBuilder('n')
+            ->where('n.deleted = 1 AND n.publieLe is null')
+            ->andWhere('n.creeLe < :date')->setParameter('date', $before)
+            ->delete(Notice::class, 'n')
+            ->getQuery()->execute();
+    }
+
     public function findFrom(int $core, bool $diff, int $limit, int $offset): array
     {
         $state = "n.etat = :etat"; if ($diff) $state .= " AND n.publieLe is null";

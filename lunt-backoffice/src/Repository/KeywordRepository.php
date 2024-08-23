@@ -47,6 +47,15 @@ class KeywordRepository extends ServiceEntityRepository
         return $this->searchQB($value)->orderBy('t.id', 'DESC')->getQuery()->getResult();
     }
 
+    public function clean(\DateTime $before): int
+    {
+        return $this->createQueryBuilder('n')
+            ->where('n.valide = 0 AND n.creeLe < :date')
+            ->setParameter('date', $before)
+            ->delete(Keyword::class, 'n')
+            ->getQuery()->execute();
+    }
+
     public function findUnusedTags($class, $limit = 12)
     {
         $em = $this->getEntityManager();

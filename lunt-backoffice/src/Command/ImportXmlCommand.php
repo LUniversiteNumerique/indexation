@@ -13,7 +13,7 @@ use Symfony\Component\Scheduler\Attribute\AsPeriodicTask;
     name: 'app:import-xml-data',
     description: "Exécute le processus d'importation des données XML du serveur",
 )]
-#[AsPeriodicTask(frequency: '1 day', from: '00:00')]
+#[AsPeriodicTask(frequency: '1 month', from: '00:00')]
 class ImportXmlCommand extends Command
 {
     private FileService $fileService;
