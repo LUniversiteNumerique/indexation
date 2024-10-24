@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Form\ChangePassType;
 use App\Repository\UserRepository;
 use App\Service\MailerService;
@@ -14,8 +15,6 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
-    const VALIDATIME_TOKEN = 10;
-
     public function __construct(private readonly UserRepository $repository) {}
 
     #[Route(path: '/login', name: 'app_login')]
@@ -48,7 +47,7 @@ class SecurityController extends AbstractController
             if ($user) {
                 $resetoken = $generator->generateToken(); $user->setReseToken($resetoken);
                 $url = $this->generateUrl('app_reset_response', ['token' => $resetoken], UrlGeneratorInterface::ABSOLUTE_URL);
-                $this->repository->add($user->setTokenExpiresAt(new \DateTimeImmutable(self::VALIDATIME_TOKEN.' min')));
+                $this->repository->add($user->setTokenExpiresAt(new \DateTimeImmutable(User::VALIDATIME_TOKEN.' min')));
 
                 $mailer->sendEmail($user->getEmail(), 'Réinitialiser votre mot de passe UNT',
                     "Bonjour " . $user->getName() . '<br/>Vous avez demandé à réinitialiser le mot de passe de votre espace UNT.<br/><br/>Merci de bien vouloir cliquer sur le lien suivant pour <a href="' . $url . '">mettre à jour votre mot de passe</a>.',

@@ -12,6 +12,7 @@ use Symfony\Component\Security\Core\User\{UserInterface,PasswordAuthenticatedUse
     ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    const VALIDATIME_TOKEN = 10;
     const ROLE_DEFAULT = 'ROLE_USER';
 
     use Timestamps;
@@ -28,7 +29,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password;
 
     #[ORM\Column(nullable: true)]
-    private ?bool $enabled = null;
+    private ?bool $enabled = false;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $reseToken = null;
@@ -103,7 +104,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->enabled;
     }
 
-    public function setEnabled(?bool $enabled): static
+    public function setEnabled(?bool $enabled): self
     {
         $this->enabled = $enabled;
 

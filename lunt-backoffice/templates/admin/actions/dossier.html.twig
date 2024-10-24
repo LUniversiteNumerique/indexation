@@ -27,7 +27,7 @@
         <th scope="row"><i class="fa fa-folder fa-xl" aria-hidden="true"></i></th>
         <td>
           <a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('detail').setEntityId(d.id) }}">{{ d.nom }}</a>
-          <p>Modifié le : {{ d.creeLe|date('d/m/Y') }} Par : {{ app.user }}</p>
+          <p>Modifié le : {{ (d.editeLe??d.creeLe)|date('d/m/Y') }} Par : {{ d.user }}</p>
         </td>
         <td><a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('edit').setEntityId(d.id) }}" class="btn btn-sm btn-link-danger"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>
       </tr>
@@ -37,7 +37,7 @@
         <th scope="row"><i class="fa fa-sticky-note-o fa-xl" aria-hidden="true"></i></th>
         <td>
           <a href="{{ ea_url().setController('App\\Controller\\NoticeCrudController').setAction('detail').setEntityId(n.id).set('folderId', curritem.id) }}">{{ n.titre }}</a>
-          <p>Modifié le : {{ n.editeLe|date('d/m/Y') }} <span class="badge badge-{{ n.etat.color }}">{{ n.etat.label }}</span>
+          <p>Modifié le : {{ (n.editeLe??n.creeLe)|date('d/m/Y') }} <span class="badge badge-{{ n.etat.color }}">{{ n.etat.label }}</span>
         </td>
         <td>
           <button type="button" class="btn btn-sm btn-light move-action" data-bs-toggle="modal" data-bs-target="#moveModal" value="{{ n.id }}">

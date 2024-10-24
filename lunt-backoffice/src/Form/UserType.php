@@ -4,14 +4,18 @@ namespace App\Form;
 
 use App\Entity\{Etablissement, Groupe, Univerique, User};
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\{AbstractType, FormBuilderInterface};
+use Symfony\Component\Form\{AbstractType,
+    Extension\Core\Type\EmailType,
+    Extension\Core\Type\TextType,
+    FormBuilderInterface};
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add('name')->add('email');
+        $builder->add('name', TextType::class, ['label' => 'Nom utilisateur'])
+            ->add('email', EmailType::class);
 
         if(!$options['owner']) $builder
             ->add('group', EntityType::class, ['class'  => Groupe::class,])

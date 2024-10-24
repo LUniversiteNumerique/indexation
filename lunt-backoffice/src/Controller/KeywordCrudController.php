@@ -23,13 +23,14 @@ class KeywordCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud->setEntityLabelInSingular('Mot clé')->setEntityLabelInPlural('Mots clés')
-            ->setSearchFields(['nom'])->setEntityPermission('ROLE_READ_KEYW');
+            ->setSearchFields(['nom'])->setDefaultSort(['nom' => 'ASC'])->setEntityPermission('ROLE_READ_KEYW');
     }
 
     public function configureActions(Actions $actions): Actions
     {
         return parent::configureActions($actions)
             ->disable(Action::DETAIL)
+            ->add(Crud::PAGE_NEW, Action::INDEX)
             ->setPermission(Action::NEW, 'ROLE_CREA_KEYW')
             ->setPermission(Action::EDIT, 'ROLE_EDIT_KEYW')
             ->setPermission(Action::DELETE, 'ROLE_DROP_KEYW')
@@ -40,10 +41,11 @@ class KeywordCrudController extends AbstractCrudController
     {
         return [
             IdField::new('id')->onlyOnDetail(),
-            TextField::new('nom'),
-            BooleanField::new('valide')->renderAsSwitch($this->isGranted('ROLE_EDIT_KEYW')),
-            DateTimeField::new('creeLe'),
-            DateTimeField::new('editeLe')->onlyOnDetail()
+            TextField::new('nom', 'Mot clé'),
+            BooleanField::new('valide', 'Statut de validation')
+                ->setSortable(false)->renderAsSwitch($this->isGranted('ROLE_EDIT_KEYW')),
+            DateTimeField::new('creeLe', 'Date de création')->hideOnForm(),
+            DateTimeField::new('editeLe', 'Dernière modification')->onlyOnDetail()
         ];
     }
 }

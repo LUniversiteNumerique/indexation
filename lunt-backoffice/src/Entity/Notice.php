@@ -53,9 +53,6 @@ class Notice
     #[ORM\Column(nullable: true)]
     private ?int $ressSize = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $ressDate;
-
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $publieLe = null;
 
@@ -70,7 +67,7 @@ class Notice
     private ?User $createur,$validateur;
 
     #[ORM\Column(length: 255)]
-    private ?string $ressUrl = null;
+    private ?string $ressDate, $ressUrl = null;
     private ?string $ressZip = null;
 
     #[ORM\Column(length: 255, nullable: true),Assert\Url]
@@ -284,11 +281,6 @@ class Notice
         return $this;
     }
 
-    public function getRessDate(): ?\DateTimeInterface
-    {
-        return $this->ressDate;
-    }
-
     public function getPublieLe(): ?\DateTimeInterface
     {
         return $this->publieLe;
@@ -321,6 +313,17 @@ class Notice
     public function setExportOAI(?bool $exportOAI): self
     {
         $this->exportOAI = $exportOAI;
+
+        return $this;
+    }
+
+    public function getRessDate(): ?string
+    {
+        return $this->ressDate;
+    }
+    public function setRessDate(?string $ressDate): self
+    {
+        $this->ressDate = $ressDate;
 
         return $this;
     }

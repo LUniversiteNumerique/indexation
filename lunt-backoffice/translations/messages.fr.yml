@@ -6,7 +6,7 @@ notice_auteurs: Auteurs
 notice_auteurs_help: Les professeurs ayant contribué
 notice_tags: Mots-clés
 notice_tags_help: Préférer 5 mots-clés en moyenne
-notice_date: Date de création
+notice_date: Année de création
 notice_date_help: Année à laquelle la ressource a été conçue (au format AAAA)
 notice_ressurl: Contenu Url
 notice_ressurl_help: Adresse URL de la ressource externe
@@ -19,7 +19,7 @@ notice_droit_help: Le droit de publication de cette ressource
 notice_resspayant: Ressource payante
 notice_resspayant_help: Cette notice est-elle une resource payante ?
 notice_proprintel: Propriété intellectuelle
-notice_proprintel_help: Cette notice est-elle une propriété intellectuelle ?
+notice_proprintel_help: Cette notice a t-elle une propriété intellectuelle ?
 notice_resslang: Langue(s) de la resource
 notice_resslang_help: La(Les) langue(s) de la ressource/notice
 notice_dureappr: Durée d'apprentissage

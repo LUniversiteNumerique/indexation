@@ -36,7 +36,7 @@ class AuteurCrudController extends AbstractCrudController
             yield TextField::new('nom');
         } else yield TextField::new('name');
         yield EmailField::new('email');
-        yield DateTimeField::new('creeLe');
+        yield DateTimeField::new('creeLe')->hideOnForm();
         yield DateTimeField::new('editeLe')->onlyOnDetail();
     }
 }

@@ -23,7 +23,7 @@ class DashboardController extends AbstractDashboardController
 
     public function configureDashboard(): Dashboard
     {
-        return Dashboard::new()->setFaviconPath('/uploads/favicon.ico')->setTitle('<img src="/uploads/logo-UN.svg" alt="logo"> Indexation de  <span class="text-small">UNoTice.</span');
+        return Dashboard::new()->setFaviconPath('/uploads/favicon.ico')->setTitle('<img src="/uploads/logo-UN.svg" alt="logo"> UNT contribution'); //Indexation de  <span class="text-small">UNoTice.</span>
     }
 
     public function configureCrud(): Crud
@@ -37,23 +37,23 @@ class DashboardController extends AbstractDashboardController
         if($user instanceof User) $me->setName($user->getName());
 
         return $me->addMenuItems([
-            MenuItem::linkToRoute('Profile', 'fa fa-id-card', 'app_profile'),
-            MenuItem::linkToRoute('Settings', 'fa fa-user-cog', 'app_profile_edit'),
+            MenuItem::linkToRoute('Profil', 'fa fa-id-card', 'app_profile'),
+            MenuItem::linkToRoute('Paramètres', 'fa fa-user-cog', 'app_profile_edit'),
         ]);
     }
 
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linkToDashboard('Tableau de bord', 'fa fa-dashboard');
+        yield MenuItem::linkToDashboard('Tableaux de bord', 'fa fa-dashboard');
 
         yield MenuItem::linkToCrud('Les Auteurs', 'fa fa-users', Auteur::class)->setPermission('ROLE_READ_ACTE');
-        yield MenuItem::section('Configurations');
-        yield MenuItem::linkToCrud('Indexation', 'fa fa-book', IndexingConfig::class)->setPermission('ROLE_READ_CORE');
-        yield MenuItem::linkToCrud("Université", 'fa fa-university', Univerique::class)->setPermission('ROLE_READ_UNIV');
+        yield MenuItem::section('Configurations')->setPermission('ROLE_VALI_NOTI');
+        yield MenuItem::linkToCrud('Indexations', 'fa fa-book', IndexingConfig::class)->setPermission('ROLE_READ_CORE');
+        yield MenuItem::linkToCrud("Groupes d'utilisateurs", 'fa fa-user-tag', Groupe::class)->setPermission('ROLE_READ_GROU');
         yield MenuItem::linkToCrud('Etablissement', 'fa fa-university', Etablissement::class)->setPermission('ROLE_READ_ETAB');
         yield MenuItem::linkToCrud('Mots clés', 'fa fa-tags', Keyword::class)->setPermission('ROLE_READ_KEYW');
-        yield MenuItem::linkToCrud("Annuaire", 'fa fa-user-group', User::class)->setPermission('ROLE_READ_USER');
-        yield MenuItem::linkToCrud("Groupe d'utilisateurs", 'fa fa-cog', Groupe::class)->setPermission('ROLE_READ_GROU');
+        yield MenuItem::linkToCrud("Utilisateurs", 'fa fa-users', User::class)->setPermission('ROLE_READ_USER');
+        yield MenuItem::linkToCrud("UNT", 'fa fa-university', Univerique::class)->setPermission('ROLE_READ_UNIV');
     }
 
     #[Route('/', name: 'app_home'),]

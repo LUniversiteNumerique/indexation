@@ -24,18 +24,14 @@ class IndexingConfig
     private ?int $batchSize = 10;
 
     #[ORM\Column(length: 255), Assert\NotBlank]
-    private ?string $frequency;
+    private ?string $frequency; //$baseUri
 
     #[ORM\ManyToOne, Assert\NotNull,
         Assert\Type(Univerique::class)]
     private ?Univerique $indexCore = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $baseUri;
-
     public function __construct()
     {
-        //$this->baseUri = '%kernel.project_dir%/../lunt-resources/files';
         $this->scheduleAt = new \DateTime();
     }
 
@@ -112,18 +108,6 @@ class IndexingConfig
     public function setIndexCore(?Univerique $core): static
     {
         $this->indexCore = $core;
-
-        return $this;
-    }
-
-    public function getBaseUri(): ?string
-    {
-        return $this->baseUri;
-    }
-
-    public function setBaseUri(?string $uri): static
-    {
-        $this->baseUri = $uri;
 
         return $this;
     }
