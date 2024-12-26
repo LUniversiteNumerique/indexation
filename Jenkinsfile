@@ -10,6 +10,9 @@ pipeline {
     aborted {
       updateGitlabCommitStatus name: 'build', state: 'canceled'
     }
+    always {
+      cleanWs()
+    }
   }
   options {
     gitLabConnection('SSL Gitlab')
