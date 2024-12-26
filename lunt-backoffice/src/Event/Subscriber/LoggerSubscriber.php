@@ -54,7 +54,7 @@ readonly class LoggerSubscriber implements EventSubscriberInterface
             $this->mailer->sendTwig($user->getEmail(),
                 sprintf("Notice %d en statut %s", $entity->getId(), $entity->getEtat()?->getLabel()), 'emails/notif.html.twig',
                 ['notice' => $entity->getTitre(), 'url' => $url, 'message' => $user->getSchool() ?
-                    sprintf("Une demande de modification vous a été transmise concernant la notice <<%s>> par le %s %s", $entity, $user->getGroup(),  $user):
+                    sprintf("Bonjour,<br /> La notice intitulée  <<%s>> a été basculée au status de soumission par %s ( %s )", $entity, $user, $user->getGroup()):
                     sprintf("La notice <<%s>> a été %s par le %s %s", $entity, lcfirst($action[1]), $user->getGroup(), $user)
                 ]
             );

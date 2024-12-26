@@ -34,6 +34,8 @@ class KeywordCrudController extends AbstractCrudController
             ->setPermission(Action::NEW, 'ROLE_CREA_KEYW')
             ->setPermission(Action::EDIT, 'ROLE_EDIT_KEYW')
             ->setPermission(Action::DELETE, 'ROLE_DROP_KEYW')
+            ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $action) => 
+                $action->setLabel('Créer un nouveau mot-clé'))  
         ;
     }
 
@@ -41,7 +43,7 @@ class KeywordCrudController extends AbstractCrudController
     {
         return [
             IdField::new('id')->onlyOnDetail(),
-            TextField::new('nom', 'Mot clé'),
+            TextField::new('nom', 'Terme'),
             BooleanField::new('valide', 'Statut de validation')
                 ->setSortable(false)->renderAsSwitch($this->isGranted('ROLE_EDIT_KEYW')),
             DateTimeField::new('creeLe', 'Date de création')->hideOnForm(),

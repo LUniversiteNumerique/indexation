@@ -1,0 +1,5 @@
+{% for current in field.value %}
+    <span class="badge bg-light">{{ current.nom }} (#{{ current.id }})</span>
+{% else %}
+    <span class="badge bg-secondary">Aucun champ</span>
+{% endfor %}

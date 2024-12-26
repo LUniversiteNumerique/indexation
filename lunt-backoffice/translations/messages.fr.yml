@@ -1,9 +1,9 @@
 notice_titre_help: Le titre de cette notice
 notice_description_help: La description de la notice pouvant être formatée en html
 notice_porteurs: Établissement(s) porteur(s)
-notice_porteurs_help: La liste des établissements co-édités
+notice_porteurs_help: Liste des établissements
 notice_auteurs: Auteurs
-notice_auteurs_help: Les professeurs ayant contribué
+notice_auteurs_help: Les contributeurs de la ressource
 notice_tags: Mots-clés
 notice_tags_help: Préférer 5 mots-clés en moyenne
 notice_date: Année de création
@@ -21,9 +21,9 @@ notice_resspayant_help: Cette notice est-elle une resource payante ?
 notice_proprintel: Propriété intellectuelle
 notice_proprintel_help: Cette notice a t-elle une propriété intellectuelle ?
 notice_resslang: Langue(s) de la resource
-notice_resslang_help: La(Les) langue(s) de la ressource/notice
+notice_resslang_help: Langues de la ressource
 notice_dureappr: Durée d'apprentissage
-notice_dureappr_help: 'Codification: PT00H00M00S'
+notice_dureappr_help: 'Durée au format "hh:mm:ss"'
 notice_pedtypes: Type pédagogique
 notice_pedtypes_help: Les types pédagogiques propres de cette notice
 notice_propuser: Proposition d'utilisation

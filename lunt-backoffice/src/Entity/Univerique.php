@@ -12,15 +12,16 @@ class Univerique
 {
     use Timestamps;
 
-    #[ORM\Column(length: 255),
+    #[ORM\Column(length: 255,unique:true),
         Assert\NotBlank, Assert\Type('string')]
     private ?string $label = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255,unique:true)]
     private ?string $name = null;
 
     #[ORM\ManyToMany(targetEntity: Discipline::class)]
     private Collection $fields;
+    
     public function __construct()
     {
         $this->creeLe = new \DateTimeImmutable();

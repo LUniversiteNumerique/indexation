@@ -1,6 +1,6 @@
 FROM php:8.3-fpm
 
-ENV APP_ENV=prod
+ENV APP_ENV=dev
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
 RUN apt update \

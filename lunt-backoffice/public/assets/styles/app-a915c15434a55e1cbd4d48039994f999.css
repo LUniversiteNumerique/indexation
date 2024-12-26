@@ -1,0 +1,55 @@
+@font-face {
+    font-family: 'poppins-regular';
+    src: url("fonts/Poppins-Regular-841449941ec9dbd3ccabf4f4d5d72893.ttf");
+}
+
+@font-face {
+    font-family: 'poppins-bold';
+    src: url("fonts/Poppins-Bold-764bc9d13f09720b32d15e1423054c2a.ttf");
+}
+
+@font-face {
+    font-family: 'poppins-semibold';
+    src: url("fonts/Poppins-SemiBold-bba63d7c7cddf15b19fbb651c0f07c7f.ttf");
+}
+
+:root {
+    --font-family-sans-serif: 'poppins-regular';
+
+    font-weight: 400;
+    font-feature-settings: 'lnum';
+    font-variant-numeric: lining-nums;
+    letter-spacing: -0.0415625em;
+
+    --body-max-width: 1960px;
+    /*--sidebar-max-width: 210px;
+    --white: rgb(240, 241, 252); hsl(30, 1%, 90%);
+    --gray-300: rgb(70, 78, 79);*/
+    --color-primary: rgb(26, 35, 126);
+    --bs-blue: rgb(26, 35, 126);
+    --color-secondary: rgb(22, 130, 125);
+
+    --secondary-bg: var(--color-secondary);
+    --primary-bg: var(--gray-300);
+    --body-bg: var(--white);
+}
+
+/* See:  https://github.com/EasyCorp/EasyAdminBundle/issues/6018#issuecomment-1819015205 */
+
+.ea-detail .field-group.field-boolean .field-label {
+    flex: unset;
+    min-width: 0;
+    margin: 0 15px 0 0 !important;
+    width: 130px !important;
+    text-align: right !important;
+}
+
+.ea-detail .field-group.field-boolean {
+    flex-direction: row !important;
+}
+
+.ea-detail .field-group.field-boolean .field-value {
+    flex: 1 !important;
+    min-width: 66% !important;
+    text-align: left !important;
+}

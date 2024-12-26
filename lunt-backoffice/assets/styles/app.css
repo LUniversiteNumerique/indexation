@@ -1,15 +1,18 @@
 @font-face {
     font-family: 'poppins-regular';
-    src:  url('./fonts/Poppins-Regular.ttf');
+    src: url('./fonts/Poppins-Regular.ttf');
 }
+
 @font-face {
     font-family: 'poppins-bold';
-    src:  url('./fonts/Poppins-Bold.ttf');
+    src: url('./fonts/Poppins-Bold.ttf');
 }
+
 @font-face {
     font-family: 'poppins-semibold';
-    src:  url('./fonts/Poppins-SemiBold.ttf');
+    src: url('./fonts/Poppins-SemiBold.ttf');
 }
+
 :root {
     --font-family-sans-serif: 'poppins-regular';
 
@@ -29,4 +32,24 @@
     --secondary-bg: var(--color-secondary);
     --primary-bg: var(--gray-300);
     --body-bg: var(--white);
+}
+
+/* See:  https://github.com/EasyCorp/EasyAdminBundle/issues/6018#issuecomment-1819015205 */
+
+.ea-detail .field-group.field-boolean .field-label {
+    flex: unset;
+    min-width: 0;
+    margin: 0 15px 0 0 !important;
+    width: 130px !important;
+    text-align: right !important;
+}
+
+.ea-detail .field-group.field-boolean {
+    flex-direction: row !important;
+}
+
+.ea-detail .field-group.field-boolean .field-value {
+    flex: 1 !important;
+    min-width: 66% !important;
+    text-align: left !important;
 }

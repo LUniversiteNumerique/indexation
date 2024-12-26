@@ -7,14 +7,16 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: EtablissementRepository::class)]
+#[UniqueEntity(fields: ['nom'], message: 'Ce nom est déjà pris.')]
+#[UniqueEntity(fields: ['abrege'], message: 'Ce nom abrégé est déjà pris.')]
 class Etablissement
 {
     use Timestamps;
 
-    #[ORM\Column(length: 255), Assert\NotBlank]
+    #[ORM\Column(length: 255, unique: true), Assert\NotBlank]
     private ?string $nom;
 
-    #[ORM\Column(length: 225), Assert\NotBlank]
+    #[ORM\Column(length: 225, unique: true), Assert\NotBlank]
     private ?string $abrege;
 
     public function __construct($abrege=null, $nom=null)

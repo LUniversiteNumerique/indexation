@@ -26,7 +26,7 @@ class DurationField implements FieldInterface
 
             ->setCustomOption(self::OPTION_INPUT, 'string')
             ->setCustomOption(self::OPTION_WIDGET, 'single_text')
-            ->setCustomOption(self::OPTION_ATTR, ['placeholder' => 'PnYnMnDTnHnMnS'])
+            ->setCustomOption(self::OPTION_ATTR, ['placeholder' => '02:30:00'])
         ;
     }
 

@@ -101,6 +101,6 @@ class Discipline
 
     public function __toString(): string
     {
-        return $this->nom;
+        return $this->nom ?? ''; // Retourne le nom ou une chaîne vide si null
     }
 }

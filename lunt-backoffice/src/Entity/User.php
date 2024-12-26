@@ -28,7 +28,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?string $password;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(nullable: false)]
     private ?bool $enabled = false;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -45,9 +45,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         Assert\Type(Univerique::class)]
     private ?Univerique $untheme = null;
 
-    #[ORM\ManyToOne, Assert\Valid,
-        Assert\Type(Etablissement::class)]
+    #[ORM\ManyToOne(targetEntity: Etablissement::class)]
+    #[Assert\Valid]
+    #[Assert\Type(type: Etablissement::class)]
+    #[Assert\NotBlank(message: "L'établissement contributeur est obligatoire.")]
     private ?Etablissement $school = null;
+
     private array $roles = [self::ROLE_DEFAULT];
 
     public function __construct(string $email=null, string $password=null, array $roles=[])

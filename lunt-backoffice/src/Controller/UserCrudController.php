@@ -29,8 +29,13 @@ class UserCrudController extends AbstractCrudController
 
     public function configureFilters(Filters $filters): Filters
     {
-        return $filters->add('enabled')->add('group')
-            ->add(EntityFilter::new('school'))->add('untheme');
+        return $filters
+            ->add('name')  
+            ->add('email')    
+            ->add('enabled')
+            ->add('group')
+            ->add('school')
+            ->add('untheme');
     }
 
     public function configureCrud(Crud $crud): Crud
@@ -47,6 +52,7 @@ class UserCrudController extends AbstractCrudController
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->remove(Crud::PAGE_INDEX, Action::DELETE)
             ->remove(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE)
+            ->setPermission(Action::INDEX, 'ROLE_READ_USER')
             ->setPermission(Action::NEW, 'ROLE_CREA_USER')
             ->setPermission(Action::EDIT, 'ROLE_EDIT_USER')
             ->setPermission(Action::DELETE, 'ROLE_DROP_USER')
@@ -60,14 +66,14 @@ class UserCrudController extends AbstractCrudController
         yield IdField::new('id')->onlyOnDetail();
         yield TextField::new('name','Nom');
         yield EmailField::new('email')->setSortable(false);
-        yield BooleanField::new('enabled','Statut')->hideOnForm()->setSortable(false);
+        yield BooleanField::new('enabled','Statut')->setSortable(false);
         yield DateTimeField::new('creeLe', 'Date création')->onlyOnDetail();
         yield DateTimeField::new('editeLe', 'Date modification')->onlyOnDetail();
 
         yield FormField::addColumn(6);
         yield FormField::addFieldset();
         yield EntityField::new('group','Groupe')->setRequired(true);
-        yield EntityField::new('school','Etablissement Contributeur')->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.nom'))->setColumns(6);
+        yield EntityField::new('school','Etablissement Contributeur')->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.nom', 'ASC'))->setRequired(true)->setColumns(6);
         yield EntityField::new('untheme',"UNT Documentaliste")->setColumns(6);
     }
 
@@ -90,12 +96,21 @@ class UserCrudController extends AbstractCrudController
     {
         $veriftoken = $this->tokenGenerator->generateToken(); //$pass = random_bytes(12); $entityInstance->setPassword($this->hasher->hashPassword($entityInstance,$pass));
         $url = $this->generateUrl('app_reset_response', ['token' => $veriftoken], UrlGeneratorInterface::ABSOLUTE_URL);
-
+        $entityInstance->setEditeLe(new \DateTimeImmutable());
         $entityInstance->setTokenExpiresAt(new \DateTimeImmutable(User::VALIDATIME_TOKEN.' min'));
         parent::persistEntity($entityManager, $entityInstance->setReseToken($veriftoken));
         $this->mailer->sendEmail($entityInstance->getEmail(), 'Création de votre compte/espace UNT',
-            "Bonjour " . $entityInstance->getName() . '<br/>Votre espace UNT vient d\'être créé. Vous pouvez l\'activer à l\'adresse <a href="' .$url. '">et initialiser votre mot de passe</a>.',
+            "Bonjour " . $entityInstance->getName() . '<br/>Votre compte UNT vient d\'être créé. Vous pouvez l\'activer à l\'adresse : <a href="' .$url. '">'.$url.'</a> et initialiser votre mot de passe</a>.',
         );
+    }
+
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        $veriftoken = $this->tokenGenerator->generateToken(); //$pass = random_bytes(12); $entityInstance->setPassword($this->hasher->hashPassword($entityInstance,$pass));
+        $url = $this->generateUrl('app_reset_response', ['token' => $veriftoken], UrlGeneratorInterface::ABSOLUTE_URL);
+        $entityInstance->setEditeLe(new \DateTimeImmutable());
+        $entityInstance->setTokenExpiresAt(new \DateTimeImmutable(User::VALIDATIME_TOKEN.' min'));
+        parent::persistEntity($entityManager, $entityInstance->setReseToken($veriftoken));
     }
 
     protected function getRedirectResponseAfterSave(AdminContext $ctx, string $action): RedirectResponse

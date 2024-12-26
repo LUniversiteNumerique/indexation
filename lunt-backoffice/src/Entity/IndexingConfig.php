@@ -17,8 +17,8 @@ class IndexingConfig
     #[ORM\Column]
     private ?bool $fullMode, $indexType;
 
-    #[ORM\Column]
-    private ?\DateTime $scheduleAt;
+    #[ORM\Column(nullable: true)]
+    private ?\DateTime $scheduleAt=null;
 
     #[ORM\Column, Assert\NotNull]
     private ?int $batchSize = 10;
@@ -32,7 +32,6 @@ class IndexingConfig
 
     public function __construct()
     {
-        $this->scheduleAt = new \DateTime();
     }
 
     public function getId(): ?int
@@ -69,7 +68,7 @@ class IndexingConfig
         return $this->scheduleAt;
     }
 
-    public function setScheduleAt(\DateTime $scheduleAt): static
+    public function setScheduleAt(?\DateTime $scheduleAt): static
     {
         $this->scheduleAt = $scheduleAt;
 

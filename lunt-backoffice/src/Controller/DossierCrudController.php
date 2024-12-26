@@ -37,6 +37,9 @@ class DossierCrudController extends AbstractCrudController
         ->update(Crud::PAGE_DETAIL, Action::DELETE, static fn(Action $a) => $a->displayIf(static fn (Dossier $d) => $d->getChildren()->isEmpty() && $d->getNotices()->isEmpty()))
         ->remove(Crud::PAGE_DETAIL, Action::EDIT)
         ->remove(Crud::PAGE_DETAIL, Action::INDEX)
+        ->setPermission(Action::INDEX, 'ROLE_READ_CORE')
+        ->setPermission(Action::EDIT, 'ROLE_EDIT_CORE')
+        ->setPermission(Action::DELETE, 'ROLE_DROP_CORE')
       ;
     }
     public function configureFields(string $pageName): iterable

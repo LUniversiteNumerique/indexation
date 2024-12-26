@@ -11,7 +11,7 @@
             </p>
             <div>{% if is_granted('ROLE_READ_NOTI') %}
             <a href="{{ ea_url().setController('App\\Controller\\NoticeCrudController').setAction('index') }}" class="btn btn-primary btn-lg">Les notices</a>
-            <a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('detail').setEntityId(1) }}" class="btn btn-primary btn-lg">Les repertoires</a>
+            <a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('detail').setEntityId(1) }}" class="btn btn-primary btn-lg">Les répertoires</a>
             {% endif %}</div>
         </div>
 

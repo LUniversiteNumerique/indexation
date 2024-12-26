@@ -8,12 +8,12 @@ use JMS\Serializer\Annotation\{SerializedName, VirtualProperty};
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: KeywordRepository::class)]
+#[UniqueEntity(fields: ['nom'], message: 'Ce nom est déjà utilisé.')]
 class Keyword
 {
     use Timestamps;
 
-    #[ORM\Column(length: 255),
-        Assert\NotBlank, SerializedName('text')]
+    #[ORM\Column(length: 255, unique: true), Assert\NotBlank, SerializedName('text')]
     private ?string $nom;
 
     #[ORM\Column(nullable: true), Assert\Type('bool')]
