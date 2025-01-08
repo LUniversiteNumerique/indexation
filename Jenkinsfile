@@ -41,7 +41,7 @@ pipeline {
 
     stage('SonarQube Analysis') {
       when {
-        environment name: 'gitlabSourceBranch', value: 'develop'
+        environment name: 'gitlabSourceBranch', value: 'dev-vincent'
         beforeAgent true
       }
       agent {

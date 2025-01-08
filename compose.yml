@@ -1,14 +1,12 @@
 services:
   backoffice:
-    build: ./lunt-backoffice #image: sslv-nexus.coexya.eu/lunt-backoffice:${VERSION:-latest}
-    env_file:
-      - ./lunt-backoffice/.env
+    image: sslv-nexus.coexya.eu/lunt-backoffice:${VERSION:-latest}
     ports: ["80:80"]
     depends_on:
       - mariadb
       - mailer
     volumes:
-      - ./lunt-backoffice:/var/www/site
+      - ${JOAI_BASE_URI:-/opt/lunt-resources}:/var/www/site/data
 
   myadmin:
     image: phpmyadmin/phpmyadmin
@@ -40,7 +38,7 @@ services:
     ports: ["8983:8983"]
     volumes:
       - solr_data:/var/solr
-      - ./lunt-solr:/var/solr/data
+      - /opt/lunt-solr:/var/solr/data
     command:
       - solr-precreate
       - unt1
