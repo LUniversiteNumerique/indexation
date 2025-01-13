@@ -2,11 +2,13 @@
 
 namespace App\Entity;
 
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Repository\AuteurRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: AuteurRepository::class)]
+#[ORM\Entity(repositoryClass: AuteurRepository::class),
+    UniqueEntity(['prenom', 'nom', 'email'], 'Cet email est déjà pris par ce meme nom et prénom.', errorPath: 'email')]
 class Auteur
 {
     use Timestamps;
@@ -18,7 +20,7 @@ class Auteur
         Assert\NotBlank, Assert\Length(max: 225)]
     private ?string $prenom = null;
 
-    #[ORM\Column(length: 255),
+    #[ORM\Column(length: 255, unique: true),
         Assert\NotNull, Assert\Email]
     private ?string $email = null;
 

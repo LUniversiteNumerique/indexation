@@ -45,10 +45,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         Assert\Type(Univerique::class)]
     private ?Univerique $untheme = null;
 
-    #[ORM\ManyToOne(targetEntity: Etablissement::class)]
-    #[Assert\Valid]
-    #[Assert\Type(type: Etablissement::class)]
-    #[Assert\NotBlank(message: "L'établissement contributeur est obligatoire.")]
+    #[ORM\ManyToOne(targetEntity: Etablissement::class),
+        Assert\Valid, Assert\Type(Etablissement::class)]
     private ?Etablissement $school = null;
 
     private array $roles = [self::ROLE_DEFAULT];

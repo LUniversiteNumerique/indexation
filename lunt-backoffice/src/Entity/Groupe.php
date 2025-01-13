@@ -12,7 +12,7 @@ class Groupe
 {
     const PERMISSIONS = array(
         'Lire_Auteur'=>'ROLE_READ_ACTE', 'Créer_Auteur'=>'ROLE_CREA_ACTE', 'Editer_Auteur'=>'ROLE_EDIT_ACTE', 'Supprimer_Auteur'=>'ROLE_DROP_ACTE',
-        //'Lire_Cdewey'=>'ROLE_READ_DEWE', 'Créer_Cdewey'=>'ROLE_CREA_DEWE', 'Editer_Cdewey'=>'ROLE_EDIT_DEWE', 'Supprimer_Cdewey'=>'ROLE_DROP_DEWE',
+        'Lire_Repert'=>'ROLE_READ_DOSS', 'Créer_Repert'=>'ROLE_CREA_DOSS', 'Editer_Repert'=>'ROLE_EDIT_DOSS', 'Supprimer_Repert'=>'ROLE_DROP_DOSS',
         //'Lire_Discip'=>'ROLE_READ_DISC', 'Créer_Discip'=>'ROLE_CREA_DISC', 'Editer_Discip'=>'ROLE_EDIT_DISC', 'Supprimer_Discip'=>'ROLE_DROP_DISC',
         'Lire_Licenc'=>'ROLE_READ_LICE', 'Créer_Licenc'=>'ROLE_CREA_LICE', 'Editer_Licenc'=>'ROLE_EDIT_LICE', 'Supprimer_Licenc'=>'ROLE_DROP_LICE',
         'Lire_Univer'=>'ROLE_READ_UNIV', 'Créer_Univer'=>'ROLE_CREA_UNIV', 'Editer_Univer'=>'ROLE_EDIT_UNIV', 'Supprimer_Univer'=>'ROLE_DROP_UNIV',

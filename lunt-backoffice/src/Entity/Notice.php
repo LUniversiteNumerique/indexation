@@ -720,28 +720,21 @@ class Notice
     /**
      * Checks if the current Notice belongs to a specified Univerique.
      *
-     * A Univerique is defined by a set of disciplines ("fields"). 
-     * This method determines whether the grandparent discipline of the current 
+     * An Univerique is defined by a set of disciplines ("fields").
+     * This method determines whether the grandparent discipline of the current
      * Notice's speciality is part of the Univerique's fields.
      *
-     * @param Univerique $univerique The Univerique to check against.
+     * @param Univerique $unt
      * @return bool True if the Notice belongs to the Univerique, false otherwise.
      */
-    public function belongsToUniverique(Univerique $univerique): bool
+    public function belongsToUNT(Univerique $unt): bool
     {
-         // Convert PersistentCollection to an array
-        $fields = $univerique->getFields()->toArray();
+        if($this->getSpecialite()) {
+            // Extract IDs of the fields (disciplines) associated with the Univerique
+            $untFieldIds = $unt->getFields()->map(fn($discipline) => $discipline->getId());
 
-        // Extract IDs of the fields (disciplines) associated with the Univerique
-        $univeriqueFieldIds = array_map(
-            fn($discipline) => $discipline->getId(),
-            $fields
-        );
-
-        // Get the ID of the grandparent discipline of the current Notice's speciality
-        $currentGrandParentId = $this->getSpecialite()?->getParent()?->getParent()?->getId();
-
-        // Check if the grandparent discipline is part of the Univerique's fields
-        return in_array($currentGrandParentId, $univeriqueFieldIds, true);
+            // Check if the grandparent discipline is part of the Univerique's fields
+            return in_array($this->getSpecialite()->getParent()?->getParent()?->getId(), $untFieldIds->toArray(), true);
+        } return false;
     }
 }

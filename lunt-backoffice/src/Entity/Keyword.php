@@ -5,10 +5,11 @@ namespace App\Entity;
 use App\Repository\KeywordRepository;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\{SerializedName, VirtualProperty};
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: KeywordRepository::class)]
-#[UniqueEntity(fields: ['nom'], message: 'Ce nom est déjà utilisé.')]
+#[ORM\Entity(repositoryClass: KeywordRepository::class),
+    UniqueEntity('nom', 'Ce nom est déjà utilisé.')]
 class Keyword
 {
     use Timestamps;

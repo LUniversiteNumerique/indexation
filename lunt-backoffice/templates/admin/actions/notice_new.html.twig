@@ -1,5 +1,7 @@
 {% extends '@!EasyAdmin/crud/new.html.twig' %}
 
+{% set curritem = entity.instance.repertoire %}
+
 {% block page_actions %}
     {% for action in entity.actions %}
         {{ include(action.templatePath, { action: action }, with_context = false) }}

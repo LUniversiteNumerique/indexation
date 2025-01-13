@@ -20,18 +20,13 @@ class SecurityController extends AbstractController
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authUtils): Response
     {
-        return $this->render('@EasyAdmin/page/login.html.twig', [
+        return $this->render('security/login.html.twig', [
             'last_username' => $authUtils->getLastUsername(),
             'error' => $authUtils->getLastAuthenticationError(),
 
             'favicon_path' => 'uploads/favicon.ico',
-            'page_title' => '<img src="uploads/logo-1000px.png" alt="logo">',
+            'page_title' => '<img src="uploads/logo-1000px.png" alt="logo"> UNT contribution',
             'csrf_token_intention' => 'authenticate',
-            'target_path' => $this->generateUrl('app_home'),
-
-            'username_label' => 'Votre identifiant',
-            'password_label' => 'Votre mot de passe',
-            'sign_in_label' => 'Connexion',
 
             'forgot_password_enabled' => true,
             'forgot_password_path' => $this->generateUrl('app_reset_request'),
@@ -75,7 +70,7 @@ class SecurityController extends AbstractController
             $user->setReseToken(null)->setPassword($hashNewPass)->setTokenExpiresAt(null);
             $this->repository->add($user->setEnabled(true));
 
-            $this->addFlash('notice', 'Votre mot de passe a bien été mis à jour.');
+            $this->addFlash('success', 'Votre mot de passe a bien été mis à jour.');
             return $this->redirectToRoute('app_login');
         }
 

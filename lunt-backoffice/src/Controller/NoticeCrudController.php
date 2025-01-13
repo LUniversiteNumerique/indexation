@@ -10,7 +10,13 @@ use App\Form\Type\{AuteurAutoField, NoticeAutoField, TagAutoField, TreeChoiceTyp
 use App\Repository\{DossierRepository, NoticeRepository};
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Form\Type\{FileUploadType, Model\FileUploadState};
-use EasyCorp\Bundle\EasyAdminBundle\{Context\AdminContext, Event\AfterEntityPersistedEvent, Factory\FormFactory, Filter\ChoiceFilter, Filter\DateTimeFilter, Router\AdminUrlGenerator};
+use EasyCorp\Bundle\EasyAdminBundle\{Context\AdminContext,
+    Event\AfterEntityPersistedEvent,
+    Factory\FormFactory,
+    Filter\ChoiceFilter,
+    Filter\DateTimeFilter,
+    Provider\AdminContextProvider,
+    Router\AdminUrlGenerator};
 use EasyCorp\Bundle\EasyAdminBundle\Collection\{ActionCollection, FieldCollection, FilterCollection};
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Actions, Asset, Assets, Crud, Filters, KeyValueStore};
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -23,9 +29,9 @@ use Symfony\Component\HttpFoundation\{File\Exception\FileException, File\Uploade
 use Symfony\Component\Intl\Languages;
 use Symfony\Component\Validator\Constraints\{File, Image, Url};
 use Symfony\Component\Uid\Uuid;
-use function Symfony\Component\String\u;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-
+use function Symfony\Component\String\u;
+use function Symfony\Component\Translation\t;
 
 class NoticeCrudController extends AbstractCrudController
 {
@@ -47,7 +53,10 @@ class NoticeCrudController extends AbstractCrudController
 
     public function configureCrud(Crud $crud): Crud
     {
-        $crud = $crud->setAutofocusSearch()->setSearchFields(['titre','description'])->setPageTitle(Crud::PAGE_DETAIL, static fn (Notice $n) => $n->getTitre());
+        $crud = $crud->setAutofocusSearch()->setSearchFields(['titre','description'])->setEntityLabelInPlural('Notices')
+            ->setPageTitle(Action::NEW, fn () => 'Créer une <b>Notice</b>')
+            ->setPageTitle(Action::EDIT, fn (Notice $n) => 'Modifier une <b>Notice</b>')
+            ->setPageTitle(Crud::PAGE_DETAIL, static fn (Notice $n) => $n->getTitre());
         if($this->isGranted('ROLE_VALI_NOTI')) $crud->renderSidebarMinimized()->overrideTemplates([
             'crud/detail'=>'admin/actions/notice_show.html.twig',
             'crud/new'=>'admin/actions/notice_new.html.twig'
@@ -79,7 +88,6 @@ class NoticeCrudController extends AbstractCrudController
         $category = Action::new('catégoriser',null,'fa fa-tag')->linkToCrudAction('labelNotice')
             ->addCssClass('text-warning confirm-action')->setHtmlAttributes(['data-bs-toggle' => 'modal', 'data-bs-target' => '#modal-confirm',]);
 
-        // ??? 
         $fwdoc = fn(Notice $n,string $s = NoticeActionVoter::VALI) => $this->isGranted($s,$n);
         
         
@@ -97,15 +105,15 @@ class NoticeCrudController extends AbstractCrudController
             ->update(Crud::PAGE_INDEX, Action::DETAIL, fn (Action $a) => $a->setCssClass('btn btn-outline-secondary'))
             ->update(Crud::PAGE_DETAIL, Action::EDIT, static fn(Action $a) => $a->setIcon('fa fa-pencil')->displayIf(static fn (Notice $n) => $fwdoc($n, NoticeActionVoter::EDIT) && $n->getEtat() !== NoticEtat::Approved ))
             ->update(Crud::PAGE_DETAIL, Action::DELETE, static fn(Action $a) => $a->addCssClass('btn btn-outline-danger')->displayIf(static fn (Notice $n) => $fwdoc($n,NoticeActionVoter::DROP)))
-            ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $action) => $action->setLabel('Créer une notice'))
+            ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $action) => $action->setLabel('Créer une <b>Notice</b>'))
             ->remove(Crud::PAGE_INDEX, Action::EDIT)
             ->remove(Crud::PAGE_INDEX, Action::DELETE)
             ->remove(Crud::PAGE_DETAIL, Action::INDEX)
             ->remove(Crud::PAGE_NEW,Action::SAVE_AND_ADD_ANOTHER)
             ->remove(Crud::PAGE_EDIT,Action::SAVE_AND_CONTINUE)
             ->setPermission(Action::INDEX, 'ROLE_READ_NOTI') 
-            ->setPermission(Action::NEW, 'ROLE_CREA_NOTI') 
-            ->setPermission(Action::DETAIL, 'ROLE_READ_NOTI') 
+            ->setPermission(Action::NEW, 'ROLE_CREA_NOTI')
+            ->setPermission(Action::DETAIL, 'ROLE_READ_NOTI')
             ->setPermission(Action::EDIT, 'ROLE_EDIT_NOTI')  
             ->setPermission(Action::DELETE, 'ROLE_DROP_NOTI');
     }
@@ -121,28 +129,26 @@ class NoticeCrudController extends AbstractCrudController
     {
         /** @var User $user */ $user = $this->getUser();
         $valdoc = $this->isGranted('ROLE_VALI_NOTI');
-        $langList = Languages::getAlpha3Names('fr');
+        $langList = array_merge(['français' => 'fra'], array_flip(Languages::getAlpha3Names('fr')));
         if ($valdoc) yield Field\FormField::addTab('Soumission')->setHelp("Infos renseignées par la contribution des établissements");
 
         yield Field\FormField::addColumn(6);
         yield Field\FormField::addFieldset('Description générale')->setIcon('fa fa-pencil');
         yield Field\IdField::new('id')->onlyOnDetail();
-        yield Field\TextField::new('titre')->setHelp('notice_titre_help');
-        yield Field\TextEditorField::new('description')->setHelp('notice_description_help')->hideOnIndex();
+        yield Field\TextField::new('titre')->setHelp(t('notice.titre_help', domain: 'EasyAdminBundle'));
+        yield Field\TextEditorField::new('description')->setHelp(t('notice.description_help', domain: 'EasyAdminBundle'))->hideOnIndex();
         //Etablissement porteur 
-        yield EntityField::new('porteurs', 'notice_porteurs')
-            ->setHelp('notice_porteurs_help')
+        yield EntityField::new('porteurs', t('notice.porteurs', domain: 'EasyAdminBundle'))
+            ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.abrege', 'ASC'))
+            ->setHelp(t('notice.porteurs_help', domain: 'EasyAdminBundle'))
             ->setSortable(false)
             ->setRequired(true)
-            ->hideOnIndex()
-            ->setQueryBuilder(function (QueryBuilder $queryBuilder) {
-                return $queryBuilder->orderBy('entity.abrege', 'ASC');
-            });
+            ->hideOnIndex();
         
         //Auteurs
-        // Todo : reactivate this one with noticeautofield // yield EntityField::new('auteurs','notice_auteurs')->setHelp('notice_auteurs_help')->setFormType(AuteurAutoField::class)->setSortable(false)->setRequired(true);
-        yield EntityField::new('auteurs','notice_auteurs')
-            ->setHelp('notice_auteurs_help')
+        // Todo : reactivate this one with noticeautofield // yield EntityField::new('auteurs','notice.auteurs')->setHelp(t('notice.auteurs_help', domain: 'EasyAdminBundle'))->setFormType(AuteurAutoField::class)->setSortable(false)->setRequired(true);
+        yield EntityField::new('auteurs',t('notice.auteurs', domain: 'EasyAdminBundle'))
+            ->setHelp(t('notice.auteurs_help', domain: 'EasyAdminBundle'))
             ->setSortable(false)
             ->setRequired(true)
             ->setQueryBuilder(function (QueryBuilder $queryBuilder) {
@@ -151,133 +157,108 @@ class NoticeCrudController extends AbstractCrudController
         
         
         // Mots clés 
-        // Todo : reactivate this one with noticeautofield // yield EntityField::new('tags', 'notice_tags')->setFormType(TagAutoField::class)->setHelp('notice_tags_help')->hideOnIndex()->setRequired(true);
-        yield EntityField::new('tags', 'notice_tags')
-            ->setHelp('notice_tags_help')
+        // Todo : reactivate this one with noticeautofield // yield EntityField::new('tags', 't(notice_.ags')->setFormType(TagAutoField::class)->setHelp(t('notice.tags_help', domain: 'EasyAdminBundle'))->hideOnIndex()->setRequired(true);
+        yield EntityField::new('tags', t('notice.tags', domain: 'EasyAdminBundle'))
+            ->setHelp(t('notice.tags_help', domain: 'EasyAdminBundle'))
             ->hideOnIndex()
             ->setRequired(true)
             ->setQueryBuilder(function (QueryBuilder $queryBuilder) {
                 return $queryBuilder->orderBy('entity.nom', 'ASC');
             });
 
-        yield Field\TextField::new('ressDate', 'notice_date')->setHelp('notice_date_help')->hideOnIndex();
+        yield Field\TextField::new('ressDate', t('notice.date', domain: 'EasyAdminBundle'))->setHelp(t('notice.date_help', domain: 'EasyAdminBundle'))->hideOnIndex();
 
         yield Field\FormField::addFieldset('Liens de la ressource')->setIcon('fa fa-paperclip');
         yield Field\BooleanField::new('zipFile')->setFormTypeOptions(['mapped' => false])->setLabel('Fichier Zip')->onlyOnForms();
-        yield Field\UrlField::new('ressUrl', 'notice_ressurl')->setHelp('notice_ressurl_help')->setFormTypeOptions(['attr' => ['class' => 'isUrl'],'constraints'=>[new Url()],'required'=>false])->setSortable(false);
-        yield FileField::new('ressZip', 'Contenu Zip')->setUploadDir('public/uploads/files')->setHelp('notice_ressurl_help')->onlyOnForms()
+        yield Field\UrlField::new('ressUrl', t('notice.ressurl', domain: 'EasyAdminBundle'))->setHelp(t('notice.ressurl_help', domain: 'EasyAdminBundle'))->setFormTypeOptions(['attr' => ['class' => 'isUrl'],'constraints'=>[new Url()],'required'=>false])->setSortable(false);
+        yield FileField::new('ressZip', 'Contenu Zip')->setUploadDir('public/uploads/files')->setHelp(t('notice.ressurl_help', domain: 'EasyAdminBundle'))->onlyOnForms()
             ->setUploadedFileNamePattern('[timestamp]-[randomhash].[extension]')->setBasePath('/uploads/files')->setFormTypeOptions(['attr' => ['class' => 'isZip'],'required'=>false])
             ->setFileConstraints([new File(maxSize: '64M', mimeTypes: ["application/zip", "application/x-zip-compressed", "multipart/x-zip"])]);
         
         // Ressource(s) liée(s) dropdown
-        // Todo : reactivate this one with noticeautofield // yield EntityField::new('ressources','notice_notices')->setFormType(NoticeAutoField::class)->setHelp('notice_notices_help')->hideOnIndex();
-        yield EntityField::new('ressources','notice_notices')
-            ->setHelp('notice_notices_help')
+        // Todo : reactivate this one with noticeautofield // yield EntityField::new('ressources','notice.notices')->setFormType(NoticeAutoField::class)->setHelp(t('notice.notices_help', domain: 'EasyAdminBundle'))->hideOnIndex();
+        yield EntityField::new('ressources',t('notice.notices', domain: 'EasyAdminBundle'))
+            ->setHelp(t('notice.notices_help', domain: 'EasyAdminBundle'))
             ->hideOnIndex()
-            ->setQueryBuilder(function (QueryBuilder $queryBuilder) {
-                return $queryBuilder->orderBy('entity.titre', 'ASC');
-            });
+            ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.titre', 'ASC'));
         
         yield Field\ChoiceField::new('etat')->setChoices(NoticEtat::getLabels())->renderAsBadges(NoticEtat::getColors())->hideOnForm();
-        yield Field\AssociationField::new('validateur','notice_validateur')->onlyOnDetail();
-        
+        yield Field\AssociationField::new('validateur',t('notice.validateur', domain: 'EasyAdminBundle'))->onlyOnDetail();
 
         yield Field\FormField::addFieldset('Droits attachés à la ressource')->setIcon('fa fa-gavel');
-        //Licence et cdt util
-        yield Field\AssociationField::new('droit','notice_droit')
-            ->setHelp('notice_droit_help')
+        yield Field\AssociationField::new('droit',t('notice.droit', domain: 'EasyAdminBundle'))
+            ->setHelp(t('notice.droit_help', domain: 'EasyAdminBundle'))
             ->setSortable(false)
             ->hideOnIndex()
-            ->setQueryBuilder(function (QueryBuilder $queryBuilder) {
-                return $queryBuilder->orderBy('entity.valeur', 'ASC');
-            });
+            ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.valeur', 'ASC'));
 
-        yield Field\BooleanField::new('ressPayant','notice_resspayant')->setHelp('notice_resspayant_help')->renderAsSwitch(false)->hideOnIndex()->setColumns(6);
-        yield Field\BooleanField::new('proprIntel','notice_proprintel')->setHelp('notice_proprintel_help')->renderAsSwitch(false)->hideOnIndex()->setColumns(6);
+        yield Field\BooleanField::new('ressPayant',t('notice.resspayant', domain: 'EasyAdminBundle'))->setHelp(t('notice.resspayant_help', domain: 'EasyAdminBundle'))->renderAsSwitch(false)->hideOnIndex()->setColumns(6);
+        yield Field\BooleanField::new('proprIntel',t('notice.proprintel', domain: 'EasyAdminBundle'))->setHelp(t('notice.proprintel_help', domain: 'EasyAdminBundle'))->renderAsSwitch(false)->hideOnIndex()->setColumns(6);
 
 
         yield Field\FormField::addColumn(6);
         yield Field\FormField::addFieldset('Indications pédagogiques')->setIcon('fa fa-th-list');
         
-        //Langue de la ressource
-        $flippedLangList = array_flip($langList);
-        $sortedLangList = array_merge(['Français' => 'fra'], $flippedLangList);
-        yield Field\ChoiceField::new('ressLang', 'notice_resslang')
-            ->setChoices($sortedLangList)
-            ->setHelp('notice_resslang_help')
+        yield Field\ChoiceField::new('ressLang', t('notice.resslang', domain: 'EasyAdminBundle'))
+            ->setChoices($langList)
+            ->setHelp(t('notice.resslang_help', domain: 'EasyAdminBundle'))
             ->allowMultipleChoices()
             ->renderAsBadges()
             ->hideOnIndex()
             ->setRequired(true)
             ->setColumns(6);
         
-            yield Field\TextField::new('dureAppr', 'notice_dureappr')
+            yield Field\TextField::new('dureAppr', t('notice.dureappr', domain: 'EasyAdminBundle'))
             ->setColumns(6)
-            ->setHelp('notice_dureappr_help')
+            ->setHelp(t('notice.dureappr_help', domain: 'EasyAdminBundle'))
             ->hideOnIndex();
 
         // Type pédagogique
-        yield EntityField::new('pedTypes', 'notice_pedtypes')
-        ->setHelp('notice_pedtypes_help')
+        yield EntityField::new('pedTypes', t('notice.pedtypes', domain: 'EasyAdminBundle'))
+        ->setHelp(t('notice.pedtypes_help', domain: 'EasyAdminBundle'))
         ->hideOnIndex()->setSortable(false)
         ->setRequired(true)
-        ->setQueryBuilder(function (QueryBuilder $queryBuilder) {
-            return $queryBuilder->orderBy('entity.nom', 'ASC');
-        });
-
+        ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.nom', 'ASC'));
         
-        yield Field\ArrayField::new('propUser', 'notice_propuser')->setHelp('notice_propuser_help')->hideOnIndex();
-        yield EntityField::new('docTypes', 'notice_doctypes')->setHelp('notice_doctypes_help')->setFormTypeOptions(['multiple' => true, 'expanded' => true])->setColumns(6)->hideOnIndex()->setRequired(true);
-        yield EntityField::new('niveaux', 'notice_niveaux')->setFormTypeOptions(['multiple' => true, 'expanded' => true])->setHelp('notice_niveaux_help')->setColumns(6)->hideOnIndex()->setRequired(true);
+        yield Field\ArrayField::new('propUser', t('notice.propuser', domain: 'EasyAdminBundle'))->setHelp(t('notice.propuser_help', domain: 'EasyAdminBundle'))->hideOnIndex();
+        yield EntityField::new('docTypes', t('notice.doctypes', domain: 'EasyAdminBundle'))->setHelp(t('notice.doctypes_help', domain: 'EasyAdminBundle'))->setFormTypeOptions(['multiple' => true, 'expanded' => true])->setColumns(6)->hideOnIndex()->setRequired(true);
+        yield EntityField::new('niveaux', t('notice.niveaux', domain: 'EasyAdminBundle'))->setFormTypeOptions(['multiple' => true, 'expanded' => true])->setHelp(t('notice.niveaux_help', domain: 'EasyAdminBundle'))->setColumns(6)->hideOnIndex()->setRequired(true);
 
         yield Field\FormField::addFieldset('Classification thématique')->setIcon('fa fa-book');
         
-        yield EntityField::new('champDisc', 'notice_champdisc')
+        yield EntityField::new('champDisc', t('notice.champdisc', domain: 'EasyAdminBundle'))
             ->setFormTypeOptions([
                 'class' => Discipline::class, 
-                'mapped' => false, 
-                'required' => true
+                'mapped' => false
             ])
-            ->setHelp('notice_champdisc_help')
+            ->setHelp(t('notice.champdisc_help', domain: 'EasyAdminBundle'))
             ->onlyOnForms()
-            ->setQueryBuilder(function (QueryBuilder $qb) use ($valdoc, $user) {
-                if ($valdoc && $user->getUntheme() instanceof Univerique) {
-                    return $qb
-                        ->where('entity IN (:champs)')
-                        ->setParameter('champs', $user->getUntheme()->getFields())
-                        ->orderBy('entity.nom', 'ASC'); // Ajout de l'orderBy ici
-                }
+            ->setQueryBuilder(function (QueryBuilder $qb) use ($user) {
+                if ($user->getUntheme() instanceof Univerique)
+                    $qb->where('entity IN (:champs)')->setParameter('champs', $user->getUntheme()->getFields());
+                else $qb->where('entity.parent IS NULL');
 
-                return $qb
-                    ->where('entity.parent IS NULL')
-                    ->orderBy('entity.nom', 'ASC'); // Ajout de l'orderBy ici
+                return $qb->orderBy('entity.nom', 'ASC');
             })
             ->setSortable(false);
         
-        //Discipline 
         yield EntityField::new('discipline')
             ->setFormTypeOptions([
                 'class' => Discipline::class, 
                 'auto_initialize' => false, 
-                'mapped' => false, 
-                'required' => true
+                'mapped' => false
             ])
-            ->setHelp('notice_discipline_help')
+            ->setHelp(t('notice.discipline_help', domain: 'EasyAdminBundle'))
             ->setSortable(false)
-            ->setQueryBuilder(function (QueryBuilder $queryBuilder) {
-                return $queryBuilder->orderBy('entity.nom', 'ASC');
-            })
+            ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.nom', 'ASC'))
             ->onlyOnForms();
         //Sous discipline 
-        yield EntityField::new('specialite')
+        yield EntityField::new('specialite', 'Specialité')
+            ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.nom', 'ASC'))
             ->setFormTypeOptions(['class' => Discipline::class])
-            ->setSortable(false)
-            ->setQueryBuilder(function (QueryBuilder $queryBuilder) {
-                return $queryBuilder->orderBy('entity.nom', 'ASC');
-            })
-            ->setLabel('Specialité');
+            ->setSortable(false);
 
-        yield Field\DateTimeField::new('editeLe', 'notice_editele')->hideOnForm();
+        yield Field\DateTimeField::new('editeLe', t('notice.editele', domain: 'EasyAdminBundle'))->hideOnForm();
 
         if ($valdoc) {
             yield Field\FormField::addTab('Validation')->setHelp("Infos techniques complémentaires de validation");
@@ -285,27 +266,27 @@ class NoticeCrudController extends AbstractCrudController
             yield Field\FormField::addFieldset('Liens de la ressource')->setIcon('fa fa-folder-open');
             yield Field\ImageField::new('vignette')->setUploadDir('public/uploads/images')
                 ->setUploadedFileNamePattern('[timestamp]-[contenthash].[extension]')->setBasePath('/uploads/images')
-                ->setFileConstraints([new Image(['maxWidth' => 620, 'maxHeight' => 390])])->setHelp('notice_vignette_help')->setSortable(false);
-            yield Field\IntegerField::new('ressSize','notice_resssize')->setHelp('notice_resssize_help')->setColumns(6)->hideOnIndex();
-            yield DurationField::new('dureExec','notice_dureexec')->setHelp('notice_dureexec_help')->setColumns(6)->hideOnIndex();
-            yield Field\UrlField::new('formEvalUrl', 'notice_formevalurl')->setHelp('notice_formevalurl_help')->hideOnIndex();
-            yield Field\ChoiceField::new('userLang','notice_userlang')->setHelp('notice_userlang_help')->hideOnIndex()
-                ->setChoices(array_flip($langList))->allowMultipleChoices()->renderExpanded(false)->renderAsBadges();
-            yield Field\TextEditorField::new('objectif','notice_objectif')->setHelp('notice_objectif_help')->hideOnIndex()->formatValue(function ($value, $entity) { return $value;});
+                ->setFileConstraints([new Image(['maxWidth' => 620, 'maxHeight' => 390])])->setHelp(t('notice.vignette_help', domain: 'EasyAdminBundle'))->setSortable(false);
+            yield Field\IntegerField::new('ressSize',t('notice.resssize', domain: 'EasyAdminBundle'))->setHelp(t('notice.resssize_help', domain: 'EasyAdminBundle'))->setColumns(6)->hideOnIndex();
+            yield DurationField::new('dureExec',t('notice.dureexec', domain: 'EasyAdminBundle'))->setHelp(t('notice.dureexec_help', domain: 'EasyAdminBundle'))->setColumns(6)->hideOnIndex();
+            yield Field\UrlField::new('formEvalUrl',t('notice.formevalurl', domain: 'EasyAdminBundle'))->setFormTypeOption('default_protocol', 'https')->setHelp(t('notice.formevalurl_help', domain: 'EasyAdminBundle'))->hideOnIndex();
+            yield Field\ChoiceField::new('userLang',t('notice.userlang', domain: 'EasyAdminBundle'))->setHelp(t('notice.userlang_help', domain: 'EasyAdminBundle'))->hideOnIndex()
+                ->setChoices($langList)->allowMultipleChoices()->renderExpanded(false)->renderAsBadges();
+            yield Field\TextEditorField::new('objectif',t('notice.objectif', domain: 'EasyAdminBundle'))->setHelp(t('notice.objectif_help', domain: 'EasyAdminBundle'))->hideOnIndex()->formatValue(function ($value, $entity) { return $value;});
             yield Field\TextField::new('champExt1',"Champ d'extension 1")->hideOnIndex(); yield Field\TextField::new('champExt2',"Champ d'extension 2")->hideOnIndex();
             yield Field\TextField::new('champExt3',"Champ d'extension 3")->hideOnIndex(); yield Field\TextField::new('champExt4',"Champ d'extension 4")->hideOnIndex();
             yield Field\TextField::new('champExt5',"Champ d'extension 5")->hideOnIndex();
-            yield Field\BooleanField::new('exportOAI', 'notice_exportoai')->setHelp('notice_exportoai_help')->renderAsSwitch(false)->hideOnIndex();
+            yield Field\BooleanField::new('exportOAI', t('notice.exportoai', domain: 'EasyAdminBundle'))->setHelp(t('notice.exportoai_help', domain: 'EasyAdminBundle'))->renderAsSwitch(false)->hideOnIndex();
 
             yield Field\FormField::addColumn(6);
             yield Field\FormField::addFieldset('Classification thématique')->setIcon('fa fa-book');
-            yield EntityField::new('disciFond','notice_discifond')->setHelp('notice_discifond_help')->onlyOnForms()
+            yield EntityField::new('disciFond',t('notice.discifond', domain: 'EasyAdminBundle'))->setHelp(t('notice.discifond_help', domain: 'EasyAdminBundle'))->onlyOnForms()
                 ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->where('entity.parent is null'))->setFormTypeOptions(['class' => Dewey::class,'mapped' => false,'required' => false])->setSortable(false);
             yield EntityField::new('division')->setFormTypeOptions(['class' => Dewey::class,'auto_initialize' => false,'mapped' => false,'required' => false])->onlyOnForms();
             yield EntityField::new('codewey','Code Dewey')->setFormTypeOptions(['class' => Dewey::class])->setRequired(true);
-            yield Field\TextField::new('label','notice_label')->setHelp('notice_label_help')->onlyOnDetail();
-            yield Field\DateTimeField::new('creeLe','notice_creele')->onlyOnDetail();
-            yield EntityField::new('repertoire','notice_repertoire')->setFormType(TreeChoiceType::class)->setHelp('notice_repertoire_help');
+            yield Field\TextField::new('label',t('notice.label', domain: 'EasyAdminBundle'))->setHelp(t('notice.label_help', domain: 'EasyAdminBundle'))->onlyOnDetail();
+            yield Field\DateTimeField::new('creeLe',t('notice.creele', domain: 'EasyAdminBundle'))->onlyOnDetail();
+            yield EntityField::new('repertoire',t('notice.repertoire', domain: 'EasyAdminBundle'))->setFormType(TreeChoiceType::class)->setHelp(t('notice.repertoire_help', domain: 'EasyAdminBundle'));
         }
     }
 
@@ -316,74 +297,31 @@ class NoticeCrudController extends AbstractCrudController
 
     public function createEntity(string $entityFqcn): Notice
     {
+        $ctx = $this->container->get(AdminContextProvider::class);
         /** @var Notice $notice */
         $notice = parent::createEntity($entityFqcn);
+        if ($folderId = $ctx->getRequest()->get('folderId', 1)) {
+            $folder = $this->rep->findOneForAll($folderId);
+            $notice->setRepertoire($folder);
+        }
         return $notice->setCreateur($this->getUser());
     }
 
-    //Personnaliser la requête qui récupère les entités affichées dans la vue de liste
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
-        
-        /** @var User $user */
-        $user = $this->getUser();
-        
-        if($this->isGranted('ROLE_READ_UNIV')) {
-            /* ADMINISTRATOR 
-                - admin allowed to do everything.
-                - don't see the Notice "en travail" of other user 
-            */
-            $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)->select('entity');
-            //Admin's working notice but not other's
-            $qb->andWhere(
-                    $qb->expr()->orX(
-                        $qb->expr()->neq('entity.etat', ':etat'), // Etat différent de "Working"
-                        $qb->expr()->eq('entity.createur', ':currentUserId') // ou alors le créateur est l'utilisateur courant
-                    )
-                )
-                ->setParameter('etat', NoticEtat::Working)
-                ->setParameter('currentUserId', $user->getId());
+        /** @var User $user */$user = $this->getUser();
+        $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)->select('entity,r,e,a,n,p,dd,pp,k,l,s')
+            ->leftJoin('entity.codewey','e')->leftJoin('entity.ressources','r')
+            ->join('entity.tags','k')->join('entity.porteurs','p')
+            ->join('entity.auteurs','a')->join('entity.niveaux','n')
+            ->join('entity.docTypes','dd')->join('entity.pedTypes','pp')
+            ->join('entity.droit','l')->join('entity.specialite','s');
 
-        } elseif($this->isGranted('ROLE_VALI_NOTI') && $user->getUntheme() instanceof Univerique) { 
-            /* DOCUMENTALIST 
-                - allowed only for his UNT.
-                - don't see the Notice "en travail" of other user
-            */
-            $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)
-            ->select('entity', 's') 
-            ->leftJoin('entity.specialite', 's') // Jointure avec l'entité Discipline (specialite)
-            ->leftJoin('s.parent', 'p');  // Jointure avec la relation parent de Discipline (s.parent)
-            // Documentalist's UNT filter
-            $qb->andWhere('p.parent in (:champs)')
-                ->setParameter('champs',$user->getUntheme()->getFields());
-            // Documentalist's working notice but not other's
-            $qb->andWhere(
-                $qb->expr()->orX(
-                    $qb->expr()->neq('entity.etat', ':etat'), // Etat différent de "Working"
-                    $qb->expr()->eq('entity.createur', ':currentUserId') // ou alors le créateur est l'utilisateur courant
-                )
-            )
-            ->setParameter('etat', NoticEtat::Working)
-            ->setParameter('currentUserId', $user->getId());
-        } 
-
-        elseif($this->isGranted('ROLE_READ_NOTI') && $user->getSchool() instanceof Etablissement) {
-            //CONTRIBUTEUR 
-            // peut afficher les notices de sont établissement contributeurs
-            $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)->select('entity,r,e,a,n,p,dd,pp,k,l,s')
-            ->leftJoin('entity.codewey','e')
-            ->leftJoin('entity.ressources','r')
-            ->join('entity.tags','k')
-            ->join('entity.porteurs','p')
-            ->join('entity.auteurs','a')
-            ->join('entity.niveaux','n')
-            ->join('entity.docTypes','dd')
-            ->join('entity.pedTypes','pp')
-            ->join('entity.droit','l')
-            ->join('entity.specialite','s')
-            ->andWhere('entity.createur = :currentUserId')->setParameter('currentUserId', $user->getId());
-            //->andWhere(':school MEMBER OF entity.porteurs')->setParameter('school', $user->getSchool());
-        } 
+        if($this->isGranted('ROLE_READ_NOTI') && $user->getSchool() instanceof Etablissement)
+            $qb->andWhere(':school MEMBER OF entity.porteurs')->setParameter('school', $user->getSchool());
+        elseif($this->isGranted('ROLE_VALI_NOTI') && $user->getUntheme() instanceof Univerique)
+            $qb->join('s.parent','d')->addSelect('d')
+                ->andWhere('d.parent in (:champs)')->setParameter('champs',$user->getUntheme()->getFields());
         return $qb->andWhere('entity.deleted = 0')->orderBy('entity.creeLe', 'DESC');
     }
 
@@ -610,15 +548,9 @@ class NoticeCrudController extends AbstractCrudController
 
     private function addDisc(FormInterface $form, ?Discipline $child): void
     {
-        $ctx = $this->getContext();
-        $currentEntity = $ctx->getEntity()->getInstance(); 
-        if (!$this->isGranted('NOTICE_EDIT', $currentEntity)) {
-            throw new AccessDeniedHttpException('Vous n\'êtes pas autorisé à éditer cette notice.');
-        }
-        
         $builder = $form->getConfig()->getFormFactory()->createNamedBuilder('discipline', EntityType::class, null, [
             'class' => Discipline::class, 'mapped' => false, 'auto_initialize' => false, 'required' => false,
-            'label' => 'notice_discipline', 'choices' => $child ? $child->getChildren() : [], 'help' => 'notice_discipline_help',
+            'label' => t('notice.discipline', domain: 'EasyAdminBundle'), 'choices' => $child ? $child->getChildren() : [], 'help' => t('notice.discipline_help', domain: 'EasyAdminBundle'),
             'placeholder' => $child ? 'Sélectionnez la discipline' : 'Sélectionnez le champ disciplinaire',
         ]);
 
@@ -633,7 +565,7 @@ class NoticeCrudController extends AbstractCrudController
     {
         $builder = $form->getConfig()->getFormFactory()->createNamedBuilder('division', EntityType::class, null, [
             'class' => Dewey::class, 'mapped' => false, 'auto_initialize' => false, 'required' => false,
-            'label' => 'notice_division', 'choices' => $child ? $child->getChildren() : [], 'help' => 'notice_division_help',
+            'label' => t('notice.division', domain: 'EasyAdminBundle'), 'choices' => $child ? $child->getChildren() : [], 'help' => t('notice.division_help', domain: 'EasyAdminBundle'),
             'placeholder' => $child ? 'Sélectionnez la division' : 'Sélectionnez la discipline fondamentale',
         ]);
 
@@ -647,15 +579,15 @@ class NoticeCrudController extends AbstractCrudController
 
     private function addSpec(FormInterface $form, ?Discipline $child): void {
         $form->add('specialite', EntityType::class, [
-            'label' => 'notice_specialite', 'class' => Discipline::class,
-            'choices' => $child ? $child->getChildren() : [], 'help' => 'notice_specialite_help',
+            'label' => t('notice.specialite', domain: 'EasyAdminBundle'), 'class' => Discipline::class,
+            'choices' => $child ? $child->getChildren() : [], 'help' => t('notice.specialite_help', domain: 'EasyAdminBundle'),
             'placeholder' => $child ? 'Sélectionnez la spécialité' : 'Sélectionnez la discipline',
         ]);
     }
     private function addCode(FormInterface $form, ?Dewey $child): void {
         $form->add('codewey', EntityType::class, [
-            'label' => 'notice_codewey', 'class' => Dewey::class, 'required' => false,
-            'choices' => $child ? $child->getChildren() : [], 'help' => 'notice_codewey_help',
+            'label' => t('notice.codewey', domain: 'EasyAdminBundle'), 'class' => Dewey::class, 'required' => false,
+            'choices' => $child ? $child->getChildren() : [], 'help' => t('notice.codewey_help', domain: 'EasyAdminBundle'),
             'placeholder' => $child ? 'Sélectionnez le code dewey' : 'Sélectionnez la division',
         ]);
     }
@@ -702,20 +634,6 @@ class NoticeCrudController extends AbstractCrudController
         });
     }
 
-    public function new(AdminContext $context)
-    {
-        $resParams = parent::new($context);
-        if ($resParams instanceof KeyValueStore && $folderId = $context->getRequest()->get('folderId')) {
-            /** @var Notice $entity */
-            $entity = $context->getEntity()->getInstance();
-            $folder = $this->rep->findOneForAll($folderId);
-            $context->getEntity()->setInstance($entity->setRepertoire($folder));
-            $resParams->set('curritem', $folder);
-        }
-        return $resParams;
-    }
-
-    /* Action de détail */ 
     public function detail(AdminContext $context): KeyValueStore
     {
         $currentEntity = $context->getEntity()->getInstance(); 

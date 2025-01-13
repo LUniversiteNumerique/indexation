@@ -1,7 +1,6 @@
 <nav aria-label="breadcrumb">
-  <ol class="breadcrumb">
     {% if bcrumb %}
-      <li class="breadcrumb-item"><a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('index') }}"> Référentiel</a></li>
+      <ol class="breadcrumb">
       {% for breadcrumb_item in bcrumb %}
         {% if not loop.last %}
           <li class="breadcrumb-item"><a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('detail').setEntityId(breadcrumb_item.id) }}">{{ breadcrumb_item.nom }}</a></li>
@@ -9,6 +8,6 @@
           <li class="breadcrumb-item active" aria-current="page"><i class="fa fa-folder-open" aria-hidden="true"></i> {{ breadcrumb_item.nom }}</li>
         {% endif %}
       {% endfor %}
-    {% else %}<li class="breadcrumb-item active" aria-current="page"><i class="fa fa-folder-open" aria-hidden="true"></i> Référentiel</li>{% endif %}
-  </ol>
+      </ol>
+    {% endif %}
 </nav>

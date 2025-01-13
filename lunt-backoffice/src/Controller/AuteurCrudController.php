@@ -18,32 +18,31 @@ class AuteurCrudController extends AbstractCrudController
 
     public function configureCrud(Crud $crud): Crud
     {
-        return $crud->setSearchMode(SearchMode::ANY_TERMS)->setEntityPermission('ROLE_READ_ACTE');
+        return $crud->setSearchMode(SearchMode::ANY_TERMS)
+            ->setEntityLabelInPlural("Auteurs")
+            ->setEntityPermission('ROLE_READ_ACTE');
     }
 
     public function configureActions(Actions $actions): Actions
     {
         return parent::configureActions($actions)
             ->disable(Action::DETAIL)
+            ->disable(Action::BATCH_DELETE)
             ->setPermission(Action::NEW, 'ROLE_CREA_ACTE')
             ->setPermission(Action::EDIT, 'ROLE_EDIT_ACTE')
             ->setPermission(Action::DELETE, 'ROLE_DROP_ACTE')
-            ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $action) => $action->setLabel('Créer un auteur'))
+            ->setPermission(Action::BATCH_DELETE, 'ROLE_DROP_ACTE')
+            ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $action) => $action->setLabel('Créer un <b>Auteur</b>'))
             ->remove(Crud::PAGE_NEW,Action::SAVE_AND_ADD_ANOTHER);
     }
 
     public function configureFields(string $pageName): iterable
     {
         yield IdField::new('id')->hideOnForm();
-        if (Crud::PAGE_NEW  === $pageName || $pageName === Crud::PAGE_EDIT) {
-            yield TextField::new('prenom')->setSortable(true);
-            yield TextField::new('nom')->setSortable(true);
-        } else {
-            yield TextField::new('prenom')->setSortable(true);
-            yield TextField::new('nom')->setSortable(true);
-        }
+        yield TextField::new('prenom', 'Prénom')->setSortable(true);
+        yield TextField::new('nom')->setSortable(true);
         yield EmailField::new('email');
-        yield DateTimeField::new('creeLe')->hideOnForm();
+        yield DateTimeField::new('creeLe', 'Date de création')->hideOnForm();
         yield DateTimeField::new('editeLe')->onlyOnDetail();
     }
 

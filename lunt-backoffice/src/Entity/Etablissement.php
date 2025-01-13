@@ -4,11 +4,11 @@ namespace App\Entity;
 
 use App\Repository\EtablissementRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: EtablissementRepository::class)]
-#[UniqueEntity(fields: ['nom'], message: 'Ce nom est déjà pris.')]
-#[UniqueEntity(fields: ['abrege'], message: 'Ce nom abrégé est déjà pris.')]
+#[ORM\Entity(repositoryClass: EtablissementRepository::class),
+    UniqueEntity('abrege')]
 class Etablissement
 {
     use Timestamps;

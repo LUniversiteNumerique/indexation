@@ -22,7 +22,7 @@ class KeywordCrudController extends AbstractCrudController
 
     public function configureCrud(Crud $crud): Crud
     {
-        return $crud->setEntityLabelInSingular('Mot clé')->setEntityLabelInPlural('Mots clés')
+        return $crud->setEntityLabelInSingular('Mot-clé')->setEntityLabelInPlural('Mots clés')
             ->setSearchFields(['nom'])->setDefaultSort(['nom' => 'ASC'])->setEntityPermission('ROLE_READ_KEYW');
     }
 
@@ -30,12 +30,11 @@ class KeywordCrudController extends AbstractCrudController
     {
         return parent::configureActions($actions)
             ->disable(Action::DETAIL)
+            ->disable(Action::BATCH_DELETE)
             ->add(Crud::PAGE_NEW, Action::INDEX)
             ->setPermission(Action::NEW, 'ROLE_CREA_KEYW')
             ->setPermission(Action::EDIT, 'ROLE_EDIT_KEYW')
             ->setPermission(Action::DELETE, 'ROLE_DROP_KEYW')
-            ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $action) => 
-                $action->setLabel('Créer un nouveau mot-clé'))  
         ;
     }
 
