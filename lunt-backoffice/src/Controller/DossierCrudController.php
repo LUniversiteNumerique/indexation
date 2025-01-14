@@ -32,7 +32,8 @@ class DossierCrudController extends AbstractCrudController
 
     public function configureCrud(Crud $crud): Crud
     {
-      return parent::configureCrud($crud)->showEntityActionsInlined(false)->setEntityLabelInPlural('Dossiers')
+      return parent::configureCrud($crud)->showEntityActionsInlined(false)
+          ->setEntityLabelInPlural('Dossiers')->setEntityLabelInSingular('dossier')
           ->overrideTemplates(['crud/detail' => 'admin/actions/dossier.html.twig']);
     }
 
@@ -70,7 +71,7 @@ class DossierCrudController extends AbstractCrudController
     {
       /** @var Dossier $ent */
         $ent = $entityDto->getInstance()->setUser($this->getUser());
-      if ($id = $context->getRequest()->get('entityId'))
+      if ($id = $context->getRequest()->get('folderId'))
         $entityDto->setInstance($ent->setParent($this->repository->find($id)));
       return parent::createNewFormBuilder($entityDto, $formOptions, $context);
     }
@@ -94,13 +95,13 @@ class DossierCrudController extends AbstractCrudController
     {
         $request = $context->getRequest();
         $entityId = $context->getEntity()->getPrimaryKeyValue();
-        $parentId = $request->get('entityId') ?? 1;
+        $parentId = $request->get('folderId') ?? 1;
         $submitButtonName = $request->request->all()['ea']['newForm']['btn'];
 
         $entityUrl = $this->generator->setAction(Action::DETAIL)->setEntityId($parentId);
         $url = match ($submitButtonName) {
             Action::SAVE_AND_CONTINUE => $this->generator->setAction(Action::EDIT)->setEntityId($entityId)->generateUrl(),
-            Action::SAVE_AND_ADD_ANOTHER => $this->generator->setAction(Action::NEW)->set('entityId', $parentId)->generateUrl(),
+            Action::SAVE_AND_ADD_ANOTHER => $this->generator->setAction(Action::NEW)->set('folderId', $parentId)->generateUrl(),
             default => $context->getReferrer() ?? $entityUrl->generateUrl(),
         };
 

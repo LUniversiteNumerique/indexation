@@ -17,7 +17,7 @@ class GroupeCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud->setSearchFields(null)
-            ->setEntityLabelInPlural("Groupes")
+            ->setEntityLabelInPlural("Groupes")->setEntityLabelInSingular('groupe')
             ->setEntityPermission('ROLE_READ_GROU');
     }
 

@@ -33,33 +33,24 @@ final class TagAutoField extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $choiceLoader = static function (Options $options, $loader) {
-            if (null === $loader) {
-                return null;
-            }
-
+            if (null === $loader) return null;
             return new ExtraLazyChoiceLoader($loader);
         };
 
         $resolver->setDefaults([
             'autocomplete' => true,
             'choice_loader' => $choiceLoader,
-            // set to the fields to search on or null to search on all fields
             'searchable_fields' => null,
             'filter_query' => null,
-            // set to the string role that's required to view the autocomplete results
-            // or a callable: function(Symfony\Component\Security\Core\Security $security): bool
             'security' => false,
-            // set the max results number that a query on automatic endpoint return.
             'max_results' => 10,
             'choice_label' => 'nom',
-
             'class' => Keyword::class,
             'placeholder' => 'Sélectionne vos tags',
             'preload' => true,
             'tom_select_options' => ['create' => true, 'createOnBlur' => true],
-
             'required' => false,'multiple' => true,
-            'query_builder' => $this->repository->createQueryBuilder('entity')->where('entity.valide = 1'),
+            'query_builder' => $this->repository->createQueryBuilder('entity')->orderBy('entity.nom', 'ASC'),
         ]);
 
         $resolver->setAllowedTypes('security', ['boolean', 'string', 'callable']);

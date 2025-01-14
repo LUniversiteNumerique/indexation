@@ -2,21 +2,17 @@
 
 namespace App\Controller;
 
-use Doctrine\ORM\EntityManagerInterface;
-use App\{Event\AfterNoticeStateSetEvent, Security\Voter\NoticeActionVoter};
+use App\Event\{AfterNoticeAdjustingEvent, AfterNoticeApprovingEvent, AfterNoticeForwardingEvent, AfterNoticeRejectingEvent, AfterNoticeStateSetEvent};
+use App\Security\Voter\NoticeActionVoter;
 use App\Entity\{Dewey, Discipline, Etablissement, Notice, NoticEtat, Univerique, User};
 use App\Field\{DurationField, EntityField, FileField};
 use App\Form\Type\{AuteurAutoField, NoticeAutoField, TagAutoField, TreeChoiceType};
 use App\Repository\{DossierRepository, NoticeRepository};
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Form\Type\{FileUploadType, Model\FileUploadState};
-use EasyCorp\Bundle\EasyAdminBundle\{Context\AdminContext,
-    Event\AfterEntityPersistedEvent,
-    Factory\FormFactory,
-    Filter\ChoiceFilter,
-    Filter\DateTimeFilter,
-    Provider\AdminContextProvider,
-    Router\AdminUrlGenerator};
+use EasyCorp\Bundle\EasyAdminBundle\Filter\{ChoiceFilter, DateTimeFilter, EntityFilter, TextFilter};
+use EasyCorp\Bundle\EasyAdminBundle\{Context\AdminContext, Event\AfterEntityPersistedEvent, Factory\FormFactory, Provider\AdminContextProvider, Router\AdminUrlGenerator};
 use EasyCorp\Bundle\EasyAdminBundle\Collection\{ActionCollection, FieldCollection, FilterCollection};
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Actions, Asset, Assets, Crud, Filters, KeyValueStore};
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -25,11 +21,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Field as Field;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\{FormBuilderInterface, FormEvent, FormEvents, FormInterface};
-use Symfony\Component\HttpFoundation\{File\Exception\FileException, File\UploadedFile, RedirectResponse, Response};
+use Symfony\Component\HttpFoundation\{File\Exception\FileException, File\UploadedFile, RedirectResponse, Request, Response};
 use Symfony\Component\Intl\Languages;
 use Symfony\Component\Validator\Constraints\{File, Image, Url};
 use Symfony\Component\Uid\Uuid;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use function Symfony\Component\String\u;
 use function Symfony\Component\Translation\t;
 
@@ -53,9 +48,10 @@ class NoticeCrudController extends AbstractCrudController
 
     public function configureCrud(Crud $crud): Crud
     {
-        $crud = $crud->setAutofocusSearch()->setSearchFields(['titre','description'])->setEntityLabelInPlural('Notices')
-            ->setPageTitle(Action::NEW, fn () => 'Créer une <b>Notice</b>')
-            ->setPageTitle(Action::EDIT, fn (Notice $n) => 'Modifier une <b>Notice</b>')
+        $crud = $crud->setAutofocusSearch()->setSearchFields(['titre','description'])
+            ->setEntityLabelInPlural('Notices')->setEntityLabelInSingular('notice')
+            ->setPageTitle(Action::NEW, fn () => 'Créer une <b>notice</b>')
+            ->setPageTitle(Action::EDIT, fn (Notice $n) => 'Modifier une <b>notice</b>')
             ->setPageTitle(Crud::PAGE_DETAIL, static fn (Notice $n) => $n->getTitre());
         if($this->isGranted('ROLE_VALI_NOTI')) $crud->renderSidebarMinimized()->overrideTemplates([
             'crud/detail'=>'admin/actions/notice_show.html.twig',
@@ -90,22 +86,21 @@ class NoticeCrudController extends AbstractCrudController
 
         $fwdoc = fn(Notice $n,string $s = NoticeActionVoter::VALI) => $this->isGranted($s,$n);
         
-        
         return $actions
-            ->add(Crud::PAGE_DETAIL, $duplicate->displayIf(static fn (Notice $n) => $n->getEtat()===NoticEtat::Working && $fwdoc($n,NoticeActionVoter::EDIT)))
+            ->add(Crud::PAGE_DETAIL, $duplicate->displayIf(static fn (Notice $n) => $fwdoc($n,NoticeActionVoter::VIEW)))
             ->add(Crud::PAGE_DETAIL, $forward->displayIf(static fn (Notice $n) => $n->getEtat()===NoticEtat::Working && $fwdoc($n,NoticeActionVoter::EDIT)))
             ->add(Crud::PAGE_DETAIL, $reject->displayIf(static fn (Notice $n) => $n->getEtat()===NoticEtat::Forward && $fwdoc($n)))
             ->add(Crud::PAGE_DETAIL, $approve->displayIf(static fn (Notice $n) => $n->getEtat()===NoticEtat::Forward && $fwdoc($n)))
             ->add(Crud::PAGE_DETAIL, $publish->displayIf(static fn (Notice $n) => $n->getEtat()===NoticEtat::Approved && $fwdoc($n)))
-            ->add(Crud::PAGE_DETAIL, $allowed->displayIf(static fn (Notice $n) => $n->isEditDemande() && $fwdoc($n)))
             ->add(Crud::PAGE_DETAIL, $category->displayIf(static fn (Notice $n) => $n->getEtat()===NoticEtat::Approved && $fwdoc($n)))
-            ->add(Crud::PAGE_DETAIL, $adjust->displayIf(static fn (Notice $n) => $n->getEtat()===NoticEtat::Approved && $fwdoc($n,NoticeActionVoter::VIEW)))
+            ->add(Crud::PAGE_DETAIL, $allowed->displayIf(static fn (Notice $n) => $n->isEditDemande() && $fwdoc($n)))
+            ->add(Crud::PAGE_DETAIL, $adjust->displayIf(static fn (Notice $n) => $n->getEtat()===NoticEtat::Approved && !$n->isEditDemande() && $fwdoc($n,NoticeActionVoter::VIEW)))
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->add(Crud::PAGE_NEW, $saward->displayAsButton())
             ->update(Crud::PAGE_INDEX, Action::DETAIL, fn (Action $a) => $a->setCssClass('btn btn-outline-secondary'))
             ->update(Crud::PAGE_DETAIL, Action::EDIT, static fn(Action $a) => $a->setIcon('fa fa-pencil')->displayIf(static fn (Notice $n) => $fwdoc($n, NoticeActionVoter::EDIT) && $n->getEtat() !== NoticEtat::Approved ))
             ->update(Crud::PAGE_DETAIL, Action::DELETE, static fn(Action $a) => $a->addCssClass('btn btn-outline-danger')->displayIf(static fn (Notice $n) => $fwdoc($n,NoticeActionVoter::DROP)))
-            ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $action) => $action->setLabel('Créer une <b>Notice</b>'))
+            ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $action) => $action->setLabel('Créer une <b>notice</b>'))
             ->remove(Crud::PAGE_INDEX, Action::EDIT)
             ->remove(Crud::PAGE_INDEX, Action::DELETE)
             ->remove(Crud::PAGE_DETAIL, Action::INDEX)
@@ -120,9 +115,12 @@ class NoticeCrudController extends AbstractCrudController
 
     public function configureFilters(Filters $filters): Filters
     {
-        return $filters->add(ChoiceFilter::new('etat')
-            ->setChoices(NoticEtat::getLabels())->renderExpanded())
-            ->add(DateTimeFilter::new('creeLe', 'Créée le'));
+        return $filters->add(ChoiceFilter::new('etat')->setChoices(NoticEtat::getLabels())->renderExpanded())
+            ->add(TextFilter::new('titre'))
+            ->add(EntityFilter::new('auteurs'))
+            ->add(EntityFilter::new('specialite', 'Spécialité'))
+            ->add(DateTimeFilter::new('creeLe', 'Créée le'))
+            ->add(DateTimeFilter::new('editeLe', 'Date de modification'));
     }
 
     public function configureFields(string $pageName): iterable
@@ -133,106 +131,57 @@ class NoticeCrudController extends AbstractCrudController
         if ($valdoc) yield Field\FormField::addTab('Soumission')->setHelp("Infos renseignées par la contribution des établissements");
 
         yield Field\FormField::addColumn(6);
+
         yield Field\FormField::addFieldset('Description générale')->setIcon('fa fa-pencil');
         yield Field\IdField::new('id')->onlyOnDetail();
         yield Field\TextField::new('titre')->setHelp(t('notice.titre_help', domain: 'EasyAdminBundle'));
         yield Field\TextEditorField::new('description')->setHelp(t('notice.description_help', domain: 'EasyAdminBundle'))->hideOnIndex();
-        //Etablissement porteur 
-        yield EntityField::new('porteurs', t('notice.porteurs', domain: 'EasyAdminBundle'))
-            ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.abrege', 'ASC'))
-            ->setHelp(t('notice.porteurs_help', domain: 'EasyAdminBundle'))
-            ->setSortable(false)
-            ->setRequired(true)
-            ->hideOnIndex();
-        
-        //Auteurs
-        // Todo : reactivate this one with noticeautofield // yield EntityField::new('auteurs','notice.auteurs')->setHelp(t('notice.auteurs_help', domain: 'EasyAdminBundle'))->setFormType(AuteurAutoField::class)->setSortable(false)->setRequired(true);
+        yield EntityField::new('porteurs', t('notice.porteurs', domain: 'EasyAdminBundle'))->hideOnIndex()
+            ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.abrege', 'ASC'))->setSortable(false)
+            ->setHelp(t('notice.porteurs_help', domain: 'EasyAdminBundle'))->setRequired(true);
         yield EntityField::new('auteurs',t('notice.auteurs', domain: 'EasyAdminBundle'))
-            ->setHelp(t('notice.auteurs_help', domain: 'EasyAdminBundle'))
-            ->setSortable(false)
-            ->setRequired(true)
-            ->setQueryBuilder(function (QueryBuilder $queryBuilder) {
-                return $queryBuilder->orderBy('entity.prenom', 'ASC');
-            });;
-        
-        
-        // Mots clés 
-        // Todo : reactivate this one with noticeautofield // yield EntityField::new('tags', 't(notice_.ags')->setFormType(TagAutoField::class)->setHelp(t('notice.tags_help', domain: 'EasyAdminBundle'))->hideOnIndex()->setRequired(true);
-        yield EntityField::new('tags', t('notice.tags', domain: 'EasyAdminBundle'))
-            ->setHelp(t('notice.tags_help', domain: 'EasyAdminBundle'))
-            ->hideOnIndex()
-            ->setRequired(true)
-            ->setQueryBuilder(function (QueryBuilder $queryBuilder) {
-                return $queryBuilder->orderBy('entity.nom', 'ASC');
-            });
-
+            ->setHelp(t('notice.auteurs_help', domain: 'EasyAdminBundle'))->setSortable(false)->setRequired(true)
+            ->setFormType(AuteurAutoField::class); //->setQueryBuilder(fn (QueryBuilder $qb) => $qb->orderBy('entity.prenom', 'ASC'));
+        yield EntityField::new('tags', t('notice.tags', domain: 'EasyAdminBundle'))->setRequired(true)
+            ->setHelp(t('notice.tags_help', domain: 'EasyAdminBundle'))->setFormType(TagAutoField::class)->hideOnIndex();
         yield Field\TextField::new('ressDate', t('notice.date', domain: 'EasyAdminBundle'))->setHelp(t('notice.date_help', domain: 'EasyAdminBundle'))->hideOnIndex();
 
         yield Field\FormField::addFieldset('Liens de la ressource')->setIcon('fa fa-paperclip');
         yield Field\BooleanField::new('zipFile')->setFormTypeOptions(['mapped' => false])->setLabel('Fichier Zip')->onlyOnForms();
-        yield Field\UrlField::new('ressUrl', t('notice.ressurl', domain: 'EasyAdminBundle'))->setHelp(t('notice.ressurl_help', domain: 'EasyAdminBundle'))->setFormTypeOptions(['attr' => ['class' => 'isUrl'],'constraints'=>[new Url()],'required'=>false])->setSortable(false);
+        yield Field\UrlField::new('ressUrl', t('notice.ressurl', domain: 'EasyAdminBundle'))->setHelp(t('notice.ressurl_help', domain: 'EasyAdminBundle'))
+            ->setFormTypeOptions(['default_protocol' => 'https', 'attr' => ['class' => 'isUrl', 'placeholder' => 'https://...'],'constraints'=>[new Url()],'required'=>false])->setSortable(false);
         yield FileField::new('ressZip', 'Contenu Zip')->setUploadDir('public/uploads/files')->setHelp(t('notice.ressurl_help', domain: 'EasyAdminBundle'))->onlyOnForms()
             ->setUploadedFileNamePattern('[timestamp]-[randomhash].[extension]')->setBasePath('/uploads/files')->setFormTypeOptions(['attr' => ['class' => 'isZip'],'required'=>false])
             ->setFileConstraints([new File(maxSize: '64M', mimeTypes: ["application/zip", "application/x-zip-compressed", "multipart/x-zip"])]);
-        
-        // Ressource(s) liée(s) dropdown
-        // Todo : reactivate this one with noticeautofield // yield EntityField::new('ressources','notice.notices')->setFormType(NoticeAutoField::class)->setHelp(t('notice.notices_help', domain: 'EasyAdminBundle'))->hideOnIndex();
+        yield EntityField::new('ressources','notice.notices')->setHelp(t('notice.notices_help', domain: 'EasyAdminBundle'))->hideOnIndex();
         yield EntityField::new('ressources',t('notice.notices', domain: 'EasyAdminBundle'))
-            ->setHelp(t('notice.notices_help', domain: 'EasyAdminBundle'))
-            ->hideOnIndex()
-            ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.titre', 'ASC'));
-        
+            ->setHelp(t('notice.notices_help', domain: 'EasyAdminBundle'))->hideOnIndex()->setFormType(NoticeAutoField::class);
         yield Field\ChoiceField::new('etat')->setChoices(NoticEtat::getLabels())->renderAsBadges(NoticEtat::getColors())->hideOnForm();
         yield Field\AssociationField::new('validateur',t('notice.validateur', domain: 'EasyAdminBundle'))->onlyOnDetail();
 
         yield Field\FormField::addFieldset('Droits attachés à la ressource')->setIcon('fa fa-gavel');
         yield Field\AssociationField::new('droit',t('notice.droit', domain: 'EasyAdminBundle'))
-            ->setHelp(t('notice.droit_help', domain: 'EasyAdminBundle'))
-            ->setSortable(false)
-            ->hideOnIndex()
-            ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.valeur', 'ASC'));
-
+            ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.valeur', 'ASC'))->hideOnIndex()
+            ->setHelp(t('notice.droit_help', domain: 'EasyAdminBundle'))->setSortable(false);
         yield Field\BooleanField::new('ressPayant',t('notice.resspayant', domain: 'EasyAdminBundle'))->setHelp(t('notice.resspayant_help', domain: 'EasyAdminBundle'))->renderAsSwitch(false)->hideOnIndex()->setColumns(6);
         yield Field\BooleanField::new('proprIntel',t('notice.proprintel', domain: 'EasyAdminBundle'))->setHelp(t('notice.proprintel_help', domain: 'EasyAdminBundle'))->renderAsSwitch(false)->hideOnIndex()->setColumns(6);
 
-
         yield Field\FormField::addColumn(6);
-        yield Field\FormField::addFieldset('Indications pédagogiques')->setIcon('fa fa-th-list');
-        
-        yield Field\ChoiceField::new('ressLang', t('notice.resslang', domain: 'EasyAdminBundle'))
-            ->setChoices($langList)
-            ->setHelp(t('notice.resslang_help', domain: 'EasyAdminBundle'))
-            ->allowMultipleChoices()
-            ->renderAsBadges()
-            ->hideOnIndex()
-            ->setRequired(true)
-            ->setColumns(6);
-        
-            yield Field\TextField::new('dureAppr', t('notice.dureappr', domain: 'EasyAdminBundle'))
-            ->setColumns(6)
-            ->setHelp(t('notice.dureappr_help', domain: 'EasyAdminBundle'))
-            ->hideOnIndex();
 
-        // Type pédagogique
+        yield Field\FormField::addFieldset('Indications pédagogiques')->setIcon('fa fa-th-list');
+        yield Field\ChoiceField::new('ressLang', t('notice.resslang', domain: 'EasyAdminBundle'))
+            ->setChoices($langList)->allowMultipleChoices()->renderAsBadges()->setRequired(true)->hideOnIndex()
+            ->setHelp(t('notice.resslang_help', domain: 'EasyAdminBundle'))->setColumns(6);
+        yield Field\TextField::new('dureAppr', t('notice.dureappr', domain: 'EasyAdminBundle'))->setHelp(t('notice.dureappr_help', domain: 'EasyAdminBundle'))->hideOnIndex()->setColumns(6);
         yield EntityField::new('pedTypes', t('notice.pedtypes', domain: 'EasyAdminBundle'))
-        ->setHelp(t('notice.pedtypes_help', domain: 'EasyAdminBundle'))
-        ->hideOnIndex()->setSortable(false)
-        ->setRequired(true)
-        ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.nom', 'ASC'));
-        
+            ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.nom', 'ASC'))->setSortable(false)
+            ->setHelp(t('notice.pedtypes_help', domain: 'EasyAdminBundle'))->setRequired(true)->hideOnIndex();
         yield Field\ArrayField::new('propUser', t('notice.propuser', domain: 'EasyAdminBundle'))->setHelp(t('notice.propuser_help', domain: 'EasyAdminBundle'))->hideOnIndex();
         yield EntityField::new('docTypes', t('notice.doctypes', domain: 'EasyAdminBundle'))->setHelp(t('notice.doctypes_help', domain: 'EasyAdminBundle'))->setFormTypeOptions(['multiple' => true, 'expanded' => true])->setColumns(6)->hideOnIndex()->setRequired(true);
         yield EntityField::new('niveaux', t('notice.niveaux', domain: 'EasyAdminBundle'))->setFormTypeOptions(['multiple' => true, 'expanded' => true])->setHelp(t('notice.niveaux_help', domain: 'EasyAdminBundle'))->setColumns(6)->hideOnIndex()->setRequired(true);
 
         yield Field\FormField::addFieldset('Classification thématique')->setIcon('fa fa-book');
-        
         yield EntityField::new('champDisc', t('notice.champdisc', domain: 'EasyAdminBundle'))
-            ->setFormTypeOptions([
-                'class' => Discipline::class, 
-                'mapped' => false
-            ])
-            ->setHelp(t('notice.champdisc_help', domain: 'EasyAdminBundle'))
-            ->onlyOnForms()
             ->setQueryBuilder(function (QueryBuilder $qb) use ($user) {
                 if ($user->getUntheme() instanceof Univerique)
                     $qb->where('entity IN (:champs)')->setParameter('champs', $user->getUntheme()->getFields());
@@ -240,36 +189,27 @@ class NoticeCrudController extends AbstractCrudController
 
                 return $qb->orderBy('entity.nom', 'ASC');
             })
-            ->setSortable(false);
-        
-        yield EntityField::new('discipline')
-            ->setFormTypeOptions([
-                'class' => Discipline::class, 
-                'auto_initialize' => false, 
-                'mapped' => false
-            ])
-            ->setHelp(t('notice.discipline_help', domain: 'EasyAdminBundle'))
-            ->setSortable(false)
-            ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.nom', 'ASC'))
-            ->onlyOnForms();
-        //Sous discipline 
-        yield EntityField::new('specialite', 'Specialité')
-            ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.nom', 'ASC'))
-            ->setFormTypeOptions(['class' => Discipline::class])
-            ->setSortable(false);
-
+            ->setHelp(t('notice.champdisc_help', domain: 'EasyAdminBundle'))->onlyOnForms()
+            ->setFormTypeOptions(['class' => Discipline::class, 'mapped' => false])->setSortable(false);
+        yield EntityField::new('discipline')->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.nom', 'ASC'))
+            ->setFormTypeOptions(['class' => Discipline::class, 'auto_initialize' => false, 'mapped' => false])->onlyOnForms()
+            ->setHelp(t('notice.discipline_help', domain: 'EasyAdminBundle'))->setSortable(false);
+        yield EntityField::new('specialite', 'Specialité')->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.nom', 'ASC'))->setFormTypeOptions(['class' => Discipline::class])->setSortable(false);
         yield Field\DateTimeField::new('editeLe', t('notice.editele', domain: 'EasyAdminBundle'))->hideOnForm();
 
         if ($valdoc) {
             yield Field\FormField::addTab('Validation')->setHelp("Infos techniques complémentaires de validation");
+
             yield Field\FormField::addColumn(6);
+
             yield Field\FormField::addFieldset('Liens de la ressource')->setIcon('fa fa-folder-open');
             yield Field\ImageField::new('vignette')->setUploadDir('public/uploads/images')
                 ->setUploadedFileNamePattern('[timestamp]-[contenthash].[extension]')->setBasePath('/uploads/images')
                 ->setFileConstraints([new Image(['maxWidth' => 620, 'maxHeight' => 390])])->setHelp(t('notice.vignette_help', domain: 'EasyAdminBundle'))->setSortable(false);
             yield Field\IntegerField::new('ressSize',t('notice.resssize', domain: 'EasyAdminBundle'))->setHelp(t('notice.resssize_help', domain: 'EasyAdminBundle'))->setColumns(6)->hideOnIndex();
             yield DurationField::new('dureExec',t('notice.dureexec', domain: 'EasyAdminBundle'))->setHelp(t('notice.dureexec_help', domain: 'EasyAdminBundle'))->setColumns(6)->hideOnIndex();
-            yield Field\UrlField::new('formEvalUrl',t('notice.formevalurl', domain: 'EasyAdminBundle'))->setFormTypeOption('default_protocol', 'https')->setHelp(t('notice.formevalurl_help', domain: 'EasyAdminBundle'))->hideOnIndex();
+            yield Field\UrlField::new('formEvalUrl',t('notice.formevalurl', domain: 'EasyAdminBundle'))
+                ->setFormTypeOptions(['default_protocol' => 'https', 'attr' => ['class' => 'isUrl', 'placeholder' => 'https://...']])->setHelp(t('notice.formevalurl_help', domain: 'EasyAdminBundle'))->hideOnIndex();
             yield Field\ChoiceField::new('userLang',t('notice.userlang', domain: 'EasyAdminBundle'))->setHelp(t('notice.userlang_help', domain: 'EasyAdminBundle'))->hideOnIndex()
                 ->setChoices($langList)->allowMultipleChoices()->renderExpanded(false)->renderAsBadges();
             yield Field\TextEditorField::new('objectif',t('notice.objectif', domain: 'EasyAdminBundle'))->setHelp(t('notice.objectif_help', domain: 'EasyAdminBundle'))->hideOnIndex()->formatValue(function ($value, $entity) { return $value;});
@@ -279,6 +219,7 @@ class NoticeCrudController extends AbstractCrudController
             yield Field\BooleanField::new('exportOAI', t('notice.exportoai', domain: 'EasyAdminBundle'))->setHelp(t('notice.exportoai_help', domain: 'EasyAdminBundle'))->renderAsSwitch(false)->hideOnIndex();
 
             yield Field\FormField::addColumn(6);
+
             yield Field\FormField::addFieldset('Classification thématique')->setIcon('fa fa-book');
             yield EntityField::new('disciFond',t('notice.discifond', domain: 'EasyAdminBundle'))->setHelp(t('notice.discifond_help', domain: 'EasyAdminBundle'))->onlyOnForms()
                 ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->where('entity.parent is null'))->setFormTypeOptions(['class' => Dewey::class,'mapped' => false,'required' => false])->setSortable(false);
@@ -287,6 +228,7 @@ class NoticeCrudController extends AbstractCrudController
             yield Field\TextField::new('label',t('notice.label', domain: 'EasyAdminBundle'))->setHelp(t('notice.label_help', domain: 'EasyAdminBundle'))->onlyOnDetail();
             yield Field\DateTimeField::new('creeLe',t('notice.creele', domain: 'EasyAdminBundle'))->onlyOnDetail();
             yield EntityField::new('repertoire',t('notice.repertoire', domain: 'EasyAdminBundle'))->setFormType(TreeChoiceType::class)->setHelp(t('notice.repertoire_help', domain: 'EasyAdminBundle'));
+            yield Field\BooleanField::new('editDemande', 'Demande de rectification ?')->renderAsSwitch(false)->onlyOnIndex();
         }
     }
 
@@ -333,12 +275,6 @@ class NoticeCrudController extends AbstractCrudController
 
     public function createEditFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
     {
-        $ctx = $this->getContext();
-        $currentEntity = $ctx->getEntity()->getInstance(); 
-        if (!$this->isGranted('NOTICE_EDIT', $currentEntity)) {
-            throw new AccessDeniedHttpException('Vous n\'êtes pas autorisé à modifier cette notice.');
-        }
-
         $builder = $this->factory->createEditFormBuilder($entityDto, $formOptions, $context);
         return $this->addFormEvent($builder);
     }
@@ -410,20 +346,52 @@ class NoticeCrudController extends AbstractCrudController
         }
     }
 
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @var Notice $entityInstance
+     */
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if($zipDir = $entityInstance->getRessZip())
+            $entityInstance->setRessUrl(pathinfo($zipDir, PATHINFO_FILENAME));
+        parent::persistEntity($entityManager, $entityInstance);
+    }
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @param Notice $entityInstance
+     * @return void
+     */
+    public function deleteEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        $entityInstance->setDeleted(true);
+        $entityManager->flush();
+    }
+
+    public function detail(AdminContext $context): KeyValueStore
+    {
+        $resParams = parent::detail($context);
+        if ($folderId = $context->getRequest()->get('folderId')) {
+            $folder = $this->rep->findOneForAll($folderId);
+            $context->getEntity()->setActions(ActionCollection::new(array_map(function(ActionDto $action) use($folderId) {
+                $action->setLinkUrl(sprintf("%s&folderId=%d",$action->getLinkUrl(),$folderId));
+                return $action;
+            }, $context->getEntity()->getActions()->all())));
+            $resParams->set('curritem', $folder);
+        }
+        return $resParams;
+    }
+
     public function duplicateNotice(): Response
     {
         $ctx = $this->getContext();
-        $currentEntity = $ctx->getEntity()->getInstance(); 
-        if (!$this->isGranted('NOTICE_VIEW', $currentEntity)) {
-            throw new AccessDeniedHttpException('Vous n\'êtes pas autorisé à valider cette notice.');
-        }
 
         /** @var Notice $notice */
         $notice = $ctx->getEntity()->getInstance();
-        $dupNot = (clone $notice)->setCreeLe(new \DateTimeImmutable())->setUuid(Uuid::v4());
-        $dupNot->setEditeLe(new \DateTimeImmutable());
-        $dupNot->setTitre("COPIE - ".$dupNot->getTitre());
-        $this->repository->add($dupNot->setCreateur($this->getUser()));
+        $this->denyAccessUnlessGranted(NoticeActionVoter::VIEW, $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
+        $dupNot = (clone $notice)->setUuid(Uuid::v4())->setCreeLe(new \DateTimeImmutable())->setEditeLe(new \DateTimeImmutable());
+
+        $this->repository->add($dupNot->setCreateur($this->getUser())->setTitre("COPIE - ".$dupNot->getTitre()));
         $this->dispatcher->dispatch(new AfterEntityPersistedEvent($dupNot));
         $this->addFlash('success', "Cette notice dupliquée vient d'être créé avec succès !");
 
@@ -436,114 +404,132 @@ class NoticeCrudController extends AbstractCrudController
     public function forwardNotice(): Response
     {
         $ctx = $this->getContext();
-        $currentEntity = $ctx->getEntity()->getInstance(); 
-        if (!$this->isGranted('NOTICE_VIEW', $currentEntity)) {
-            throw new AccessDeniedHttpException('Vous n\'êtes pas autorisé à valider cette notice.');
-        }
+        $url = $this->redirecTo($ctx->getRequest())->removeReferrer();
 
         /** @var Notice|null $notice */
         $notice = $ctx->getEntity()->getInstance(); //Working
-        return $this->changEtatNotice(['Soumettre', NoticEtat::Forward->getLabel(), 'Soummision', true], $notice->setEtat(NoticEtat::Forward),$ctx->getRequest()->get('folderId'));
+        $this->denyAccessUnlessGranted(NoticeActionVoter::EDIT, $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
+
+        $this->repository->add($notice->setEtat(NoticEtat::Forward));
+        $this->dispatcher->dispatch(new AfterNoticeForwardingEvent($notice));
+        $this->addFlash('success', sprintf("La notice est bien %s avec succès !",NoticEtat::Forward->getLabel()));
+
+        return $this->redirect($url->generateUrl());
     }
 
     public function approveNotice(): Response
     {
-        /** @var User $user */ $user = $this->getUser();
         $ctx = $this->getContext();
-        $currentEntity = $ctx->getEntity()->getInstance(); 
-        if (!$this->isGranted('NOTICE_VALI', $currentEntity)) {
-            throw new AccessDeniedHttpException('Vous n\'êtes pas autorisé à valider cette notice.');
-        }
+        $url = $this->redirecTo($ctx->getRequest())->removeReferrer();
 
-        /** @var Notice|null $notice */
-        $notice = $ctx->getEntity()->getInstance(); //Forward
-        $notice->setValidateur($user);
-        return $this->changEtatNotice(['Valider', NoticEtat::Approved->getLabel(), 'Validation', true], $notice->setEtat(NoticEtat::Approved),$ctx->getRequest()->get('folderId'));
+        /** @var User $user */ $user = $this->getUser();
+        /** @var Notice|null $notice */ $notice = $ctx->getEntity()->getInstance(); //Forward
+        $this->denyAccessUnlessGranted(NoticeActionVoter::EDIT, $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
+
+        $this->repository->add($notice->setEtat(NoticEtat::Approved)->setValidateur($user));
+        $this->dispatcher->dispatch(new AfterNoticeApprovingEvent($notice));
+        $this->addFlash('success', sprintf("La notice est bien %s avec succès !",NoticEtat::Approved->getLabel()));
+
+        return $this->redirect($url->generateUrl());
     }
 
     public function rejectNotice(): Response
     {
         $ctx = $this->getContext();
-        $currentEntity = $ctx->getEntity()->getInstance(); 
-        if (!$this->isGranted('NOTICE_VALI', $currentEntity)) {
-            throw new AccessDeniedHttpException('Vous n\'êtes pas autorisé à valider cette notice.');
-        }
+        $url = $this->redirecTo($ctx->getRequest())->removeReferrer();
+        $note = $ctx->getRequest()->get('motifs', "Revoir l'ensemble des informations"); // TODO: faire le formulaire sur la base de la labellisation
 
         /** @var Notice|null $notice */
         $notice = $ctx->getEntity()->getInstance(); //Forward
-        return $this->changEtatNotice(['Rejeter', 'Rejetée', 'Rejet', true], $notice->setEtat(NoticEtat::Working),$ctx->getRequest()->get('folderId'));
+        $this->denyAccessUnlessGranted(NoticeActionVoter::EDIT, $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
+
+        $this->repository->add($notice->setEtat(NoticEtat::Working));
+        $this->dispatcher->dispatch(new AfterNoticeRejectingEvent($notice, $note));
+        $this->addFlash('success', "La notice est bien rejet avec succès !");
+
+        return $this->redirect($url->generateUrl());
     }
 
     public function publishNotice(): Response
     {
         $ctx = $this->getContext();
-        $currentEntity = $ctx->getEntity()->getInstance(); 
-        if (!$this->isGranted('NOTICE_VALI', $currentEntity)) {
-            throw new AccessDeniedHttpException('Vous n\'êtes pas autorisé à pbulier cette notice.');
-        }
+        $url = $this->redirecTo($ctx->getRequest())->removeReferrer();
 
         /** @var Notice|null $notice */
         $notice = $ctx->getEntity()->getInstance(); //Approved
-        return $this->changEtatNotice(['Dépublier', 'Dépubliée', 'Dépublication', false], $notice->setEtat(NoticEtat::Forward),$ctx->getRequest()->get('folderId'));
+        $this->denyAccessUnlessGranted(NoticeActionVoter::EDIT, $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
+
+        $this->repository->add($notice->setEtat(NoticEtat::Forward));
+        $this->dispatcher->dispatch(new AfterNoticeStateSetEvent($notice, ['Dépublier', 'Dépubliée', 'Dépublication', false]));
+        $this->addFlash('success', "La notice est bien dépubliée avec succès !");
+
+        return $this->redirect($url->generateUrl());
     }
 
     public function allowedNotice(): Response
     {
         $ctx = $this->getContext();
-        $currentEntity = $ctx->getEntity()->getInstance(); 
-        if (!$this->isGranted('NOTICE_VALI', $currentEntity)) {
-            throw new AccessDeniedHttpException('Vous n\'êtes pas autorisé à valider cette notice.');
-        }
+        $url = $this->redirecTo($ctx->getRequest())->removeReferrer();
 
         /** @var Notice|null $notice */
         $notice = $ctx->getEntity()->getInstance(); //Approved
-        return $this->changEtatNotice(['Autoriser', 'Autorisée', 'Autorisation', false], $notice->setEtat(NoticEtat::Working)->setEditDemande(false),$ctx->getRequest()->get('folderId'));
+        $this->denyAccessUnlessGranted(NoticeActionVoter::EDIT, $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
+
+        $this->repository->add($notice->setEtat(NoticEtat::Working)->setEditDemande(false));
+        $this->dispatcher->dispatch(new AfterNoticeStateSetEvent($notice, ['Autoriser', 'Autorisée', 'Autorisation', false]));
+        $this->addFlash('success', "La notice est bien autorisée avec succès !");
+
+        return $this->redirect($url->generateUrl());
     }
 
     public function adjustNotice(): Response
     {
         $ctx = $this->getContext();
-        $currentEntity = $ctx->getEntity()->getInstance(); 
-        if (!$this->isGranted('NOTICE_VALI', $currentEntity)) {
-            throw new AccessDeniedHttpException('Vous n\'êtes pas autorisé à valider cette notice.');
-        }
+        $url = $this->redirecTo($ctx->getRequest())->removeReferrer();
 
         /** @var Notice|null $notice */
         $notice = $ctx->getEntity()->getInstance(); //Approved
-        return $this->changEtatNotice(['Rectifier', 'Signalée', 'Rectification', true], $notice->setEditDemande(true),$ctx->getRequest()->get('folderId'));
+        $this->denyAccessUnlessGranted(NoticeActionVoter::VIEW, $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
+
+        $this->repository->add($notice->setEditDemande(true));
+        $this->dispatcher->dispatch(new AfterNoticeAdjustingEvent($notice));
+        $this->addFlash('success', "Votre demande de rectification est bien envoyée !");
+
+        return $this->redirect($url->generateUrl());
     }
 
     public function labelNotice(): Response
     {
         $ctx = $this->getContext();
-        $currentEntity = $ctx->getEntity()->getInstance(); 
-        if (!$this->isGranted('NOTICE_VALI', $currentEntity)) {
-            throw new AccessDeniedHttpException('Vous n\'êtes pas autorisé à valider cette notice.');
-        }
+        $url = $this->redirecTo($ctx->getRequest())->removeReferrer();
         $label = $ctx->getRequest()->get('label');
 
         /** @var Notice $notice */
         $notice = $ctx->getEntity()->getInstance();
-        return $this->changEtatNotice(['Catégoriser', 'Labellisée', 'Catégorisation', false], $notice->setLabel($label),$ctx->getRequest()->get('folderId'));
+        $this->denyAccessUnlessGranted(NoticeActionVoter::EDIT, $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
+
+        $this->repository->add($notice->setLabel($label));
+        $this->dispatcher->dispatch(new AfterNoticeStateSetEvent($notice, ['Catégoriser', 'Labellisée', 'Catégorisation', false]));
+        $this->addFlash('success', "La notice est labellisée avec succès !");
+
+        return $this->redirect($url->generateUrl());
     }
 
-    private function changEtatNotice(array $transition, Notice $notice, ?int $folderId = null): Response
+    public function moveNotice(AdminContext $ctx): Response
     {
-        $ctx = $this->getContext();
-        $currentEntity = $ctx->getEntity()->getInstance(); 
-        if (!$this->isGranted('NOTICE_VIEW', $currentEntity)) {
-            throw new AccessDeniedHttpException('Vous n\'êtes pas autorisé à valider cette notice.');
-        }
+        $url = $this->redirecTo($ctx->getRequest())->removeReferrer();
+        $request = $ctx->getRequest()->get("dossier");
 
-        $url = $folderId ?
-            $this->generator->setController(DossierCrudController::class)->setAction(Action::DETAIL)->setEntityId($folderId):
-            $this->generator->setController(self::class)->setAction(Action::INDEX);
+        /** @var Notice $notice */
+        $notice = $ctx->getEntity()->getInstance();
+        $this->denyAccessUnlessGranted(NoticeActionVoter::EDIT, $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
+        if($request["dossier"] && $dossier = $this->rep->find($request["dossier"])) $notice->setRepertoire($dossier);
 
         $this->repository->add($notice);
-        $this->dispatcher->dispatch(new AfterNoticeStateSetEvent($notice, $transition));
-        $this->addFlash('success', sprintf("La notice est bien %s avec succès !",$transition[1]));
+        $this->dispatcher->dispatch(new AfterNoticeStateSetEvent($notice, ['Déplacer', 'Déplacée', 'Déplacement', false]));
+        $this->addFlash('success', "La notice est bien déplacée avec succès !");
 
-        return $this->redirect($url->removeReferrer()->generateUrl());
+        return $this->redirect($url->generateUrl());
     }
 
     private function addDisc(FormInterface $form, ?Discipline $child): void
@@ -634,54 +620,12 @@ class NoticeCrudController extends AbstractCrudController
         });
     }
 
-    public function detail(AdminContext $context): KeyValueStore
+    private function redirecTo(Request $req): AdminUrlGenerator
     {
-        $currentEntity = $context->getEntity()->getInstance(); 
-        if (!$this->isGranted('NOTICE_VIEW', $currentEntity)) {
-            throw new AccessDeniedHttpException('Vous n\'êtes pas autorisé à voir les détails de cette notice.');
-        }
-        
-        $resParams = parent::detail($context);
-        if ($folderId = $context->getRequest()->get('folderId')) {
-            $folder = $this->rep->findOneForAll($folderId);
-            $context->getEntity()->setActions(ActionCollection::new(array_map(function(ActionDto $action) use($folderId) {
-                $action->setLinkUrl(sprintf("%s&folderId=%d",$action->getLinkUrl(),$folderId));
-                return $action;
-            }, $context->getEntity()->getActions()->all())));
-            $resParams->set('curritem', $folder);
-        }
-        return $resParams;
-    }
+        $folderId = $req->get('folderId');
 
-    public function moveNotice(AdminContext $ctx): Response
-    {
-        $request = $ctx->getRequest()->get("dossier");
-
-        /** @var Notice $notice */
-        $notice = $ctx->getEntity()->getInstance();
-        if($request["dossier"] && $dossier = $this->rep->find($request["dossier"])) $notice->setRepertoire($dossier);
-        return $this->changEtatNotice(['Déplacer', 'Déplacée', 'Déplacement', false], $notice, $ctx->getRequest()->get('folderId'));
-    }
-
-    /**
-     * @param EntityManagerInterface $entityManager
-     * @var Notice $entityInstance
-     */
-    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
-    {
-        if($zipDir = $entityInstance->getRessZip())
-            $entityInstance->setRessUrl(pathinfo($zipDir, PATHINFO_FILENAME));
-        parent::persistEntity($entityManager, $entityInstance);
-    }
-
-    /**
-     * @param EntityManagerInterface $entityManager
-     * @param Notice $entityInstance
-     * @return void
-     */
-    public function deleteEntity(EntityManagerInterface $entityManager, $entityInstance): void
-    {
-        $entityInstance->setDeleted(true);
-        $entityManager->flush();
+        return $folderId ?
+            $this->generator->setController(DossierCrudController::class)->setAction(Action::DETAIL)->setEntityId($folderId):
+            $this->generator->setController(self::class)->setAction(Action::INDEX);
     }
 }

@@ -21,7 +21,7 @@ class EtablissementCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud->setSearchFields(['nom', 'abrege'])->setDefaultSort(['nom' => 'ASC'])
-            ->setEntityLabelInPlural("Etablissements")
+            ->setEntityLabelInPlural("Etablissements")->setEntityLabelInSingular("etablissement")
             ->setEntityPermission('ROLE_READ_ETAB');
     }
 

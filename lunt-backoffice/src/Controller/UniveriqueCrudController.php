@@ -30,7 +30,9 @@ class UniveriqueCrudController extends AbstractCrudController
             ->setPermission(Action::INDEX, 'ROLE_READ_UNIV')
             ->setPermission(Action::EDIT, 'ROLE_EDIT_UNIV')
             ->setPermission(Action::NEW, 'ROLE_CREA_UNIV')
-            ->setPermission(Action::DELETE, 'ROLE_DROP_UNIV');
+            ->setPermission(Action::DELETE, 'ROLE_DROP_UNIV')
+            ->remove(Crud::PAGE_INDEX, Action::EDIT)
+            ->remove(Crud::PAGE_INDEX, Action::DELETE);
     }
 
     public function configureFields(string $pageName): iterable

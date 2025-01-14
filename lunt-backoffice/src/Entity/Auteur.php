@@ -8,7 +8,7 @@ use App\Repository\AuteurRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AuteurRepository::class),
-    UniqueEntity(['prenom', 'nom', 'email'], 'Cet email est déjà pris par ce meme nom et prénom.', errorPath: 'email')]
+    UniqueEntity(['prenom', 'nom', 'email'], 'Un auteur avec les mêmes prénom, nom et email existe déjà.', errorPath: 'email')]
 class Auteur
 {
     use Timestamps;

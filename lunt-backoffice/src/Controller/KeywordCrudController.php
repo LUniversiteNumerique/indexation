@@ -22,7 +22,7 @@ class KeywordCrudController extends AbstractCrudController
 
     public function configureCrud(Crud $crud): Crud
     {
-        return $crud->setEntityLabelInSingular('Mot-clé')->setEntityLabelInPlural('Mots clés')
+        return $crud->setEntityLabelInSingular('mot-clé')->setEntityLabelInPlural('Mots clés')
             ->setSearchFields(['nom'])->setDefaultSort(['nom' => 'ASC'])->setEntityPermission('ROLE_READ_KEYW');
     }
 

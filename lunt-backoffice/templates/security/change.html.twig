@@ -2,6 +2,10 @@
 
 {% block content_title 'Changement de mot de passe' %}
 
+{% block page_actions %}
+    <a class="btn btn-outline-primary" href="{{ path('app_profile') }}">Retour au profil</a>
+{% endblock %}
+
 {% block main %}
     <div class="alert alert-info" role="alert">Après avoir modifié votre mot de passe, vous serez déconnecté de l'application.</div>
 

@@ -40,7 +40,7 @@ class IndexingConfigCrudController extends AbstractCrudController
 
     public function configureCrud(Crud $crud): Crud
     {
-        return $crud->setEntityLabelInSingular('Indexation')->setEntityLabelInPlural("Indexations")
+        return $crud->setEntityLabelInSingular('indexation')->setEntityLabelInPlural("Indexations")
             ->setSearchFields(null)->setEntityPermission('ROLE_READ_CORE')
             ->setPageTitle(Action::NEW, fn () => 'Créer une <b>Indexation</b>')
             ->setPageTitle(Action::EDIT, fn (IndexingConfig $i) => 'Modifier une <b>Indexation</b>');

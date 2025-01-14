@@ -7,7 +7,7 @@
         {{ include(action.templatePath, { action: action }, with_context = false) }}
     {% endfor %}
 
-    {% if curritem is defined %}
+    {% if curritem is not null %}
         <a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('detail').setEntityId(curritem.id) }}" class="btn btn-secondary"><i class="fa fa-arrow-up" aria-hidden="true"></i> Retourner</a>
     {% else %}
         <a href="{{ ea_url().setController('App\\Controller\\NoticeCrudController').setAction('index') }}" class="btn btn-secondary"><i class="fa fa-arrow-up" aria-hidden="true"></i> Retourner</a>
@@ -16,7 +16,7 @@
 {% endblock %}
 
 {% block main %}
-    {% if curritem is defined %}
+    {% if curritem is not null %}
         {{ include('breadcrumb.html.twig', {bcrumb: getCurrentParents(curritem)}, with_context = false) }}
     {% endif %}
 

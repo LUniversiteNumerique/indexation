@@ -19,7 +19,7 @@ class AuteurCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud->setSearchMode(SearchMode::ANY_TERMS)
-            ->setEntityLabelInPlural("Auteurs")
+            ->setEntityLabelInPlural("Auteurs")->setEntityLabelInSingular('auteur')
             ->setEntityPermission('ROLE_READ_ACTE');
     }
 
@@ -27,11 +27,10 @@ class AuteurCrudController extends AbstractCrudController
     {
         return parent::configureActions($actions)
             ->disable(Action::DETAIL)
-            ->disable(Action::BATCH_DELETE)
             ->setPermission(Action::NEW, 'ROLE_CREA_ACTE')
             ->setPermission(Action::EDIT, 'ROLE_EDIT_ACTE')
             ->setPermission(Action::DELETE, 'ROLE_DROP_ACTE')
-            ->setPermission(Action::BATCH_DELETE, 'ROLE_DROP_ACTE')
+            ->setPermission(Action::BATCH_DELETE, 'ROLE_VALI_NOTI')
             ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $action) => $action->setLabel('Créer un <b>Auteur</b>'))
             ->remove(Crud::PAGE_NEW,Action::SAVE_AND_ADD_ANOTHER);
     }

@@ -115,10 +115,7 @@ class Notice
     private Collection $ressources;
 
     #[ORM\Column]
-    private ?bool $ressPayant = false, $proprIntel = false, $deleted = false;
-
-    #[ORM\Column(nullable: true)]
-    private ?bool $editDemande = null;
+    private ?bool $ressPayant = false, $proprIntel = false, $deleted = false, $editDemande = false;
 
     #[ORM\Column(nullable: true)]
     private ?string $champExt1, $champExt2, $champExt3, $champExt4, $champExt5;

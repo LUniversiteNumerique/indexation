@@ -4,8 +4,8 @@
 
 
 {% block page_actions %}
-  <a href="{{ ea_url().setController('App\\Controller\\NoticeCrudController').setAction('new').set('folderId', curritem.id) }}" class="btn btn-sm btn-outline-success">Créer une notice</a>
-  <a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('new').setEntityId(curritem.id) }}" class="btn btn-sm btn-outline-primary">Créer un dossier</a>
+  <a href="{{ ea_url({ folderId: curritem.id }).setController('App\\Controller\\NoticeCrudController').setAction('new').unset('entityId') }}" class="btn btn-sm btn-outline-success">Créer une notice</a>
+  <a href="{{ ea_url({ folderId: curritem.id }).setController('App\\Controller\\DossierCrudController').setAction('new').unset('entityId') }}" class="btn btn-sm btn-outline-primary">Créer un dossier</a>
   {% for action in entity.actions %} {{ include(action.templatePath, { action }, with_context = false) }} {% endfor %}
   {% if curritem.parent %}<a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('detail').setEntityId(curritem.parent.id) }}" class="btn btn-outline-secondary">Retourner</a>{% endif %}
 {% endblock %}
