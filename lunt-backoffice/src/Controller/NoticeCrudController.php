@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Event\{AfterNoticeAdjustingEvent, AfterNoticeApprovingEvent, AfterNoticeForwardingEvent, AfterNoticeRejectingEvent, AfterNoticeStateSetEvent};
+use App\Event\{AfterNoticeAdjustingEvent, AfterNoticeApprovingEvent, AfterNoticeRejectingEvent, AfterNoticeStateSetEvent};
 use App\Security\Voter\NoticeActionVoter;
 use App\Entity\{Dewey, Discipline, Etablissement, Notice, NoticEtat, Univerique, User};
 use App\Field\{DurationField, EntityField, FileField};
@@ -411,7 +411,7 @@ class NoticeCrudController extends AbstractCrudController
         $this->denyAccessUnlessGranted(NoticeActionVoter::EDIT, $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
 
         $this->repository->add($notice->setEtat(NoticEtat::Forward));
-        $this->dispatcher->dispatch(new AfterNoticeForwardingEvent($notice));
+        $this->dispatcher->dispatch(new AfterNoticeStateSetEvent($notice, ['Soumettre', NoticEtat::Forward->getLabel(), 'Soummision']));
         $this->addFlash('success', sprintf("La notice est bien %s avec succès !",NoticEtat::Forward->getLabel()));
 
         return $this->redirect($url->generateUrl());
@@ -460,7 +460,7 @@ class NoticeCrudController extends AbstractCrudController
         $this->denyAccessUnlessGranted(NoticeActionVoter::EDIT, $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
 
         $this->repository->add($notice->setEtat(NoticEtat::Forward));
-        $this->dispatcher->dispatch(new AfterNoticeStateSetEvent($notice, ['Dépublier', 'Dépubliée', 'Dépublication', false]));
+        $this->dispatcher->dispatch(new AfterNoticeStateSetEvent($notice, ['Dépublier', 'Dépubliée', 'Dépublication']));
         $this->addFlash('success', "La notice est bien dépubliée avec succès !");
 
         return $this->redirect($url->generateUrl());
@@ -476,7 +476,7 @@ class NoticeCrudController extends AbstractCrudController
         $this->denyAccessUnlessGranted(NoticeActionVoter::EDIT, $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
 
         $this->repository->add($notice->setEtat(NoticEtat::Working)->setEditDemande(false));
-        $this->dispatcher->dispatch(new AfterNoticeStateSetEvent($notice, ['Autoriser', 'Autorisée', 'Autorisation', false]));
+        $this->dispatcher->dispatch(new AfterNoticeStateSetEvent($notice, ['Autoriser', 'Autorisée', 'Autorisation']));
         $this->addFlash('success', "La notice est bien autorisée avec succès !");
 
         return $this->redirect($url->generateUrl());
@@ -509,7 +509,7 @@ class NoticeCrudController extends AbstractCrudController
         $this->denyAccessUnlessGranted(NoticeActionVoter::EDIT, $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
 
         $this->repository->add($notice->setLabel($label));
-        $this->dispatcher->dispatch(new AfterNoticeStateSetEvent($notice, ['Catégoriser', 'Labellisée', 'Catégorisation', false]));
+        $this->dispatcher->dispatch(new AfterNoticeStateSetEvent($notice, ['Catégoriser', 'Labellisée', 'Catégorisation']));
         $this->addFlash('success', "La notice est labellisée avec succès !");
 
         return $this->redirect($url->generateUrl());
@@ -526,7 +526,7 @@ class NoticeCrudController extends AbstractCrudController
         if($request["dossier"] && $dossier = $this->rep->find($request["dossier"])) $notice->setRepertoire($dossier);
 
         $this->repository->add($notice);
-        $this->dispatcher->dispatch(new AfterNoticeStateSetEvent($notice, ['Déplacer', 'Déplacée', 'Déplacement', false]));
+        $this->dispatcher->dispatch(new AfterNoticeStateSetEvent($notice, ['Déplacer', 'Déplacée', 'Déplacement']));
         $this->addFlash('success', "La notice est bien déplacée avec succès !");
 
         return $this->redirect($url->generateUrl());

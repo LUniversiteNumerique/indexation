@@ -4,11 +4,7 @@ namespace App\Event\Subscriber;
 
 use EasyCorp\Bundle\EasyAdminBundle\Event\{AbstractLifecycleEvent, AfterEntityDeletedEvent, AfterEntityPersistedEvent, AfterEntityUpdatedEvent, BeforeEntityUpdatedEvent};
 use App\Controller\NoticeCrudController;
-use App\Event\AfterNoticeAdjustingEvent;
-use App\Event\AfterNoticeApprovingEvent;
-use App\Event\AfterNoticeForwardingEvent;
-use App\Event\AfterNoticeRejectingEvent;
-use App\Event\AfterNoticeStateSetEvent;
+use App\Event\{AfterNoticeAdjustingEvent,AfterNoticeApprovingEvent,AfterNoticeRejectingEvent,AfterNoticeStateSetEvent};
 use App\Service\MailerService;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
@@ -31,9 +27,9 @@ readonly class LoggerSubscriber implements EventSubscriberInterface
     {
         return [
             AfterNoticeAdjustingEvent::class => 'noticeAdjusting',
-            AfterNoticeForwardingEvent::class => 'noticeForwarding',
             AfterNoticeApprovingEvent::class => 'noticeApproving',
             AfterNoticeRejectingEvent::class => 'noticeRejecting',
+            AfterNoticeStateSetEvent::class => 'logChanging',
             AfterEntityDeletedEvent::class => 'logDeleting',
             AfterEntityPersistedEvent::class => 'logCreating',
             AfterEntityUpdatedEvent::class => 'logUpdating',
@@ -67,40 +63,7 @@ readonly class LoggerSubscriber implements EventSubscriberInterface
             [
                 'notice' => $entity->getTitre(),
                 'url' => $url,
-                'message' => sprintf("Bonjour, <br/> L'utilisateur %s de <b>%s</b> a demandé a une rectification sur la notice << %s >>", $user, $user->getSchool(), $entity)
-            ]
-        );
-    }
-
-    public function noticeForwarding(AfterNoticeForwardingEvent $event): void
-    {
-        /** @var Notice $entity */ $entity = $event->getEntityInstance();
-        /** @var User $user */ $user = $this->security->getUser();
-
-        $from = $entity->getCreateur();
-        $to = $entity->getValidateur();
-        $contributorFrom = $user->getSchool();
-        $this->untLogger->notice(sprintf("%s vient d'être soumise par %s", $entity, $user), [
-            'actionType'=> 'Soumission',
-            'ressType' => Notice::class,
-            'ressInstance' => $entity->getId(),
-            'userInstance' => $user->getId(),
-            'userGroup' => $user->getGroup()
-        ]);
-
-        $url = $this->generator
-            ->setController(NoticeCrudController::class)
-            ->setAction(Action::DETAIL)->setEntityId($entity->getId())
-            ->generateUrl();
-
-        $this->mailer->sendTwig(
-            $contributorFrom? $to?->getEmail(): $from->getEmail(), //$to?->getUntheme()?->getEmail() : $from->getSchool()?->getEmail()
-            sprintf("Notice %d est soumise", $entity->getId()),
-            'emails/notif.html.twig',
-            [
-                'notice' => $entity->getTitre(),
-                'url' => $url,
-                'message' => sprintf("Bonjour, <br/> La notice intitulée  <<%s>> vient d'être passée au statut de soumission par %s,  %s de <b>%s</b>", $entity, $user, $user->getGroup(), $contributorFrom??$user->getUntheme())
+                'message' => sprintf("L'utilisateur %s de %s a demandé a une rectification sur la notice << %s >>", $user, $user->getSchool(), $entity)
             ]
         );
     }
@@ -131,7 +94,7 @@ readonly class LoggerSubscriber implements EventSubscriberInterface
             [
                 'notice' => $entity->getTitre(),
                 'url' => $url,
-                'message' => sprintf("Bonjour, <br/> La notice intitulée  <<%s>> vient d'être validée par %s,  %s de <b>%s</b>", $entity, $user, $user->getGroup(), $user->getUntheme())
+                'message' => sprintf("La notice intitulée  <<%s>> vient d'être validée par %s,  %s de %s", $entity, $user, $user->getGroup(), $user->getUntheme())
             ]
         );
     }
@@ -163,7 +126,7 @@ readonly class LoggerSubscriber implements EventSubscriberInterface
             [
                 'notice' => $entity->getTitre(),
                 'url' => $url,
-                'message' => sprintf("Bonjour, <br/> La notice intitulée  <<%s>> est rejetée pour défaut/raison de <strong>%s</strong> par %s,  %s de <b>%s</b>", $entity, $motif , $user, $user->getGroup(), $user->getUntheme())
+                'message' => sprintf("La notice intitulée  <<%s>> est rejetée pour défaut/raison de %s par %s,  %s de %s", $entity, $motif , $user, $user->getGroup(), $user->getUntheme())
             ]
         );
     }

@@ -43,7 +43,7 @@ return [
     'action' => [
         'entity_actions' => 'Actions',
         'new' => 'Créer un <b>%entity_label_singular%</b>',
-        'search' => 'Rechercher un(e) %entity_label_singular%',
+        'search' => 'Rechercher un élément',
         'detail' => 'Consulter',
         'edit' => 'Modifier',
         'delete' => 'Supprimer',

@@ -30,11 +30,11 @@ class KeywordCrudController extends AbstractCrudController
     {
         return parent::configureActions($actions)
             ->disable(Action::DETAIL)
-            ->disable(Action::BATCH_DELETE)
             ->add(Crud::PAGE_NEW, Action::INDEX)
             ->setPermission(Action::NEW, 'ROLE_CREA_KEYW')
             ->setPermission(Action::EDIT, 'ROLE_EDIT_KEYW')
             ->setPermission(Action::DELETE, 'ROLE_DROP_KEYW')
+            ->setPermission(Action::BATCH_DELETE, 'ROLE_DROP_KEYW')
         ;
     }
 

@@ -23,8 +23,9 @@ class IndexingConfig
     #[ORM\Column, Assert\NotNull]
     private ?int $batchSize = 10;
 
-    #[ORM\Column(length: 255), Assert\NotBlank]
-    private ?string $frequency; //$baseUri
+    #[ORM\Embedded(Frequence::class, "every_"),
+        Assert\NotNull]
+    private ?Frequence $frequency;
 
     #[ORM\ManyToOne, Assert\NotNull,
         Assert\Type(Univerique::class)]
@@ -32,6 +33,7 @@ class IndexingConfig
 
     public function __construct()
     {
+        $this->frequency = new Frequence();
     }
 
     public function getId(): ?int
@@ -87,12 +89,12 @@ class IndexingConfig
         return $this;
     }
 
-    public function getFrequency(): ?string
+    public function getFrequency(): ?Frequence
     {
         return $this->frequency;
     }
 
-    public function setFrequency(?string $frequency): static
+    public function setFrequency(?Frequence $frequency): static
     {
         $this->frequency = $frequency;
 
