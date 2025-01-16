@@ -13,7 +13,5 @@ docker compose -f compose.yml exec backoffice sh -c 'php bin/console d:q:sql -n 
 docker compose -f compose.yml exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat data/sql/niveau.sql)"'
 docker compose -f compose.yml exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat data/sql/tdocument.sql)"'
 docker compose -f compose.yml exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat data/sql/tpedagogie.sql)"'
-docker compose -f compose.yml exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat data/sql/discipline.sql)"'
-docker compose -f compose.yml exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat data/sql/dewey.sql)"'
 docker compose -f compose.yml exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat data/sql/dossier.sql)"'
 docker compose -f compose.yml exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat data/sql/univerique_discipline.sql)"'

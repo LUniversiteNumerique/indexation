@@ -4,12 +4,19 @@ namespace App\Controller;
 
 use App\Entity\Keyword;
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Actions, Crud, Filters};
+use App\Repository\KeywordRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\{BooleanField, DateTimeField, IdField, TextField};
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
+use JMS\Serializer\SerializerInterface;
+use Symfony\Component\HttpFoundation\{Request, Response};
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class KeywordCrudController extends AbstractCrudController
 {
+    public function __construct(private readonly KeywordRepository $repository){}
+
     public static function getEntityFqcn(): string
     {
         return Keyword::class;
@@ -34,8 +41,7 @@ class KeywordCrudController extends AbstractCrudController
             ->setPermission(Action::NEW, 'ROLE_CREA_KEYW')
             ->setPermission(Action::EDIT, 'ROLE_EDIT_KEYW')
             ->setPermission(Action::DELETE, 'ROLE_DROP_KEYW')
-            ->setPermission(Action::BATCH_DELETE, 'ROLE_DROP_KEYW')
-        ;
+            ->setPermission(Action::BATCH_DELETE, 'ROLE_DROP_KEYW');
     }
 
     public function configureFields(string $pageName): iterable
@@ -48,5 +54,21 @@ class KeywordCrudController extends AbstractCrudController
             DateTimeField::new('creeLe', 'Date de création')->hideOnForm(),
             DateTimeField::new('editeLe', 'Dernière modification')->onlyOnDetail()
         ];
+    }
+
+
+    #[Route('/api/keyworks', name: 'app_keywork_new', methods: ['POST'])]
+    public function ajaxNew(Request $request, SerializerInterface $serializer, ValidatorInterface $validator): Response
+    {
+        $values = $serializer->deserialize($request->getContent(), Keyword::class, 'json');
+        $object = $validator->validate($values);
+        dd($object, $values);
+        if ($object->count()) {
+            $errors = array_reduce((array)$object, fn($acc, $obj) => $acc[$obj->getPropertyPath()] = $obj->getMessage());
+            return $this->json(['errors' => $errors], Response::HTTP_BAD_REQUEST);
+        }
+
+        $this->repository->add($values);
+        return $this->json($object, Response::HTTP_CREATED);
     }
 }

@@ -6,8 +6,7 @@ create or replace table unt_db.univerique
     cree_le  datetime     not null comment '(DC2Type:datetime_immutable)',
     edite_le datetime     null,
     name     varchar(255) not null
-)
-    collate = utf8mb4_unicode_ci;
+) collate = utf8mb4_unicode_ci;
 
 CREATE TABLE `indexing_config` (
    `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -21,7 +20,7 @@ CREATE TABLE `indexing_config` (
    PRIMARY KEY (`id`),
    KEY `IDX_4D2B580B2D9C040` (`index_core_id`),
    CONSTRAINT `FK_4D2B580B2D9C040` FOREIGN KEY (`index_core_id`) REFERENCES `univerique` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 create or replace index IDX_4D2B580B2D9C040 on unt_db.indexing_config (index_core_id);
 

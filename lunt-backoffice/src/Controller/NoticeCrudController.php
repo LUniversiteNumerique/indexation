@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Event\{AfterNoticeAdjustingEvent, AfterNoticeApprovingEvent, AfterNoticeRejectingEvent, AfterNoticeStateSetEvent};
 use App\Security\Voter\NoticeActionVoter;
-use App\Entity\{Dewey, Discipline, Etablissement, Notice, NoticEtat, Univerique, User};
+use App\Entity\{Dewey, Discipline, Etablissement, Keyword, Notice, NoticEtat, Univerique, User};
 use App\Field\{DurationField, EntityField, FileField};
 use App\Form\Type\{AuteurAutoField, NoticeAutoField, TagAutoField, TreeChoiceType};
 use App\Repository\{DossierRepository, NoticeRepository};
@@ -24,6 +24,7 @@ use Symfony\Component\Form\{FormBuilderInterface, FormEvent, FormEvents, FormInt
 use Symfony\Component\HttpFoundation\{File\Exception\FileException, File\UploadedFile, RedirectResponse, Request, Response};
 use Symfony\Component\Intl\Languages;
 use Symfony\Component\Validator\Constraints\{File, Image, Url};
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Uid\Uuid;
 use function Symfony\Component\String\u;
 use function Symfony\Component\Translation\t;
@@ -38,6 +39,7 @@ class NoticeCrudController extends AbstractCrudController
         private readonly DossierRepository $rep,
         private readonly NoticeRepository $repository,
         private readonly AdminUrlGenerator $generator,
+        private readonly UrlGeneratorInterface $router,
         private readonly EventDispatcherInterface $dispatcher,
     ) {}
 
@@ -141,9 +143,9 @@ class NoticeCrudController extends AbstractCrudController
             ->setHelp(t('notice.porteurs_help', domain: 'EasyAdminBundle'))->setRequired(true);
         yield EntityField::new('auteurs',t('notice.auteurs', domain: 'EasyAdminBundle'))
             ->setHelp(t('notice.auteurs_help', domain: 'EasyAdminBundle'))->setSortable(false)->setRequired(true)
-            ->setFormType(AuteurAutoField::class); //->setQueryBuilder(fn (QueryBuilder $qb) => $qb->orderBy('entity.prenom', 'ASC'));
+            ->setFormType(AuteurAutoField::class);
         yield EntityField::new('tags', t('notice.tags', domain: 'EasyAdminBundle'))->setRequired(true)
-            ->setHelp(t('notice.tags_help', domain: 'EasyAdminBundle'))->setFormType(TagAutoField::class)->hideOnIndex();
+            ->setHelp(t('notice.tags_help', domain: 'EasyAdminBundle'))->hideOnIndex()->setFormType(TagAutoField::class);
         yield Field\TextField::new('ressDate', t('notice.date', domain: 'EasyAdminBundle'))->setHelp(t('notice.date_help', domain: 'EasyAdminBundle'))->hideOnIndex();
 
         yield Field\FormField::addFieldset('Liens de la ressource')->setIcon('fa fa-paperclip');
@@ -252,18 +254,17 @@ class NoticeCrudController extends AbstractCrudController
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
         /** @var User $user */$user = $this->getUser();
-        $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)->select('entity,r,e,a,n,p,dd,pp,k,l,s')
-            ->leftJoin('entity.codewey','e')->leftJoin('entity.ressources','r')
+        $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)->select('entity,d,e,r,k,p,a,n,dd,pp,l,s')
+            ->leftJoin('entity.repertoire','d')->leftJoin('entity.codewey','e')->leftJoin('entity.ressources','r')
             ->join('entity.tags','k')->join('entity.porteurs','p')
             ->join('entity.auteurs','a')->join('entity.niveaux','n')
             ->join('entity.docTypes','dd')->join('entity.pedTypes','pp')
             ->join('entity.droit','l')->join('entity.specialite','s');
 
-        if($this->isGranted('ROLE_READ_NOTI') && $user->getSchool() instanceof Etablissement)
-            $qb->andWhere(':school MEMBER OF entity.porteurs')->setParameter('school', $user->getSchool());
-        elseif($this->isGranted('ROLE_VALI_NOTI') && $user->getUntheme() instanceof Univerique)
-            $qb->join('s.parent','d')->addSelect('d')
-                ->andWhere('d.parent in (:champs)')->setParameter('champs',$user->getUntheme()->getFields());
+        $qb->andWhere('entity.etat != :etat OR entity.createur = :user')->setParameter('etat',NoticEtat::Working)->setParameter('user', $user->getId());
+        if($user->getSchool()) $qb->andWhere(':school MEMBER OF entity.porteurs')->setParameter('school', $user->getSchool());
+        elseif($user->getUntheme()) $qb->join('s.parent','u')->andWhere('u.parent in (:champs)')->setParameter('champs',$user->getUntheme()->getFields());
+
         return $qb->andWhere('entity.deleted = 0')->orderBy('entity.creeLe', 'DESC');
     }
 
@@ -389,9 +390,9 @@ class NoticeCrudController extends AbstractCrudController
         /** @var Notice $notice */
         $notice = $ctx->getEntity()->getInstance();
         $this->denyAccessUnlessGranted(NoticeActionVoter::VIEW, $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
-        $dupNot = (clone $notice)->setUuid(Uuid::v4())->setCreeLe(new \DateTimeImmutable())->setEditeLe(new \DateTimeImmutable());
+        $dupNot = (clone $notice)->setCreateur($this->getUser())->setValidateur(null)->setCreeLe(new \DateTimeImmutable())->setEditeLe(null);
 
-        $this->repository->add($dupNot->setCreateur($this->getUser())->setTitre("COPIE - ".$dupNot->getTitre()));
+        $this->repository->add($dupNot->setUuid(Uuid::v4())->setEtat(NoticEtat::Working)->setEditDemande(false)->setTitre("COPIE - ".$dupNot->getTitre()));
         $this->dispatcher->dispatch(new AfterEntityPersistedEvent($dupNot));
         $this->addFlash('success', "Cette notice dupliquée vient d'être créé avec succès !");
 

@@ -30,8 +30,7 @@ class GroupeCrudController extends AbstractCrudController
             ->setPermission(Action::DELETE, 'ROLE_DROP_GROU')
             ->update(Crud::PAGE_DETAIL, Action::DELETE, $deleting)
             ->update(Crud::PAGE_INDEX, Action::DELETE, $deleting)
-            ->disable(Action::NEW, Action::DELETE)
-            ;
+            ->disable(Action::NEW, Action::DELETE);
     }
 
     public function configureFields(string $pageName): iterable

@@ -39,11 +39,10 @@ class UniveriqueCrudController extends AbstractCrudController
     {
         return [
             IdField::new('id')->onlyOnDetail(),
-            TextField::new('label'),
-            TextField::new('name', "Nom"),
-            AssociationField::new('fields', "Champs disciplinaires")
-                ->setSortable(false)->setTemplatePath('badge/fields.html.twig')
-                ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->where('entity.parent is null')->orderBy('entity.nom')),
+            TextField::new('label', 'Nom'),
+            TextField::new('name', "Nom du répertoire"),
+            AssociationField::new('fields', "Champs disciplinaires")->setTemplatePath('badge/fields.html.twig')
+                ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->where('entity.parent is null')->orderBy('entity.nom'))->setSortable(false),
             DateTimeField::new('creeLe', 'Date de création')->hideOnForm(),
             DateTimeField::new('editeLe', "Date d'édition")->onlyOnDetail(),
         ];
@@ -52,8 +51,8 @@ class UniveriqueCrudController extends AbstractCrudController
     public function configureFilters(Filters $filters): Filters
     {
         return $filters
-            ->add(TextFilter::new('label')->setLabel('Label'))
-            ->add(TextFilter::new('name')->setLabel('Nom'))
-            ->add(DateTimeFilter::new('creeLe')->setLabel('Date Création'));
+            ->add(TextFilter::new('label','Nom'))
+            ->add(TextFilter::new('name','Répertoire'))
+            ->add(DateTimeFilter::new('creeLe','Date Création'));
     }
 }

@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Repository\{NoticeRepository, UserRepository};
 use App\Form\{ChangePassType,UserType};
 use App\Entity\{Auteur, Etablissement, Groupe, IndexingConfig, Keyword, Univerique, User};
-use EasyCorp\Bundle\EasyAdminBundle\Config\{Assets, Crud, Dashboard, MenuItem, UserMenu};
+use EasyCorp\Bundle\EasyAdminBundle\Config\{Crud, Dashboard, MenuItem, UserMenu};
 use EasyCorp\Bundle\EasyAdminBundle\{Context\AdminContext,Controller\AbstractDashboardController,Router\AdminUrlGenerator};
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\{Request, Response};
@@ -30,11 +30,6 @@ class DashboardController extends AbstractDashboardController
     public function configureCrud(): Crud
     {
         return Crud::new()->showEntityActionsInlined()->setDateTimeFormat('medium', 'short');
-    }
-
-    public function configureAssets(): Assets
-    {
-        return parent::configureAssets()->addCssFile('assets/field-boolean.css');
     }
 
     public function configureUserMenu(UserInterface $user): UserMenu

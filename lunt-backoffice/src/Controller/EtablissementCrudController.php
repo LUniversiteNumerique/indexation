@@ -21,16 +21,16 @@ class EtablissementCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud->setSearchFields(['nom', 'abrege'])->setDefaultSort(['nom' => 'ASC'])
-            ->setEntityLabelInPlural("Etablissements")->setEntityLabelInSingular("etablissement")
+            ->setEntityLabelInPlural("Etablissements")->setEntityLabelInSingular("établissement")
             ->setEntityPermission('ROLE_READ_ETAB');
     }
 
     public function configureFilters(Filters $filters): Filters
     {
         return $filters
-            ->add(TextFilter::new('nom')->setLabel('Etablissement'))
-            ->add(TextFilter::new('abrege')->setLabel('Nom abrégé'))
-            ->add(DateTimeFilter::new('creeLe')->setLabel('Date Création'));
+            ->add(TextFilter::new('nom','Etablissement'))
+            ->add(TextFilter::new('abrege','Nom abrégé'))
+            ->add(DateTimeFilter::new('creeLe','Date Création'));
     }
 
     public function configureActions(Actions $actions): Actions

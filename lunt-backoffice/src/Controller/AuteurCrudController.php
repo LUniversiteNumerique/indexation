@@ -31,7 +31,6 @@ class AuteurCrudController extends AbstractCrudController
             ->setPermission(Action::EDIT, 'ROLE_EDIT_ACTE')
             ->setPermission(Action::DELETE, 'ROLE_DROP_ACTE')
             ->setPermission(Action::BATCH_DELETE, 'ROLE_VALI_NOTI')
-            ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $action) => $action->setLabel('Créer un <b>Auteur</b>'))
             ->remove(Crud::PAGE_NEW,Action::SAVE_AND_ADD_ANOTHER);
     }
 
@@ -42,15 +41,15 @@ class AuteurCrudController extends AbstractCrudController
         yield TextField::new('nom')->setSortable(true);
         yield EmailField::new('email');
         yield DateTimeField::new('creeLe', 'Date de création')->hideOnForm();
-        yield DateTimeField::new('editeLe')->onlyOnDetail();
+        yield DateTimeField::new('editeLe', "Date d'édition'")->onlyOnDetail();
     }
 
     
     public function configureFilters(Filters $filters): Filters
     {
         return $filters
-            ->add(TextFilter::new('prenom')->setLabel('Prénom de l\'auteur'))
-            ->add(TextFilter::new('nom')->setLabel('Nom de l\'auteur'))
-            ->add(DateTimeFilter::new('creeLe')->setLabel('Créé le'));
+            ->add(TextFilter::new('prenom',"Prénom de l'auteur"))
+            ->add(TextFilter::new('nom',"Nom de l'auteur"))
+            ->add(DateTimeFilter::new('creeLe','Date de création'));
     }
 }

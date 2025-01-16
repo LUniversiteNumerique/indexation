@@ -63,7 +63,7 @@ readonly class LoggerSubscriber implements EventSubscriberInterface
             [
                 'notice' => $entity->getTitre(),
                 'url' => $url,
-                'message' => sprintf("L'utilisateur %s de %s a demandé a une rectification sur la notice << %s >>", $user, $user->getSchool(), $entity)
+                'message' => sprintf("L'utilisateur %s a demandé a une rectification sur la notice ", $user)
             ]
         );
     }
