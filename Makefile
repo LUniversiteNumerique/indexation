@@ -5,7 +5,7 @@ SRC_DIR := src
 APP=docker compose --env-file lunt-backoffice/.env
 
 dev:
-	$(APP) up -d --build
+	$(APP) up -d
 
 ddev:
 	$(APP) down

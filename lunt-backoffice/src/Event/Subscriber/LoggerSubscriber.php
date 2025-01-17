@@ -58,13 +58,8 @@ readonly class LoggerSubscriber implements EventSubscriberInterface
             ->generateUrl();
 
         $this->mailer->sendTwig($to?->getEmail(), //$to?->getUntheme()?->getEmail()
-            sprintf("Demande de Rectification de la notice %d", $entity->getId()),
-            'emails/notif.html.twig',
-            [
-                'notice' => $entity->getTitre(),
-                'url' => $url,
-                'message' => sprintf("L'utilisateur %s a demandé a une rectification sur la notice ", $user)
-            ]
+            sprintf("[UNT] Demande de Rectification de la notice %d", $entity->getId()),
+            'emails/ajust.html.twig', ['user' => $user, 'url' => $url, 'notice' => $entity->getTitre(),]
         );
     }
 
@@ -87,15 +82,9 @@ readonly class LoggerSubscriber implements EventSubscriberInterface
             ->setAction(Action::DETAIL)->setEntityId($entity->getId())
             ->generateUrl();
 
-        $this->mailer->sendTwig(
-            $from->getEmail(), //$from->getSchool()?->getEmail()
-            sprintf("Notice %d est validée", $entity->getId()),
-            'emails/notif.html.twig',
-            [
-                'notice' => $entity->getTitre(),
-                'url' => $url,
-                'message' => sprintf("La notice intitulée  <<%s>> vient d'être validée par %s,  %s de %s", $entity, $user, $user->getGroup(), $user->getUntheme())
-            ]
+        $this->mailer->sendTwig($from->getEmail(), //$from->getSchool()?->getEmail()
+            sprintf("[UNT] La notice N° %d est validée", $entity->getId()),
+            'emails/approve.html.twig', ['user' => $user, 'url' => $url, 'notice' => $entity->getTitre()]
         );
     }
 
@@ -119,15 +108,9 @@ readonly class LoggerSubscriber implements EventSubscriberInterface
             ->setAction(Action::DETAIL)->setEntityId($entity->getId())
             ->generateUrl();
 
-        $this->mailer->sendTwig(
-            $from->getEmail(), //$from->getSchool()?->getEmail()
-            sprintf("Notice %d est rejetée", $entity->getId()),
-            'emails/notif.html.twig',
-            [
-                'notice' => $entity->getTitre(),
-                'url' => $url,
-                'message' => sprintf("La notice intitulée  <<%s>> est rejetée pour défaut/raison de %s par %s,  %s de %s", $entity, $motif , $user, $user->getGroup(), $user->getUntheme())
-            ]
+        $this->mailer->sendTwig($from->getEmail(), //$from->getSchool()?->getEmail()
+            sprintf("[UNT] La notice N° %d est rejetée", $entity->getId()),
+            'emails/reject.html.twig', ['user' => $user, 'url' => $url, 'motifs' => $motif, 'notice' => $entity->getTitre(),]
         );
     }
 

@@ -11,6 +11,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\{Request, Response};
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class KeywordCrudController extends AbstractCrudController
@@ -56,19 +58,22 @@ class KeywordCrudController extends AbstractCrudController
         ];
     }
 
-
-    #[Route('/api/keyworks', name: 'app_keywork_new', methods: ['POST'])]
+    #[Route('/api/keyworks', name: 'app_keywork_new', methods: 'POST'), IsGranted('ROLE_CREA_KEYW')]
     public function ajaxNew(Request $request, SerializerInterface $serializer, ValidatorInterface $validator): Response
     {
+        /** @var Keyword $values */
         $values = $serializer->deserialize($request->getContent(), Keyword::class, 'json');
-        $object = $validator->validate($values);
-        dd($object, $values);
+        /** @var ConstraintViolationList $object */$object = $validator->validate($values);
+
         if ($object->count()) {
-            $errors = array_reduce((array)$object, fn($acc, $obj) => $acc[$obj->getPropertyPath()] = $obj->getMessage());
-            return $this->json(['errors' => $errors], Response::HTTP_BAD_REQUEST);
+            $error = $object->get(0); //array_reduce($object->getIterator()?->getArrayCopy(), fn($acc, $obj) => $acc[$obj->getPropertyPath()] = $obj->getMessage());
+            return $this->json(['error' => $error->getInvalidValue() .', '. $error->getMessage()], Response::HTTP_BAD_REQUEST);
         }
 
-        $this->repository->add($values);
-        return $this->json($object, Response::HTTP_CREATED);
+        $this->repository->add($values->setCreeLe(new \DateTimeImmutable()));
+        return $this->json([
+            'id' => $values->getId(),
+            'name' => $values->getNom(),
+        ], Response::HTTP_CREATED);
     }
 }

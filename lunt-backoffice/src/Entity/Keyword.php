@@ -8,7 +8,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: KeywordRepository::class),
-    UniqueEntity('nom', 'Ce nom est déjà utilisé.')]
+    UniqueEntity('nom', 'ce nom est déjà utilisé.')]
 class Keyword
 {
     use Timestamps;
@@ -19,7 +19,7 @@ class Keyword
     #[ORM\Column(nullable: true), Assert\Type('bool')]
     private ?bool $valide;
 
-    public function __construct(string $name = null,bool $valid = false)
+    public function __construct(?string $name = null, bool $valid = false)
     {
         $this->nom = $name;
         $this->valide = $valid;

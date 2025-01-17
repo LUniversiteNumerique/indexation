@@ -41,7 +41,7 @@ class UniveriqueCrudController extends AbstractCrudController
             IdField::new('id')->onlyOnDetail(),
             TextField::new('label', 'Nom'),
             TextField::new('name', "Nom du répertoire"),
-            AssociationField::new('fields', "Champs disciplinaires")->setTemplatePath('badge/fields.html.twig')
+            AssociationField::new('fields', "Champs disciplinaires")->setTemplatePath('admin/fields/badge.html.twig')
                 ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->where('entity.parent is null')->orderBy('entity.nom'))->setSortable(false),
             DateTimeField::new('creeLe', 'Date de création')->hideOnForm(),
             DateTimeField::new('editeLe', "Date d'édition")->onlyOnDetail(),

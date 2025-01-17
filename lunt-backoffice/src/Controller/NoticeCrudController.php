@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Event\{AfterNoticeAdjustingEvent, AfterNoticeApprovingEvent, AfterNoticeRejectingEvent, AfterNoticeStateSetEvent};
 use App\Security\Voter\NoticeActionVoter;
-use App\Entity\{Dewey, Discipline, Etablissement, Keyword, Notice, NoticEtat, Univerique, User};
+use App\Entity\{Dewey, Discipline, Notice, NoticEtat, Univerique, User};
 use App\Field\{DurationField, EntityField, FileField};
 use App\Form\Type\{AuteurAutoField, NoticeAutoField, TagAutoField, TreeChoiceType};
 use App\Repository\{DossierRepository, NoticeRepository};
@@ -64,27 +64,15 @@ class NoticeCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        //Action dupliquer
-        $duplicate = Action::new('dupliquer',null,'fa fa-copy')
-            ->linkToCrudAction('duplicateNotice')
-            ->setHtmlAttributes(['data-toggle' => 'tooltip', 'title' => 'Dupliquer cette notice']);
-        
-        //Action Soumettre
-        $forward = Action::new('soumettre',null,'fa fa-send')->linkToCrudAction(self::FORWARD_ACTION)->setHtmlAttributes(['data-toggle' => 'tooltip', 'title' => 'Soumettre cette notice']);
-        
-        //Action Valider 
-        $approve = Action::new('valider',null,'fa fa-check')
-            ->linkToCrudAction('approveNotice')
-            ->setHtmlAttributes(['data-toggle' => 'tooltip', 'title' => 'Valider la notice pour publication']);
-        
-        //Action ???
-        $reject = Action::new('rejeter',null,'fa fa-close')->linkToCrudAction('rejectNotice')->setHtmlAttributes(['data-toggle' => 'tooltip', 'title' => 'Rejeter la notice pour correction']);
-        $publish = Action::new('dépublier',null,'fa fa-step-backward')->linkToCrudAction('publishNotice')->setHtmlAttributes(['data-toggle' => 'tooltip', 'title' => 'Dépublier cette notice publiée']);
-        $allowed = Action::new('autoriser',null,'fa fa-fast-backward')->linkToCrudAction('allowedNotice')->setHtmlAttributes(['data-toggle' => 'tooltip', 'title' => 'Autoriser la notice pour modification']);
+        $duplicate = Action::new('dupliquer',null,'fa fa-copy')->linkToCrudAction('duplicateNotice')->addCssClass('btn btn-outline-light')->setHtmlAttributes(['data-toggle' => 'tooltip', 'title' => 'Dupliquer cette notice']);
+        $forward = Action::new('soumettre',null,'fa fa-send')->linkToCrudAction(self::FORWARD_ACTION)->addCssClass('btn btn-outline-success')->setHtmlAttributes(['data-toggle' => 'tooltip', 'title' => 'Soumettre cette notice']);
+        $approve = Action::new('valider',null,'fa fa-check')->linkToCrudAction('approveNotice')->addCssClass('btn btn-outline-success')->setHtmlAttributes(['data-toggle' => 'tooltip', 'title' => 'Valider la notice pour publication']);
+        $reject = Action::new('rejeter',null,'fa fa-close')->linkToCrudAction('rejectNotice')->addCssClass('btn btn-outline-danger')->setHtmlAttributes(['data-bs-toggle' => 'modal', 'data-bs-target' => '#modal-reject', 'data-toggle' => 'tooltip', 'title' => 'Rejeter la notice pour correction']);
+        $publish = Action::new('dépublier',null,'fa fa-step-backward')->linkToCrudAction('publishNotice')->addCssClass('btn btn-outline-danger')->setHtmlAttributes(['data-toggle' => 'tooltip', 'title' => 'Dépublier cette notice publiée']);
+        $allowed = Action::new('autoriser',null,'fa fa-fast-backward')->linkToCrudAction('allowedNotice')->addCssClass('btn btn-outline-info')->setHtmlAttributes(['data-toggle' => 'tooltip', 'title' => 'Autoriser la notice pour modification']);
+        $adjust = Action::new('rectifier',null,'fa fa-share-square')->linkToCrudAction('adjustNotice')->addCssClass('btn btn-outline-info')->setHtmlAttributes(['data-toggle' => 'tooltip', 'title' => 'Demander la modification de cette notice']);
+        $category = Action::new('catégoriser',null,'fa fa-tag')->linkToCrudAction('labelNotice')->addCssClass('btn btn-outline-warning confirm-action')->setHtmlAttributes(['data-bs-toggle' => 'modal', 'data-bs-target' => '#modal-confirm',]);
         $saward = Action::new(self::SAVE_AND_FORWARD, 'Créer et soumettre la notice', 'fa fa-send')->linkToCrudAction(Action::NEW)->setHtmlAttributes(['type' => 'submit', 'name' => 'ea[newForm][btn]', 'value' => self::SAVE_AND_FORWARD]);
-        $adjust = Action::new('rectifier',null,'fa fa-share-square')->linkToCrudAction('adjustNotice');
-        $category = Action::new('catégoriser',null,'fa fa-tag')->linkToCrudAction('labelNotice')
-            ->addCssClass('text-warning confirm-action')->setHtmlAttributes(['data-bs-toggle' => 'modal', 'data-bs-target' => '#modal-confirm',]);
 
         $fwdoc = fn(Notice $n,string $s = NoticeActionVoter::VALI) => $this->isGranted($s,$n);
         
@@ -144,8 +132,10 @@ class NoticeCrudController extends AbstractCrudController
         yield EntityField::new('auteurs',t('notice.auteurs', domain: 'EasyAdminBundle'))
             ->setHelp(t('notice.auteurs_help', domain: 'EasyAdminBundle'))->setSortable(false)->setRequired(true)
             ->setFormType(AuteurAutoField::class);
-        yield EntityField::new('tags', t('notice.tags', domain: 'EasyAdminBundle'))->setRequired(true)
-            ->setHelp(t('notice.tags_help', domain: 'EasyAdminBundle'))->hideOnIndex()->setFormType(TagAutoField::class);
+        yield EntityField::new('tags', t('notice.tags', domain: 'EasyAdminBundle'))->setRequired(true)->hideOnIndex()
+            ->setHelp(t('notice.tags_help', domain: 'EasyAdminBundle'))->setFormType(TagAutoField::class)->setFormTypeOption('attr', [
+                'data-tag-autocreate-url-value' => $this->router->generate('app_keywork_new'), 'data-controller' => 'tag-autocreate'
+            ]);
         yield Field\TextField::new('ressDate', t('notice.date', domain: 'EasyAdminBundle'))->setHelp(t('notice.date_help', domain: 'EasyAdminBundle'))->hideOnIndex();
 
         yield Field\FormField::addFieldset('Liens de la ressource')->setIcon('fa fa-paperclip');
@@ -190,9 +180,8 @@ class NoticeCrudController extends AbstractCrudController
                 else $qb->where('entity.parent IS NULL');
 
                 return $qb->orderBy('entity.nom', 'ASC');
-            })
-            ->setHelp(t('notice.champdisc_help', domain: 'EasyAdminBundle'))->onlyOnForms()
-            ->setFormTypeOptions(['class' => Discipline::class, 'mapped' => false])->setSortable(false);
+            })->setSortable(false)->onlyOnForms()
+            ->setHelp(t('notice.champdisc_help', domain: 'EasyAdminBundle'))->setFormTypeOptions(['class' => Discipline::class, 'mapped' => false]);
         yield EntityField::new('discipline')->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.nom', 'ASC'))
             ->setFormTypeOptions(['class' => Discipline::class, 'auto_initialize' => false, 'mapped' => false])->onlyOnForms()
             ->setHelp(t('notice.discipline_help', domain: 'EasyAdminBundle'))->setSortable(false);
@@ -213,7 +202,7 @@ class NoticeCrudController extends AbstractCrudController
             yield Field\UrlField::new('formEvalUrl',t('notice.formevalurl', domain: 'EasyAdminBundle'))
                 ->setFormTypeOptions(['default_protocol' => 'https', 'attr' => ['class' => 'isUrl', 'placeholder' => 'https://...']])->setHelp(t('notice.formevalurl_help', domain: 'EasyAdminBundle'))->hideOnIndex();
             yield Field\ChoiceField::new('userLang',t('notice.userlang', domain: 'EasyAdminBundle'))->setHelp(t('notice.userlang_help', domain: 'EasyAdminBundle'))->hideOnIndex()
-                ->setChoices($langList)->allowMultipleChoices()->renderExpanded(false)->renderAsBadges();
+                ->setChoices($langList)->allowMultipleChoices()->renderAsBadges()->renderExpanded(false)->setRequired(true);
             yield Field\TextEditorField::new('objectif',t('notice.objectif', domain: 'EasyAdminBundle'))->setHelp(t('notice.objectif_help', domain: 'EasyAdminBundle'))->hideOnIndex()->formatValue(function ($value, $entity) { return $value;});
             yield Field\TextField::new('champExt1',"Champ d'extension 1")->hideOnIndex(); yield Field\TextField::new('champExt2',"Champ d'extension 2")->hideOnIndex();
             yield Field\TextField::new('champExt3',"Champ d'extension 3")->hideOnIndex(); yield Field\TextField::new('champExt4',"Champ d'extension 4")->hideOnIndex();
@@ -224,8 +213,8 @@ class NoticeCrudController extends AbstractCrudController
 
             yield Field\FormField::addFieldset('Classification thématique')->setIcon('fa fa-book');
             yield EntityField::new('disciFond',t('notice.discifond', domain: 'EasyAdminBundle'))->setHelp(t('notice.discifond_help', domain: 'EasyAdminBundle'))->onlyOnForms()
-                ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->where('entity.parent is null'))->setFormTypeOptions(['class' => Dewey::class,'mapped' => false,'required' => false])->setSortable(false);
-            yield EntityField::new('division')->setFormTypeOptions(['class' => Dewey::class,'auto_initialize' => false,'mapped' => false,'required' => false])->onlyOnForms();
+                ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->where('entity.parent is null'))->setFormTypeOptions(['class' => Dewey::class,'mapped' => false,'required' => true])->setSortable(false);
+            yield EntityField::new('division')->setFormTypeOptions(['class' => Dewey::class,'auto_initialize' => false,'mapped' => false,'required' => true])->onlyOnForms();
             yield EntityField::new('codewey','Code Dewey')->setFormTypeOptions(['class' => Dewey::class])->setRequired(true);
             yield Field\TextField::new('label',t('notice.label', domain: 'EasyAdminBundle'))->setHelp(t('notice.label_help', domain: 'EasyAdminBundle'))->onlyOnDetail();
             yield Field\DateTimeField::new('creeLe',t('notice.creele', domain: 'EasyAdminBundle'))->onlyOnDetail();
@@ -438,7 +427,7 @@ class NoticeCrudController extends AbstractCrudController
     {
         $ctx = $this->getContext();
         $url = $this->redirecTo($ctx->getRequest())->removeReferrer();
-        $note = $ctx->getRequest()->get('motifs', "Revoir l'ensemble des informations"); // TODO: faire le formulaire sur la base de la labellisation
+        $note = $ctx->getRequest()->get('motifs');
 
         /** @var Notice|null $notice */
         $notice = $ctx->getEntity()->getInstance(); //Forward
@@ -446,7 +435,7 @@ class NoticeCrudController extends AbstractCrudController
 
         $this->repository->add($notice->setEtat(NoticEtat::Working));
         $this->dispatcher->dispatch(new AfterNoticeRejectingEvent($notice, $note));
-        $this->addFlash('success', "La notice est bien rejet avec succès !");
+        $this->addFlash('success', "La notice est bien rejetée avec succès !");
 
         return $this->redirect($url->generateUrl());
     }

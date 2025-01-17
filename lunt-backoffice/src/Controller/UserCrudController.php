@@ -3,24 +3,25 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Event\UserPassSettingEvent;
 use App\Field\EntityField;
-use App\Service\MailerService;
 use Doctrine\ORM\{EntityManagerInterface,QueryBuilder};
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Actions, Crud, Filters};
 use EasyCorp\Bundle\EasyAdminBundle\Collection\{FieldCollection,FilterCollection};
 use EasyCorp\Bundle\EasyAdminBundle\Dto\{EntityDto,SearchDto};
-use EasyCorp\Bundle\EasyAdminBundle\{Controller\AbstractCrudController, Context\AdminContext, Filter\EntityFilter, Router\AdminUrlGenerator};
+use EasyCorp\Bundle\EasyAdminBundle\{Controller\AbstractCrudController, Context\AdminContext, Router\AdminUrlGenerator};
 use EasyCorp\Bundle\EasyAdminBundle\Field\{BooleanField, DateTimeField, EmailField, FormField, IdField, TextField};
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 
 class UserCrudController extends AbstractCrudController
 {
     public function __construct(
-        private readonly TokenGeneratorInterface $tokenGenerator,
+        private readonly TokenGeneratorInterface $tokGenerator,
         private readonly AdminUrlGenerator $urlGenerator,
-        private readonly MailerService $mailer) {}
+        private readonly EventDispatcherInterface $dispatcher
+    ) {}
 
     public static function getEntityFqcn(): string
     {
@@ -94,36 +95,22 @@ class UserCrudController extends AbstractCrudController
      */
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        $veriftoken = $this->tokenGenerator->generateToken(); //$pass = random_bytes(12); $entityInstance->setPassword($this->hasher->hashPassword($entityInstance,$pass));
-        $url = $this->generateUrl('app_reset_response', ['token' => $veriftoken], UrlGeneratorInterface::ABSOLUTE_URL);
-        $entityInstance->setEditeLe(new \DateTimeImmutable());
-        $entityInstance->setTokenExpiresAt(new \DateTimeImmutable(User::VALIDATIME_TOKEN.' min'));
-        parent::persistEntity($entityManager, $entityInstance->setReseToken($veriftoken));
-        $this->mailer->sendEmail($entityInstance->getEmail(), 'Création de votre compte/espace UNT',
-            "Bonjour " . $entityInstance->getName() . '<br/>Votre compte UNT vient d\'être créé. Vous pouvez l\'activer à l\'adresse : <a href="' .$url. '">'.$url.'</a> et initialiser votre mot de passe</a>.',
-        );
+        $this->dispatcher->dispatch(new UserPassSettingEvent($entityInstance->setReseToken($this->tokGenerator->generateToken())));
+
+        parent::persistEntity($entityManager, $entityInstance->setTokenExpiresAt(new \DateTimeImmutable(User::VALIDATIME_TOKEN.' min')));
     }
 
-    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    protected function getRedirectResponseAfterSave(AdminContext $context, string $action): RedirectResponse
     {
-        $veriftoken = $this->tokenGenerator->generateToken(); //$pass = random_bytes(12); $entityInstance->setPassword($this->hasher->hashPassword($entityInstance,$pass));
-        $url = $this->generateUrl('app_reset_response', ['token' => $veriftoken], UrlGeneratorInterface::ABSOLUTE_URL);
-        $entityInstance->setEditeLe(new \DateTimeImmutable());
-        $entityInstance->setTokenExpiresAt(new \DateTimeImmutable(User::VALIDATIME_TOKEN.' min'));
-        parent::persistEntity($entityManager, $entityInstance->setReseToken($veriftoken));
-    }
-
-    protected function getRedirectResponseAfterSave(AdminContext $ctx, string $action): RedirectResponse
-    {
-        $submitButtonName = $ctx->getRequest()->request->all()['ea']['newForm']['btn'];
+        $submitButtonName = $context->getRequest()->request->all()['ea']['newForm']['btn'];
 
         $url = match ($submitButtonName) {
             Action::SAVE_AND_CONTINUE => $this->urlGenerator->setAction(Action::EDIT)
-                ->setEntityId($ctx->getEntity()->getPrimaryKeyValue())->generateUrl(),
-            Action::SAVE_AND_RETURN => $ctx->getReferrer() ?? $this->urlGenerator->setAction(Action::DETAIL)
-                    ->setEntityId($ctx->getEntity()->getPrimaryKeyValue())->generateUrl(),
+                ->setEntityId($context->getEntity()->getPrimaryKeyValue())->generateUrl(),
+            Action::SAVE_AND_RETURN => $context->getReferrer() ?? $this->urlGenerator->setAction(Action::DETAIL)
+                    ->setEntityId($context->getEntity()->getPrimaryKeyValue())->generateUrl(),
             Action::SAVE_AND_ADD_ANOTHER => $this->urlGenerator->setAction(Action::NEW)->generateUrl(),
-            default => $this->generateUrl($ctx->getDashboardRouteName()),
+            default => $this->generateUrl($context->getDashboardRouteName()),
         };
 
         return $this->redirect($url);
