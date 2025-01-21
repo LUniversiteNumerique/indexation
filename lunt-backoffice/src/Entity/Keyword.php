@@ -16,8 +16,8 @@ class Keyword
     #[ORM\Column(length: 255, unique: true), Assert\NotBlank]
     private ?string $nom;
 
-    #[ORM\Column(nullable: true), Assert\Type('bool')]
-    private ?bool $valide;
+    #[ORM\Column, Assert\Type('bool')]
+    private bool $valide;
 
     public function __construct(?string $name = null, bool $valid = false)
     {

@@ -19,6 +19,8 @@ class IndexingConfigCrudController extends AbstractCrudController
     {
         return parent::configureActions($actions)
             ->disable(Action::BATCH_DELETE)
+            ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $a) => $a->setLabel('Créer une <b>indexation</b>'))
+            ->update(Crud::PAGE_NEW, Action::SAVE_AND_ADD_ANOTHER, fn (Action $a) => $a->setLabel('Créer et ajouter une <b>nouvelle</b>'))
             ->setPermission(Action::NEW, 'ROLE_CREA_CORE')
             ->setPermission(Action::EDIT, 'ROLE_EDIT_CORE')
             ->setPermission(Action::DELETE, 'ROLE_DROP_CORE');
@@ -40,6 +42,8 @@ class IndexingConfigCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud->setEntityLabelInSingular('indexation')->setEntityLabelInPlural("Indexations")
-            ->setSearchFields(null)->setEntityPermission('ROLE_READ_CORE');
+            ->setSearchFields(null)->setEntityPermission('ROLE_READ_CORE')
+            ->setPageTitle(Action::NEW, fn () => 'Créer une <b>indexation</b>')
+            ->setPageTitle(Action::EDIT, fn (IndexingConfig $n) => 'Modifier une <b>indexation</b>');
     }
 }

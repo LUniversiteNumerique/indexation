@@ -51,7 +51,9 @@ class NoticeCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         $crud = $crud->setAutofocusSearch()->setSearchFields(['titre','description'])
-            ->setEntityLabelInPlural('Notices')->setEntityLabelInSingular('notice')
+            ->setEntityLabelInPlural('Notices')->setEntityLabelInSingular('notice')->setFormOptions([
+                'attr' => ['data-controller'=>"notice-setting", 'data-notice-setting-target'=>"form"]
+            ])
             ->setPageTitle(Action::NEW, fn () => 'Créer une <b>notice</b>')
             ->setPageTitle(Action::EDIT, fn (Notice $n) => 'Modifier une <b>notice</b>')
             ->setPageTitle(Crud::PAGE_DETAIL, static fn (Notice $n) => $n->getTitre());
@@ -83,14 +85,15 @@ class NoticeCrudController extends AbstractCrudController
             ->add(Crud::PAGE_DETAIL, $approve->displayIf(static fn (Notice $n) => $n->getEtat()===NoticEtat::Forward && $fwdoc($n)))
             ->add(Crud::PAGE_DETAIL, $publish->displayIf(static fn (Notice $n) => $n->getEtat()===NoticEtat::Approved && $fwdoc($n)))
             ->add(Crud::PAGE_DETAIL, $category->displayIf(static fn (Notice $n) => $n->getEtat()===NoticEtat::Approved && $fwdoc($n)))
-            ->add(Crud::PAGE_DETAIL, $allowed->displayIf(static fn (Notice $n) => $n->isEditDemande() && $fwdoc($n)))
-            ->add(Crud::PAGE_DETAIL, $adjust->displayIf(static fn (Notice $n) => $n->getEtat()===NoticEtat::Approved && !$n->isEditDemande() && $fwdoc($n,NoticeActionVoter::VIEW)))
+            ->add(Crud::PAGE_DETAIL, $allowed->displayIf(static fn (Notice $n) => $fwdoc($n) && $n->isEditDemande()))
+            ->add(Crud::PAGE_DETAIL, $adjust->displayIf(static fn (Notice $n) => $n->getEtat()===NoticEtat::Approved && $fwdoc($n,NoticeActionVoter::DEFA) && !$n->isEditDemande()))
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->add(Crud::PAGE_NEW, $saward->displayAsButton())
             ->update(Crud::PAGE_INDEX, Action::DETAIL, fn (Action $a) => $a->setCssClass('btn btn-outline-secondary'))
-            ->update(Crud::PAGE_DETAIL, Action::EDIT, static fn(Action $a) => $a->setIcon('fa fa-pencil')->displayIf(static fn (Notice $n) => $fwdoc($n, NoticeActionVoter::EDIT) && $n->getEtat() !== NoticEtat::Approved ))
+            ->update(Crud::PAGE_DETAIL, Action::EDIT, static fn(Action $a) => $a->setIcon('fa fa-pencil')->displayIf(static fn (Notice $n) => $fwdoc($n, NoticeActionVoter::EDIT)))
             ->update(Crud::PAGE_DETAIL, Action::DELETE, static fn(Action $a) => $a->addCssClass('btn btn-outline-danger')->displayIf(static fn (Notice $n) => $fwdoc($n,NoticeActionVoter::DROP)))
             ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $action) => $action->setLabel('Créer une <b>notice</b>'))
+            ->update(Crud::PAGE_NEW, Action::SAVE_AND_ADD_ANOTHER, fn (Action $a) => $a->setLabel('Créer et ajouter une <b>nouvelle</b>'))
             ->remove(Crud::PAGE_INDEX, Action::EDIT)
             ->remove(Crud::PAGE_INDEX, Action::DELETE)
             ->remove(Crud::PAGE_DETAIL, Action::INDEX)
@@ -245,26 +248,27 @@ class NoticeCrudController extends AbstractCrudController
         /** @var User $user */$user = $this->getUser();
         $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)->select('entity,d,e,r,k,p,a,n,dd,pp,l,s')
             ->leftJoin('entity.repertoire','d')->leftJoin('entity.codewey','e')->leftJoin('entity.ressources','r')
-            ->join('entity.tags','k')->join('entity.porteurs','p')
-            ->join('entity.auteurs','a')->join('entity.niveaux','n')
-            ->join('entity.docTypes','dd')->join('entity.pedTypes','pp')
-            ->join('entity.droit','l')->join('entity.specialite','s');
+            ->join('entity.tags','k')->join('entity.porteurs','p')->join('entity.auteurs','a')->join('entity.niveaux','n')
+            ->join('entity.docTypes','dd')->join('entity.pedTypes','pp')->join('entity.droit','l')->join('entity.specialite','s');
 
-        $qb->andWhere('entity.etat != :etat OR entity.createur = :user')->setParameter('etat',NoticEtat::Working)->setParameter('user', $user->getId());
-        if($user->getSchool()) $qb->andWhere(':school MEMBER OF entity.porteurs')->setParameter('school', $user->getSchool());
-        elseif($user->getUntheme()) $qb->join('s.parent','u')->andWhere('u.parent in (:champs)')->setParameter('champs',$user->getUntheme()->getFields());
+        $qb->andWhere('entity.etat != :etat')->setParameter('etat',NoticEtat::Working);
+        if($sch = $user->getSchool()) $qb->andWhere(':school MEMBER OF entity.porteurs')->setParameter('school', $sch->getId());
+        elseif($unt = $user->getUntheme()) $qb->join('s.parent','u')->andWhere('u.parent in (:champs)')->setParameter('champs',$unt->getFields());
+        $qb->orWhere('entity.createur = :user')->setParameter('user', $user->getId());
 
         return $qb->andWhere('entity.deleted = 0')->orderBy('entity.creeLe', 'DESC');
     }
 
     public function createNewFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
     {
+        $formOptions->setIfNotSet('action', $context->getRequest()->getRequestUri());
         $builder = $this->factory->createNewFormBuilder($entityDto, $formOptions, $context);
         return $this->addFormEvent($builder);
     }
 
     public function createEditFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
     {
+        $formOptions->setIfNotSet('action', $context->getRequest()->getRequestUri());
         $builder = $this->factory->createEditFormBuilder($entityDto, $formOptions, $context);
         return $this->addFormEvent($builder);
     }
@@ -360,17 +364,31 @@ class NoticeCrudController extends AbstractCrudController
 
     public function detail(AdminContext $context): KeyValueStore
     {
+        /** @var Notice $notice */
+        $notice = $context->getEntity()->getInstance();
+        $this->denyAccessUnlessGranted(NoticeActionVoter::VIEW, $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
+
         $resParams = parent::detail($context);
         if ($folderId = $context->getRequest()->get('folderId')) {
             $folder = $this->rep->findOneForAll($folderId);
             $context->getEntity()->setActions(ActionCollection::new(array_map(function(ActionDto $action) use($folderId) {
-                $action->setLinkUrl(sprintf("%s&folderId=%d",$action->getLinkUrl(),$folderId));
+                $action->setHtmlAttribute('folderId', $folderId); //setLinkUrl(sprintf("%s&folderId=%d",$action->getLinkUrl(),$folderId));
                 return $action;
             }, $context->getEntity()->getActions()->all())));
             $resParams->set('curritem', $folder);
         }
         return $resParams;
     }
+
+    public function edit(AdminContext $context)
+    {
+        /** @var Notice $notice */
+        $notice = $context->getEntity()->getInstance();
+        $this->denyAccessUnlessGranted(NoticeActionVoter::VIEW, $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
+
+        return parent::edit($context);
+    }
+
 
     public function duplicateNotice(): Response
     {
@@ -573,10 +591,12 @@ class NoticeCrudController extends AbstractCrudController
         $builder->get('champDisc')->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             $form = $event->getForm();
             $this->addDisc($form->getParent(), $form->getData());
+            $this->addSpec($form->getParent(), null);
         });
         if ($builder->has('disciFond')) $builder->get('disciFond')->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             $form = $event->getForm();
             $this->addDivi($form->getParent(), $form->getData());
+            $this->addSpec($form->getParent(), null);
         });
 
         return $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {

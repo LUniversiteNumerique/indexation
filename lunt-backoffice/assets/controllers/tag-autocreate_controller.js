@@ -26,9 +26,9 @@ export default class extends Controller {
         };
         const url = this.urlValue;
         options.create = function (input, callback) {
-            fetch(url, {method: 'POST', body: JSON.stringify({nom: input})})
+            fetch(url, {method: 'POST', body: input})
                 .then(r => r.json())
-                .then(data => callback(data));
+                .then(data => callback({value: data.id, text: data.nom}));
         }
     }
 }

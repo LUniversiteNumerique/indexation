@@ -20,6 +20,9 @@
     <div class="mb-4">
         <span>Profil</span>
         <strong class="badge badge-outline">{{ app.user.group }}</strong>
+        {% if(app.user.school or app.user.untheme) %}
+            <strong class="badge badge-dark">{{ app.user.school }}{{ app.user.untheme }}</strong>
+        {% endif %}
     </div>
 
 {% endblock %}

@@ -37,16 +37,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $tokenExpiresAt = null;
 
-    #[ORM\ManyToOne(targetEntity: Groupe::class, inversedBy: 'users'),
+    #[ORM\ManyToOne(inversedBy: 'users'), Assert\NotNull,
         Assert\Valid, Assert\Type(Groupe::class)]
-    private ?Groupe $group;
+    private ?Groupe $group = null;
 
     #[ORM\ManyToOne, Assert\Valid,
         Assert\Type(Univerique::class)]
     private ?Univerique $untheme = null;
 
-    #[ORM\ManyToOne(targetEntity: Etablissement::class),
-        Assert\Valid, Assert\Type(Etablissement::class)]
+    #[ORM\ManyToOne, Assert\Valid,
+        Assert\Type(Etablissement::class)]
     private ?Etablissement $school = null;
 
     private array $roles = [self::ROLE_DEFAULT];

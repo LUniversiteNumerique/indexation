@@ -18,7 +18,9 @@ class UniveriqueCrudController extends AbstractCrudController
 
     public function configureCrud(Crud $crud): Crud
     {
-        return parent::configureCrud($crud)->setEntityLabelInSingular('UNT')->setEntityLabelInPlural("UNT");
+        return parent::configureCrud($crud)->setEntityLabelInSingular('UNT')->setEntityLabelInPlural("UNT")
+            ->setPageTitle(Action::NEW, fn () => 'Créer une <b>UNT</b>')
+            ->setPageTitle(Action::EDIT, fn (Univerique $n) => 'Modifier une <b>UNT</b>');
     }
 
     public function configureActions(Actions $actions): Actions
@@ -31,6 +33,8 @@ class UniveriqueCrudController extends AbstractCrudController
             ->setPermission(Action::EDIT, 'ROLE_EDIT_UNIV')
             ->setPermission(Action::NEW, 'ROLE_CREA_UNIV')
             ->setPermission(Action::DELETE, 'ROLE_DROP_UNIV')
+            ->update(Crud::PAGE_NEW, Action::SAVE_AND_ADD_ANOTHER, fn (Action $a) => $a->setLabel('Créer et ajouter une <b>nouvelle</b>'))
+            ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $a) => $a->setLabel('Créer une <b>UNT</b>'))
             ->remove(Crud::PAGE_INDEX, Action::EDIT)
             ->remove(Crud::PAGE_INDEX, Action::DELETE);
     }

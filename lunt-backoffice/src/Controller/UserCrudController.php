@@ -48,16 +48,16 @@ class UserCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         return $actions
-            ->add(Crud::PAGE_NEW, Action::INDEX)
-            ->add(Crud::PAGE_EDIT, Action::DETAIL)
-            ->add(Crud::PAGE_INDEX, Action::DETAIL)
-            ->remove(Crud::PAGE_INDEX, Action::DELETE)
-            ->remove(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE)
             ->setPermission(Action::INDEX, 'ROLE_READ_USER')
             ->setPermission(Action::NEW, 'ROLE_CREA_USER')
             ->setPermission(Action::EDIT, 'ROLE_EDIT_USER')
             ->setPermission(Action::DELETE, 'ROLE_DROP_USER')
-            ->update(Crud::PAGE_EDIT, Action::DETAIL, fn (Action $a) => $a->setIcon('fa fa-undo')->setLabel('Annuler les modifications'));
+            ->add(Crud::PAGE_NEW, Action::INDEX)
+            ->add(Crud::PAGE_EDIT, Action::DETAIL)
+            ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->update(Crud::PAGE_EDIT, Action::DETAIL, fn (Action $a) => $a->setIcon('fa fa-undo')->setLabel('Annuler les modifications'))
+            ->remove(Crud::PAGE_INDEX, Action::DELETE)
+            ->remove(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE);
     }
 
     public function configureFields(string $pageName): iterable
@@ -73,9 +73,9 @@ class UserCrudController extends AbstractCrudController
 
         yield FormField::addColumn(6);
         yield FormField::addFieldset();
-        yield EntityField::new('group','Groupe')->setRequired(true);
-        yield EntityField::new('school','Etablissement Contributeur')->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.nom', 'ASC'))->setRequired(true)->setColumns(6);
-        yield EntityField::new('untheme',"UNT Documentaliste")->setColumns(6);
+        yield EntityField::new('group','Groupe')->setFormTypeOption('attr', ['data-user-creating-target' => 'masterSelect',]);
+        yield EntityField::new('school','Etablissement Contributeur')->setRequired(true);
+        yield EntityField::new('untheme',"UNT Documentaliste")->setRequired(true);
     }
 
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
@@ -115,5 +115,4 @@ class UserCrudController extends AbstractCrudController
 
         return $this->redirect($url);
     }
-
 }

@@ -9,16 +9,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\{BooleanField, DateTimeField, IdField, TextField};
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use JMS\Serializer\SerializerInterface;
-use Symfony\Component\HttpFoundation\{Request, Response};
+use Symfony\Component\HttpFoundation\{JsonResponse, Request, Response};
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Validator\ConstraintViolationList;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class KeywordCrudController extends AbstractCrudController
 {
-    public function __construct(private readonly KeywordRepository $repository){}
-
     public static function getEntityFqcn(): string
     {
         return Keyword::class;
@@ -58,22 +54,17 @@ class KeywordCrudController extends AbstractCrudController
         ];
     }
 
-    #[Route('/api/keyworks', name: 'app_keywork_new', methods: 'POST'), IsGranted('ROLE_CREA_KEYW')]
-    public function ajaxNew(Request $request, SerializerInterface $serializer, ValidatorInterface $validator): Response
+    #[Route('/api/keyworks', name: 'app_keywork_new', methods: 'POST'), IsGranted('ROLE_CREA_NOTI')]
+    public function ajaxNew(Request $request, KeywordRepository $repository, SerializerInterface $serializer): Response
     {
-        /** @var Keyword $values */
-        $values = $serializer->deserialize($request->getContent(), Keyword::class, 'json');
-        /** @var ConstraintViolationList $object */$object = $validator->validate($values);
+        $word = $request->getContent();
+        $keyw = $repository->findOneBy(['nom' => $word]);
 
-        if ($object->count()) {
-            $error = $object->get(0); //array_reduce($object->getIterator()?->getArrayCopy(), fn($acc, $obj) => $acc[$obj->getPropertyPath()] = $obj->getMessage());
-            return $this->json(['error' => $error->getInvalidValue() .', '. $error->getMessage()], Response::HTTP_BAD_REQUEST);
+        if (!$keyw) {
+            $keyw = new Keyword($word);
+            $repository->add($keyw);
         }
 
-        $this->repository->add($values->setCreeLe(new \DateTimeImmutable()));
-        return $this->json([
-            'id' => $values->getId(),
-            'name' => $values->getNom(),
-        ], Response::HTTP_CREATED);
+        return new JsonResponse($serializer->serialize($keyw, 'json'), json: true);
     }
 }

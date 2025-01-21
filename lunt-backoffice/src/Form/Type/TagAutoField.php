@@ -3,6 +3,7 @@
 namespace App\Form\Type;
 
 use App\Entity\Keyword;
+use App\Repository\KeywordRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\UX\Autocomplete\Form\{AsEntityAutocompleteField, BaseEntityAutocompleteType};
@@ -17,7 +18,9 @@ class TagAutoField extends AbstractType
             'class' => Keyword::class,
             'placeholder' => 'Sélectionne vos tags',
             'preload' => true, 'multiple' => true, 'required' => false,
-            'tom_select_options' => ['create' => false]
+            'tom_select_options' => ['create' => false],
+            'query_builder' => fn(KeywordRepository $r) => $r->createQueryBuilder('entity')
+                ->where('entity.valide = 1')->orderBy('entity.nom'),
         ]);
     }
 

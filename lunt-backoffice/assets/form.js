@@ -1,5 +1,5 @@
 const updateForm = async (data, form) => {
-    const action = '?crudAction=new&crudControllerFqcn=App%5CController%5CNoticeCrudController';
+    const action = form.getAttribute('action');
     const req = await fetch(action, {
         method: form.getAttribute('method'), body: data,
         headers: {'Content-Type': 'application/x-www-form-urlencoded', 'charset': 'utf-8'}
@@ -14,13 +14,14 @@ const changeOptions = (form, champ,disci,speci) => {
     const form_select_disci = document.getElementById(disci);
     const form_select_speci = document.getElementById(speci);
 
-    form_select_champ.addEventListener('change', async e => {
-        reqBody = e.target.getAttribute('name') +'='+ e.target.value;
-        form_select_disci.innerHTML = (await updateForm(reqBody,form)).getElementById(disci).innerHTML
+    form_select_champ.addEventListener('change', async ({target}) => {
+        const resText = await updateForm(`${target.getAttribute('name')}=${target.value}`,form);
+        form_select_disci.innerHTML = resText.getElementById(disci).innerHTML
+        form_select_speci.innerHTML = resText.getElementById(speci).innerHTML
     });
-    form_select_disci.addEventListener('change', async e => {
+    form_select_disci.addEventListener('change', async ({target}) => {
         if(reqBody===null) reqBody = form_select_champ.getAttribute('name') +'='+ form_select_champ.value
-        reqBody += '&'+ e.target.getAttribute('name') +'='+ e.target.value;
+        reqBody += `&${target.getAttribute('name')}=${target.value}`;
         form_select_speci.innerHTML = (await updateForm(reqBody,form)).getElementById(speci).innerHTML
     });
 }
