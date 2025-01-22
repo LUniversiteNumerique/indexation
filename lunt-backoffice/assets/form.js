@@ -9,7 +9,6 @@ const updateForm = async (data, form) => {
 };
 
 const changeOptions = (form, champ,disci,speci) => {
-    let reqBody = null
     const form_select_champ = document.getElementById(champ);
     const form_select_disci = document.getElementById(disci);
     const form_select_speci = document.getElementById(speci);
@@ -20,8 +19,7 @@ const changeOptions = (form, champ,disci,speci) => {
         form_select_speci.innerHTML = resText.getElementById(speci).innerHTML
     });
     form_select_disci.addEventListener('change', async ({target}) => {
-        if(reqBody===null) reqBody = form_select_champ.getAttribute('name') +'='+ form_select_champ.value
-        reqBody += `&${target.getAttribute('name')}=${target.value}`;
+        const reqBody = `${form_select_champ.getAttribute('name')}=${form_select_champ.value}&${target.getAttribute('name')}=${target.value}`
         form_select_speci.innerHTML = (await updateForm(reqBody,form)).getElementById(speci).innerHTML
     });
 }

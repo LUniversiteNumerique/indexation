@@ -42,7 +42,9 @@ class UserCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud->setEntityLabelInSingular('utilisateur')->setEntityLabelInPlural('Utilisateurs')
-            ->setSearchFields(['name', 'email'])->setDefaultSort(['name' => 'ASC'])->setEntityPermission('ROLE_READ_USER');
+            ->setSearchFields(['name', 'email'])->setDefaultSort(['name' => 'ASC'])->setEntityPermission('ROLE_READ_USER')->setFormOptions([
+                'attr' => ['data-controller'=>"user-creating", 'data-user-creating-target'=>"form"]
+            ]);
     }
 
     public function configureActions(Actions $actions): Actions

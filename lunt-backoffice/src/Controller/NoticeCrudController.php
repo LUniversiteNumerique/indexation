@@ -591,12 +591,10 @@ class NoticeCrudController extends AbstractCrudController
         $builder->get('champDisc')->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             $form = $event->getForm();
             $this->addDisc($form->getParent(), $form->getData());
-            $this->addSpec($form->getParent(), null);
         });
         if ($builder->has('disciFond')) $builder->get('disciFond')->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             $form = $event->getForm();
             $this->addDivi($form->getParent(), $form->getData());
-            $this->addSpec($form->getParent(), null);
         });
 
         return $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
