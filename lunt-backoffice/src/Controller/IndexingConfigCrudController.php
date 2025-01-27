@@ -23,7 +23,9 @@ class IndexingConfigCrudController extends AbstractCrudController
             ->update(Crud::PAGE_NEW, Action::SAVE_AND_ADD_ANOTHER, fn (Action $a) => $a->setLabel('Créer et ajouter une <b>nouvelle</b>'))
             ->setPermission(Action::NEW, 'ROLE_CREA_CORE')
             ->setPermission(Action::EDIT, 'ROLE_EDIT_CORE')
-            ->setPermission(Action::DELETE, 'ROLE_DROP_CORE');
+            ->setPermission(Action::DELETE, 'ROLE_DROP_CORE')
+            ->setPermission(Action::DETAIL, 'ROLE_READ_CORE')
+            ->setPermission(Action::INDEX, 'ROLE_READ_CORE');
     }
 
     public function configureFields(string $pageName): iterable

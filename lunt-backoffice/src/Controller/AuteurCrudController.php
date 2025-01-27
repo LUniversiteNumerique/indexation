@@ -27,6 +27,8 @@ class AuteurCrudController extends AbstractCrudController
     {
         return parent::configureActions($actions)
             ->disable(Action::DETAIL)
+            ->setPermission(Action::DETAIL, 'ROLE_READ_ACTE')
+            ->setPermission(Action::INDEX, 'ROLE_READ_ACTE')
             ->setPermission(Action::NEW, 'ROLE_CREA_ACTE')
             ->setPermission(Action::EDIT, 'ROLE_EDIT_ACTE')
             ->setPermission(Action::DELETE, 'ROLE_DROP_ACTE')

@@ -37,6 +37,7 @@ class EtablissementCrudController extends AbstractCrudController
     {
         return parent::configureActions($actions)
             ->setPermission(Action::DETAIL, 'ROLE_READ_ETAB')
+            ->setPermission(Action::INDEX, 'ROLE_READ_ETAB')
             ->setPermission(Action::NEW, 'ROLE_CREA_ETAB')
             ->setPermission(Action::EDIT, 'ROLE_EDIT_ETAB')
             ->setPermission(Action::DELETE, 'ROLE_DROP_ETAB')

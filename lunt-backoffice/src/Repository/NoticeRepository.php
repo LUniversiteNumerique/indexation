@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\{Notice, NoticEtat, Univerique};
+use App\Entity\{IndexingConfig, Notice, NoticEtat, Univerique};
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -30,17 +30,15 @@ class NoticeRepository extends ServiceEntityRepository
             ->getQuery()->execute();
     }
 
-    public function findFrom(int $core, bool $diff, int $limit, int $offset): array
+    public function findFrom(IndexingConfig $cfg, int $limit, int $offset): array
     {
-        $state = "n.etat = :etat"; if ($diff) $state .= " AND n.publieLe is null";
+        $qr = $this->createQueryBuilder('n')->join('n.validateur', 'u')->where('n.etat = :etat');
+        if(!$cfg->isFullMode()) $qr->andWhere('n.publieLe is null OR n.editeLe > :date')->setParameter('date', $cfg->getScheduleAt());
+        $qr->orWhere('n.etat != :etat AND n.publieLe is not null');
 
-        return $this->createQueryBuilder('n')
-            ->join('n.validateur', 'u')
-            ->where("u.untheme = :core")
-            ->andWhere("(n.etat != :etat AND n.publieLe is not null) OR $state")
-            ->setParameters(["core" => $core, "etat" => NoticEtat::Approved])
-            ->setFirstResult($offset)->setMaxResults($limit)
-            ->getQuery()->getResult();
+        return $qr->andWhere("u.untheme = :core")
+            ->setParameter("core", $cfg->getIndexCore())->setParameter("etat", NoticEtat::Approved)
+            ->setFirstResult($offset)->setMaxResults($limit)->getQuery()->getResult();
     }
 
     public function findByIds(array $uuids): array

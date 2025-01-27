@@ -39,6 +39,8 @@ class KeywordCrudController extends AbstractCrudController
             ->setPermission(Action::NEW, 'ROLE_CREA_KEYW')
             ->setPermission(Action::EDIT, 'ROLE_EDIT_KEYW')
             ->setPermission(Action::DELETE, 'ROLE_DROP_KEYW')
+            ->setPermission(Action::DETAIL, 'ROLE_READ_KEYN')
+            ->setPermission(Action::INDEX, 'ROLE_READ_KEYW')
             ->setPermission(Action::BATCH_DELETE, 'ROLE_DROP_KEYW');
     }
 

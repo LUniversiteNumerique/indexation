@@ -3,14 +3,19 @@
 namespace App\Controller;
 
 use App\Entity\Univerique;
+use App\Event\AfterUntCreatedEvent;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action,Actions,Crud,Filters};
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\{AssociationField,DateTimeField,IdField,TextField};
+use Psr\EventDispatcher\EventDispatcherInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\{TextFilter, DateTimeFilter};
 
 class UniveriqueCrudController extends AbstractCrudController
 {
+    public function __construct(private readonly EventDispatcherInterface $dispatcher,){}
+
     public static function getEntityFqcn(): string
     {
         return Univerique::class;
@@ -58,5 +63,12 @@ class UniveriqueCrudController extends AbstractCrudController
             ->add(TextFilter::new('label','Nom'))
             ->add(TextFilter::new('name','Répertoire'))
             ->add(DateTimeFilter::new('creeLe','Date Création'));
+    }
+
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        /** @var Univerique $entityInstance */
+        parent::persistEntity($entityManager, $entityInstance);
+        $this->dispatcher->dispatch(new AfterUntCreatedEvent($entityInstance));
     }
 }

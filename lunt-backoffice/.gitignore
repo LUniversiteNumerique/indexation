@@ -22,7 +22,5 @@
 
 ###> symfony/asset-mapper ###
 /assets/vendor
-/data/oai
-/data/suplom*
 ###< symfony/asset-mapper ###
 .idea/

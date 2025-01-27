@@ -168,7 +168,7 @@ return [
         'resslang' => 'Langue(s) de la resource',
         'resslang_help' => 'Langues de la ressource',
         'dureappr' => 'Durée d\'apprentissage',
-        'dureappr_help' => 'Durée au format "hh:mm:ss"',
+        'dureappr_help' => 'Durée au format "PT00H00M00S"',
         'pedtypes' => 'Type pédagogique',
         'pedtypes_help' => 'Les types pédagogiques propres de cette notice',
         'propuser' => 'Proposition d\'utilisation',

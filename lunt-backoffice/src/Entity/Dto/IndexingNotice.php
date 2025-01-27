@@ -29,7 +29,7 @@ class IndexingNotice
             new Field('objectifs_pedagogiques', $notice->getObjectif()),
             new Field('evaluation_form_url', $notice->getFormEvalUrl()),
             new Field('description_text', strip_tags($notice->getDescription())),
-            new Field('date_creation', $notice->getRessDate()?->format('Y')),
+            new Field('date_creation', $notice->getRessDate()),
             new Field('mots_cles', implode(";", $notice->getTags()->toArray())),
             new Field('niveaux', implode(",", $notice->getNiveaux()->toArray())),
             new Field('types_pedagogiques', implode(",", $notice->getPedTypes()->toArray())),
@@ -69,69 +69,80 @@ class IndexingNotice
             $entities = self::getContribute($c->entities);
             if (!empty($entities)) list($auteurs[], $porteurs[]) = $entities;
         }
+        $porteurs = array_unique($porteurs);
 
         $inotice = new self([
+            new Field('uuid', substr($suplom->general?->identifier?->entry, -36)),
+            new Field('titre', $suplom->general->title[0]?->value),
             new Field('entrepot_nom',$core?->getLabel()),
             new Field('entrepot_logo', $core?->getName()),
             new Field('entrepot_url',"http://www.uoh.fr"),
-            new Field('vignette', 'default_value.png'),
-
-            new Field('uuid', substr($suplom->general?->identifier?->entry, -36)),
-            new Field('titre', $suplom->general->title[0]?->value),
+            new Field('vignette', null),
+            new Field('ressource_lien', null),
             new Field('description', $suplom->general->description[0]?->value),
-            new Field('langues_ressource', implode(', ',$suplom->general->languages)),
-            new Field('mots_cles', array_reduce($suplom->general?->keyword, fn(string $acc, Field $s) => $acc.$s->value.", ", "")),
+            //new Field('dure_apprentissage', $notice->getDureAppr()),
+            //new Field('estampillage', $notice->getLabel()??''),
+            //new Field('objectifs_pedagogiques', $notice->getObjectif()),
+            //new Field('evaluation_form_url', $notice->getFormEvalUrl()),
+            new Field('description_text', strip_tags($suplom->general->description[0]?->value)),
+            //new Field('date_creation', $notice->getRessDate()),
+            new Field('mots_cles', array_reduce($suplom->general?->keywords, fn(string $acc, Motcle $s) => $acc.$s->string?->value.", ", "")),
+            new Field('niveaux', array_reduce($suplom->educational?->contexts, fn(string $acc, Source $s) => $acc.$s->value.", ", '')),
             new Field('types_documentaires', array_reduce($suplom->general?->documentTypes, fn(string $acc, Source $s) => $acc.$s->value.", ", "")),
+            new Field('types_pedagogiques', array_reduce($suplom->educational?->learningResourceTypes, fn(string $acc, Source $s) => $acc.$s->value.", ", "")),
+            new Field('proposition_utilisation', array_reduce($suplom->educational?->description, fn(string $acc, Field $f) => $acc.$f->value.", ", '')),
 
-            new Field('etablissements_co_editeurs', array_reduce($porteurs,fn(string $tmp, string $etab): string => $tmp.sprintf("%s, ",$etab),"")),
             new Field('contributions', array_reduce($auteurs,fn(string $tmp, string $etab): string => $tmp.sprintf("%s, ",$etab),"")),
+            //new Field('associations_associate', array_map(fn(Resource $r) => sprintf('%s|%s', $r->identifier->entry, $r->description[0]?->value), $suplom->relation?->resources)),
+            new Field('etablissements_co_editeurs', array_reduce($porteurs,fn(string $tmp, string $etab): string => $tmp.sprintf("%s, ",$etab),"")),
             new Field('date_modification', $creat?->date[0]),
             new Field('date_publication', $valid?->date[0]),
 
-            new Field('types_pedagogiques', array_reduce($suplom->educational?->learningResourceTypes, fn(string $acc, Source $s) => $acc.$s->value.", ", "")),
-            new Field('niveaux', array_reduce($suplom->educational?->contexts, fn(string $acc, Source $s) => $acc.$s->value.", ", '')),
-            new Field('proposition_utilisation', array_reduce($suplom->educational?->description, fn(string $acc, Field $f) => $acc.$f->value.", ", '')),
-            //new Field('dure_apprentissage', $suplom->educational?->date[0]),
             new Field('langues_utilisateur', implode(', ',$suplom->educational->languages)),
+            new Field('langues_ressource', implode(', ',$suplom->general->languages)),
 
             new Field('propriete_intellectuelle', $suplom->rights?->copyrightAndOtherRestrictions?->value!=='No'),
             new Field('ressource_payante', $suplom->rights?->cost?->value!=='No'),
             new Field('droit', $suplom->rights?->description[0]?->value),
 
             new Field('ressource_lien', $suplom->technical?->location),
-            //new Field('associations_associate', array_map(fn(Resource $r) => sprintf('%s|%s', $r->identifier->entry, $r->description[0]?->value), $suplom->relation?->resources)),
-            new Field('exposition_oai', 1),
+            new Field('exposition_oai', 0),
             new Field('external_resource', 1),
         ]);
 
+        $validators = ""; $porteurs = ""; $creators = "";
         /** @var Contribute $c */
         foreach ($suplom->metadata?->contributes as $c) {
             $entities = self::getContribute($c->entities);
             if (!empty($entities)) {
                 list($auteur, $porteur) = $entities;
                 if ($c->role->value == 'creator') {
-                    $inotice->fields[] = new Field('correspondant', $auteur);
-                    $inotice->fields[] = new Field('etablissement_porteur', $porteur);
-                }elseif ($c->role->value == 'validator')
-                    $inotice->fields[] = new Field('validateur', $auteur);
+                    $creators .= "$auteur, ";
+                    $porteurs .= "$porteur, ";
+                }elseif ($c->role->value == 'publisher'||$c->role->value == 'validator') $validators .= "$auteur, ";
             }
         }
+        $inotice->fields[] = new Field('correspondant', $creators);
+        $inotice->fields[] = new Field('etablissement_porteur', $porteurs);
+        $inotice->fields[] = new Field('validateur', $validators);
 
+        $taxons = [];
         /** @var Classification $class */
         foreach ($suplom->classifications as $class) {
-            if($class->purpose && isset($class->taxonPath) && count($class->taxonPath->taxons) >0) {
+            if($class->purpose && isset($class->taxonPath->taxons)) {
                 /** @var Taxon $taxon */
                 $taxon = $class->taxonPath->taxons[0];
-                $inotice->fields[] = new Field($class->purpose->value, sprintf("{id=%s, libelle=%s}, ",$taxon?->id??'',$taxon?->entry[0]?->value));
+                $taxons[$class->purpose->value] = $taxon?->entry[0]?->value;
             }
         }
+        $inotice->fields[] = new Field('specialites', $taxons['discipline']);
         return $inotice;
     }
 
     private static function getContribute(array $c): array
     {
         $entities = explode("ORG:", $c[0]);
-        if (count($entities) == 2) {
+        if (count($entities) == 2 && !str_contains($entities[0],';;;')) {
             $entity = str_replace("VERSION:3.0",'{nom:',$entities[0]);
             $entity = str_replace("FN:",', email:',$entity);
             $entity = str_replace(['BEGIN:VCARD',';;','N:', '\n'],'',$entity);
@@ -177,9 +188,9 @@ class OaidcDto
             "https://www.uoh.fr/front/noticefr/?uuid=".$n->getUuid(),
             $n->getTitre(),
             $n->getDescription(),
-            "https://www.uoh.fr/",
+            "https://www.uoh.fr",
             $n->getDroit(),
-            $n->getRessDate()?->format('Y'),
+            $n->getRessDate(),
             $n->getRessLang(),
             $n->getTags()->toArray(),
             $n->getAuteurs()->toArray(),

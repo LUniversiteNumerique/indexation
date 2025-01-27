@@ -6,8 +6,10 @@ use App\Repository\{KeywordRepository,NoticeRepository};
 use Symfony\Component\Console\{Attribute\AsCommand,Command\Command,Input\InputInterface,Output\OutputInterface,Style\SymfonyStyle};
 use Symfony\Component\Scheduler\Attribute\AsCronTask;
 
-#[AsCommand('app:clean-data'),
-    AsCronTask('0 0 1 * *', method: 'execute')]
+#[
+    AsCommand('app:clean-data'),
+    //AsCronTask('0 0 1 * *', method: 'execute')
+]
 class CleaNoticeCommand extends Command
 {
     const MONTH_SIZE = 1;

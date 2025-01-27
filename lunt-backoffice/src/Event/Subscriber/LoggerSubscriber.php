@@ -59,7 +59,7 @@ readonly class LoggerSubscriber implements EventSubscriberInterface
 
         $this->mailer->sendTwig($to?->getEmail(), //$to?->getUntheme()?->getEmail()
             sprintf("[UNT] Demande de Rectification de la notice %d", $entity->getId()),
-            'emails/ajust.html.twig', ['user' => $user, 'url' => $url, 'notice' => $entity->getTitre(),]
+            'emails/adjust.html.twig', ['user' => $user, 'url' => $url, 'notice' => $entity->getTitre(),]
         );
     }
 

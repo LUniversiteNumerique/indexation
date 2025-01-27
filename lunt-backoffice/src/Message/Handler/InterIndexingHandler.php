@@ -31,33 +31,29 @@ readonly class InterIndexingHandler
         /** @var IndexingConfig $task */
         $task = $this->configRep->find($message->taskId);
         if (!$task) throw new \RuntimeException("Aucun planificateur d'identifant ".$message->taskId);
-        //$this->fs = new FileService($task->getBaseUri());
         $core = $task->getIndexCore()?->getName(); $offset = 0;
-        $this->lg->warning(sprintf("Début d'indexation %s de %s", $task->isFullMode()?'complète':'différentielle', $core));
+        $this->lg->warning(sprintf("Début d'indexation interne %s de %s", $task->isFullMode()?'complète':'différentielle', $core));
 
-        do {
-            /** @var Notice[] $data */
-            $data = $this->noticeRep->findFrom($task->getIndexCore()?->getId(), !$task->isFullMode(), $task->getBatchSize(), $offset);
+        /** @var Notice[] $data */
+        while (!empty($data = $this->noticeRep->findFrom($task, $task->getBatchSize(), $offset))) {
             $news = []; $olds = [];
 
             foreach ($data as $d) {
-                if($d->getEtat() === NoticEtat::Approved) { //&& !$d->isDeleted()
+                if($d->getEtat() === NoticEtat::Approved) { //=> $d->isDeleted()!=1
                     if(empty($d->getPublieLe())) $news[] = $d->setPublieLe(new \DateTime()); // A publier
-                    elseif($task->isFullMode()) { $olds[] = $d->getUuid(); $news[] = $d; }// A republier
-                } elseif($d->getPublieLe())  $olds[] = $d->setPublieLe(null)->getUuid();// A dépublier //if (($d->getEditeLe() <= $task->getScheduleAt()) || $d->isDeleted()) elseif ($task->isFullMode()) $news[] = $d; //Reindex
+                    elseif($task->isFullMode() || $d->getEditeLe() > $task->getScheduleAt()) { $olds[] = $d->getUuid(); $news[] = $d; }// A republier
+                } elseif($d->getPublieLe())  $olds[] = $d->setPublieLe(null)->getUuid();// A dépublier
             }
 
-            if (!empty($data)) {
-                $this->sm->editDocuments($this->pop($olds, $core) . $this->push($news, $core), "$core/update?commit=true");
-                $task->setScheduleAt(new \DateTime());
-                $this->em->flush(); $this->em->clear();
-                $this->lg->info(sprintf("Notices concernées %d:  %d (indexées) + %d (dépubliées)", count($data), count($news), count($olds)));
-            }
+            $this->sm->editDocuments($this->pop($olds, $core) . $this->push($news, $core), "$core/update?commit=true");
+            $task->setScheduleAt(new \DateTime());
+            $this->em->flush(); $this->em->clear();
 
+            $this->lg->info(sprintf("Notices concernées %d:  %d (indexées) + %d (dépubliées)", count($data), count($news), count($olds)));
             $offset += $task->getBatchSize();
-        } while (count($data) > 0);
+        }
 
-        $this->lg->warning(sprintf("Fin d'indexation %s de %s", $task->isFullMode()?'complète':'différentielle', $core));
+        $this->lg->warning(sprintf("Fin d'indexation interne %s de %s", $task->isFullMode()?'complète':'différentielle', $core));
     }
 
     private function pop(array $sources, string $index): string

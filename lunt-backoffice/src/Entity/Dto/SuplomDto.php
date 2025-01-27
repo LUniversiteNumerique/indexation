@@ -43,7 +43,7 @@ class SuplomDto {
         return new self(
             new General(
                 new Catalog('URI', self::RESOURCE_URI .$n->getUuid()), [new Field($lang, $n->getTitre())], [new Field($lang, $n->getDescription())],
-                array_map(fn(Keyword $k) => new Field($lang, $k->getNom()), $n->getTags()->toArray()),
+                array_map(fn(Keyword $k) => new Motcle(new Field($lang, $k->getNom())), $n->getTags()->toArray()),
                 array_map(fn(TDocument $d) => new Source('LOMFRv1.0',$d->getNom()), $n->getDocTypes()->toArray()),
                 $n->getRessLang()
             ),
@@ -95,12 +95,12 @@ class Right {
 
 class General {
     public function __construct(
-        #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(Catalog::class)] public ?Catalog $identifier = null,
-        #[Jms\XmlList(entry: "string", namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Field::class.">"), Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM")] public array $title = [],
-        #[Jms\XmlList(entry: "string", namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Field::class.">"), Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM")] public array $description = [],
-        #[Jms\XmlList(entry: "string", namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Field::class.">"), Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM")] public array $keyword = [],
-        #[Jms\XmlList(entry: "documentType", inline: true, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Source::class.">")] public array $documentTypes = [],
-        #[Jms\XmlList(entry: "language", inline: true, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<string>"),Jms\XmlElement(cdata: false)] public array $languages = [],
+        #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(Catalog::class)] public ?Catalog                                                                                                  $identifier = null,
+        #[Jms\XmlList(entry: "string", namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Field::class.">"), Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM")] public array                 $title = [],
+        #[Jms\XmlList(entry: "string", namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Field::class.">"), Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM")] public array                 $description = [],
+        #[Jms\XmlList(entry: "keyword", inline: true, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Motcle::class.">"), Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM")] public array $keywords = [],
+        #[Jms\XmlList(entry: "documentType", inline: true, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Source::class.">")] public array                                                                     $documentTypes = [],
+        #[Jms\XmlList(entry: "language", inline: true, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<string>"),Jms\XmlElement(cdata: false)] public array                                                       $languages = [],
         //#[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(Source::class), Jms\SerializedName('aggregationLevel')] public ?Source $aggregationLevel = null,
     ){}
 }
@@ -186,4 +186,9 @@ class Taxon {
         #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("string")] public ?string $id = null,
         #[Jms\XmlList(entry: "string", namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Field::class.">"), Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM")] public array $entry = [],
     ){}
+}
+
+class Motcle
+{
+    public function __construct(#[Jms\Type(Field::class), Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM")] public ?Field $string = null){}
 }

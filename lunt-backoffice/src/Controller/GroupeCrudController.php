@@ -25,6 +25,8 @@ class GroupeCrudController extends AbstractCrudController
     {
         $deleting = static fn(Action $a) => $a->displayIf(static fn (Groupe $g) => $g->getUsers()->isEmpty());
         return parent::configureActions($actions)
+            ->setPermission(Action::DETAIL, 'ROLE_READ_GROU')
+            ->setPermission(Action::INDEX, 'ROLE_READ_GROU')
             ->setPermission(Action::NEW, 'ROLE_CREA_GROU')
             ->setPermission(Action::EDIT, 'ROLE_EDIT_GROU')
             ->setPermission(Action::DELETE, 'ROLE_DROP_GROU')

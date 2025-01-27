@@ -50,7 +50,7 @@ class NoticeCrudController extends AbstractCrudController
 
     public function configureCrud(Crud $crud): Crud
     {
-        $crud = $crud->setAutofocusSearch()->setSearchFields(['titre','description'])
+        $crud = $crud->setAutofocusSearch()->setSearchFields(['titre','description'])->setDefaultSort(['creeLe' => 'DESC'])
             ->setEntityLabelInPlural('Notices')->setEntityLabelInSingular('notice')->setFormOptions([
                 'attr' => ['data-controller'=>"notice-setting", 'data-notice-setting-target'=>"form"]
             ])
@@ -139,17 +139,16 @@ class NoticeCrudController extends AbstractCrudController
             ->setHelp(t('notice.tags_help', domain: 'EasyAdminBundle'))->setFormType(TagAutoField::class)->setFormTypeOption('attr', [
                 'data-tag-autocreate-url-value' => $this->router->generate('app_keywork_new'), 'data-controller' => 'tag-autocreate'
             ]);
-        yield Field\TextField::new('ressDate', t('notice.date', domain: 'EasyAdminBundle'))->setHelp(t('notice.date_help', domain: 'EasyAdminBundle'))->hideOnIndex();
+        yield Field\ChoiceField::new('ressDate', t('notice.date', domain: 'EasyAdminBundle'))->setChoices(array_flip(range((int) date('Y'), (int) date('Y') - 100)))->hideOnIndex();
 
         yield Field\FormField::addFieldset('Liens de la ressource')->setIcon('fa fa-paperclip');
         yield Field\BooleanField::new('zipFile')->setFormTypeOptions(['mapped' => false])->setLabel('Fichier Zip')->onlyOnForms();
-        yield Field\UrlField::new('ressUrl', t('notice.ressurl', domain: 'EasyAdminBundle'))->setHelp(t('notice.ressurl_help', domain: 'EasyAdminBundle'))
-            ->setFormTypeOptions(['default_protocol' => 'https', 'attr' => ['class' => 'isUrl', 'placeholder' => 'https://...'],'constraints'=>[new Url()],'required'=>false])->setSortable(false);
+        yield Field\TextField::new('ressUrl', t('notice.ressurl', domain: 'EasyAdminBundle'))->setHelp(t('notice.ressurl_help', domain: 'EasyAdminBundle'))
+            ->setFormTypeOptions(['attr' => ['class' => 'isUrl', 'placeholder' => 'https://...'],'constraints'=>[new Url()],'required'=>false])->setSortable(false);
         yield FileField::new('ressZip', 'Contenu Zip')->setUploadDir('public/uploads/files')->setHelp(t('notice.ressurl_help', domain: 'EasyAdminBundle'))->onlyOnForms()
             ->setUploadedFileNamePattern('[timestamp]-[randomhash].[extension]')->setBasePath('/uploads/files')->setFormTypeOptions(['attr' => ['class' => 'isZip'],'required'=>false])
             ->setFileConstraints([new File(maxSize: '64M', mimeTypes: ["application/zip", "application/x-zip-compressed", "multipart/x-zip"])]);
-        yield EntityField::new('ressources','notice.notices')->setHelp(t('notice.notices_help', domain: 'EasyAdminBundle'))->hideOnIndex();
-        yield EntityField::new('ressources',t('notice.notices', domain: 'EasyAdminBundle'))
+        yield EntityField::new('ressources', t('notice.notices', domain: 'EasyAdminBundle'))
             ->setHelp(t('notice.notices_help', domain: 'EasyAdminBundle'))->hideOnIndex()->setFormType(NoticeAutoField::class);
         yield Field\ChoiceField::new('etat')->setChoices(NoticEtat::getLabels())->renderAsBadges(NoticEtat::getColors())->hideOnForm();
         yield Field\AssociationField::new('validateur',t('notice.validateur', domain: 'EasyAdminBundle'))->onlyOnDetail();
@@ -167,7 +166,7 @@ class NoticeCrudController extends AbstractCrudController
         yield Field\ChoiceField::new('ressLang', t('notice.resslang', domain: 'EasyAdminBundle'))
             ->setChoices($langList)->allowMultipleChoices()->renderAsBadges()->setRequired(true)->hideOnIndex()
             ->setHelp(t('notice.resslang_help', domain: 'EasyAdminBundle'))->setColumns(6);
-        yield Field\TextField::new('dureAppr', t('notice.dureappr', domain: 'EasyAdminBundle'))->setHelp(t('notice.dureappr_help', domain: 'EasyAdminBundle'))->hideOnIndex()->setColumns(6);
+        yield DurationField::new('dureAppr', "Durée d'apprentissage")->setHelp(t('notice.dureappr_help', domain: 'EasyAdminBundle'))->hideOnIndex()->setColumns(6);
         yield EntityField::new('pedTypes', t('notice.pedtypes', domain: 'EasyAdminBundle'))
             ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.nom', 'ASC'))->setSortable(false)
             ->setHelp(t('notice.pedtypes_help', domain: 'EasyAdminBundle'))->setRequired(true)->hideOnIndex();
@@ -201,7 +200,7 @@ class NoticeCrudController extends AbstractCrudController
                 ->setUploadedFileNamePattern('[timestamp]-[contenthash].[extension]')->setBasePath('/uploads/images')
                 ->setFileConstraints([new Image(['maxWidth' => 620, 'maxHeight' => 390])])->setHelp(t('notice.vignette_help', domain: 'EasyAdminBundle'))->setSortable(false);
             yield Field\IntegerField::new('ressSize',t('notice.resssize', domain: 'EasyAdminBundle'))->setHelp(t('notice.resssize_help', domain: 'EasyAdminBundle'))->setColumns(6)->hideOnIndex();
-            yield DurationField::new('dureExec',t('notice.dureexec', domain: 'EasyAdminBundle'))->setHelp(t('notice.dureexec_help', domain: 'EasyAdminBundle'))->setColumns(6)->hideOnIndex();
+            yield DurationField::new('dureExec', "Durée d'exécution")->setHelp(t('notice.dureexec_help', domain: 'EasyAdminBundle'))->setColumns(6)->hideOnIndex();
             yield Field\UrlField::new('formEvalUrl',t('notice.formevalurl', domain: 'EasyAdminBundle'))
                 ->setFormTypeOptions(['default_protocol' => 'https', 'attr' => ['class' => 'isUrl', 'placeholder' => 'https://...']])->setHelp(t('notice.formevalurl_help', domain: 'EasyAdminBundle'))->hideOnIndex();
             yield Field\ChoiceField::new('userLang',t('notice.userlang', domain: 'EasyAdminBundle'))->setHelp(t('notice.userlang_help', domain: 'EasyAdminBundle'))->hideOnIndex()
@@ -218,11 +217,11 @@ class NoticeCrudController extends AbstractCrudController
             yield EntityField::new('disciFond',t('notice.discifond', domain: 'EasyAdminBundle'))->setHelp(t('notice.discifond_help', domain: 'EasyAdminBundle'))->onlyOnForms()
                 ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->where('entity.parent is null'))->setFormTypeOptions(['class' => Dewey::class,'mapped' => false,'required' => true])->setSortable(false);
             yield EntityField::new('division')->setFormTypeOptions(['class' => Dewey::class,'auto_initialize' => false,'mapped' => false,'required' => true])->onlyOnForms();
-            yield EntityField::new('codewey','Code Dewey')->setFormTypeOptions(['class' => Dewey::class])->setRequired(true);
+            yield EntityField::new('codewey','Code Dewey')->setFormTypeOptions(['class' => Dewey::class])->setRequired(true)->setSortable(false);
             yield Field\TextField::new('label',t('notice.label', domain: 'EasyAdminBundle'))->setHelp(t('notice.label_help', domain: 'EasyAdminBundle'))->onlyOnDetail();
             yield Field\DateTimeField::new('creeLe',t('notice.creele', domain: 'EasyAdminBundle'))->onlyOnDetail();
             yield EntityField::new('repertoire',t('notice.repertoire', domain: 'EasyAdminBundle'))->setFormType(TreeChoiceType::class)->setHelp(t('notice.repertoire_help', domain: 'EasyAdminBundle'));
-            yield Field\BooleanField::new('editDemande', 'Demande de rectification ?')->renderAsSwitch(false)->onlyOnIndex();
+            yield Field\BooleanField::new('editDemande', 'Demande de rectification ?')->renderAsSwitch(false)->setSortable(false)->onlyOnIndex();
         }
     }
 
@@ -256,7 +255,7 @@ class NoticeCrudController extends AbstractCrudController
         elseif($unt = $user->getUntheme()) $qb->join('s.parent','u')->andWhere('u.parent in (:champs)')->setParameter('champs',$unt->getFields());
         $qb->orWhere('entity.createur = :user')->setParameter('user', $user->getId());
 
-        return $qb->andWhere('entity.deleted = 0')->orderBy('entity.creeLe', 'DESC');
+        return $qb->andWhere('entity.deleted = 0');
     }
 
     public function createNewFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
@@ -465,7 +464,7 @@ class NoticeCrudController extends AbstractCrudController
 
         /** @var Notice|null $notice */
         $notice = $ctx->getEntity()->getInstance(); //Approved
-        $this->denyAccessUnlessGranted(NoticeActionVoter::EDIT, $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
+        $this->denyAccessUnlessGranted('ROLE_VALI_NOTI', $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
 
         $this->repository->add($notice->setEtat(NoticEtat::Forward));
         $this->dispatcher->dispatch(new AfterNoticeStateSetEvent($notice, ['Dépublier', 'Dépubliée', 'Dépublication']));
@@ -481,7 +480,7 @@ class NoticeCrudController extends AbstractCrudController
 
         /** @var Notice|null $notice */
         $notice = $ctx->getEntity()->getInstance(); //Approved
-        $this->denyAccessUnlessGranted(NoticeActionVoter::EDIT, $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
+        $this->denyAccessUnlessGranted('ROLE_VALI_NOTI', $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
 
         $this->repository->add($notice->setEtat(NoticEtat::Working)->setEditDemande(false));
         $this->dispatcher->dispatch(new AfterNoticeStateSetEvent($notice, ['Autoriser', 'Autorisée', 'Autorisation']));

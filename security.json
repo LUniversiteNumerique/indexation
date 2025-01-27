@@ -1,0 +1,23 @@
+{
+  "authentication": {
+    "class": "solr.BasicAuthPlugin",
+    "forwardCredentials": false,
+    "blockUnknown": true,
+    "credentials": {
+      "admin": "IV0EHq1OnNrj6gvRCwvFwTrZ1+z1oBbnQdiVC3otuq0= Ndd7LKvVBAaZIF0QAVi1ekCfAJXr1GGfLtRUXhgrF8c=",
+      "solr": "IV0EHq1OnNrj6gvRCwvFwTrZ1+z1oBbnQdiVC3otuq0= Ndd7LKvVBAaZIF0QAVi1ekCfAJXr1GGfLtRUXhgrF8c="
+    }
+  },
+  "authorization": {
+    "class": "solr.RuleBasedAuthorizationPlugin",
+    "user-role": {
+      "admin": "admin",
+      "solr": "dev"
+    },
+    "permissions": [
+      { "name": "dev-private-collection", "collection": "dev-private", "role": "dev"},
+      { "name": "security-read", "role": "admin"},
+      { "name": "security-edit", "role": "admin"}
+    ]
+  }
+}

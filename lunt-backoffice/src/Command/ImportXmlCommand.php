@@ -9,11 +9,13 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Scheduler\Attribute\AsPeriodicTask;
 
-#[AsCommand(
-    name: 'app:import-xml-data',
-    description: "Exécute le processus d'importation des données XML du serveur",
-)]
-#[AsPeriodicTask(frequency: '1 month', from: '00:00')]
+#[
+    AsCommand(
+        name: 'app:import-xml-data',
+        description: "Exécute le processus d'importation des données XML du serveur",
+    ),
+    //AsPeriodicTask(frequency: '1 month', from: '00:00')
+]
 class ImportXmlCommand extends Command
 {
     private FileService $fileService;

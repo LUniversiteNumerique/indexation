@@ -51,6 +51,7 @@ class UserCrudController extends AbstractCrudController
     {
         return $actions
             ->setPermission(Action::INDEX, 'ROLE_READ_USER')
+            ->setPermission(Action::DETAIL, 'ROLE_READ_USER')
             ->setPermission(Action::NEW, 'ROLE_CREA_USER')
             ->setPermission(Action::EDIT, 'ROLE_EDIT_USER')
             ->setPermission(Action::DELETE, 'ROLE_DROP_USER')

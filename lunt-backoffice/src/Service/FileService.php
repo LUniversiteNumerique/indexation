@@ -2,22 +2,19 @@
 
 namespace App\Service;
 
-use Symfony\Component\{DependencyInjection\Attribute\Autowire, Filesystem\Filesystem, Finder\Finder};
+use Symfony\Component\{Filesystem\Filesystem, Finder\Finder};
 use Symfony\Component\Filesystem\Exception\{IOException,IOExceptionInterface};
 
-readonly class FileService
+class FileService
 {
-    private Finder $finder;
+    const RESOURCES_DIR = '/opt';
     private Filesystem $filesystem;
-    public function __construct(
-        #[Autowire('%kernel.project_dir%/data')]
-        private string $directory
-    )
+    public function __construct(private ?string $directory = null)
     {
+        $this->directory = $directory ?? self::RESOURCES_DIR . DIRECTORY_SEPARATOR . 'lunt-resources';
         $this->filesystem = new Filesystem();
         if (!$this->filesystem->exists($this->directory))
             $this->filesystem->mkdir($this->directory);
-        $this->finder = new Finder();
     }
 
     public function writeFile(string $filename, string $content): bool
@@ -57,31 +54,30 @@ readonly class FileService
 
     public function readFilesFrom(\DateTime $since = null, string $relativePath = '', $names = ['*.xml'], $deep = 0): ?Finder
     {
+        $finder = new Finder();
         $path = $this->directory .DIRECTORY_SEPARATOR. $relativePath;
         try {
             // Vérifier si le répertoire existe
             if (!$this->filesystem->exists($path))
                 throw new IOException("Le répertoire n'existe pas : $path");
-            $this->finder->files()->in($path)->name($names)->depth($deep);
+            $finder->files()->in($path)->name($names)->depth($deep);
 
-            if ($since) $this->finder->date('>= ' . $since->format('Y-m-d H:i:s'));
-            //foreach ($this->finder as $file) $filesContent[$file->getFilename()] = file_get_contents($file->getRealPath());
+            if ($since) $finder->date('>= ' . $since->format('Y-m-d H:i:s')); //foreach ($finder as $file) $filesContent[$file->getFilename()] = file_get_contents($file->getRealPath());
 
-            return $this->finder;
-
+            return $finder;
         }catch (IOExceptionInterface) { return null; }
-
     }
 
     public function removeFilesFrom(string $relativePath = '', $filenames = null): bool
     {
+        $finder = new Finder();
         $path = $this->directory .DIRECTORY_SEPARATOR. $relativePath;
         try {
             if (!$this->filesystem->exists($path))
                 throw new IOException("Le répertoire n'existe pas : $path");
             if($filenames === null) {
-                $this->finder->files()->in($path);
-                foreach ($this->finder as $file) $this->filesystem->remove($file->getRealPath());
+                $finder->files()->in($path);
+                foreach ($finder as $file) $this->filesystem->remove($file->getRealPath());
             } else foreach ($filenames as $file) {
                 $filePath = sprintf("%s%s_%s.xml", $path, DIRECTORY_SEPARATOR.(str_starts_with($relativePath,'oai') ?'dc':'sf'), $file);
                 if ($this->filesystem->exists($filePath)) $this->filesystem->remove($filePath);
