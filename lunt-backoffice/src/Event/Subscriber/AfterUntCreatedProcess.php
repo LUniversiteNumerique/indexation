@@ -33,7 +33,8 @@ final class AfterUntCreatedProcess
 
         // création du dossier Solr de l'UNT à partir d'un template par défaut
         $source = $this->diresource. 'untsolr_defaultemplate';
-        $process = new Process(['cp', '-r', $source, $target]);
+        $command = ['docker', 'compose', 'exec', '-it', 'solr', 'solr', 'create_core', '-c', $unt->getName()];
+        $process = new Process(['cp', '-r', $source, $target]); //docker compose exec -it solr solr create_core -c mycore -d /tmp/myconfig
 
         try {
             $process->mustRun(); // Ensure the command runs successfully

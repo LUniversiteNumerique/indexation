@@ -144,7 +144,7 @@ class NoticeCrudController extends AbstractCrudController
         yield Field\FormField::addFieldset('Liens de la ressource')->setIcon('fa fa-paperclip');
         yield Field\BooleanField::new('zipFile')->setFormTypeOptions(['mapped' => false])->setLabel('Fichier Zip')->onlyOnForms();
         yield Field\TextField::new('ressUrl', t('notice.ressurl', domain: 'EasyAdminBundle'))->setHelp(t('notice.ressurl_help', domain: 'EasyAdminBundle'))
-            ->setFormTypeOptions(['attr' => ['class' => 'isUrl', 'placeholder' => 'https://...'],'constraints'=>[new Url()],'required'=>false])->setSortable(false);
+            ->setFormTypeOptions(['attr' => ['class' => 'isUrl', 'placeholder' => 'https://...']])->setSortable(false);
         yield FileField::new('ressZip', 'Contenu Zip')->setUploadDir('public/uploads/files')->setHelp(t('notice.ressurl_help', domain: 'EasyAdminBundle'))->onlyOnForms()
             ->setUploadedFileNamePattern('[timestamp]-[randomhash].[extension]')->setBasePath('/uploads/files')->setFormTypeOptions(['attr' => ['class' => 'isZip'],'required'=>false])
             ->setFileConstraints([new File(maxSize: '64M', mimeTypes: ["application/zip", "application/x-zip-compressed", "multipart/x-zip"])]);
@@ -350,6 +350,14 @@ class NoticeCrudController extends AbstractCrudController
         parent::persistEntity($entityManager, $entityInstance);
     }
 
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if($zipDir = $entityInstance->getRessZip())
+            $entityInstance->setRessUrl(pathinfo($zipDir, PATHINFO_FILENAME));
+        parent::updateEntity($entityManager, $entityInstance);
+    }
+
+
     /**
      * @param EntityManagerInterface $entityManager
      * @param Notice $entityInstance
@@ -387,7 +395,6 @@ class NoticeCrudController extends AbstractCrudController
 
         return parent::edit($context);
     }
-
 
     public function duplicateNotice(): Response
     {

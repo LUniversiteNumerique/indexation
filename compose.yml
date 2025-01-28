@@ -1,12 +1,13 @@
 services:
   backoffice:
     image: sslv-nexus.coexya.eu/lunt-backoffice:${VERSION:-latest}
-    env_file: ./.env
     ports: ["80:80"]
     depends_on:
       - mariadb
       - mailer
+      - solr
     volumes:
+      - ./lunt-backoffice:/var/www/site
       - ${JOAI_BASE_URI:-/opt}:/opt
 
   myadmin:
@@ -36,10 +37,13 @@ services:
     environment:
       - SOLR_HOME=/var/solr/data
       - SOLR_LOG_LEVEL=INFO
+      #- SOLR_AUTH_TYPE=basic
+      #- SOLR_AUTHENTICATION_OPTS=-Dbasicauth=solr:SolrRocks  #Dsolr.auth.enabled=true
     ports: ["8983:8983"]
     volumes:
       - solr_data:/var/solr
-      - ${JOAI_BASE_URI:-/opt}/lunt-solr:/var/solr/data
+      - ${JOAI_BASE_URI}/lunt-solr/data:/var/solr/data
+      - ${JOAI_BASE_URI}/lunt-solr/conf:/opt/solr/server/solr/configsets/_default/conf
     command:
       - solr-precreate
       - unt1
