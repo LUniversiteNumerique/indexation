@@ -4,9 +4,11 @@ namespace App\Controller;
 
 use App\Entity\Univerique;
 use App\Event\AfterUntCreatedEvent;
+use App\Repository\UniveriqueRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action,Actions,Crud,Filters};
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\{AssociationField,DateTimeField,IdField,TextField};
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -14,7 +16,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\{TextFilter, DateTimeFilter};
 
 class UniveriqueCrudController extends AbstractCrudController
 {
-    public function __construct(private readonly EventDispatcherInterface $dispatcher,){}
+    public function __construct(private readonly EventDispatcherInterface $dispatcher){}
 
     public static function getEntityFqcn(): string
     {
@@ -41,7 +43,7 @@ class UniveriqueCrudController extends AbstractCrudController
             ->update(Crud::PAGE_NEW, Action::SAVE_AND_ADD_ANOTHER, fn (Action $a) => $a->setLabel('Créer et ajouter une <b>nouvelle</b>'))
             ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $a) => $a->setLabel('Créer une <b>UNT</b>'))
             ->remove(Crud::PAGE_INDEX, Action::EDIT)
-            ->remove(Crud::PAGE_INDEX, Action::DELETE);
+            ->disable(Action::DELETE);
     }
 
     public function configureFields(string $pageName): iterable
@@ -49,7 +51,7 @@ class UniveriqueCrudController extends AbstractCrudController
         return [
             IdField::new('id')->onlyOnDetail(),
             TextField::new('label', 'Nom'),
-            TextField::new('name', "Nom du répertoire"),
+            TextField::new('name', "Nom du répertoire")->hideWhenUpdating(),
             AssociationField::new('fields', "Champs disciplinaires")->setTemplatePath('admin/fields/badge.html.twig')
                 ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->where('entity.parent is null')->orderBy('entity.nom'))->setSortable(false),
             DateTimeField::new('creeLe', 'Date de création')->hideOnForm(),
@@ -70,5 +72,35 @@ class UniveriqueCrudController extends AbstractCrudController
         /** @var Univerique $entityInstance */
         parent::persistEntity($entityManager, $entityInstance);
         $this->dispatcher->dispatch(new AfterUntCreatedEvent($entityInstance));
+    }
+
+    public function index(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_READ_UNIV');
+        return parent::index($context);
+    }
+
+    public function new(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_CREA_UNIV');
+        return parent::new($context);
+    }
+
+    public function detail(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_READ_UNIV');
+        return parent::detail($context);
+    }
+
+    public function edit(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_EDIT_UNIV');
+        return parent::edit($context);
+    }
+
+    public function delete(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_DROP_UNIV');
+        return parent::delete($context);
     }
 }

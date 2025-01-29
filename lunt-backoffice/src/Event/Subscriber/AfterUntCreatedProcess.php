@@ -6,43 +6,43 @@ use App\Event\AfterUntCreatedEvent;
 use App\Service\FileService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
-use Symfony\Component\Process\{Process, Exception\ProcessFailedException};
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\HttpClient\{HttpClientInterface,Exception\ExceptionInterface};
 
 #[AsEventListener]
-final class AfterUntCreatedProcess
+readonly class AfterUntCreatedProcess
 {
     const SUB_DIR = ["oai", "suplom", "suplom_externe"];
-    private string $diresource;
 
-    public function __construct(private readonly LoggerInterface $untLogger)
-    {
-        $this->diresource = FileService::RESOURCES_DIR. DIRECTORY_SEPARATOR. 'lunt-resources'. DIRECTORY_SEPARATOR;
-    }
+    public function __construct(
+        private HttpClientInterface $solrClient,
+        private LoggerInterface $untLogger,
+        private string $sorlConfig
+    ){}
 
     public function __invoke(AfterUntCreatedEvent $event): void
     {
         $unt = $event->getUnt();
-        $target = FileService::RESOURCES_DIR. DIRECTORY_SEPARATOR. 'lunt-solr'. DIRECTORY_SEPARATOR. $unt->getName();
 
         // Création des répertoires associés à l'UNT
         foreach (self::SUB_DIR as $subPath) {
-            $untDir = $this->diresource. $subPath .DIRECTORY_SEPARATOR. $unt->getName();
+            $untDir = FileService::RESOURCES_DIR. $subPath .DIRECTORY_SEPARATOR. $unt->getName();
             if (!mkdir($untDir, 0755, true) && !is_dir($untDir))
                 throw new \RuntimeException("Failed to create destination directory: $untDir");
         }
 
-        // création du dossier Solr de l'UNT à partir d'un template par défaut
-        $source = $this->diresource. 'untsolr_defaultemplate';
-        $command = ['docker', 'compose', 'exec', '-it', 'solr', 'solr', 'create_core', '-c', $unt->getName()];
-        $process = new Process(['cp', '-r', $source, $target]); //docker compose exec -it solr solr create_core -c mycore -d /tmp/myconfig
-
+        // Création du core Solr de l'UNT à partir du config untconfig
         try {
-            $process->mustRun(); // Ensure the command runs successfully
-        } catch (ProcessFailedException $exception) {
-            $this->untLogger->error(sprintf("Erreur lors de la création des repertoires de l'UNT <<%s>>",$unt), [
-                'untId' => $unt->getId(), 'exception' => $exception->getMessage(),
+            $this->solrClient->request("POST", "api/cores", ['json' => ['create' => [
+                'configSet' => $this->sorlConfig,
+                'name' => $unt->getName()
+            ]]]);
+            //if($resp->getStatusCode() === Response::HTTP_OK) echo $resp->getContent();
+        } catch (ExceptionInterface $e) {
+            $this->untLogger->error(sprintf("Erreur lors de l'enregistrement du core SOLR de l'UNT <<%s>>",$unt), [
+                'untId' => $unt->getId(), 'exception' => $e->getMessage(),
             ]);
-        }
+        } //$process = new Process(['cp', '-r', $source, $target]); //docker compose exec -it solr solr create_core -c mycore -d /tmp/myconfig
     }
 
 }

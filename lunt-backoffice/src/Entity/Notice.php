@@ -187,7 +187,7 @@ class Notice
         return $this->ressSize;
     }
 
-    public function setRessSize(int $ressSize): self
+    public function setRessSize(?int $ressSize): self
     {
         $this->ressSize = $ressSize;
 
@@ -606,7 +606,7 @@ class Notice
         return $this->ressPayant;
     }
 
-    public function setRessPayant(bool $ressPayant): static
+    public function setRessPayant(?bool $ressPayant): static
     {
         $this->ressPayant = $ressPayant;
 
@@ -618,7 +618,7 @@ class Notice
         return $this->proprIntel;
     }
 
-    public function setProprIntel(bool $proprIntel): static
+    public function setProprIntel(?bool $proprIntel): static
     {
         $this->proprIntel = $proprIntel;
 
@@ -630,7 +630,7 @@ class Notice
         return $this->deleted;
     }
 
-    public function setDeleted(bool $deleted): static
+    public function setDeleted(?bool $deleted): static
     {
         $this->deleted = $deleted;
 

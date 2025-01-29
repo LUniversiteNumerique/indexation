@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\DateUnit;
 use App\Entity\IndexingConfig;
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action,Actions,Crud};
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\{AssociationField, BooleanField, ChoiceField, DateTimeField, IntegerField, TextField};
 
@@ -47,5 +48,35 @@ class IndexingConfigCrudController extends AbstractCrudController
             ->setSearchFields(null)->setEntityPermission('ROLE_READ_CORE')
             ->setPageTitle(Action::NEW, fn () => 'Créer une <b>indexation</b>')
             ->setPageTitle(Action::EDIT, fn (IndexingConfig $n) => 'Modifier une <b>indexation</b>');
+    }
+
+    public function index(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_READ_CORE');
+        return parent::index($context);
+    }
+
+    public function new(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_CREA_CORE');
+        return parent::new($context);
+    }
+
+    public function detail(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_READ_CORE');
+        return parent::detail($context);
+    }
+
+    public function edit(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_EDIT_CORE');
+        return parent::edit($context);
+    }
+
+    public function delete(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_DROP_CORE');
+        return parent::delete($context);
     }
 }

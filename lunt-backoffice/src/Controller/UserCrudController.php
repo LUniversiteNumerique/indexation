@@ -118,4 +118,34 @@ class UserCrudController extends AbstractCrudController
 
         return $this->redirect($url);
     }
+
+    public function index(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_READ_USER');
+        return parent::index($context);
+    }
+
+    public function new(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_CREA_USER');
+        return parent::new($context);
+    }
+
+    public function detail(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_READ_USER');
+        return parent::detail($context);
+    }
+
+    public function edit(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_EDIT_USER');
+        return parent::edit($context);
+    }
+
+    public function delete(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_DROP_USER');
+        return parent::delete($context);
+    }
 }

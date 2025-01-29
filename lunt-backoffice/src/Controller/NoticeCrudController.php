@@ -23,7 +23,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\{FormBuilderInterface, FormEvent, FormEvents, FormInterface};
 use Symfony\Component\HttpFoundation\{File\Exception\FileException, File\UploadedFile, RedirectResponse, Request, Response};
 use Symfony\Component\Intl\Languages;
-use Symfony\Component\Validator\Constraints\{File, Image, Url};
+use Symfony\Component\Validator\Constraints\{File, Image};
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Uid\Uuid;
 use function Symfony\Component\String\u;
@@ -246,14 +246,23 @@ class NoticeCrudController extends AbstractCrudController
     {
         /** @var User $user */$user = $this->getUser();
         $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)->select('entity,d,e,r,k,p,a,n,dd,pp,l,s')
-            ->leftJoin('entity.repertoire','d')->leftJoin('entity.codewey','e')->leftJoin('entity.ressources','r')
-            ->join('entity.tags','k')->join('entity.porteurs','p')->join('entity.auteurs','a')->join('entity.niveaux','n')
+            ->leftJoin('entity.repertoire','d')->leftJoin('entity.codewey','e')->leftJoin('entity.ressources','r')->leftJoin('entity.tags','k')
+            ->join('entity.porteurs','p')->join('entity.auteurs','a')->join('entity.niveaux','n')
             ->join('entity.docTypes','dd')->join('entity.pedTypes','pp')->join('entity.droit','l')->join('entity.specialite','s');
 
-        $qb->andWhere('entity.etat != :etat')->setParameter('etat',NoticEtat::Working);
-        if($sch = $user->getSchool()) $qb->andWhere(':school MEMBER OF entity.porteurs')->setParameter('school', $sch->getId());
-        elseif($unt = $user->getUntheme()) $qb->join('s.parent','u')->andWhere('u.parent in (:champs)')->setParameter('champs',$unt->getFields());
-        $qb->orWhere('entity.createur = :user')->setParameter('user', $user->getId());
+        $andX = $qb->expr()->andX('entity.etat != :etat');
+        if ($sch = $user->getSchool()) {
+            $qb->setParameter('school', $sch->getId());
+            $andX->add(':school MEMBER OF entity.porteurs');
+        } elseif ($unt = $user->getUntheme()) {
+            $qb->join('s.parent','u')->setParameter('champs', $unt->getFields());
+            $andX->add('u.parent in (:champs)');
+        }
+        $qb->andWhere($qb->expr()->orX(
+            $qb->expr()->eq('entity.createur',':user'), $andX
+        ))
+            ->setParameter('etat', NoticEtat::Working)
+            ->setParameter('user', $user->getId());
 
         return $qb->andWhere('entity.deleted = 0');
     }
@@ -369,6 +378,18 @@ class NoticeCrudController extends AbstractCrudController
         $entityManager->flush();
     }
 
+    public function index(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_READ_NOTI');
+        return parent::index($context);
+    }
+
+    public function new(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_CREA_NOTI');
+        return parent::new($context);
+    }
+
     public function detail(AdminContext $context): KeyValueStore
     {
         /** @var Notice $notice */
@@ -394,6 +415,12 @@ class NoticeCrudController extends AbstractCrudController
         $this->denyAccessUnlessGranted(NoticeActionVoter::VIEW, $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
 
         return parent::edit($context);
+    }
+
+    public function delete(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_DROP_NOTI');
+        return parent::delete($context);
     }
 
     public function duplicateNotice(): Response

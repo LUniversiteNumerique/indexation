@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Etablissement;
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Actions, Crud, Filters};
 use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\{FieldCollection,FilterCollection};
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\{DateTimeField, IdField, TextField};
@@ -59,6 +60,36 @@ class EtablissementCrudController extends AbstractCrudController
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
         return parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)->orderBy('entity.nom', 'ASC');
+    }
+
+    public function index(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_READ_ETAB');
+        return parent::index($context);
+    }
+
+    public function new(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_CREA_ETAB');
+        return parent::new($context);
+    }
+
+    public function detail(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_READ_ETAB');
+        return parent::detail($context);
+    }
+
+    public function edit(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_EDIT_ETAB');
+        return parent::edit($context);
+    }
+
+    public function delete(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_DROP_ETAB');
+        return parent::delete($context);
     }
 
 }

@@ -7,11 +7,11 @@ use Symfony\Component\Filesystem\Exception\{IOException,IOExceptionInterface};
 
 class FileService
 {
-    const RESOURCES_DIR = '/opt';
+    const RESOURCES_DIR = DIRECTORY_SEPARATOR. 'opt'. DIRECTORY_SEPARATOR. 'lunt-resources'. DIRECTORY_SEPARATOR;
     private Filesystem $filesystem;
     public function __construct(private ?string $directory = null)
     {
-        $this->directory = $directory ?? self::RESOURCES_DIR . DIRECTORY_SEPARATOR . 'lunt-resources';
+        $this->directory = $directory ?? self::RESOURCES_DIR;
         $this->filesystem = new Filesystem();
         if (!$this->filesystem->exists($this->directory))
             $this->filesystem->mkdir($this->directory);
@@ -21,7 +21,7 @@ class FileService
     {
         try {
             // Chemin complet du fichier
-            $filePath = $this->directory . DIRECTORY_SEPARATOR . $filename;
+            $filePath = $this->directory . $filename;
 
             // Écrire le contenu dans le fichier
             $this->filesystem->dumpFile($filePath, $content);
@@ -34,7 +34,7 @@ class FileService
 
     public function readFile(string $filePath, $isRelative = false): ?string
     {
-        $path = $isRelative ? $this->directory .DIRECTORY_SEPARATOR. $filePath : $filePath;
+        $path = $isRelative ? $this->directory. $filePath : $filePath;
         try {
             // Vérifier si le fichier existe
             if (!$this->filesystem->exists($path))
@@ -47,7 +47,7 @@ class FileService
 
     public function writeFilesTo(array $filesContent,string $relativePath = ''): array
     {
-        $path = $this->directory .DIRECTORY_SEPARATOR. $relativePath;
+        $path = $this->directory. $relativePath;
         if (!$this->filesystem->exists($path)) $this->filesystem->mkdir($path);
         return array_map(fn ($fileName) => $this->writeFile($relativePath.$fileName, $filesContent[$fileName]), array_keys($filesContent));
     }
@@ -55,7 +55,7 @@ class FileService
     public function readFilesFrom(\DateTime $since = null, string $relativePath = '', $names = ['*.xml'], $deep = 0): ?Finder
     {
         $finder = new Finder();
-        $path = $this->directory .DIRECTORY_SEPARATOR. $relativePath;
+        $path = $this->directory. $relativePath;
         try {
             // Vérifier si le répertoire existe
             if (!$this->filesystem->exists($path))
@@ -71,7 +71,7 @@ class FileService
     public function removeFilesFrom(string $relativePath = '', $filenames = null): bool
     {
         $finder = new Finder();
-        $path = $this->directory .DIRECTORY_SEPARATOR. $relativePath;
+        $path = $this->directory. $relativePath;
         try {
             if (!$this->filesystem->exists($path))
                 throw new IOException("Le répertoire n'existe pas : $path");

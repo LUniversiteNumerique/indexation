@@ -132,7 +132,7 @@ return [
     'exception' => [
         'entity_not_found' => 'Cet élément n\'est plus disponible.',
         'entity_remove' => 'Cet élément ne peut être supprimé car d\'autres éléments en dépendent.',
-        'forbidden_action' => 'L\'action demandée ne peut être exécutée sur cet élément.',
+        'forbidden_action' => 'Vous n\'êtes pas autorisé à accéder à cet élément.',
         'insufficient_entity_permission' => 'Vous n\'êtes pas autorisé à accéder à cet élément.',
     ],
 

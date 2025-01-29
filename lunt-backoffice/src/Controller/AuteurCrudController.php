@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Auteur;
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Actions, Crud, Option\SearchMode};
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\{DateTimeField, EmailField, IdField, TextField};
 use EasyCorp\Bundle\EasyAdminBundle\Filter\{TextFilter, DateTimeFilter};
@@ -53,5 +54,35 @@ class AuteurCrudController extends AbstractCrudController
             ->add(TextFilter::new('prenom',"Prénom de l'auteur"))
             ->add(TextFilter::new('nom',"Nom de l'auteur"))
             ->add(DateTimeFilter::new('creeLe','Date de création'));
+    }
+
+    public function index(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_READ_ACTE');
+        return parent::index($context);
+    }
+
+    public function new(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_CREA_ACTE');
+        return parent::new($context);
+    }
+
+    public function detail(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_READ_ACTE');
+        return parent::detail($context);
+    }
+
+    public function edit(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_EDIT_ACTE');
+        return parent::edit($context);
+    }
+
+    public function delete(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_DROP_ACTE');
+        return parent::delete($context);
     }
 }

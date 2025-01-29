@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Groupe;
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Actions, Crud};
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\{AssociationField, ChoiceField, DateTimeField, IdField, TextField};
 
@@ -48,5 +49,35 @@ class GroupeCrudController extends AbstractCrudController
             DateTimeField::new('creeLe')->hideOnForm(),
             DateTimeField::new('editeLe')->onlyOnDetail()
         ];
+    }
+
+    public function index(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_READ_GROU');
+        return parent::index($context);
+    }
+
+    public function new(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_CREA_GROU');
+        return parent::new($context);
+    }
+
+    public function detail(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_READ_GROU');
+        return parent::detail($context);
+    }
+
+    public function edit(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_EDIT_GROU');
+        return parent::edit($context);
+    }
+
+    public function delete(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_DROP_GROU');
+        return parent::delete($context);
     }
 }

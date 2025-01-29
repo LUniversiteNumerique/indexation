@@ -76,15 +76,35 @@ class DossierCrudController extends AbstractCrudController
       return parent::createNewFormBuilder($entityDto, $formOptions, $context);
     }
 
+    public function index(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_READ_DOSS');
+        return parent::index($context);
+    }
+
+    public function new(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_CREA_DOSS');
+        return parent::new($context);
+    }
+
     public function detail(AdminContext $context): KeyValueStore|Response
     {
+        $this->denyAccessUnlessGranted('ROLE_READ_DOSS');
         $resParams = parent::detail($context);
         $resParams->set('form', $this->createForm(DossierType::class));
         return $resParams;
     }
 
+    public function edit(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_EDIT_DOSS');
+        return parent::edit($context);
+    }
+
     public function delete(AdminContext $context): KeyValueStore|RedirectResponse|Response
     {
+        $this->denyAccessUnlessGranted('ROLE_DROP_DOSS');
         /** @var Dossier $entity */ $entity = $context->getEntity()->getInstance();
         $entUrl = $this->generator->setAction(Action::DETAIL)->setEntityId($entity->getParent()?->getId() ?? 1);
         $context->getRequest()->query->set(EA::REFERRER, $entUrl->generateUrl());
@@ -107,5 +127,4 @@ class DossierCrudController extends AbstractCrudController
 
         return $this->redirect($url);
     }
-
 }

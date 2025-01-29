@@ -18,7 +18,8 @@ class Univerique
         Assert\NotBlank, Assert\Type('string')]
     private ?string $label = null;
 
-    #[ORM\Column(length: 255, unique:true)]
+    #[ORM\Column(length: 255, unique:true),
+        Assert\Regex('/^[a-zA-Z0-9-_]+$/')]
     private ?string $name = null;
 
     #[ORM\ManyToMany(targetEntity: Discipline::class)]

@@ -6,10 +6,10 @@
     <div class="row row-cols-1 row-cols-md-2 align-items-md-center g-5">
         <div class="col d-flex flex-column align-items-start gap-2">
             <p class="text-body-secondary">Ces chiffres proviennent des différents statuts des notices et sont mis à jour en temps réel à chaque actualisation de cette page. Pour gérer ces notices, cliquez sur les liens ci-dessous.</p>
-            <div>{% if is_granted('ROLE_READ_NOTI') %}
-            <a href="{{ ea_url().setController('App\\Controller\\NoticeCrudController').setAction('index') }}" class="btn btn-primary btn-lg">Les notices</a>
-            <a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('detail').setEntityId(1) }}" class="btn btn-primary btn-lg">Les répertoires</a>
-            {% endif %}</div>
+            <div>
+                {% if is_granted('ROLE_READ_NOTI') %}<a href="{{ ea_url().setController('App\\Controller\\NoticeCrudController').setAction('index') }}" class="btn btn-primary btn-lg">Les notices</a>{% endif %}
+                {% if is_granted('ROLE_VALI_NOTI') %}<a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('detail').setEntityId(1) }}" class="btn btn-primary btn-lg">Les répertoires</a>{% endif %}
+            </div>
         </div>
 
         <div class="col">

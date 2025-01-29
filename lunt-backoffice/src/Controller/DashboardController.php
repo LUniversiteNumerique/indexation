@@ -6,7 +6,7 @@ use App\Repository\{NoticeRepository, UserRepository};
 use App\Form\{ChangePassType,UserType};
 use App\Entity\{Auteur, Etablissement, Groupe, IndexingConfig, Keyword, Univerique, User};
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Crud, Dashboard, MenuItem, UserMenu};
-use EasyCorp\Bundle\EasyAdminBundle\{Context\AdminContext,Controller\AbstractDashboardController,Router\AdminUrlGenerator};
+use EasyCorp\Bundle\EasyAdminBundle\{Context\AdminContext,Controller\AbstractDashboardController};
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\{Request, Response};
 use Symfony\Component\Routing\Attribute\Route;
@@ -17,7 +17,6 @@ use function Symfony\Component\Translation\t;
 class DashboardController extends AbstractDashboardController
 {
     public function __construct(
-        private readonly AdminUrlGenerator $generator,
         private readonly NoticeRepository $repository,
         private readonly UserRepository $userRep,
     ) {}
@@ -60,10 +59,7 @@ class DashboardController extends AbstractDashboardController
     #[Route('/', name: 'app_home'),]
     public function index(): Response
     {
-        /** @var User $user */ $user = $this->getUser();
-        return $this->isGranted("ROLE_VALI_NOTI") ?
-            $this->render('admin/index.html.twig', ['noEtats' => $this->repository->countByEtat($user->getUntheme()),]):
-            $this->redirect($this->generator->setController(NoticeCrudController::class)->generateUrl());
+        return $this->render('admin/index.html.twig', ['noEtats' => $this->repository->countByEtat($this->getUser()),]);
     }
 
     #[Route('/profile', name: 'app_profile')]

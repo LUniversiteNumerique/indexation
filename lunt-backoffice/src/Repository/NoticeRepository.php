@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\{IndexingConfig, Notice, NoticEtat, Univerique};
+use App\Entity\{IndexingConfig, Notice, NoticEtat, Univerique, User};
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -70,13 +70,28 @@ class NoticeRepository extends ServiceEntityRepository
         return $n;
     }
 
-    public function countByEtat(?Univerique $unt, ?string $date = null)
+    public function countByEtat(User $user, ?string $date = null)
     {
-        $qb = $this->createQueryBuilder('n')->select('n.etat, COUNT(n.id) as nombre')->where('n.deleted = 0');
-        if ($unt) $qb->join('n.specialite','d')->join('d.parent','c')
-            ->andWhere('c.parent in (:champs)')->setParameter('champs',$unt->getFields());
+        $qb = $this->createQueryBuilder('n')->select('n.etat, COUNT(n.id) as nombre');
+        $andX = $qb->expr()->andX('n.etat != :etat');
+
+        if ($sch = $user->getSchool()) {
+            $qb->setParameter('school', $sch->getId());
+            $andX->add(':school MEMBER OF n.porteurs');
+        } elseif ($unt = $user->getUntheme()) {
+            $qb->join('n.specialite', 's')->join('s.parent', 'u')
+                ->setParameter('champs', $unt->getFields());
+            $andX->add('u.parent in (:champs)');
+        }
+        $qb->where($qb->expr()->orX(
+            $qb->expr()->eq('n.createur',':user'), $andX
+        ))
+            ->setParameter('user', $user->getId())
+            ->setParameter('etat', NoticEtat::Working);
+
         if($date) $qb->andWhere('n.creeLe > :date')->setParameter('date', new \DateTIME("-1 $date"));
-        return $qb->groupBy('n.etat')->getQuery()->getResult();
+
+        return $qb->andWhere('n.deleted = 0')->groupBy('n.etat')->getQuery()->getResult();
     }
 
     private function getJoin(): \Doctrine\ORM\QueryBuilder
