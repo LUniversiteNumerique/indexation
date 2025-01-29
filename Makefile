@@ -23,6 +23,7 @@ bsh:
 #  php bin/console as:co             #
 #  rm -rf var/cache/prod/*           #
 #  chown -R www-data:www-data var/   #
-#  chown -R www-data:www-data /opt/  #
+#  chown -R www-data:www-data /opt/lunt-resources  #
+#  chown -R 8983:8983 /opt/lunt-solr/*
 #                                    #
 ######################################

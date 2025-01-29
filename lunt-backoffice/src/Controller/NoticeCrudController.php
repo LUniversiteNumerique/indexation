@@ -247,8 +247,8 @@ class NoticeCrudController extends AbstractCrudController
         /** @var User $user */$user = $this->getUser();
         $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)->select('entity,d,e,r,k,p,a,n,dd,pp,l,s')
             ->leftJoin('entity.repertoire','d')->leftJoin('entity.codewey','e')->leftJoin('entity.ressources','r')->leftJoin('entity.tags','k')
-            ->join('entity.porteurs','p')->join('entity.auteurs','a')->join('entity.niveaux','n')
-            ->join('entity.docTypes','dd')->join('entity.pedTypes','pp')->join('entity.droit','l')->join('entity.specialite','s');
+            ->leftJoin('entity.porteurs','p')->leftJoin('entity.auteurs','a')->leftJoin('entity.niveaux','n')
+            ->leftJoin('entity.docTypes','dd')->leftJoin('entity.pedTypes','pp')->join('entity.droit','l')->join('entity.specialite','s');
 
         $andX = $qb->expr()->andX('entity.etat != :etat');
         if ($sch = $user->getSchool()) {
