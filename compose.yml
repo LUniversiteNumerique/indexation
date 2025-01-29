@@ -8,7 +8,6 @@ services:
       - mailer
       - solr
     volumes:
-      - ./lunt-backoffice:/var/www/site
       - ${JOAI_BASE_URI:-/opt}:/opt
 
   myadmin:
