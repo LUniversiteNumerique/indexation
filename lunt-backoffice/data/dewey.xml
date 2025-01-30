@@ -2,7 +2,7 @@
 <ns1:DeweyCodes xmlns:ns1="http://www.uoh.fr/dewey">
 	<ns1:Concept level="1" uri="http://dewey.info/class/0/">
 		<ns1:Notation>000</ns1:Notation>
-		<ns1:Label>Sciences de la société</ns1:Label>
+		<ns1:Label>Sciences de l’information</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/00/">
 		<ns1:Notation>000</ns1:Notation>
@@ -74,34 +74,6 @@
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/021/">
 		<ns1:Notation>021</ns1:Notation>
-		<ns1:Label>Bibliothéconomie - Sciences de l’information</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/022/">
-		<ns1:Notation>022</ns1:Notation>
-		<ns1:Label>Bibliothéconomie - Sciences de l’information</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/023/">
-		<ns1:Notation>023</ns1:Notation>
-		<ns1:Label>Bibliothéconomie - Sciences de l’information</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/025/">
-		<ns1:Notation>025</ns1:Notation>
-		<ns1:Label>Bibliothéconomie - Sciences de l’information</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/026/">
-		<ns1:Notation>026</ns1:Notation>
-		<ns1:Label>Bibliothéconomie - Sciences de l’information</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/027/">
-		<ns1:Notation>027</ns1:Notation>
-		<ns1:Label>Bibliothéconomie - Sciences de l’information</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/028/">
-		<ns1:Notation>028</ns1:Notation>
-		<ns1:Label>Bibliothéconomie - Sciences de l’information</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/029/">
-		<ns1:Notation>029</ns1:Notation>
 		<ns1:Label>Bibliothéconomie - Sciences de l’information</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/03/">
@@ -244,42 +216,6 @@
 		<ns1:Notation>070</ns1:Notation>
 		<ns1:Label>Médias documentaires et éducatifs - Journalisme - Édition</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/071/">
-		<ns1:Notation>071</ns1:Notation>
-		<ns1:Label>Médias documentaires et éducatifs - Journalisme - Édition</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/072/">
-		<ns1:Notation>072</ns1:Notation>
-		<ns1:Label>Médias documentaires et éducatifs - Journalisme - Édition</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/073/">
-		<ns1:Notation>073</ns1:Notation>
-		<ns1:Label>Médias documentaires et éducatifs - Journalisme - Édition</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/074/">
-		<ns1:Notation>074</ns1:Notation>
-		<ns1:Label>Médias documentaires et éducatifs - Journalisme - Édition</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/075/">
-		<ns1:Notation>075</ns1:Notation>
-		<ns1:Label>Médias documentaires et éducatifs - Journalisme - Édition</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/076/">
-		<ns1:Notation>076</ns1:Notation>
-		<ns1:Label>Médias documentaires et éducatifs - Journalisme - Édition</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/077/">
-		<ns1:Notation>077</ns1:Notation>
-		<ns1:Label>Médias documentaires et éducatifs - Journalisme - Édition</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/078/">
-		<ns1:Notation>078</ns1:Notation>
-		<ns1:Label>Médias documentaires et éducatifs - Journalisme - Édition</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/079/">
-		<ns1:Notation>079</ns1:Notation>
-		<ns1:Label>Médias documentaires et éducatifs - Journalisme - Édition</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/08/">
 		<ns1:Notation>080</ns1:Notation>
 		<ns1:Label>Recueils généraux</ns1:Label>
@@ -413,76 +349,12 @@
 		<ns1:Notation>110</ns1:Notation>
 		<ns1:Label>Métaphysique</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/111/">
-		<ns1:Notation>111</ns1:Notation>
-		<ns1:Label>Métaphysique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/113/">
-		<ns1:Notation>113</ns1:Notation>
-		<ns1:Label>Métaphysique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/114/">
-		<ns1:Notation>114</ns1:Notation>
-		<ns1:Label>Métaphysique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/115/">
-		<ns1:Notation>115</ns1:Notation>
-		<ns1:Label>Métaphysique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/116/">
-		<ns1:Notation>116</ns1:Notation>
-		<ns1:Label>Métaphysique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/117/">
-		<ns1:Notation>117</ns1:Notation>
-		<ns1:Label>Métaphysique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/118/">
-		<ns1:Notation>118</ns1:Notation>
-		<ns1:Label>Métaphysique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/119/">
-		<ns1:Notation>119</ns1:Notation>
-		<ns1:Label>Métaphysique</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/12/">
 		<ns1:Notation>120</ns1:Notation>
 		<ns1:Label>Épistémologie, causalité, genre humain</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/120/">
 		<ns1:Notation>120</ns1:Notation>
-		<ns1:Label>Épistémologie, causalité, genre humain</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/121/">
-		<ns1:Notation>121</ns1:Notation>
-		<ns1:Label>Épistémologie, causalité, genre humain</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/122/">
-		<ns1:Notation>122</ns1:Notation>
-		<ns1:Label>Épistémologie, causalité, genre humain</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/123/">
-		<ns1:Notation>123</ns1:Notation>
-		<ns1:Label>Épistémologie, causalité, genre humain</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/124/">
-		<ns1:Notation>124</ns1:Notation>
-		<ns1:Label>Épistémologie, causalité, genre humain</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/126/">
-		<ns1:Notation>126</ns1:Notation>
-		<ns1:Label>Épistémologie, causalité, genre humain</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/127/">
-		<ns1:Notation>127</ns1:Notation>
-		<ns1:Label>Épistémologie, causalité, genre humain</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/128/">
-		<ns1:Notation>128</ns1:Notation>
-		<ns1:Label>Épistémologie, causalité, genre humain</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/129/">
-		<ns1:Notation>129</ns1:Notation>
 		<ns1:Label>Épistémologie, causalité, genre humain</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/13/">
@@ -493,72 +365,12 @@
 		<ns1:Notation>130</ns1:Notation>
 		<ns1:Label>Phénomènes paranormaux</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/131/">
-		<ns1:Notation>131</ns1:Notation>
-		<ns1:Label>Phénomènes paranormaux</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/133/">
-		<ns1:Notation>133</ns1:Notation>
-		<ns1:Label>Phénomènes paranormaux</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/135/">
-		<ns1:Notation>135</ns1:Notation>
-		<ns1:Label>Phénomènes paranormaux</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/137/">
-		<ns1:Notation>137</ns1:Notation>
-		<ns1:Label>Phénomènes paranormaux</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/138/">
-		<ns1:Notation>138</ns1:Notation>
-		<ns1:Label>Phénomènes paranormaux</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/139/">
-		<ns1:Notation>139</ns1:Notation>
-		<ns1:Label>Phénomènes paranormaux</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/14/">
 		<ns1:Notation>140</ns1:Notation>
 		<ns1:Label>Les divers systèmes et écoles philosophiques modernes</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/140/">
 		<ns1:Notation>140</ns1:Notation>
-		<ns1:Label>Les divers systèmes et écoles philosophiques modernes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/141/">
-		<ns1:Notation>141</ns1:Notation>
-		<ns1:Label>Les divers systèmes et écoles philosophiques modernes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/142/">
-		<ns1:Notation>142</ns1:Notation>
-		<ns1:Label>Les divers systèmes et écoles philosophiques modernes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/143/">
-		<ns1:Notation>143</ns1:Notation>
-		<ns1:Label>Les divers systèmes et écoles philosophiques modernes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/144/">
-		<ns1:Notation>144</ns1:Notation>
-		<ns1:Label>Les divers systèmes et écoles philosophiques modernes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/145/">
-		<ns1:Notation>145</ns1:Notation>
-		<ns1:Label>Les divers systèmes et écoles philosophiques modernes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/146/">
-		<ns1:Notation>146</ns1:Notation>
-		<ns1:Label>Les divers systèmes et écoles philosophiques modernes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/147/">
-		<ns1:Notation>147</ns1:Notation>
-		<ns1:Label>Les divers systèmes et écoles philosophiques modernes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/148/">
-		<ns1:Notation>148</ns1:Notation>
-		<ns1:Label>Les divers systèmes et écoles philosophiques modernes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/149/">
-		<ns1:Notation>149</ns1:Notation>
 		<ns1:Label>Les divers systèmes et écoles philosophiques modernes</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/15/">
@@ -601,76 +413,12 @@
 		<ns1:Notation>160</ns1:Notation>
 		<ns1:Label>Logique</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/161/">
-		<ns1:Notation>161</ns1:Notation>
-		<ns1:Label>Logique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/162/">
-		<ns1:Notation>162</ns1:Notation>
-		<ns1:Label>Logique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/165/">
-		<ns1:Notation>165</ns1:Notation>
-		<ns1:Label>Logique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/166/">
-		<ns1:Notation>166</ns1:Notation>
-		<ns1:Label>Logique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/167/">
-		<ns1:Notation>167</ns1:Notation>
-		<ns1:Label>Logique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/168/">
-		<ns1:Notation>168</ns1:Notation>
-		<ns1:Label>Logique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/169/">
-		<ns1:Notation>169</ns1:Notation>
-		<ns1:Label>Logique</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/17/">
 		<ns1:Notation>170</ns1:Notation>
 		<ns1:Label>Morale (éthique)</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/170/">
 		<ns1:Notation>170</ns1:Notation>
-		<ns1:Label>Morale (éthique)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/171/">
-		<ns1:Notation>171</ns1:Notation>
-		<ns1:Label>Morale (éthique)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/172/">
-		<ns1:Notation>172</ns1:Notation>
-		<ns1:Label>Morale (éthique)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/173/">
-		<ns1:Notation>173</ns1:Notation>
-		<ns1:Label>Morale (éthique)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/174/">
-		<ns1:Notation>174</ns1:Notation>
-		<ns1:Label>Morale (éthique)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/175/">
-		<ns1:Notation>175</ns1:Notation>
-		<ns1:Label>Morale (éthique)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/176/">
-		<ns1:Notation>176</ns1:Notation>
-		<ns1:Label>Morale (éthique)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/177/">
-		<ns1:Notation>177</ns1:Notation>
-		<ns1:Label>Morale (éthique)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/178/">
-		<ns1:Notation>178</ns1:Notation>
-		<ns1:Label>Morale (éthique)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/179/">
-		<ns1:Notation>179</ns1:Notation>
 		<ns1:Label>Morale (éthique)</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/18/">
@@ -685,80 +433,12 @@
 		<ns1:Notation>181</ns1:Notation>
 		<ns1:Label>Philosophies de l’Orient</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/182/">
-		<ns1:Notation>182</ns1:Notation>
-		<ns1:Label>Philosophies occidentales de l’Antiquité et du Moyen-Age</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/183/">
-		<ns1:Notation>183</ns1:Notation>
-		<ns1:Label>Philosophies occidentales de l’Antiquité et du Moyen-Age</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/184/">
-		<ns1:Notation>184</ns1:Notation>
-		<ns1:Label>Philosophies occidentales de l’Antiquité et du Moyen-Age</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/185/">
-		<ns1:Notation>185</ns1:Notation>
-		<ns1:Label>Philosophies occidentales de l’Antiquité et du Moyen-Age</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/186/">
-		<ns1:Notation>186</ns1:Notation>
-		<ns1:Label>Philosophies occidentales de l’Antiquité et du Moyen-Age</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/187/">
-		<ns1:Notation>187</ns1:Notation>
-		<ns1:Label>Philosophies occidentales de l’Antiquité et du Moyen-Age</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/188/">
-		<ns1:Notation>188</ns1:Notation>
-		<ns1:Label>Philosophies occidentales de l’Antiquité et du Moyen-Age</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/189/">
-		<ns1:Notation>189</ns1:Notation>
-		<ns1:Label>Philosophies occidentales de l’Antiquité et du Moyen-Age</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/19/">
 		<ns1:Notation>190</ns1:Notation>
 		<ns1:Label>Les divers systèmes et écoles philosophiques modernes</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/190/">
 		<ns1:Notation>190</ns1:Notation>
-		<ns1:Label>Les divers systèmes et écoles philosophiques modernes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/191/">
-		<ns1:Notation>191</ns1:Notation>
-		<ns1:Label>Les divers systèmes et écoles philosophiques modernes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/192/">
-		<ns1:Notation>192</ns1:Notation>
-		<ns1:Label>Les divers systèmes et écoles philosophiques modernes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/193/">
-		<ns1:Notation>193</ns1:Notation>
-		<ns1:Label>Les divers systèmes et écoles philosophiques modernes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/194/">
-		<ns1:Notation>194</ns1:Notation>
-		<ns1:Label>Les divers systèmes et écoles philosophiques modernes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/195/">
-		<ns1:Notation>195</ns1:Notation>
-		<ns1:Label>Les divers systèmes et écoles philosophiques modernes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/196/">
-		<ns1:Notation>196</ns1:Notation>
-		<ns1:Label>Les divers systèmes et écoles philosophiques modernes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/197/">
-		<ns1:Notation>197</ns1:Notation>
-		<ns1:Label>Les divers systèmes et écoles philosophiques modernes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/198/">
-		<ns1:Notation>198</ns1:Notation>
-		<ns1:Label>Les divers systèmes et écoles philosophiques modernes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/199/">
-		<ns1:Notation>199</ns1:Notation>
 		<ns1:Label>Les divers systèmes et écoles philosophiques modernes</ns1:Label>
 	</ns1:Concept>
 
@@ -776,67 +456,7 @@
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/201/">
 		<ns1:Notation>201</ns1:Notation>
-		<ns1:Label>Histoire et théorie de la religion - concepts transversaux - analyses comparées</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/202/">
-		<ns1:Notation>202</ns1:Notation>
-		<ns1:Label>Histoire et théorie de la religion - concepts transversaux - analyses comparées</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/203/">
-		<ns1:Notation>203</ns1:Notation>
-		<ns1:Label>Histoire et théorie de la religion - concepts transversaux - analyses comparées</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/204/">
-		<ns1:Notation>204</ns1:Notation>
-		<ns1:Label>Histoire et théorie de la religion - concepts transversaux - analyses comparées</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/205/">
-		<ns1:Notation>205</ns1:Notation>
-		<ns1:Label>Histoire et théorie de la religion - concepts transversaux - analyses comparées</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/206/">
-		<ns1:Notation>206</ns1:Notation>
-		<ns1:Label>Histoire et théorie de la religion - concepts transversaux - analyses comparées</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/207/">
-		<ns1:Notation>207</ns1:Notation>
-		<ns1:Label>Histoire et théorie de la religion - concepts transversaux - analyses comparées</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/208/">
-		<ns1:Notation>208</ns1:Notation>
-		<ns1:Label>Histoire et théorie de la religion - concepts transversaux - analyses comparées</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/209/">
-		<ns1:Notation>209</ns1:Notation>
-		<ns1:Label>Histoire et théorie de la religion - concepts transversaux - analyses comparées</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="2" uri="http://dewey.info/class/21/">
-		<ns1:Notation>210</ns1:Notation>
-		<ns1:Label>Histoire et théorie de la religion - concepts transversaux - analyses comparées</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/211/">
-		<ns1:Notation>211</ns1:Notation>
 		<ns1:Label>Sciences des religions</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/212/">
-		<ns1:Notation>212</ns1:Notation>
-		<ns1:Label>Histoire et théorie de la religion - concepts transversaux - analyses comparées</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/213/">
-		<ns1:Notation>213</ns1:Notation>
-		<ns1:Label>Histoire et théorie de la religion - concepts transversaux - analyses comparées</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/214/">
-		<ns1:Notation>214</ns1:Notation>
-		<ns1:Label>Histoire et théorie de la religion - concepts transversaux - analyses comparées</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/215/">
-		<ns1:Notation>215</ns1:Notation>
-		<ns1:Label>Histoire et théorie de la religion - concepts transversaux - analyses comparées</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/218/">
-		<ns1:Notation>218</ns1:Notation>
-		<ns1:Label>Histoire et théorie de la religion - concepts transversaux - analyses comparées</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/22/">
 		<ns1:Notation>220</ns1:Notation>
@@ -844,42 +464,6 @@
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/220/">
 		<ns1:Notation>220</ns1:Notation>
-		<ns1:Label>Christianisme - Théologie doctrinale</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/221/">
-		<ns1:Notation>221</ns1:Notation>
-		<ns1:Label>Christianisme - Théologie doctrinale</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/222/">
-		<ns1:Notation>222</ns1:Notation>
-		<ns1:Label>Christianisme - Théologie doctrinale</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/223/">
-		<ns1:Notation>223</ns1:Notation>
-		<ns1:Label>Christianisme - Théologie doctrinale</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/224/">
-		<ns1:Notation>224</ns1:Notation>
-		<ns1:Label>Christianisme - Théologie doctrinale</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/225/">
-		<ns1:Notation>225</ns1:Notation>
-		<ns1:Label>Christianisme - Théologie doctrinale</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/226/">
-		<ns1:Notation>226</ns1:Notation>
-		<ns1:Label>Christianisme - Théologie doctrinale</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/227/">
-		<ns1:Notation>227</ns1:Notation>
-		<ns1:Label>Christianisme - Théologie doctrinale</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/228/">
-		<ns1:Notation>228</ns1:Notation>
-		<ns1:Label>Christianisme - Théologie doctrinale</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/229/">
-		<ns1:Notation>229</ns1:Notation>
 		<ns1:Label>Christianisme - Théologie doctrinale</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/23/">
@@ -890,37 +474,9 @@
 		<ns1:Notation>230</ns1:Notation>
 		<ns1:Label>Christianisme - Théologie doctrinale</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/231/">
-		<ns1:Notation>231</ns1:Notation>
-		<ns1:Label>Christianisme - Théologie doctrinale</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/232/">
-		<ns1:Notation>232</ns1:Notation>
-		<ns1:Label>Christianisme - Théologie doctrinale</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/233/">
-		<ns1:Notation>233</ns1:Notation>
-		<ns1:Label>Christianisme - Théologie doctrinale</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/234/">
 		<ns1:Notation>234</ns1:Notation>
 		<ns1:Label>Salut et grâce</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/235/">
-		<ns1:Notation>235</ns1:Notation>
-		<ns1:Label>Christianisme - Théologie doctrinale</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/236/">
-		<ns1:Notation>236</ns1:Notation>
-		<ns1:Label>Christianisme - Théologie doctrinale</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/238/">
-		<ns1:Notation>238</ns1:Notation>
-		<ns1:Label>Christianisme - Théologie doctrinale</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/239/">
-		<ns1:Notation>239</ns1:Notation>
-		<ns1:Label>Christianisme - Théologie doctrinale</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/24/">
 		<ns1:Notation>240</ns1:Notation>
@@ -928,62 +484,6 @@
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/240/">
 		<ns1:Notation>240</ns1:Notation>
-		<ns1:Label>Christianisme - Vie, culte et pratique religieuse</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/241/">
-		<ns1:Notation>241</ns1:Notation>
-		<ns1:Label>Christianisme - Vie, culte et pratique religieuse</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/242/">
-		<ns1:Notation>242</ns1:Notation>
-		<ns1:Label>Christianisme - Vie, culte et pratique religieuse</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/243/">
-		<ns1:Notation>243</ns1:Notation>
-		<ns1:Label>Christianisme - Vie, culte et pratique religieuse</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/246/">
-		<ns1:Notation>246</ns1:Notation>
-		<ns1:Label>Christianisme - Vie, culte et pratique religieuse</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/247/">
-		<ns1:Notation>247</ns1:Notation>
-		<ns1:Label>Christianisme - Vie, culte et pratique religieuse</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/248/">
-		<ns1:Notation>248</ns1:Notation>
-		<ns1:Label>Christianisme - Vie, culte et pratique religieuse</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/249/">
-		<ns1:Notation>249</ns1:Notation>
-		<ns1:Label>Christianisme - Vie, culte et pratique religieuse</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="2" uri="http://dewey.info/class/25/">
-		<ns1:Notation>250</ns1:Notation>
-		<ns1:Label>Christianisme - Vie, culte et pratique religieuse</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/251/">
-		<ns1:Notation>251</ns1:Notation>
-		<ns1:Label>Christianisme - Vie, culte et pratique religieuse</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/252/">
-		<ns1:Notation>252</ns1:Notation>
-		<ns1:Label>Christianisme - Vie, culte et pratique religieuse</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/253/">
-		<ns1:Notation>253</ns1:Notation>
-		<ns1:Label>Christianisme - Vie, culte et pratique religieuse</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/254/">
-		<ns1:Notation>254</ns1:Notation>
-		<ns1:Label>Christianisme - Vie, culte et pratique religieuse</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/255/">
-		<ns1:Notation>255</ns1:Notation>
-		<ns1:Label>Christianisme - Vie, culte et pratique religieuse</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/259/">
-		<ns1:Notation>259</ns1:Notation>
 		<ns1:Label>Christianisme - Vie, culte et pratique religieuse</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/26/">
@@ -994,124 +494,12 @@
 		<ns1:Notation>260</ns1:Notation>
 		<ns1:Label>Église chrétienne et sociétés (approches sociales et historiques)</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/261/">
-		<ns1:Notation>261</ns1:Notation>
-		<ns1:Label>Église chrétienne et sociétés (approches sociales et historiques)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/262/">
-		<ns1:Notation>262</ns1:Notation>
-		<ns1:Label>Église chrétienne et sociétés (approches sociales et historiques)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/263/">
-		<ns1:Notation>263</ns1:Notation>
-		<ns1:Label>Église chrétienne et sociétés (approches sociales et historiques)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/264/">
-		<ns1:Notation>264</ns1:Notation>
-		<ns1:Label>Église chrétienne et sociétés (approches sociales et historiques)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/265/">
-		<ns1:Notation>265</ns1:Notation>
-		<ns1:Label>Église chrétienne et sociétés (approches sociales et historiques)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/266/">
-		<ns1:Notation>266</ns1:Notation>
-		<ns1:Label>Église chrétienne et sociétés (approches sociales et historiques)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/267/">
-		<ns1:Notation>267</ns1:Notation>
-		<ns1:Label>Église chrétienne et sociétés (approches sociales et historiques)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/268/">
-		<ns1:Notation>268</ns1:Notation>
-		<ns1:Label>Église chrétienne et sociétés (approches sociales et historiques)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/269/">
-		<ns1:Notation>269</ns1:Notation>
-		<ns1:Label>Église chrétienne et sociétés (approches sociales et historiques)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="2" uri="http://dewey.info/class/27/">
-		<ns1:Notation>270</ns1:Notation>
-		<ns1:Label>Église chrétienne et sociétés (approches sociales et historiques)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/270/">
-		<ns1:Notation>270</ns1:Notation>
-		<ns1:Label>Église chrétienne et sociétés (approches sociales et historiques)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/271/">
-		<ns1:Notation>271</ns1:Notation>
-		<ns1:Label>Église chrétienne et sociétés (approches sociales et historiques)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/272/">
-		<ns1:Notation>272</ns1:Notation>
-		<ns1:Label>Église chrétienne et sociétés (approches sociales et historiques)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/273/">
-		<ns1:Notation>273</ns1:Notation>
-		<ns1:Label>Église chrétienne et sociétés (approches sociales et historiques)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/274/">
-		<ns1:Notation>274</ns1:Notation>
-		<ns1:Label>Église chrétienne et sociétés (approches sociales et historiques)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/275/">
-		<ns1:Notation>275</ns1:Notation>
-		<ns1:Label>Église chrétienne et sociétés (approches sociales et historiques)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/276/">
-		<ns1:Notation>276</ns1:Notation>
-		<ns1:Label>Église chrétienne et sociétés (approches sociales et historiques)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/277/">
-		<ns1:Notation>277</ns1:Notation>
-		<ns1:Label>Église chrétienne et sociétés (approches sociales et historiques)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/278/">
-		<ns1:Notation>278</ns1:Notation>
-		<ns1:Label>Église chrétienne et sociétés (approches sociales et historiques)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/279/">
-		<ns1:Notation>279</ns1:Notation>
-		<ns1:Label>Église chrétienne et sociétés (approches sociales et historiques)</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/28/">
 		<ns1:Notation>280</ns1:Notation>
 		<ns1:Label>Confessions et sectes chrétiennes</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/280/">
 		<ns1:Notation>280</ns1:Notation>
-		<ns1:Label>Confessions et sectes chrétiennes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/281/">
-		<ns1:Notation>281</ns1:Notation>
-		<ns1:Label>Confessions et sectes chrétiennes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/282/">
-		<ns1:Notation>282</ns1:Notation>
-		<ns1:Label>Confessions et sectes chrétiennes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/283/">
-		<ns1:Notation>283</ns1:Notation>
-		<ns1:Label>Confessions et sectes chrétiennes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/284/">
-		<ns1:Notation>284</ns1:Notation>
-		<ns1:Label>Confessions et sectes chrétiennes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/285/">
-		<ns1:Notation>285</ns1:Notation>
-		<ns1:Label>Confessions et sectes chrétiennes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/286/">
-		<ns1:Notation>286</ns1:Notation>
-		<ns1:Label>Confessions et sectes chrétiennes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/287/">
-		<ns1:Notation>287</ns1:Notation>
-		<ns1:Label>Confessions et sectes chrétiennes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/289/">
-		<ns1:Notation>289</ns1:Notation>
 		<ns1:Label>Confessions et sectes chrétiennes</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/29/">
@@ -1163,10 +551,6 @@
 		<ns1:Notation>300</ns1:Notation>
 		<ns1:Label>Théories sociologiques, ethnologiques, anthropologiques et méthodologie</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/301/">
-		<ns1:Notation>301</ns1:Notation>
-		<ns1:Label>Théories sociologiques, ethnologiques, anthropologiques et méthodologie</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/302/">
 		<ns1:Notation>302</ns1:Notation>
 		<ns1:Label>Psychologie sociale</ns1:Label>
@@ -1201,30 +585,6 @@
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/310/">
 		<ns1:Notation>310</ns1:Notation>
-		<ns1:Label>Statistiques appliquées aux sciences sociales</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/314/">
-		<ns1:Notation>314</ns1:Notation>
-		<ns1:Label>Statistiques appliquées aux sciences sociales</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/315/">
-		<ns1:Notation>315</ns1:Notation>
-		<ns1:Label>Statistiques appliquées aux sciences sociales</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/316/">
-		<ns1:Notation>316</ns1:Notation>
-		<ns1:Label>Statistiques appliquées aux sciences sociales</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/317/">
-		<ns1:Notation>317</ns1:Notation>
-		<ns1:Label>Statistiques appliquées aux sciences sociales</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/318/">
-		<ns1:Notation>318</ns1:Notation>
-		<ns1:Label>Statistiques appliquées aux sciences sociales</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/319/">
-		<ns1:Notation>319</ns1:Notation>
 		<ns1:Label>Statistiques appliquées aux sciences sociales</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/32/">
@@ -1512,76 +872,12 @@
 		<ns1:Notation>400</ns1:Notation>
 		<ns1:Label>Langage</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/401/">
-		<ns1:Notation>401</ns1:Notation>
-		<ns1:Label>Langage</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/402/">
-		<ns1:Notation>402</ns1:Notation>
-		<ns1:Label>Langage</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/403/">
-		<ns1:Notation>403</ns1:Notation>
-		<ns1:Label>Langage</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/404/">
-		<ns1:Notation>404</ns1:Notation>
-		<ns1:Label>Langage</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/405/">
-		<ns1:Notation>405</ns1:Notation>
-		<ns1:Label>Langage</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/406/">
-		<ns1:Notation>406</ns1:Notation>
-		<ns1:Label>Langage</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/407/">
-		<ns1:Notation>407</ns1:Notation>
-		<ns1:Label>Langage</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/408/">
-		<ns1:Notation>408</ns1:Notation>
-		<ns1:Label>Langage</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/409/">
-		<ns1:Notation>409</ns1:Notation>
-		<ns1:Label>Langage</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/41/">
 		<ns1:Notation>410</ns1:Notation>
 		<ns1:Label>Linguistique</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/410/">
 		<ns1:Notation>410</ns1:Notation>
-		<ns1:Label>Linguistique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/411/">
-		<ns1:Notation>411</ns1:Notation>
-		<ns1:Label>Linguistique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/412/">
-		<ns1:Notation>412</ns1:Notation>
-		<ns1:Label>Linguistique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/413/">
-		<ns1:Notation>413</ns1:Notation>
-		<ns1:Label>Linguistique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/414/">
-		<ns1:Notation>414</ns1:Notation>
-		<ns1:Label>Linguistique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/415/">
-		<ns1:Notation>415</ns1:Notation>
-		<ns1:Label>Linguistique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/417/">
-		<ns1:Notation>417</ns1:Notation>
-		<ns1:Label>Linguistique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/418/">
-		<ns1:Notation>418</ns1:Notation>
 		<ns1:Label>Linguistique</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/419/">
@@ -1596,60 +892,8 @@
 		<ns1:Notation>420</ns1:Notation>
 		<ns1:Label>Français</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/421/">
-		<ns1:Notation>421</ns1:Notation>
-		<ns1:Label>Français</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/422/">
-		<ns1:Notation>422</ns1:Notation>
-		<ns1:Label>Français</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/423/">
-		<ns1:Notation>423</ns1:Notation>
-		<ns1:Label>Français</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/425/">
-		<ns1:Notation>425</ns1:Notation>
-		<ns1:Label>Français</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/427/">
-		<ns1:Notation>427</ns1:Notation>
-		<ns1:Label>Français</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/428/">
-		<ns1:Notation>428</ns1:Notation>
-		<ns1:Label>Français</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/429/">
-		<ns1:Notation>429</ns1:Notation>
-		<ns1:Label>Français</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/44/">
 		<ns1:Notation>440</ns1:Notation>
-		<ns1:Label>FLE - Français langue étrangère</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/441/">
-		<ns1:Notation>441</ns1:Notation>
-		<ns1:Label>FLE - Français langue étrangère</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/442/">
-		<ns1:Notation>442</ns1:Notation>
-		<ns1:Label>FLE - Français langue étrangère</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/443/">
-		<ns1:Notation>443</ns1:Notation>
-		<ns1:Label>FLE - Français langue étrangère</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/445/">
-		<ns1:Notation>445</ns1:Notation>
-		<ns1:Label>FLE - Français langue étrangère</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/447/">
-		<ns1:Notation>447</ns1:Notation>
-		<ns1:Label>FLE - Français langue étrangère</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/448/">
-		<ns1:Notation>448</ns1:Notation>
 		<ns1:Label>FLE - Français langue étrangère</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/449/">
@@ -1664,30 +908,6 @@
 		<ns1:Notation>470</ns1:Notation>
 		<ns1:Label>Langue latine</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/471/">
-		<ns1:Notation>471</ns1:Notation>
-		<ns1:Label>Langue latine</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/472/">
-		<ns1:Notation>472</ns1:Notation>
-		<ns1:Label>Langue latine</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/473/">
-		<ns1:Notation>473</ns1:Notation>
-		<ns1:Label>Langue latine</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/475/">
-		<ns1:Notation>475</ns1:Notation>
-		<ns1:Label>Langue latine</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/477/">
-		<ns1:Notation>477</ns1:Notation>
-		<ns1:Label>Langue latine</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/478/">
-		<ns1:Notation>478</ns1:Notation>
-		<ns1:Label>Langue latine</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/479/">
 		<ns1:Notation>479</ns1:Notation>
 		<ns1:Label>Autres langues et littérature italiques</ns1:Label>
@@ -1698,30 +918,6 @@
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/480/">
 		<ns1:Notation>480</ns1:Notation>
-		<ns1:Label>Grec classique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/481/">
-		<ns1:Notation>481</ns1:Notation>
-		<ns1:Label>Grec classique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/482/">
-		<ns1:Notation>482</ns1:Notation>
-		<ns1:Label>Grec classique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/483/">
-		<ns1:Notation>483</ns1:Notation>
-		<ns1:Label>Grec classique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/485/">
-		<ns1:Notation>485</ns1:Notation>
-		<ns1:Label>Grec classique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/487/">
-		<ns1:Notation>487</ns1:Notation>
-		<ns1:Label>Grec classique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/488/">
-		<ns1:Notation>488</ns1:Notation>
 		<ns1:Label>Grec classique</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/489/">
@@ -1740,18 +936,6 @@
 		<ns1:Notation>491</ns1:Notation>
 		<ns1:Label>Langues indo-européennes orientales et celtiques</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/491.7/">
-		<ns1:Notation>491.7</ns1:Notation>
-		<ns1:Label>Langues indo-européennes orientales et celtiques</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/491.6/">
-		<ns1:Notation>491.6</ns1:Notation>
-		<ns1:Label>Langues indo-européennes orientales et celtiques</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/491.81/">
-		<ns1:Notation>491.81</ns1:Notation>
-		<ns1:Label>Langues indo-européennes orientales et celtiques</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/491.86/">
 		<ns1:Notation>491.86</ns1:Notation>
 		<ns1:Label>Tchèque</ns1:Label>
@@ -1760,41 +944,13 @@
 		<ns1:Notation>492</ns1:Notation>
 		<ns1:Label>Langues afro-asiatiques; langues sémitiques</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/492.4/">
-		<ns1:Notation>492.4</ns1:Notation>
-		<ns1:Label>Langues afro-asiatiques; langues sémitiques</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/492.7/">
-		<ns1:Notation>492.7</ns1:Notation>
-		<ns1:Label>Langues afro-asiatiques; langues sémitiques</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/493/">
-		<ns1:Notation>493</ns1:Notation>
-		<ns1:Label>Langues afro-asiatiques non sémitiques</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/494/">
 		<ns1:Notation>494</ns1:Notation>
-		<ns1:Label>Langues altaïques, ouraliennes, hyperboréennes et dravidiennes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/494.35/">
-		<ns1:Notation>494.35</ns1:Notation>
-		<ns1:Label>Langues altaïques, ouraliennes, hyperboréennes et dravidiennes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/494.53/">
-		<ns1:Notation>494.53</ns1:Notation>
-		<ns1:Label>Langues altaïques, ouraliennes, hyperboréennes et dravidiennes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/494.54/">
-		<ns1:Notation>494.54</ns1:Notation>
 		<ns1:Label>Langues altaïques, ouraliennes, hyperboréennes et dravidiennes</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/495.1/">
 		<ns1:Notation>495.1</ns1:Notation>
 		<ns1:Label>Langues de l’Asie de l’Est et du Sud-Est</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/495.6/">
-		<ns1:Notation>495.6</ns1:Notation>
-		<ns1:Label>Langue</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/496/">
 		<ns1:Notation>496</ns1:Notation>
@@ -1810,10 +966,6 @@
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/499/">
 		<ns1:Notation>499</ns1:Notation>
-		<ns1:Label>Langues malayo-polynésiennes et autres langues</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/499.92/">
-		<ns1:Notation>499.92</ns1:Notation>
 		<ns1:Label>Langues malayo-polynésiennes et autres langues</ns1:Label>
 	</ns1:Concept>
 
@@ -2228,7 +1380,7 @@
 	</ns1:Concept>
 
 	<!-- Technologie : désactivé (pas de niveau 1) -->
-	<ns1:Concept level="2" uri="http://dewey.info/class/6/">
+	<ns1:Concept level="1" uri="http://dewey.info/class/6/">
 		<ns1:Notation>600</ns1:Notation>
 		<ns1:Label>Technologie</ns1:Label>
 	</ns1:Concept>
@@ -2645,52 +1797,12 @@
 		<ns1:Notation>700</ns1:Notation>
 		<ns1:Label>Histoire de l’art</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/701/">
-		<ns1:Notation>701</ns1:Notation>
-		<ns1:Label>Histoire de l’art</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/702/">
-		<ns1:Notation>702</ns1:Notation>
-		<ns1:Label>Histoire de l’art</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/703/">
-		<ns1:Notation>703</ns1:Notation>
-		<ns1:Label>Histoire de l’art</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/704/">
-		<ns1:Notation>704</ns1:Notation>
-		<ns1:Label>Histoire de l’art</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/705/">
-		<ns1:Notation>705</ns1:Notation>
-		<ns1:Label>Histoire de l’art</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/706/">
-		<ns1:Notation>706</ns1:Notation>
-		<ns1:Label>Histoire de l’art</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/707/">
-		<ns1:Notation>707</ns1:Notation>
-		<ns1:Label>Histoire de l’art</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/708/">
-		<ns1:Notation>708</ns1:Notation>
-		<ns1:Label>Histoire de l’art</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/709/">
-		<ns1:Notation>709</ns1:Notation>
-		<ns1:Label>Histoire de l’art</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/71/">
 		<ns1:Notation>710</ns1:Notation>
 		<ns1:Label>Architecture, Art du paysage</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/710/">
 		<ns1:Notation>710</ns1:Notation>
-		<ns1:Label>Aménagement</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/711/">
-		<ns1:Notation>711</ns1:Notation>
 		<ns1:Label>Aménagement</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/712/">
@@ -2733,84 +1845,12 @@
 		<ns1:Notation>720</ns1:Notation>
 		<ns1:Label>Architecture</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/721/">
-		<ns1:Notation>721</ns1:Notation>
-		<ns1:Label>Architecture</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/722/">
-		<ns1:Notation>722</ns1:Notation>
-		<ns1:Label>Architecture</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/723/">
-		<ns1:Notation>723</ns1:Notation>
-		<ns1:Label>Architecture</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/724/">
-		<ns1:Notation>724</ns1:Notation>
-		<ns1:Label>Architecture</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/725/">
-		<ns1:Notation>725</ns1:Notation>
-		<ns1:Label>Architecture</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/726/">
-		<ns1:Notation>726</ns1:Notation>
-		<ns1:Label>Architecture</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/727/">
-		<ns1:Notation>727</ns1:Notation>
-		<ns1:Label>Architecture</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/728/">
-		<ns1:Notation>728</ns1:Notation>
-		<ns1:Label>Architecture</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/729/">
-		<ns1:Notation>729</ns1:Notation>
-		<ns1:Label>Architecture</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/73/">
 		<ns1:Notation>730</ns1:Notation>
 		<ns1:Label>Sculpture et autres arts plastiques</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/730/">
 		<ns1:Notation>730</ns1:Notation>
-		<ns1:Label>Sculpture et autres arts plastiques</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/731/">
-		<ns1:Notation>731</ns1:Notation>
-		<ns1:Label>Sculpture et autres arts plastiques</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/732/">
-		<ns1:Notation>732</ns1:Notation>
-		<ns1:Label>Sculpture et autres arts plastiques</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/733/">
-		<ns1:Notation>733</ns1:Notation>
-		<ns1:Label>Sculpture et autres arts plastiques</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/734/">
-		<ns1:Notation>734</ns1:Notation>
-		<ns1:Label>Sculpture et autres arts plastiques</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/735/">
-		<ns1:Notation>735</ns1:Notation>
-		<ns1:Label>Sculpture et autres arts plastiques</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/736/">
-		<ns1:Notation>736</ns1:Notation>
-		<ns1:Label>Sculpture et autres arts plastiques</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/737/">
-		<ns1:Notation>737</ns1:Notation>
-		<ns1:Label>Sculpture et autres arts plastiques</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/738/">
-		<ns1:Notation>738</ns1:Notation>
-		<ns1:Label>Sculpture et autres arts plastiques</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/739/">
-		<ns1:Notation>739</ns1:Notation>
 		<ns1:Label>Sculpture et autres arts plastiques</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/74/">
@@ -2821,76 +1861,12 @@
 		<ns1:Notation>740</ns1:Notation>
 		<ns1:Label>Dessin et arts décoratifs</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/741/">
-		<ns1:Notation>741</ns1:Notation>
-		<ns1:Label>Dessin et arts décoratifs</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/742/">
-		<ns1:Notation>742</ns1:Notation>
-		<ns1:Label>Dessin et arts décoratifs</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/743/">
-		<ns1:Notation>743</ns1:Notation>
-		<ns1:Label>Dessin et arts décoratifs</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/745/">
-		<ns1:Notation>745</ns1:Notation>
-		<ns1:Label>Dessin et arts décoratifs</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/746/">
-		<ns1:Notation>746</ns1:Notation>
-		<ns1:Label>Dessin et arts décoratifs</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/747/">
-		<ns1:Notation>747</ns1:Notation>
-		<ns1:Label>Dessin et arts décoratifs</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/748/">
-		<ns1:Notation>748</ns1:Notation>
-		<ns1:Label>Dessin et arts décoratifs</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/749/">
-		<ns1:Notation>749</ns1:Notation>
-		<ns1:Label>Dessin et arts décoratifs</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/75/">
 		<ns1:Notation>750</ns1:Notation>
 		<ns1:Label>Arts visuels et plastiques</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/750/">
 		<ns1:Notation>750</ns1:Notation>
-		<ns1:Label>La peinture et les peintures</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/751/">
-		<ns1:Notation>751</ns1:Notation>
-		<ns1:Label>La peinture et les peintures</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/752/">
-		<ns1:Notation>752</ns1:Notation>
-		<ns1:Label>La peinture et les peintures</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/753/">
-		<ns1:Notation>753</ns1:Notation>
-		<ns1:Label>La peinture et les peintures</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/754/">
-		<ns1:Notation>754</ns1:Notation>
-		<ns1:Label>La peinture et les peintures</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/755/">
-		<ns1:Notation>755</ns1:Notation>
-		<ns1:Label>La peinture et les peintures</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/757/">
-		<ns1:Notation>757</ns1:Notation>
-		<ns1:Label>La peinture et les peintures</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/758/">
-		<ns1:Notation>758</ns1:Notation>
-		<ns1:Label>La peinture et les peintures</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/759/">
-		<ns1:Notation>759</ns1:Notation>
 		<ns1:Label>La peinture et les peintures</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/76/">
@@ -2901,72 +1877,12 @@
 		<ns1:Notation>760</ns1:Notation>
 		<ns1:Label>Arts graphiques, gravures et estampes</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/761/">
-		<ns1:Notation>761</ns1:Notation>
-		<ns1:Label>Arts graphiques, gravures et estampes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/763/">
-		<ns1:Notation>763</ns1:Notation>
-		<ns1:Label>Arts graphiques, gravures et estampes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/764/">
-		<ns1:Notation>764</ns1:Notation>
-		<ns1:Label>Arts graphiques, gravures et estampes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/765/">
-		<ns1:Notation>765</ns1:Notation>
-		<ns1:Label>Arts graphiques, gravures et estampes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/766/">
-		<ns1:Notation>766</ns1:Notation>
-		<ns1:Label>Arts graphiques, gravures et estampes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/767/">
-		<ns1:Notation>767</ns1:Notation>
-		<ns1:Label>Arts graphiques, gravures et estampes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/769/">
-		<ns1:Notation>769</ns1:Notation>
-		<ns1:Label>Arts graphiques, gravures et estampes</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/77/">
 		<ns1:Notation>770</ns1:Notation>
 		<ns1:Label>Photographie, photographies, art par ordinateur (art numérique)</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/770/">
 		<ns1:Notation>770</ns1:Notation>
-		<ns1:Label>Photographie, photographies, art par ordinateur (art numérique)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/771/">
-		<ns1:Notation>771</ns1:Notation>
-		<ns1:Label>Photographie, photographies, art par ordinateur (art numérique)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/772/">
-		<ns1:Notation>772</ns1:Notation>
-		<ns1:Label>Photographie, photographies, art par ordinateur (art numérique)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/773/">
-		<ns1:Notation>773</ns1:Notation>
-		<ns1:Label>Photographie, photographies, art par ordinateur (art numérique)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/774/">
-		<ns1:Notation>774</ns1:Notation>
-		<ns1:Label>Photographie, photographies, art par ordinateur (art numérique)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/775/">
-		<ns1:Notation>775</ns1:Notation>
-		<ns1:Label>Photographie, photographies, art par ordinateur (art numérique)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/776/">
-		<ns1:Notation>776</ns1:Notation>
-		<ns1:Label>Photographie, photographies, art par ordinateur (art numérique)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/778/">
-		<ns1:Notation>778</ns1:Notation>
-		<ns1:Label>Photographie, photographies, art par ordinateur (art numérique)</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/779/">
-		<ns1:Notation>779</ns1:Notation>
 		<ns1:Label>Photographie, photographies, art par ordinateur (art numérique)</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/78/">
@@ -2985,28 +1901,12 @@
 		<ns1:Notation>782</ns1:Notation>
 		<ns1:Label>Musiques vocales</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/783/">
-		<ns1:Notation>783</ns1:Notation>
-		<ns1:Label>Musiques vocales</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/784/">
 		<ns1:Notation>784</ns1:Notation>
 		<ns1:Label>Musiques instrumentales</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/785/">
-		<ns1:Notation>785</ns1:Notation>
-		<ns1:Label>Musiques instrumentales</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/786/">
 		<ns1:Notation>786</ns1:Notation>
-		<ns1:Label>Les instruments</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/787/">
-		<ns1:Notation>787</ns1:Notation>
-		<ns1:Label>Les instruments</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/788/">
-		<ns1:Notation>788</ns1:Notation>
 		<ns1:Label>Les instruments</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/79/">
@@ -3074,25 +1974,9 @@
 		<ns1:Notation>803</ns1:Notation>
 		<ns1:Label>Généralités</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/805/">
-		<ns1:Notation>805</ns1:Notation>
-		<ns1:Label>Généralités</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/806/">
-		<ns1:Notation>806</ns1:Notation>
-		<ns1:Label>Généralités</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/807/">
-		<ns1:Notation>807</ns1:Notation>
-		<ns1:Label>Généralités</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/808/">
 		<ns1:Notation>808</ns1:Notation>
 		<ns1:Label>Rhétorique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/809/">
-		<ns1:Notation>809</ns1:Notation>
-		<ns1:Label>Généralités</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/81/">
 		<ns1:Notation>810</ns1:Notation>
@@ -3100,34 +1984,6 @@
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/811/">
 		<ns1:Notation>811</ns1:Notation>
-		<ns1:Label>Littérature</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/812/">
-		<ns1:Notation>812</ns1:Notation>
-		<ns1:Label>Littérature</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/813/">
-		<ns1:Notation>813</ns1:Notation>
-		<ns1:Label>Littérature</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/814/">
-		<ns1:Notation>814</ns1:Notation>
-		<ns1:Label>Littérature</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/815/">
-		<ns1:Notation>815</ns1:Notation>
-		<ns1:Label>Littérature</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/816/">
-		<ns1:Notation>816</ns1:Notation>
-		<ns1:Label>Littérature</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/817/">
-		<ns1:Notation>817</ns1:Notation>
-		<ns1:Label>Littérature</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/818/">
-		<ns1:Notation>818</ns1:Notation>
 		<ns1:Label>Littérature</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/84/">
@@ -3178,78 +2034,6 @@
 		<ns1:Notation>851</ns1:Notation>
 		<ns1:Label>Littérature</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/852/">
-		<ns1:Notation>852</ns1:Notation>
-		<ns1:Label>Littérature</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/853/">
-		<ns1:Notation>853</ns1:Notation>
-		<ns1:Label>Littérature</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/854/">
-		<ns1:Notation>854</ns1:Notation>
-		<ns1:Label>Littérature</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/855/">
-		<ns1:Notation>855</ns1:Notation>
-		<ns1:Label>Littérature</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/856/">
-		<ns1:Notation>856</ns1:Notation>
-		<ns1:Label>Littérature</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/857/">
-		<ns1:Notation>857</ns1:Notation>
-		<ns1:Label>Littérature</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/858/">
-		<ns1:Notation>858</ns1:Notation>
-		<ns1:Label>Littérature</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/859/">
-		<ns1:Notation>859</ns1:Notation>
-		<ns1:Label>Littérature</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="2" uri="http://dewey.info/class/86/">
-		<ns1:Notation>860</ns1:Notation>
-		<ns1:Label>Littérature</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/861/">
-		<ns1:Notation>861</ns1:Notation>
-		<ns1:Label>Littérature</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/862/">
-		<ns1:Notation>862</ns1:Notation>
-		<ns1:Label>Littérature</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/863/">
-		<ns1:Notation>863</ns1:Notation>
-		<ns1:Label>Littérature</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/864/">
-		<ns1:Notation>864</ns1:Notation>
-		<ns1:Label>Littérature</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/865/">
-		<ns1:Notation>865</ns1:Notation>
-		<ns1:Label>Littérature</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/866/">
-		<ns1:Notation>866</ns1:Notation>
-		<ns1:Label>Littérature</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/867/">
-		<ns1:Notation>867</ns1:Notation>
-		<ns1:Label>Littérature</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/868/">
-		<ns1:Notation>868</ns1:Notation>
-		<ns1:Label>Littérature</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/869/">
-		<ns1:Notation>869</ns1:Notation>
-		<ns1:Label>Littérature</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/87/">
 		<ns1:Notation>870</ns1:Notation>
 		<ns1:Label>Lettres classiques</ns1:Label>
@@ -3258,37 +2042,9 @@
 		<ns1:Notation>870</ns1:Notation>
 		<ns1:Label>Littérature latine</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/871/">
-		<ns1:Notation>871</ns1:Notation>
-		<ns1:Label>Littérature latine</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/872/">
-		<ns1:Notation>872</ns1:Notation>
-		<ns1:Label>Littérature latine</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/873/">
 		<ns1:Notation>873</ns1:Notation>
 		<ns1:Label>Poésie et fiction épiques latines</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/874/">
-		<ns1:Notation>874</ns1:Notation>
-		<ns1:Label>Littérature latine</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/875/">
-		<ns1:Notation>875</ns1:Notation>
-		<ns1:Label>Littérature latine</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/876/">
-		<ns1:Notation>876</ns1:Notation>
-		<ns1:Label>Littérature latine</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/877/">
-		<ns1:Notation>877</ns1:Notation>
-		<ns1:Label>Littérature latine</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/878/">
-		<ns1:Notation>878</ns1:Notation>
-		<ns1:Label>Littérature latine</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/879/">
 		<ns1:Notation>879</ns1:Notation>
@@ -3300,38 +2056,6 @@
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/880/">
 		<ns1:Notation>880</ns1:Notation>
-		<ns1:Label>Littérature grecque classique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/881/">
-		<ns1:Notation>881</ns1:Notation>
-		<ns1:Label>Littérature grecque classique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/882/">
-		<ns1:Notation>882</ns1:Notation>
-		<ns1:Label>Littérature grecque classique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/883/">
-		<ns1:Notation>883</ns1:Notation>
-		<ns1:Label>Littérature grecque classique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/884/">
-		<ns1:Notation>884</ns1:Notation>
-		<ns1:Label>Littérature grecque classique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/885/">
-		<ns1:Notation>885</ns1:Notation>
-		<ns1:Label>Littérature grecque classique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/886/">
-		<ns1:Notation>886</ns1:Notation>
-		<ns1:Label>Littérature grecque classique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/887/">
-		<ns1:Notation>887</ns1:Notation>
-		<ns1:Label>Littérature grecque classique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/888/">
-		<ns1:Notation>888</ns1:Notation>
 		<ns1:Label>Littérature grecque classique</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/889/">
@@ -3354,10 +2078,6 @@
 		<ns1:Notation>892.4</ns1:Notation>
 		<ns1:Label>Langues afro-asiatiques; langues sémitiques</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/892.7/">
-		<ns1:Notation>892.7</ns1:Notation>
-		<ns1:Label>Langue afro-asiatiques; langues sémantiques</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/893/">
 		<ns1:Notation>893</ns1:Notation>
 		<ns1:Label>Littératures afro-asiatiques non sémitiques</ns1:Label>
@@ -3366,10 +2086,6 @@
 		<ns1:Notation>894.6</ns1:Notation>
 		<ns1:Label>Littératures altaïques, ouraliennes, hyperboréennes, dravidiennes</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/894.51/">
-		<ns1:Notation>894.51</ns1:Notation>
-		<ns1:Label>Littératures </ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/895/">
 		<ns1:Notation>895</ns1:Notation>
 		<ns1:Label>Littératures de l’Asie de l’Est et du Sud-Est</ns1:Label>
@@ -3377,14 +2093,6 @@
 	<ns1:Concept level="3" uri="http://dewey.info/class/895.1/">
 		<ns1:Notation>895.1</ns1:Notation>
 		<ns1:Label>Langues de l’Asie de l’Est et du Sud-Est</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/895.6/">
-		<ns1:Notation>895.6</ns1:Notation>
-		<ns1:Label>Littérature</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/896/">
-		<ns1:Notation>896</ns1:Notation>
-		<ns1:Label>Littérature</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/897/">
 		<ns1:Notation>897</ns1:Notation>
@@ -3471,26 +2179,6 @@
 		<ns1:Notation>914</ns1:Notation>
 		<ns1:Label>Géographie humaine</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/915/">
-		<ns1:Notation>915</ns1:Notation>
-		<ns1:Label>Géographie humaine</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/916/">
-		<ns1:Notation>916</ns1:Notation>
-		<ns1:Label>Géographie humaine</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/917/">
-		<ns1:Notation>917</ns1:Notation>
-		<ns1:Label>Géographie humaine</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/918/">
-		<ns1:Notation>918</ns1:Notation>
-		<ns1:Label>Géographie humaine</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/919/">
-		<ns1:Notation>919</ns1:Notation>
-		<ns1:Label>Géographie humaine</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/92/">
 		<ns1:Notation>920</ns1:Notation>
 		<ns1:Label>Biographie et généalogie</ns1:Label>
@@ -3511,80 +2199,12 @@
 		<ns1:Notation>930</ns1:Notation>
 		<ns1:Label>Histoire du monde ancien, jusqu’à 499 après J.C.</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/931/">
-		<ns1:Notation>931</ns1:Notation>
-		<ns1:Label>Histoire du monde ancien, jusqu’à 499 après J.C.</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/932/">
-		<ns1:Notation>932</ns1:Notation>
-		<ns1:Label>Histoire du monde ancien, jusqu’à 499 après J.C.</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/933/">
-		<ns1:Notation>933</ns1:Notation>
-		<ns1:Label>Histoire du monde ancien, jusqu’à 499 après J.C.</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/934/">
-		<ns1:Notation>934</ns1:Notation>
-		<ns1:Label>Histoire du monde ancien, jusqu’à 499 après J.C.</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/935/">
-		<ns1:Notation>935</ns1:Notation>
-		<ns1:Label>Histoire du monde ancien, jusqu’à 499 après J.C.</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/936/">
-		<ns1:Notation>936</ns1:Notation>
-		<ns1:Label>Histoire du monde ancien, jusqu’à 499 après J.C.</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/937/">
-		<ns1:Notation>937</ns1:Notation>
-		<ns1:Label>Histoire du monde ancien, jusqu’à 499 après J.C.</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/938/">
-		<ns1:Notation>938</ns1:Notation>
-		<ns1:Label>Histoire du monde ancien, jusqu’à 499 après J.C.</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/939/">
-		<ns1:Notation>939</ns1:Notation>
-		<ns1:Label>Histoire du monde ancien, jusqu’à 499 après J.C.</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/94/">
 		<ns1:Notation>940</ns1:Notation>
 		<ns1:Label>Histoire de l’Europe</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/941/">
 		<ns1:Notation>941</ns1:Notation>
-		<ns1:Label>Histoire de l’Europe</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/942/">
-		<ns1:Notation>942</ns1:Notation>
-		<ns1:Label>Histoire de l’Europe</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/943/">
-		<ns1:Notation>943</ns1:Notation>
-		<ns1:Label>Histoire de l’Europe</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/944/">
-		<ns1:Notation>944</ns1:Notation>
-		<ns1:Label>Histoire de l’Europe</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/945/">
-		<ns1:Notation>945</ns1:Notation>
-		<ns1:Label>Histoire de l’Europe</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/946/">
-		<ns1:Notation>946</ns1:Notation>
-		<ns1:Label>Histoire de l’Europe</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/946.9/">
-		<ns1:Notation>946.9</ns1:Notation>
-		<ns1:Label>Histoire de l’Europe</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/947/">
-		<ns1:Notation>947</ns1:Notation>
-		<ns1:Label>Histoire de l’Europe</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/948/">
-		<ns1:Notation>948</ns1:Notation>
 		<ns1:Label>Histoire de l’Europe</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/948.9/">
@@ -3594,10 +2214,6 @@
 	<ns1:Concept level="3" uri="http://dewey.info/class/948.97/">
 		<ns1:Notation>948.97</ns1:Notation>
 		<ns1:Label>Langues altaïques, ouraliennes, hyperboréennes et dravidiennes</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/949/">
-		<ns1:Notation>949</ns1:Notation>
-		<ns1:Label>Histoire de l’Europe</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/949.5/">
 		<ns1:Notation>949.5</ns1:Notation>
@@ -3615,41 +2231,9 @@
 		<ns1:Notation>951</ns1:Notation>
 		<ns1:Label>Histoire de l’Asie, Orient, Extrême-Orient</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/952/">
-		<ns1:Notation>952</ns1:Notation>
-		<ns1:Label>Histoire de l’Asie, Orient, Extrême-Orient</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/953/">
-		<ns1:Notation>953</ns1:Notation>
-		<ns1:Label>Histoire de l’Asie, Orient, Extrême-Orient</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/954/">
-		<ns1:Notation>954</ns1:Notation>
-		<ns1:Label>Histoire de l’Asie, Orient, Extrême-Orient</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/955/">
-		<ns1:Notation>955</ns1:Notation>
-		<ns1:Label>Histoire de l’Asie, Orient, Extrême-Orient</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/956/">
-		<ns1:Notation>956</ns1:Notation>
-		<ns1:Label>Histoire de l’Asie, Orient, Extrême-Orient</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/956.9/">
 		<ns1:Notation>956.9</ns1:Notation>
 		<ns1:Label>Langues afro-asiatiques; langues sémitiques</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/957/">
-		<ns1:Notation>957</ns1:Notation>
-		<ns1:Label>Histoire de l’Asie, Orient, Extrême-Orient</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/958/">
-		<ns1:Notation>958</ns1:Notation>
-		<ns1:Label>Histoire de l’Asie, Orient, Extrême-Orient</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/959/">
-		<ns1:Notation>959</ns1:Notation>
-		<ns1:Label>Histoire de l’Asie, Orient, Extrême-Orient</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/96/">
 		<ns1:Notation>960</ns1:Notation>
@@ -3657,38 +2241,6 @@
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/961/">
 		<ns1:Notation>961</ns1:Notation>
-		<ns1:Label>Histoire de l’Afrique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/962/">
-		<ns1:Notation>962</ns1:Notation>
-		<ns1:Label>Histoire de l’Afrique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/963/">
-		<ns1:Notation>963</ns1:Notation>
-		<ns1:Label>Histoire de l’Afrique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/964/">
-		<ns1:Notation>964</ns1:Notation>
-		<ns1:Label>Histoire de l’Afrique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/965/">
-		<ns1:Notation>965</ns1:Notation>
-		<ns1:Label>Histoire de l’Afrique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/966/">
-		<ns1:Notation>966</ns1:Notation>
-		<ns1:Label>Histoire de l’Afrique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/967/">
-		<ns1:Notation>967</ns1:Notation>
-		<ns1:Label>Histoire de l’Afrique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/968/">
-		<ns1:Notation>968</ns1:Notation>
-		<ns1:Label>Histoire de l’Afrique</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/969/">
-		<ns1:Notation>969</ns1:Notation>
 		<ns1:Label>Histoire de l’Afrique</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/97/">
@@ -3699,38 +2251,6 @@
 		<ns1:Notation>971</ns1:Notation>
 		<ns1:Label>Histoire de l’Amérique du Nord</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/972/">
-		<ns1:Notation>972</ns1:Notation>
-		<ns1:Label>Histoire de l’Amérique du Nord</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/973/">
-		<ns1:Notation>973</ns1:Notation>
-		<ns1:Label>Histoire de l’Amérique du Nord</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/974/">
-		<ns1:Notation>974</ns1:Notation>
-		<ns1:Label>Histoire de l’Amérique du Nord</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/975/">
-		<ns1:Notation>975</ns1:Notation>
-		<ns1:Label>Histoire de l’Amérique du Nord</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/976/">
-		<ns1:Notation>976</ns1:Notation>
-		<ns1:Label>Histoire de l’Amérique du Nord</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/977/">
-		<ns1:Notation>977</ns1:Notation>
-		<ns1:Label>Histoire de l’Amérique du Nord</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/978/">
-		<ns1:Notation>978</ns1:Notation>
-		<ns1:Label>Histoire de l’Amérique du Nord</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/979/">
-		<ns1:Notation>979</ns1:Notation>
-		<ns1:Label>Histoire de l’Amérique du Nord</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/98/">
 		<ns1:Notation>980</ns1:Notation>
 		<ns1:Label>Histoire de l’Amérique du Sud</ns1:Label>
@@ -3739,72 +2259,12 @@
 		<ns1:Notation>981</ns1:Notation>
 		<ns1:Label>Histoire de l’Amérique du Sud</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/982/">
-		<ns1:Notation>982</ns1:Notation>
-		<ns1:Label>Histoire de l’Amérique du Sud</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/983/">
-		<ns1:Notation>983</ns1:Notation>
-		<ns1:Label>Histoire de l’Amérique du Sud</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/984/">
-		<ns1:Notation>984</ns1:Notation>
-		<ns1:Label>Histoire de l’Amérique du Sud</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/985/">
-		<ns1:Notation>985</ns1:Notation>
-		<ns1:Label>Histoire de l’Amérique du Sud</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/986/">
-		<ns1:Notation>986</ns1:Notation>
-		<ns1:Label>Histoire de l’Amérique du Sud</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/987/">
-		<ns1:Notation>987</ns1:Notation>
-		<ns1:Label>Histoire de l’Amérique du Sud</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/988/">
-		<ns1:Notation>988</ns1:Notation>
-		<ns1:Label>Histoire de l’Amérique du Sud</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/989/">
-		<ns1:Notation>989</ns1:Notation>
-		<ns1:Label>Histoire de l’Amérique du Sud</ns1:Label>
-	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/99/">
 		<ns1:Notation>990</ns1:Notation>
 		<ns1:Label>Histoire d’autres aires</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/990/">
 		<ns1:Notation>990</ns1:Notation>
-		<ns1:Label>Histoire d’autres aires</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/993/">
-		<ns1:Notation>993</ns1:Notation>
-		<ns1:Label>Histoire d’autres aires</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/994/">
-		<ns1:Notation>994</ns1:Notation>
-		<ns1:Label>Histoire d’autres aires</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/995/">
-		<ns1:Notation>995</ns1:Notation>
-		<ns1:Label>Histoire d’autres aires</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/996/">
-		<ns1:Notation>996</ns1:Notation>
-		<ns1:Label>Histoire d’autres aires</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/997/">
-		<ns1:Notation>997</ns1:Notation>
-		<ns1:Label>Histoire d’autres aires</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/998/">
-		<ns1:Notation>998</ns1:Notation>
-		<ns1:Label>Histoire d’autres aires</ns1:Label>
-	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/999/">
-		<ns1:Notation>999</ns1:Notation>
 		<ns1:Label>Histoire d’autres aires</ns1:Label>
 	</ns1:Concept>
 </ns1:DeweyCodes>

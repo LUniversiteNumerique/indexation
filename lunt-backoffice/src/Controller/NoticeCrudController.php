@@ -142,12 +142,16 @@ class NoticeCrudController extends AbstractCrudController
         yield Field\ChoiceField::new('ressDate', t('notice.date', domain: 'EasyAdminBundle'))->setChoices(array_flip(range((int) date('Y'), (int) date('Y') - 100)))->hideOnIndex();
 
         yield Field\FormField::addFieldset('Liens de la ressource')->setIcon('fa fa-paperclip');
-        yield Field\BooleanField::new('zipFile')->setFormTypeOptions(['mapped' => false])->setLabel('Fichier Zip')->onlyOnForms();
+
+        yield Field\BooleanField::new('zipFile', 'Fichier Zip')->setFormTypeOptions(['mapped' => false, 'attr' => ['data-notice-setting-target' => 'ressToggle',]])->onlyOnForms();
+
         yield Field\TextField::new('ressUrl', t('notice.ressurl', domain: 'EasyAdminBundle'))->setHelp(t('notice.ressurl_help', domain: 'EasyAdminBundle'))
-            ->setFormTypeOptions(['attr' => ['class' => 'isUrl', 'placeholder' => 'https://...']])->setSortable(false);
+            ->setFormTypeOptions(['attr' => ['placeholder' => 'https://...'], 'required' => true])->setSortable(false);
+
         yield FileField::new('ressZip', 'Contenu Zip')->setUploadDir('public/uploads/files')->setHelp(t('notice.ressurl_help', domain: 'EasyAdminBundle'))->onlyOnForms()
-            ->setUploadedFileNamePattern('[timestamp]-[randomhash].[extension]')->setBasePath('/uploads/files')->setFormTypeOptions(['attr' => ['class' => 'isZip'],'required'=>false])
+            ->setUploadedFileNamePattern('[timestamp]-[randomhash].[extension]')->setBasePath('/uploads/files')->setRequired(true)
             ->setFileConstraints([new File(maxSize: '64M', mimeTypes: ["application/zip", "application/x-zip-compressed", "multipart/x-zip"])]);
+
         yield EntityField::new('ressources', t('notice.notices', domain: 'EasyAdminBundle'))
             ->setHelp(t('notice.notices_help', domain: 'EasyAdminBundle'))->hideOnIndex()->setFormType(NoticeAutoField::class);
         yield Field\ChoiceField::new('etat')->setChoices(NoticEtat::getLabels())->renderAsBadges(NoticEtat::getColors())->hideOnForm();
@@ -215,9 +219,9 @@ class NoticeCrudController extends AbstractCrudController
 
             yield Field\FormField::addFieldset('Classification thématique')->setIcon('fa fa-book');
             yield EntityField::new('disciFond',t('notice.discifond', domain: 'EasyAdminBundle'))->setHelp(t('notice.discifond_help', domain: 'EasyAdminBundle'))->onlyOnForms()
-                ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->where('entity.parent is null'))->setFormTypeOptions(['class' => Dewey::class,'mapped' => false,'required' => true])->setSortable(false);
+                ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->where('entity.parent is null'))->setFormTypeOptions(['class' => Dewey::class,'mapped' => false])->setSortable(false);
             yield EntityField::new('division')->setFormTypeOptions(['class' => Dewey::class,'auto_initialize' => false,'mapped' => false,'required' => true])->onlyOnForms();
-            yield EntityField::new('codewey','Code Dewey')->setFormTypeOptions(['class' => Dewey::class])->setRequired(true)->setSortable(false);
+            yield EntityField::new('codewey','Code Dewey')->setFormTypeOptions(['class' => Dewey::class])->setSortable(false);
             yield Field\TextField::new('label',t('notice.label', domain: 'EasyAdminBundle'))->setHelp(t('notice.label_help', domain: 'EasyAdminBundle'))->onlyOnDetail();
             yield Field\DateTimeField::new('creeLe',t('notice.creele', domain: 'EasyAdminBundle'))->onlyOnDetail();
             yield EntityField::new('repertoire',t('notice.repertoire', domain: 'EasyAdminBundle'))->setFormType(TreeChoiceType::class)->setHelp(t('notice.repertoire_help', domain: 'EasyAdminBundle'));
@@ -613,7 +617,7 @@ class NoticeCrudController extends AbstractCrudController
     }
     private function addCode(FormInterface $form, ?Dewey $child): void {
         $form->add('codewey', EntityType::class, [
-            'label' => t('notice.codewey', domain: 'EasyAdminBundle'), 'class' => Dewey::class, 'required' => false,
+            'label' => t('notice.codewey', domain: 'EasyAdminBundle'), 'class' => Dewey::class, 'required' => true,
             'choices' => $child ? $child->getChildren() : [], 'help' => t('notice.codewey_help', domain: 'EasyAdminBundle'),
             'placeholder' => $child ? 'Sélectionnez le code dewey' : 'Sélectionnez la division',
         ]);
