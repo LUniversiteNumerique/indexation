@@ -197,14 +197,13 @@ class NoticeCrudController extends AbstractCrudController
 
         if ($valdoc) {
             yield Field\FormField::addTab('Validation')->setHelp("Infos techniques complémentaires de validation");
-
             yield Field\FormField::addColumn(6);
 
             yield Field\FormField::addFieldset('Liens de la ressource')->setIcon('fa fa-folder-open');
             yield Field\ImageField::new('vignette')->setUploadDir('public/uploads/images')
                 ->setUploadedFileNamePattern('[timestamp]-[contenthash].[extension]')->setBasePath('/uploads/images')
                 ->setFileConstraints([new Image(['maxWidth' => 620, 'maxHeight' => 390])])->setHelp(t('notice.vignette_help', domain: 'EasyAdminBundle'))->setSortable(false);
-            yield Field\IntegerField::new('ressSize',t('notice.resssize', domain: 'EasyAdminBundle'))->setHelp(t('notice.resssize_help', domain: 'EasyAdminBundle'))->setColumns(6)->hideOnIndex();
+            yield Field\NumberField::new('ressSize',t('notice.resssize', domain: 'EasyAdminBundle'))->setHelp(t('notice.resssize_help', domain: 'EasyAdminBundle'))->setColumns(6)->hideOnIndex();
             yield DurationField::new('dureExec', "Durée d'exécution")->setHelp(t('notice.dureexec_help', domain: 'EasyAdminBundle'))->setColumns(6)->hideOnIndex();
             yield Field\UrlField::new('formEvalUrl',t('notice.formevalurl', domain: 'EasyAdminBundle'))
                 ->setFormTypeOptions(['default_protocol' => 'https', 'attr' => ['class' => 'isUrl', 'placeholder' => 'https://...']])->setHelp(t('notice.formevalurl_help', domain: 'EasyAdminBundle'))->hideOnIndex();
@@ -552,7 +551,7 @@ class NoticeCrudController extends AbstractCrudController
 
         /** @var Notice $notice */
         $notice = $ctx->getEntity()->getInstance();
-        $this->denyAccessUnlessGranted(NoticeActionVoter::EDIT, $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
+        $this->denyAccessUnlessGranted('ROLE_VALI_NOTI', $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
 
         $this->repository->add($notice->setLabel($label));
         $this->dispatcher->dispatch(new AfterNoticeStateSetEvent($notice, ['Catégoriser', 'Labellisée', 'Catégorisation']));

@@ -51,7 +51,7 @@ class Notice
     private ?array $ressLang = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $ressSize = null;
+    private ?float $ressSize = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $publieLe = null;
@@ -182,12 +182,12 @@ class Notice
         return $this;
     }
 
-    public function getRessSize(): ?int
+    public function getRessSize(): ?float
     {
         return $this->ressSize;
     }
 
-    public function setRessSize(?int $ressSize): self
+    public function setRessSize(?float $ressSize): self
     {
         $this->ressSize = $ressSize;
 

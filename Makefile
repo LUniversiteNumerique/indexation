@@ -15,15 +15,3 @@ dstop:
 
 bsh:
 	$(APP) exec -it backoffice bash
-
-######################################
-#                                    #
-#  chmod -R a+rw public/uploads/     #
-#  rm -rf public/assets              #
-#  php bin/console as:co             #
-#  rm -rf var/cache/prod/*           #
-#  chown -R www-data:www-data var/   #
-#  chown -R www-data:www-data /opt/lunt-resources  #
-#  chown -R 8983:8983 /opt/lunt-solr/*
-#                                    #
-######################################
