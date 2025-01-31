@@ -10,16 +10,15 @@ class IndexingNotice
 {
     public function __construct(#[Jms\XmlList(entry: "field", inline: true), Jms\Type("array<".Field::class.">")] public array $fields = []){}
 
-    static function fromNotice(Notice $notice): IndexingNotice
+    static function fromNotice(Notice $notice, Univerique $core): IndexingNotice
     {
         $user = $notice->getCreateur();
         $dewe = $notice->getCodewey(); $disc = $notice->getSpecialite();
-        $core = $notice->getValidateur()?->getUntheme();
         return new self([
             new Field('uuid', $notice->getUuid()),
             new Field('titre', $notice->getTitre()),
-            new Field('entrepot_nom',$core?->getLabel()),
-            new Field('entrepot_logo', $core?->getName()),
+            new Field('entrepot_nom',$core->getLabel()),
+            new Field('entrepot_logo', $core->getName()),
             new Field('entrepot_url',"http://www.uoh.fr"),
             new Field('vignette', $notice->getVignette()),
             new Field('ressource_lien', $notice->getRessUrl()),

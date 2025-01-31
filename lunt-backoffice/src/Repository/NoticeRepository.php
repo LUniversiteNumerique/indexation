@@ -32,11 +32,12 @@ class NoticeRepository extends ServiceEntityRepository
 
     public function findFrom(IndexingConfig $cfg, int $limit, int $offset): array
     {
-        $qr = $this->createQueryBuilder('n')->join('n.validateur', 'u')->where('n.etat = :etat');
+        $qr = $this->createQueryBuilder('n')->join('n.specialite', 's')
+            ->join('s.parent', 'u')->where('n.etat = :etat');
         if(!$cfg->isFullMode()) $qr->andWhere('n.publieLe is null OR n.editeLe > :date')->setParameter('date', $cfg->getScheduleAt());
         $qr->orWhere('n.etat != :etat AND n.publieLe is not null');
 
-        return $qr->andWhere("u.untheme = :core")
+        return $qr->andWhere("u.parent = :core")
             ->setParameter("core", $cfg->getIndexCore())->setParameter("etat", NoticEtat::Approved)
             ->setFirstResult($offset)->setMaxResults($limit)->getQuery()->getResult();
     }

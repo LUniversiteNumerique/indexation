@@ -19,7 +19,7 @@ class Univerique
     private ?string $label = null;
 
     #[ORM\Column(length: 255, unique:true),
-        Assert\Regex('/^[a-zA-Z0-9-_]+$/')]
+        Assert\Regex('/^[a-zA-Z0-9-_]+$/', "Le nom du répertoire ne peut contenir que des caractères alphanumériques, un tiret ou un tiret bas.")]
     private ?string $name = null;
 
     #[ORM\ManyToMany(targetEntity: Discipline::class)]

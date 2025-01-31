@@ -2,7 +2,7 @@
 
 namespace App\Message\Handler;
 
-use App\Entity\{IndexingConfig, Notice, NoticEtat};
+use App\Entity\{IndexingConfig, Notice, NoticEtat, Univerique};
 use Doctrine\ORM\{EntityManagerInterface,EntityRepository};
 use App\Entity\Dto\{OaidcDto, SuplomDto, IndexingNotice};
 use App\Service\{FileService, SolrApiService};
@@ -45,11 +45,11 @@ readonly class InterIndexingHandler
                 } elseif($d->getPublieLe())  $olds[] = $d->setPublieLe(null)->getUuid();// A dépublier
             }
 
-            $this->sm->editDocuments($this->pop($olds, $core) . $this->push($news, $core), "$core/update?commit=true");
+            $this->sm->editDocuments($this->pop($olds, $core) . $this->push($news, $task->getIndexCore()), "$core/update?commit=true");
             $task->setScheduleAt(new \DateTime());
             $this->em->flush(); $this->em->clear();
 
-            $this->lg->info(sprintf("Notices concernées %d:  %d (indexées) + %d (dépubliées)", count($data), count($news), count($olds)));
+            $this->lg->info(sprintf("Notices concernées %d:  %d (indexées) + %d (désindexées)", count($data), count($news), count($olds)));
             $offset += $task->getBatchSize();
         }
 
@@ -65,11 +65,11 @@ readonly class InterIndexingHandler
         return "<delete>$itemSP</delete>";
     }
 
-    private function push(array $sources, string $index): string
+    private function push(array $sources, Univerique $unt): string
     {
-        $itemSF = []; $itemDC = []; $itemSP = "";
+        $itemSF = []; $itemDC = []; $itemSP = ""; $index = $unt->getName();
         foreach ($sources as $notice) {
-            $item = $this->js->serialize(IndexingNotice::fromNotice($notice), 'xml'); $itemSP .= preg_replace('/<\?xml.*?\?>/', '', $item); //SolrPivotBuildingAnalyzer
+            $itemSP .= preg_replace('/<\?xml.*?\?>/', '', $this->js->serialize(IndexingNotice::fromNotice($notice, $unt), 'xml')); //SolrPivotBuildingAnalyzer
             $itemDC[sprintf("dc_%s.xml", $notice->getUuid())] = $this->js->serialize(OaidcDto::create($notice), 'xml'); //DublinCoreExportAnalyzer
             $itemSF[sprintf("sf_%s.xml", $notice->getUuid())] = $this->js->serialize(SuplomDto::create($notice), 'xml'); //SuplomfrExportAnalyzer
         }

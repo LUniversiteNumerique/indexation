@@ -38,7 +38,7 @@ class IndexingConfigCrudController extends AbstractCrudController
         } else yield TextField::new('frequency','Fréquence')->setSortable(false);
         yield IntegerField::new('batchSize','Taille du lot')->setHelp('Batch Size');
         yield BooleanField::new('indexType',"Indexation externe ?")->renderAsSwitch(false)->setSortable(false)->hideWhenUpdating();
-        yield BooleanField::new('fullMode','Réindexation complète ?')->renderAsSwitch(false)->setSortable(false)->hideWhenUpdating();
+        yield BooleanField::new('fullMode','Réindexation complète ?')->setSortable(false);
         yield DateTimeField::new('scheduleAt','Dernière Execution')->hideOnForm();
     }
 

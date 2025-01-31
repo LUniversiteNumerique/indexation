@@ -6,7 +6,7 @@ export default class extends Controller {
     initialize() {
         this.zipParent = document.querySelector('#Notice_ressZip_file').closest(".form-group");
         this.urlParent = document.querySelector('#Notice_ressUrl').closest(".form-group");
-        this.toparent = this.urlParent.closest(".row")
+        this.toparent = this.urlParent.closest(".col-12")
     }
 
     connect() {
