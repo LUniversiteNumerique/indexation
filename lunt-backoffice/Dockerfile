@@ -27,11 +27,8 @@ COPY ./custom-php.ini /usr/local/etc/php/conf.d/
 WORKDIR /var/www/site
 COPY . /var/www/site
 
-RUN if [ "$APP_ENV" = "dev" ]; then \
-      composer install -v; \
-    else \
-      composer install --no-dev --optimize-autoloader; \
-    fi
+RUN if [ "$APP_ENV" = "dev" ]; then  ["composer","install","-v"];  \
+    else composer install --no-dev --optimize-autoloader; fi
 
 RUN chmod +x /root/nginx-start.sh && \
     mkdir -p /var/log/php-fpm && mkdir -p /var/log/ngninx && \
