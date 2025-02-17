@@ -111,9 +111,10 @@ class NoticeCrudController extends AbstractCrudController
         return $filters->add(ChoiceFilter::new('etat')->setChoices(NoticEtat::getLabels())->renderExpanded())
             ->add(TextFilter::new('titre'))
             ->add(EntityFilter::new('auteurs'))
-            ->add(EntityFilter::new('specialite', 'Spécialité'))
             ->add(DateTimeFilter::new('creeLe', 'Créée le'))
-            ->add(DateTimeFilter::new('editeLe', 'Date de modification'));
+            ->add(DateTimeFilter::new('editeLe', 'Date de modification'))
+            ->add(EntityFilter::new('specialite', 'Spécialité'))
+            ;
     }
 
     public function configureFields(string $pageName): iterable
@@ -128,7 +129,7 @@ class NoticeCrudController extends AbstractCrudController
         yield Field\FormField::addFieldset('Description générale')->setIcon('fa fa-pencil');
         yield Field\IdField::new('id')->onlyOnDetail();
         yield Field\TextField::new('titre')->setHelp(t('notice.titre_help', domain: 'EasyAdminBundle'));
-        yield Field\TextEditorField::new('description')->setHelp(t('notice.description_help', domain: 'EasyAdminBundle'))->hideOnIndex();
+        yield Field\TextEditorField::new('description')->setHelp(t('notice.description_help', domain: 'EasyAdminBundle'))->setTemplatePath('admin/fields/text_editor.html.twig')->hideOnIndex();
         yield EntityField::new('porteurs', t('notice.porteurs', domain: 'EasyAdminBundle'))->hideOnIndex()
             ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.abrege', 'ASC'))->setSortable(false)
             ->setHelp(t('notice.porteurs_help', domain: 'EasyAdminBundle'))->setRequired(true);
@@ -187,7 +188,7 @@ class NoticeCrudController extends AbstractCrudController
 
                 return $qb->orderBy('entity.nom', 'ASC');
             })->setSortable(false)->onlyOnForms()
-            ->setHelp(t('notice.champdisc_help', domain: 'EasyAdminBundle'))->setFormTypeOptions(['class' => Discipline::class, 'mapped' => false]);
+            ->setHelp(t('notice.champdisc_help', domain: 'EasyAdminBundle'))->setFormTypeOptions(['class' => Discipline::class, 'mapped' => false, 'required' => true]);
         yield EntityField::new('discipline')->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.nom', 'ASC'))
             ->setFormTypeOptions(['class' => Discipline::class, 'auto_initialize' => false, 'mapped' => false])->onlyOnForms()
             ->setHelp(t('notice.discipline_help', domain: 'EasyAdminBundle'))->setSortable(false);
@@ -219,7 +220,7 @@ class NoticeCrudController extends AbstractCrudController
 
             yield Field\FormField::addFieldset('Classification thématique')->setIcon('fa fa-book');
             yield EntityField::new('disciFond',t('notice.discifond', domain: 'EasyAdminBundle'))->setHelp(t('notice.discifond_help', domain: 'EasyAdminBundle'))->onlyOnForms()
-                ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->where('entity.parent is null'))->setFormTypeOptions(['class' => Dewey::class,'mapped' => false])->setSortable(false);
+                ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->where('entity.parent is null'))->setFormTypeOptions(['class' => Dewey::class,'mapped' => false,'required' => false])->setSortable(false);
             yield EntityField::new('division')->setFormTypeOptions(['class' => Dewey::class,'auto_initialize' => false,'mapped' => false,'required' => true])->onlyOnForms();
             yield EntityField::new('codewey','Code Dewey')->setFormTypeOptions(['class' => Dewey::class])->setSortable(false);
             yield Field\TextField::new('label',t('notice.label', domain: 'EasyAdminBundle'))->setHelp(t('notice.label_help', domain: 'EasyAdminBundle'))->onlyOnDetail();
@@ -243,6 +244,8 @@ class NoticeCrudController extends AbstractCrudController
             $folder = $this->rep->findOneForAll($folderId);
             $notice->setRepertoire($folder);
         }
+        /** @var User $user */$user = $this->getUser();
+        if($sch = $user->getSchool()) $notice->addPorteur($sch);
         return $notice->setCreateur($this->getUser());
     }
 
@@ -580,7 +583,7 @@ class NoticeCrudController extends AbstractCrudController
     private function addDisc(FormInterface $form, ?Discipline $child): void
     {
         $builder = $form->getConfig()->getFormFactory()->createNamedBuilder('discipline', EntityType::class, null, [
-            'class' => Discipline::class, 'mapped' => false, 'auto_initialize' => false, 'required' => false,
+            'class' => Discipline::class, 'mapped' => false, 'auto_initialize' => false, 'required' => true,
             'label' => t('notice.discipline', domain: 'EasyAdminBundle'), 'choices' => $child ? $child->getChildren() : [], 'help' => t('notice.discipline_help', domain: 'EasyAdminBundle'),
             'placeholder' => $child ? 'Sélectionnez la discipline' : 'Sélectionnez le champ disciplinaire',
         ]);
@@ -595,7 +598,7 @@ class NoticeCrudController extends AbstractCrudController
     private function addDivi(FormInterface $form, ?Dewey $child): void
     {
         $builder = $form->getConfig()->getFormFactory()->createNamedBuilder('division', EntityType::class, null, [
-            'class' => Dewey::class, 'mapped' => false, 'auto_initialize' => false, 'required' => false,
+            'class' => Dewey::class, 'mapped' => false, 'auto_initialize' => false, 'required' => true,
             'label' => t('notice.division', domain: 'EasyAdminBundle'), 'choices' => $child ? $child->getChildren() : [], 'help' => t('notice.division_help', domain: 'EasyAdminBundle'),
             'placeholder' => $child ? 'Sélectionnez la division' : 'Sélectionnez la discipline fondamentale',
         ]);
