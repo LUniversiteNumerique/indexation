@@ -209,7 +209,7 @@ class NoticeCrudController extends AbstractCrudController
             yield Field\UrlField::new('formEvalUrl',t('notice.formevalurl', domain: 'EasyAdminBundle'))
                 ->setFormTypeOptions(['default_protocol' => 'https', 'attr' => ['class' => 'isUrl', 'placeholder' => 'https://...']])->setHelp(t('notice.formevalurl_help', domain: 'EasyAdminBundle'))->hideOnIndex();
             yield Field\ChoiceField::new('userLang',t('notice.userlang', domain: 'EasyAdminBundle'))->setHelp(t('notice.userlang_help', domain: 'EasyAdminBundle'))->hideOnIndex()
-                ->setChoices($langList)->allowMultipleChoices()->renderAsBadges()->renderExpanded(false)->setRequired(true);
+                ->setChoices($langList)->allowMultipleChoices()->renderAsBadges()->setFormTypeOption('autocomplete',true)->setRequired(true);
             yield Field\TextEditorField::new('objectif',t('notice.objectif', domain: 'EasyAdminBundle'))->setHelp(t('notice.objectif_help', domain: 'EasyAdminBundle'))->hideOnIndex()->formatValue(function ($value, $entity) { return $value;});
             yield Field\TextField::new('champExt1',"Champ d'extension 1")->hideOnIndex(); yield Field\TextField::new('champExt2',"Champ d'extension 2")->hideOnIndex();
             yield Field\TextField::new('champExt3',"Champ d'extension 3")->hideOnIndex(); yield Field\TextField::new('champExt4',"Champ d'extension 4")->hideOnIndex();
@@ -220,7 +220,7 @@ class NoticeCrudController extends AbstractCrudController
 
             yield Field\FormField::addFieldset('Classification thématique')->setIcon('fa fa-book');
             yield EntityField::new('disciFond',t('notice.discifond', domain: 'EasyAdminBundle'))->setHelp(t('notice.discifond_help', domain: 'EasyAdminBundle'))->onlyOnForms()
-                ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->where('entity.parent is null'))->setFormTypeOptions(['class' => Dewey::class,'mapped' => false,'required' => false])->setSortable(false);
+                ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->where('entity.parent is null'))->setFormTypeOptions(['class' => Dewey::class,'mapped' => false,'required' => true])->setSortable(false);
             yield EntityField::new('division')->setFormTypeOptions(['class' => Dewey::class,'auto_initialize' => false,'mapped' => false,'required' => true])->onlyOnForms();
             yield EntityField::new('codewey','Code Dewey')->setFormTypeOptions(['class' => Dewey::class])->setSortable(false);
             yield Field\TextField::new('label',t('notice.label', domain: 'EasyAdminBundle'))->setHelp(t('notice.label_help', domain: 'EasyAdminBundle'))->onlyOnDetail();

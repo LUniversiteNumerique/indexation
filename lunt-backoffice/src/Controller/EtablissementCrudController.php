@@ -57,11 +57,6 @@ class EtablissementCrudController extends AbstractCrudController
         ];
     }
 
-    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
-    {
-        return parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)->orderBy('entity.nom', 'ASC');
-    }
-
     public function index(AdminContext $context)
     {
         $this->denyAccessUnlessGranted('ROLE_READ_ETAB');

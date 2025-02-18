@@ -13,7 +13,7 @@ class Etablissement
 {
     use Timestamps;
 
-    #[ORM\Column(length: 255, unique: true), Assert\NotBlank]
+    #[ORM\Column(length: 255), Assert\NotBlank]
     private ?string $nom;
 
     #[ORM\Column(length: 225, unique: true), Assert\NotBlank]
@@ -56,6 +56,6 @@ class Etablissement
 
     public function __toString(): string
     {
-        return $this->abrege;
+        return $this->nom;
     }
 }

@@ -165,7 +165,7 @@ return [
         'resspayant_help' => 'Cette notice donne-t-elle accès à une resource payante ?',
         'proprintel' => 'Propriété intellectuelle',
         'proprintel_help' => 'Cette notice donne-t-elle accès à une ressource ayant une propriété intellectuelle particulière ?',
-        'resslang' => 'Langue(s) de la resource',
+        'resslang' => 'Langue(s) de la ressource',
         'resslang_help' => 'Langues de la ressource',
         'dureappr' => 'Durée d\'apprentissage',
         'dureappr_help' => 'Durée au format "PT00H00M00S"',
