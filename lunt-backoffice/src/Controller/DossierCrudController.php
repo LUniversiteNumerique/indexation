@@ -15,8 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\{EntityDto,SearchDto};
 use EasyCorp\Bundle\EasyAdminBundle\Field\{IdField,AssociationField,TextField};
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\{RedirectResponse,Response};
 
 class DossierCrudController extends AbstractCrudController
 {
@@ -33,24 +32,24 @@ class DossierCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
       return parent::configureCrud($crud)->showEntityActionsInlined(false)
-          ->setEntityLabelInPlural('Dossiers')->setEntityLabelInSingular('dossier')
+          ->setEntityLabelInPlural('Répertoires')->setEntityLabelInSingular('Répertoire')
           ->overrideTemplates(['crud/detail' => 'admin/actions/dossier.html.twig']);
     }
 
     public function configureActions(Actions $actions): Actions
     {
-      return parent::configureActions($actions)
-        ->add(Crud::PAGE_INDEX, Action::DETAIL)
-        ->add(Crud::PAGE_DETAIL, Action::NEW)
-        ->update(Crud::PAGE_DETAIL, Action::DELETE, static fn(Action $a) => $a->displayIf(static fn (Dossier $d) => $d->getChildren()->isEmpty() && $d->getNotices()->isEmpty()))
-        ->remove(Crud::PAGE_DETAIL, Action::EDIT)
-        ->remove(Crud::PAGE_DETAIL, Action::INDEX)
-        ->setPermission(Action::INDEX, 'ROLE_READ_DOSS')
-        ->setPermission(Action::DETAIL, 'ROLE_READ_DOSS')
-        ->setPermission(Action::NEW, 'ROLE_CREA_DOSS')
-        ->setPermission(Action::EDIT, 'ROLE_EDIT_DOSS')
-        ->setPermission(Action::DELETE, 'ROLE_DROP_DOSS')
-      ;
+        return parent::configureActions($actions)
+            ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->add(Crud::PAGE_DETAIL, Action::NEW)
+            ->add(Crud::PAGE_NEW, Action::INDEX)
+            ->update(Crud::PAGE_DETAIL, Action::DELETE, static fn(Action $a) => $a->displayIf(static fn (Dossier $d) => $d->getChildren()->isEmpty() && $d->getNotices()->isEmpty()))
+            ->remove(Crud::PAGE_DETAIL, Action::EDIT)
+            ->remove(Crud::PAGE_DETAIL, Action::INDEX)
+            ->setPermission(Action::INDEX, 'ROLE_READ_DOSS')
+            ->setPermission(Action::DETAIL, 'ROLE_READ_DOSS')
+            ->setPermission(Action::NEW, 'ROLE_CREA_DOSS')
+            ->setPermission(Action::EDIT, 'ROLE_EDIT_DOSS')
+            ->setPermission(Action::DELETE, 'ROLE_DROP_DOSS');
     }
     public function configureFields(string $pageName): iterable
     {

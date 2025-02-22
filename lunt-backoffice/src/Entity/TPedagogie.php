@@ -23,7 +23,7 @@ class TPedagogie
 
     public static function create(array $o): self
     {
-        return new self($o['id'],$o['libelle_uoh']);
+        return new self($o['id'],$o['libelle_import']);
     }
 
     public function getCode(): ?string

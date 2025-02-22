@@ -13,13 +13,19 @@ class Etablissement
 {
     use Timestamps;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $logo;
+
     #[ORM\Column(length: 255), Assert\NotBlank]
     private ?string $nom;
 
     #[ORM\Column(length: 225, unique: true), Assert\NotBlank]
     private ?string $abrege;
 
-    public function __construct($abrege=null, $nom=null)
+    #[ORM\Column, Assert\Type('bool')]
+    private bool $adherent = false;
+
+    public function __construct(?string $abrege=null, ?string $nom=null)
     {
         $this->creeLe = new \DateTimeImmutable();
         $this->abrege = $abrege;
@@ -27,7 +33,19 @@ class Etablissement
     }
     public static function create(array $o): self
     {
-        return new self($o['id'],$o['libelle_uoh']);
+        return new self($o['id'],$o['libelle_import']);
+    }
+
+    public function getLogo(): ?string
+    {
+        return $this->logo;
+    }
+
+    public function setLogo(?string $logo): static
+    {
+        $this->logo = $logo;
+
+        return $this;
     }
 
     public function getNom(): ?string
@@ -50,6 +68,18 @@ class Etablissement
     public function setAbrege(?string $abrege): static
     {
         $this->abrege = $abrege;
+
+        return $this;
+    }
+
+    public function isAdherent(): ?bool
+    {
+        return $this->adherent;
+    }
+
+    public function setAdherent(?bool $adherent): static
+    {
+        $this->adherent = $adherent;
 
         return $this;
     }

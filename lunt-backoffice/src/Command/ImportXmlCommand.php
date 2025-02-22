@@ -5,7 +5,6 @@ namespace App\Command;
 use App\Message\ImportXmlMessage;
 use App\Service\FileService;
 use Symfony\Component\Console\{Attribute\AsCommand,Command\Command,Input\InputInterface,Output\OutputInterface,Style\SymfonyStyle};
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Scheduler\Attribute\AsPeriodicTask;
 
@@ -18,16 +17,12 @@ use Symfony\Component\Scheduler\Attribute\AsPeriodicTask;
 ]
 class ImportXmlCommand extends Command
 {
-    private FileService $fileService;
-
     public function __construct(
-        #[Autowire('%kernel.project_dir%/data')]
-        private readonly string              $directory,
+        private readonly FileService $fileService,
         private readonly MessageBusInterface $eventBus
     )
     {
         parent::__construct();
-        $this->fileService = new FileService($this->directory);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

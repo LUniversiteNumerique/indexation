@@ -4,8 +4,8 @@ namespace App\Controller;
 
 use App\Repository\{NoticeRepository, UserRepository};
 use App\Form\{ChangePassType,UserType};
-use App\Entity\{Auteur, Etablissement, Groupe, IndexingConfig, Keyword, Univerique, User};
-use EasyCorp\Bundle\EasyAdminBundle\Config\{Crud, Dashboard, MenuItem, UserMenu};
+use App\Entity\{Auteur, Dossier, Etablissement, Groupe, IndexingConfig, Keyword, Notice, TPedagogie, Univerique, User};
+use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Crud, Dashboard, MenuItem, UserMenu};
 use EasyCorp\Bundle\EasyAdminBundle\{Context\AdminContext,Controller\AbstractDashboardController};
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\{Request, Response};
@@ -44,13 +44,16 @@ class DashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linkToDashboard(t('page_title.dashboard', domain: 'EasyAdminBundle'), 'fa fa-dashboard')->setPermission('ROLE_READ_NOTI');
+        yield MenuItem::linkToDashboard(t('page_title.dashboard', domain: 'EasyAdminBundle'), 'fa fa-dashboard');
+        yield MenuItem::linkToCrud('Liste Notices', 'fa fa-table-list', Notice::class)->setPermission('ROLE_READ_NOTI');
+        yield MenuItem::linkToCrud('Répertoire Notices', 'fa fa-folder-tree', Dossier::class)->setAction(Action::DETAIL)->setEntityId(1)->setPermission('ROLE_VALI_NOTI');
 
         yield MenuItem::linkToCrud('Auteurs', 'fa fa-users', Auteur::class)->setPermission('ROLE_READ_ACTE');
         yield MenuItem::section('Configurations')->setPermission('ROLE_VALI_NOTI');
         yield MenuItem::linkToCrud('Indexations', 'fa fa-book', IndexingConfig::class)->setPermission('ROLE_READ_CORE');
         yield MenuItem::linkToCrud("Utilisateurs", 'fa fa-users-gear', User::class)->setPermission('ROLE_READ_USER');
-        yield MenuItem::linkToCrud("Groupes d'utilisateurs", 'fa fa-user-tag', Groupe::class)->setPermission('ROLE_READ_GROU');
+        yield MenuItem::linkToCrud("Rôles et permissions", 'fa fa-user-tag', Groupe::class)->setPermission('ROLE_READ_GROU');
+        yield MenuItem::linkToCrud('Types pédagogiques', 'fa fa-gavel', TPedagogie::class)->setPermission('ROLE_READ_TPED');
         yield MenuItem::linkToCrud('Etablissements', 'fa fa-building', Etablissement::class)->setPermission('ROLE_READ_ETAB');
         yield MenuItem::linkToCrud('Mots clés', 'fa fa-tags', Keyword::class)->setPermission('ROLE_READ_KEYW');
         yield MenuItem::linkToCrud("UNT", 'fa fa-university', Univerique::class)->setPermission('ROLE_READ_UNIV');
@@ -59,7 +62,11 @@ class DashboardController extends AbstractDashboardController
     #[Route('/', name: 'app_home'),]
     public function index(): Response
     {
-        return $this->render('admin/index.html.twig', ['noEtats' => $this->repository->countByEtat($this->getUser()),]);
+        /** @var User $user */$user = $this->getUser();
+        return $this->render('admin/index.html.twig', [
+            'noEtats' => $this->repository->countByEtat($user),
+            'notices' => $this->repository->findLatestBy($user),
+        ]);
     }
 
     #[Route('/profile', name: 'app_profile')]

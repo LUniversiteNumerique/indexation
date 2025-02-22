@@ -4,12 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Etablissement;
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Actions, Crud, Filters};
-use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
-use EasyCorp\Bundle\EasyAdminBundle\Collection\{FieldCollection,FilterCollection};
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\{DateTimeField, IdField, TextField};
-use EasyCorp\Bundle\EasyAdminBundle\Dto\{EntityDto,SearchDto};
+use EasyCorp\Bundle\EasyAdminBundle\Field\{BooleanField, DateTimeField, IdField, TextField};
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\{TextFilter, DateTimeFilter};
 
 class EtablissementCrudController extends AbstractCrudController
@@ -31,7 +29,7 @@ class EtablissementCrudController extends AbstractCrudController
         return $filters
             ->add(TextFilter::new('nom','Etablissement'))
             ->add(TextFilter::new('abrege','Nom abrégé'))
-            ->add(DateTimeFilter::new('creeLe','Date Création'));
+            ->add(DateTimeFilter::new('creeLe','Date Création')->setFormTypeOption('value_type', DateType::class));
     }
 
     public function configureActions(Actions $actions): Actions
@@ -43,6 +41,7 @@ class EtablissementCrudController extends AbstractCrudController
             ->setPermission(Action::EDIT, 'ROLE_EDIT_ETAB')
             ->setPermission(Action::DELETE, 'ROLE_DROP_ETAB')
             ->setPermission(Action::BATCH_DELETE, 'ROLE_DROP_ETAB')
+            ->add(Crud::PAGE_NEW, Action::INDEX)
             ->remove(Crud::PAGE_NEW,Action::SAVE_AND_ADD_ANOTHER);
     }
 
@@ -50,8 +49,10 @@ class EtablissementCrudController extends AbstractCrudController
     {
         return [
             IdField::new('id')->onlyOnDetail(),
+            TextField::new('logo', ),
             TextField::new('nom', 'Intitulé'),
             TextField::new('abrege', 'Nom abrégé'),
+            BooleanField::new('adherent', 'Adhérent UNT')->renderAsSwitch(false),
             DateTimeField::new('creeLe')->onlyOnDetail(),
             DateTimeField::new('editeLe')->onlyOnDetail()
         ];

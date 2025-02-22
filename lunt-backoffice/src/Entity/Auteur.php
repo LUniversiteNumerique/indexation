@@ -24,6 +24,8 @@ class Auteur
         Assert\NotNull, Assert\Email]
     private ?string $email = null;
 
+    #[ORM\ManyToOne] private ?Etablissement $etablissement = null;
+
     public function __construct()
     {
         $this->creeLe = new \DateTimeImmutable();
@@ -66,6 +68,18 @@ class Auteur
     public function setEmail(?string $email): static
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getEtablissement(): ?Etablissement
+    {
+        return $this->etablissement;
+    }
+
+    public function setEtablissement(?Etablissement $etablissement): static
+    {
+        $this->etablissement = $etablissement;
 
         return $this;
     }

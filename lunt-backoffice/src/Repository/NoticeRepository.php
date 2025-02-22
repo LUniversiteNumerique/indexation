@@ -42,19 +42,16 @@ class NoticeRepository extends ServiceEntityRepository
             ->setFirstResult($offset)->setMaxResults($limit)->getQuery()->getResult();
     }
 
-    public function findByIds(array $uuids): array
+    public function findLatestBy(User $user, int $limit = 10): array
     {
-        $qr = $this->getJoin()
-            ->where('n.id IN (:uuids)')->setParameter('uuids', $uuids);
-        return $qr->getQuery()->getResult();
-    }
+        $qb = $this->createQueryBuilder('n')->select('n,a,e,s')
+            ->leftJoin('n.auteurs','a')->leftJoin('n.codewey','e')->join('n.specialite', 's')
+            ->where('n.deleted = 0 AND n.etat = :etat')->setParameter('etat', NoticEtat::Approved);
 
-    public function findAllorBy(int $etab = null): array
-    {
-        $qr = $this->getJoin();
-        if($etab) $qr->andWhere("n.repertoire = :etab")->setParameter("etab", $etab);
+        if ($sch = $user->getSchool()) $qb->andWhere(':school MEMBER OF n.porteurs')->setParameter('school', $sch->getId());
+        elseif ($unt = $user->getUntheme()) $qb->join('s.parent', 'u')->andWhere('u.parent in (:champs)')->setParameter('champs', $unt->getFields());
 
-        return $qr->getQuery()->getResult();
+        return $qb->orderBy('n.creeLe', 'DESC')->setMaxResults($limit)->getQuery()->getResult();
     }
 
     public function add(Notice $n=null): ?Notice
@@ -73,35 +70,29 @@ class NoticeRepository extends ServiceEntityRepository
 
     public function countByEtat(User $user, ?string $date = null)
     {
-        $qb = $this->createQueryBuilder('n')->select('n.etat, COUNT(n.id) as nombre');
-        $andX = $qb->expr()->andX('n.etat != :etat');
-
-        if ($sch = $user->getSchool()) {
-            $qb->setParameter('school', $sch->getId());
-            $andX->add(':school MEMBER OF n.porteurs');
-        } elseif ($unt = $user->getUntheme()) {
-            $qb->join('n.specialite', 's')->join('s.parent', 'u')
-                ->setParameter('champs', $unt->getFields());
-            $andX->add('u.parent in (:champs)');
-        }
-        $qb->where($qb->expr()->orX(
-            $qb->expr()->eq('n.createur',':user'), $andX
-        ))
-            ->setParameter('user', $user->getId())
-            ->setParameter('etat', NoticEtat::Working);
-
+        $qb = $this->forUser($user);
         if($date) $qb->andWhere('n.creeLe > :date')->setParameter('date', new \DateTIME("-1 $date"));
 
-        return $qb->andWhere('n.deleted = 0')->groupBy('n.etat')->getQuery()->getResult();
+        return $qb->groupBy('n.etat')->select('n.etat, COUNT(n.id) as nombre')->getQuery()->getResult();
     }
 
-    private function getJoin(): \Doctrine\ORM\QueryBuilder
+    private function forUser(User $u): \Doctrine\ORM\QueryBuilder
     {
-        return $this->createQueryBuilder('n')->select('n,a,d,p,u,t,l,s,q')
-            ->where('n.deleted = 0')->leftJoin('n.ressources', 'r')
-            ->join('n.droit', 'l')->join('n.porteurs', 'q')
-            ->join('n.specialite', 's')->join('n.auteurs', 'a')
-            ->join('n.docTypes', 'd')->join('n.pedTypes', 'p')
-            ->join('n.niveaux', 'u')->join('n.tags', 't');
+        $qb = $this->createQueryBuilder('n')->where('n.deleted = 0');
+        $andX = $qb->expr()->andX('n.etat != :etat');
+
+        if ($sch = $u->getSchool()) {
+            $qb->setParameter('school', $sch->getId());
+            $andX->add(':school MEMBER OF n.porteurs');
+        } elseif ($unt = $u->getUntheme()) {
+            $qb->join('n.specialite', 's')->join('s.parent', 'u')->setParameter('champs', $unt->getFields());
+            $andX->add('u.parent in (:champs)');
+        }
+
+        return $qb->andWhere($qb->expr()->orX(
+            $qb->expr()->eq('n.createur',':user'), $andX
+        ))
+            ->setParameter('user', $u->getId())
+            ->setParameter('etat', NoticEtat::Working);
     }
 }

@@ -9,9 +9,13 @@ use Doctrine\ORM\{EntityManagerInterface,QueryBuilder};
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Actions, Crud, Filters};
 use EasyCorp\Bundle\EasyAdminBundle\Collection\{FieldCollection,FilterCollection};
 use EasyCorp\Bundle\EasyAdminBundle\Dto\{EntityDto,SearchDto};
-use EasyCorp\Bundle\EasyAdminBundle\{Controller\AbstractCrudController, Context\AdminContext, Router\AdminUrlGenerator};
+use EasyCorp\Bundle\EasyAdminBundle\{Controller\AbstractCrudController,
+    Context\AdminContext,
+    Filter\DateTimeFilter,
+    Router\AdminUrlGenerator};
 use EasyCorp\Bundle\EasyAdminBundle\Field\{BooleanField, DateTimeField, EmailField, FormField, IdField, TextField};
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 
@@ -31,12 +35,13 @@ class UserCrudController extends AbstractCrudController
     public function configureFilters(Filters $filters): Filters
     {
         return $filters
-            ->add('name')  
-            ->add('email')    
+            ->add('name')
+            ->add('email')
             ->add('enabled')
             ->add('group')
             ->add('school')
-            ->add('untheme');
+            ->add('untheme')
+            ->add(DateTimeFilter::new('creeLe','Date Création')->setFormTypeOption('value_type', DateType::class));
     }
 
     public function configureCrud(Crud $crud): Crud

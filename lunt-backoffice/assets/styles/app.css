@@ -34,6 +34,12 @@
     --body-bg: var(--white);
 }
 
+.badge.badge-custom {
+    background-color: #eee;
+    box-shadow: var(--badge-dark-box-shadow);
+    color: black;
+}
+
 /* See:  https://github.com/EasyCorp/EasyAdminBundle/issues/6018#issuecomment-1819015205 */
 
 .ea-detail .field-group.field-boolean .field-label {

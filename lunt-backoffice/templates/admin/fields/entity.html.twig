@@ -1,0 +1,13 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
+{# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
+
+{% if field.formattedValue is iterable %}
+    {% for key, value in field.formattedValue %}
+        <span class="badge badge-custom">
+            <a href="{{ key }}" target="_blank">{{ value }}</a>
+        </span>
+    {% endfor %}
+{% else %}
+    <span class="badge badge-custom">{{ field.formattedValue }}</span>
+{% endif %}

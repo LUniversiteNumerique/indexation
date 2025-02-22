@@ -40,7 +40,7 @@ class EntityField implements FieldInterface
         return (new self())
             ->setProperty($propertyName)
             ->setLabel($label)
-            ->setTemplateName('crud/field/association')
+            ->setTemplatePath('admin/fields/entity.html.twig')
             ->setFormType(EntityType::class)
             ->addCssClass('field-association')
             ->setDefaultColumns('col-md-7 col-xxl-6')

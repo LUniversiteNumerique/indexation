@@ -12,6 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\{AssociationField,DateTimeField,IdField,TextField};
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\{TextFilter, DateTimeFilter};
 
 class UniveriqueCrudController extends AbstractCrudController
@@ -33,13 +34,13 @@ class UniveriqueCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         return parent::configureActions($actions)
-            ->add(Crud::PAGE_NEW, Action::INDEX)
-            ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->setPermission(Action::DETAIL, 'ROLE_READ_UNIV')
             ->setPermission(Action::INDEX, 'ROLE_READ_UNIV')
             ->setPermission(Action::EDIT, 'ROLE_EDIT_UNIV')
             ->setPermission(Action::NEW, 'ROLE_CREA_UNIV')
             ->setPermission(Action::DELETE, 'ROLE_DROP_UNIV')
+            ->add(Crud::PAGE_NEW, Action::INDEX)
+            ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->update(Crud::PAGE_NEW, Action::SAVE_AND_ADD_ANOTHER, fn (Action $a) => $a->setLabel('Créer et ajouter une <b>nouvelle</b>'))
             ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $a) => $a->setLabel('Créer une <b>UNT</b>'))
             ->remove(Crud::PAGE_INDEX, Action::EDIT)
@@ -64,7 +65,7 @@ class UniveriqueCrudController extends AbstractCrudController
         return $filters
             ->add(TextFilter::new('label','Nom'))
             ->add(TextFilter::new('name','Répertoire'))
-            ->add(DateTimeFilter::new('creeLe','Date Création'));
+            ->add(DateTimeFilter::new('creeLe','Date Création')->setFormTypeOption('value_type', DateType::class));
     }
 
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void

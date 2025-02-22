@@ -208,7 +208,7 @@ return [
         'label' => 'Catégorie',
         'label_help' => 'La catégorie de la notice (conf 5 champs de config)',
         'creele' => 'Créée depuis',
-        'repertoire' => 'Dossier',
-        'repertoire_help' => 'Le repertoire de la notice selon l\'hiérarchie de navigation'
+        'repertoire' => 'Répertoire',
+        'repertoire_help' => 'Le repertoire de la notice selon la hiérarchie de navigation'
     ]
 ];

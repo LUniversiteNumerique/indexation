@@ -2,39 +2,26 @@ services:
   backoffice:
     image: sslv-nexus.coexya.eu/lunt-backoffice:${VERSION:-latest}
     env_file: ./.env
-    ports: ["80:80"]
+    network_mode: "host"
     depends_on:
       - mariadb
       - solr
     volumes:
+      - ./lunt-backoffice:/var/www/site
       - ${JOAI_BASE_URI:-/opt}:/opt
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-
-  myadmin:
-    image: phpmyadmin/phpmyadmin
-    environment:
-      PMA_HOST: mariadb
-      MYSQL_ROOT_PASSWORD: ${MARIADB_PASS}
-    #ports: ["8080:80"]
-    depends_on:
-      - mariadb
 
   mariadb:
     image: mariadb:latest
     environment:
       MYSQL_DATABASE: ${MARIADB_DB}
       MYSQL_ROOT_PASSWORD: ${MARIADB_PASS}
+    network_mode: "host"
     volumes:
       - db_data:/var/lib/mysql
 
   solr:
     image: solr:latest
-    environment:
-      - SOLR_LOG_LEVEL=INFO
-      #- SOLR_AUTH_TYPE=basic
-      #- SOLR_AUTHENTICATION_OPTS=-Dbasicauth=solr:SolrRocks  #Dsolr.auth.enabled=true
-    ports: ["8983:8983"]
+    network_mode: "host"
     volumes:
       - ${JOAI_BASE_URI}/lunt-solr/data:/var/solr/data
       - ${JOAI_BASE_URI}/lunt-solr/conf:${SOLR_DEFAULT_CONF}/conf
@@ -45,4 +32,3 @@ services:
 
 volumes:
   db_data:
-  wp_data:

@@ -173,7 +173,7 @@ readonly class EntityConfigurator implements FieldConfiguratorInterface
         return $this->formatAsString($field->getValue(), $targetEntityDto);
     }
 
-    private function configureToManyAssociation(FieldDto $field, AdminContext $context): ?string
+    private function configureToManyAssociation(FieldDto $field, AdminContext $context): mixed
     {
         $field->setCustomOption(EntityField::OPTION_DOCTRINE_ASSOCIATION_TYPE, 'toMany');
 
@@ -183,16 +183,18 @@ readonly class EntityConfigurator implements FieldConfiguratorInterface
         $field->setFormTypeOptionIfNotSet('class', $field->getDoctrineMetadata()->get('targetEntity'));
 
         if (null === $field->getTextAlign()) $field->setTextAlign(TextAlign::RIGHT);
+        $targetCrudControllerFqcn = $field->getCustomOption(EntityField::OPTION_EMBEDDED_CRUD_FORM_CONTROLLER);
+        $isDetailAction = Action::DETAIL === $context->getCrud()->getCurrentAction();
 
         $collectionItemsAsText = [];
         foreach ($field->getValue() ?? [] as $item) {
             if (!\is_string($item) && !(\is_object($item) && method_exists($item, '__toString')))
                 return $this->countNumElements($field->getValue());
-            $collectionItemsAsText[] = (string) $item;
+            $targetEntityDto = $this->entityFactory->createForEntityInstance($item);
+            $collectionItemsAsText[$this->generateLinkToAssociatedEntity($targetCrudControllerFqcn, $targetEntityDto)] = $this->formatAsString($item, $targetEntityDto);
         }
-        $isDetailAction = Action::DETAIL === $context->getCrud()->getCurrentAction();
 
-        return u(', ')->join($collectionItemsAsText)->truncate($isDetailAction ? 512 : 32, '…')->toString();
+        return $targetCrudControllerFqcn ? $collectionItemsAsText : u(', ')->join($collectionItemsAsText)->truncate($isDetailAction ? 512 : 32, '…')->toString();
     }
 
     private function formatAsString($entityInstance, EntityDto $entityDto): ?string
@@ -218,7 +220,7 @@ readonly class EntityConfigurator implements FieldConfiguratorInterface
             ->setEntityId($entityDto->getPrimaryKeyValue())
             ->unset(EA::MENU_INDEX)
             ->unset(EA::SUBMENU_INDEX)
-            ->includeReferrer()
+            //->includeReferrer()
             ->generateUrl();
     }
 

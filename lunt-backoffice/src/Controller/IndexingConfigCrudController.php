@@ -20,6 +20,7 @@ class IndexingConfigCrudController extends AbstractCrudController
     {
         return parent::configureActions($actions)
             ->disable(Action::BATCH_DELETE)
+            ->add(Crud::PAGE_NEW, Action::INDEX)
             ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $a) => $a->setLabel('Créer une <b>indexation</b>'))
             ->update(Crud::PAGE_NEW, Action::SAVE_AND_ADD_ANOTHER, fn (Action $a) => $a->setLabel('Créer et ajouter une <b>nouvelle</b>'))
             ->setPermission(Action::NEW, 'ROLE_CREA_CORE')
