@@ -1,7 +1,7 @@
 services:
   backoffice:
-    image: sslv-nexus.coexya.eu/lunt-backoffice:${VERSION:-latest}
-    env_file: ./.env
+    build: ./lunt-backoffice
+    env_file: ./lunt-backoffice/.env.dev.local
     network_mode: "host"
     depends_on:
       - mariadb

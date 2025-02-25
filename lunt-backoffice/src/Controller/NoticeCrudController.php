@@ -19,7 +19,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\{ActionDto, EntityDto, SearchDto};
 use EasyCorp\Bundle\EasyAdminBundle\Field as Field;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\{Extension\Core\Type\DateType, FormBuilderInterface, FormEvent, FormEvents, FormInterface};
+use Symfony\Component\Form\{FormBuilderInterface, FormEvent, FormEvents, FormInterface};
 use Symfony\Component\HttpFoundation\{File\Exception\FileException, File\UploadedFile, RedirectResponse, Request, Response};
 use Symfony\Component\{Intl\Languages, Routing\Generator\UrlGeneratorInterface, Uid\Uuid};
 use Symfony\Component\Validator\Constraints\{File, Image};
@@ -108,8 +108,8 @@ class NoticeCrudController extends AbstractCrudController
             ->add(TextFilter::new('titre'))
             ->add(EntityFilter::new('specialite', 'Spécialité'))
             ->add(EntityFilter::new('auteurs'))
-            ->add(DateTimeFilter::new('creeLe', 'Créée le')->setFormTypeOption('value_type', DateType::class))
-            ->add(DateTimeFilter::new('editeLe', 'Date de modification')->setFormTypeOption('value_type', DateType::class));
+            ->add(DateTimeFilter::new('creeLe', 'Créée le'))
+            ->add(DateTimeFilter::new('editeLe', 'Date de modification'));
     }
 
     public function configureFields(string $pageName): iterable
@@ -124,7 +124,7 @@ class NoticeCrudController extends AbstractCrudController
         yield Field\FormField::addFieldset('Description générale')->setIcon('fa fa-pencil');
         yield Field\IdField::new('id')->onlyOnDetail();
         yield Field\TextField::new('titre')->setHelp(t('notice.titre_help', domain: 'EasyAdminBundle'));
-        yield Field\TextEditorField::new('description')->setHelp(t('notice.description_help', domain: 'EasyAdminBundle'))->setTemplatePath('admin/fields/text_editor.html.twig')->hideOnIndex();
+        yield Field\TextEditorField::new('description')->setHelp(t('notice.description_help', domain: 'EasyAdminBundle'))->setTemplatePath('admin/fields/text_editor.html.twig')->hideOnIndex()->setRequired(true);
         yield EntityField::new('porteurs', t('notice.porteurs', domain: 'EasyAdminBundle'))->setHelp(t('notice.porteurs_help', domain: 'EasyAdminBundle'))
             ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.abrege', 'ASC'))->setSortable(false)->setRequired(true)->hideOnIndex();
         yield EntityField::new('auteurs',t('notice.auteurs', domain: 'EasyAdminBundle'))->setFormType(AuteurAutoField::class)

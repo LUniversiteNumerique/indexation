@@ -48,7 +48,7 @@ return [
         'edit' => 'Modifier',
         'delete' => 'Supprimer',
         'cancel' => 'Annuler',
-        'index' => 'Retourner',
+        'index' => 'Annuler',
         'deselect' => 'Désélectionner',
         'add_new_item' => 'Ajouter un nouvel élément',
         'remove_item' => 'Supprimer l\'élément',

@@ -11,7 +11,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\{BooleanField, DateTimeField, IdField,
 use EasyCorp\Bundle\EasyAdminBundle\Filter\{BooleanFilter,DateTimeFilter};
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\{JsonResponse, Request, Response};
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -26,7 +25,7 @@ class KeywordCrudController extends AbstractCrudController
     {
         return $filters
             ->add(BooleanFilter::new('valide'))
-            ->add(DateTimeFilter::new('creeLe','Date Création')->setFormTypeOption('value_type', DateType::class));
+            ->add(DateTimeFilter::new('creeLe','Date Création'));
     }
 
     public function configureCrud(Crud $crud): Crud

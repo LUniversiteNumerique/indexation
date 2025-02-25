@@ -2,6 +2,7 @@
 
 namespace App\Field\Configurator;
 
+use App\Controller\NoticeCrudController;
 use App\Field\EntityField;
 use Doctrine\ORM\{EntityRepository, PersistentCollection};
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
@@ -14,8 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Form\Type\{CrudAutocompleteType, CrudFormTyp
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\PropertyAccess\{Exception\UnexpectedTypeException, PropertyAccessor};
-use function Symfony\Component\Translation\t;
-use function Symfony\Component\String\u;
+use function Symfony\Component\{Translation\t,String\u};
 
 readonly class EntityConfigurator implements FieldConfiguratorInterface
 {
@@ -173,7 +173,7 @@ readonly class EntityConfigurator implements FieldConfiguratorInterface
         return $this->formatAsString($field->getValue(), $targetEntityDto);
     }
 
-    private function configureToManyAssociation(FieldDto $field, AdminContext $context): mixed
+    private function configureToManyAssociation(FieldDto $field, AdminContext $context): string|array|int
     {
         $field->setCustomOption(EntityField::OPTION_DOCTRINE_ASSOCIATION_TYPE, 'toMany');
 
@@ -186,15 +186,17 @@ readonly class EntityConfigurator implements FieldConfiguratorInterface
         $targetCrudControllerFqcn = $field->getCustomOption(EntityField::OPTION_EMBEDDED_CRUD_FORM_CONTROLLER);
         $isDetailAction = Action::DETAIL === $context->getCrud()->getCurrentAction();
 
-        $collectionItemsAsText = [];
+        $collectionItemsAsText = []; $resource = $targetCrudControllerFqcn === NoticeCrudController::class && $isDetailAction;
         foreach ($field->getValue() ?? [] as $item) {
             if (!\is_string($item) && !(\is_object($item) && method_exists($item, '__toString')))
                 return $this->countNumElements($field->getValue());
-            $targetEntityDto = $this->entityFactory->createForEntityInstance($item);
-            $collectionItemsAsText[$this->generateLinkToAssociatedEntity($targetCrudControllerFqcn, $targetEntityDto)] = $this->formatAsString($item, $targetEntityDto);
+            if($resource) {
+                $targetEntityDto = $this->entityFactory->createForEntityInstance($item);
+                $collectionItemsAsText[$this->generateLinkToAssociatedEntity($targetCrudControllerFqcn, $targetEntityDto)] = $this->formatAsString($item, $targetEntityDto);
+            } else $collectionItemsAsText[] = (string) $item;
         }
 
-        return $targetCrudControllerFqcn ? $collectionItemsAsText : u(', ')->join($collectionItemsAsText)->truncate($isDetailAction ? 512 : 32, '…')->toString();
+        return $resource ? $collectionItemsAsText : u(', ')->join($collectionItemsAsText)->truncate($isDetailAction ? 512 : 32, '…')->toString();
     }
 
     private function formatAsString($entityInstance, EntityDto $entityDto): ?string
@@ -220,7 +222,6 @@ readonly class EntityConfigurator implements FieldConfiguratorInterface
             ->setEntityId($entityDto->getPrimaryKeyValue())
             ->unset(EA::MENU_INDEX)
             ->unset(EA::SUBMENU_INDEX)
-            //->includeReferrer()
             ->generateUrl();
     }
 
@@ -243,12 +244,12 @@ readonly class EntityConfigurator implements FieldConfiguratorInterface
         $associatedEntity = (null !== $entityDto->getInstance() && $propertyAccessor->isReadable($entityDto->getInstance(), $propertyName)) ?
             $propertyAccessor->getValue($entityDto->getInstance(), $propertyName) : null;
 
-        if (null === $associatedEntity) {
-            $targetCrudControllerAction = Action::NEW;
-            $targetCrudControllerPageName = $field->getCustomOption(EntityField::OPTION_EMBEDDED_CRUD_FORM_NEW_PAGE_NAME) ?? Crud::PAGE_NEW;
-        } else {
+        if ($associatedEntity) {
             $targetCrudControllerAction = Action::EDIT;
             $targetCrudControllerPageName = $field->getCustomOption(EntityField::OPTION_EMBEDDED_CRUD_FORM_EDIT_PAGE_NAME) ?? Crud::PAGE_EDIT;
+        } else {
+            $targetCrudControllerAction = Action::NEW;
+            $targetCrudControllerPageName = $field->getCustomOption(EntityField::OPTION_EMBEDDED_CRUD_FORM_NEW_PAGE_NAME) ?? Crud::PAGE_NEW;
         }
 
         $field->setFormTypeOption('entityDto',

@@ -8,7 +8,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\{DateTimeField,IdField,TextField};
 use EasyCorp\Bundle\EasyAdminBundle\Filter\{DateTimeFilter,TextFilter};
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 
 class TPedagogieCrudController extends AbstractCrudController
 {
@@ -29,7 +28,7 @@ class TPedagogieCrudController extends AbstractCrudController
         return $filters
             ->add(TextFilter::new('code'))
             ->add(TextFilter::new('nom'))
-            ->add(DateTimeFilter::new('creeLe','Date Création')->setFormTypeOption('value_type', DateType::class));
+            ->add(DateTimeFilter::new('creeLe','Date Création'));
     }
 
     public function configureActions(Actions $actions): Actions

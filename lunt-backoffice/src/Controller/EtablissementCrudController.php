@@ -7,7 +7,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Actions, Crud, Filters};
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\{BooleanField, DateTimeField, IdField, TextField};
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\{TextFilter, DateTimeFilter};
 
 class EtablissementCrudController extends AbstractCrudController
@@ -29,7 +28,7 @@ class EtablissementCrudController extends AbstractCrudController
         return $filters
             ->add(TextFilter::new('nom','Etablissement'))
             ->add(TextFilter::new('abrege','Nom abrégé'))
-            ->add(DateTimeFilter::new('creeLe','Date Création')->setFormTypeOption('value_type', DateType::class));
+            ->add(DateTimeFilter::new('creeLe','Date Création'));
     }
 
     public function configureActions(Actions $actions): Actions

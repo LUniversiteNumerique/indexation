@@ -7,7 +7,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Actions, Crud, Filters, Opti
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\{AssociationField, DateTimeField, EmailField, IdField, TextField};
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\{TextFilter, DateTimeFilter};
 
 class AuteurCrudController extends AbstractCrudController
@@ -54,7 +53,7 @@ class AuteurCrudController extends AbstractCrudController
         return $filters
             ->add(TextFilter::new('prenom',"Prénom de l'auteur"))
             ->add(TextFilter::new('nom',"Nom de l'auteur"))
-            ->add(DateTimeFilter::new('creeLe','Date de création')->setFormTypeOption('value_type', DateType::class));
+            ->add(DateTimeFilter::new('creeLe','Date de création'));
     }
 
     public function index(AdminContext $context)

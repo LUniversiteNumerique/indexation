@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Univerique;
 use App\Event\AfterUntCreatedEvent;
-use App\Repository\UniveriqueRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action,Actions,Crud,Filters};
@@ -12,7 +11,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\{AssociationField,DateTimeField,IdField,TextField};
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\{TextFilter, DateTimeFilter};
 
 class UniveriqueCrudController extends AbstractCrudController
@@ -65,7 +63,7 @@ class UniveriqueCrudController extends AbstractCrudController
         return $filters
             ->add(TextFilter::new('label','Nom'))
             ->add(TextFilter::new('name','Répertoire'))
-            ->add(DateTimeFilter::new('creeLe','Date Création')->setFormTypeOption('value_type', DateType::class));
+            ->add(DateTimeFilter::new('creeLe','Date Création'));
     }
 
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
