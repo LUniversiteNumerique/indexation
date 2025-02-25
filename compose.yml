@@ -1,13 +1,12 @@
 services:
   backoffice:
-    build: ./lunt-backoffice
-    env_file: ./lunt-backoffice/.env.dev.local
+    image: sslv-nexus.coexya.eu/lunt-backoffice:${VERSION:-latest}
+    env_file: ./.env
     network_mode: "host"
     depends_on:
       - mariadb
       - solr
     volumes:
-      - ./lunt-backoffice:/var/www/site
       - ${JOAI_BASE_URI:-/opt}:/opt
 
   mariadb:

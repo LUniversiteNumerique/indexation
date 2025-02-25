@@ -574,49 +574,53 @@ class NoticeCrudController extends AbstractCrudController
         return $this->redirect($url->generateUrl());
     }
 
-    private function addDisc(FormInterface $form, ?Discipline $child): void
+    private function addDisc(FormInterface $form, ?array $children): void
     {
         $builder = $form->getConfig()->getFormFactory()->createNamedBuilder('discipline', EntityType::class, null, [
             'class' => Discipline::class, 'mapped' => false, 'auto_initialize' => false, 'required' => true,
-            'label' => t('notice.discipline', domain: 'EasyAdminBundle'), 'choices' => $child ? $child->getChildren() : [], 'help' => t('notice.discipline_help', domain: 'EasyAdminBundle'),
-            'placeholder' => $child ? 'Sélectionnez la discipline' : 'Sélectionnez le champ disciplinaire',
+            'label' => t('notice.discipline', domain: 'EasyAdminBundle'), 'choices' => $children ?? [], 'help' => t('notice.discipline_help', domain: 'EasyAdminBundle'),
+            'placeholder' => $children ? 'Sélectionnez la discipline' : 'Sélectionnez le champ disciplinaire',
         ]);
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             $form = $event->getForm();
-            $this->addSpec($form->getParent(), $form->getData());
+            /** @var Discipline $spec */
+            $spec = $form->getData();
+            $this->addSpec($form->getParent(), $spec?->getChildren()->toArray());
         });
 
         $form->add($builder->getForm());
     }
-    private function addDivi(FormInterface $form, ?Dewey $child): void
+    private function addDivi(FormInterface $form, ?array $children): void
     {
         $builder = $form->getConfig()->getFormFactory()->createNamedBuilder('division', EntityType::class, null, [
             'class' => Dewey::class, 'mapped' => false, 'auto_initialize' => false, 'required' => true,
-            'label' => t('notice.division', domain: 'EasyAdminBundle'), 'choices' => $child ? $child->getChildren() : [], 'help' => t('notice.division_help', domain: 'EasyAdminBundle'),
-            'placeholder' => $child ? 'Sélectionnez la division' : 'Sélectionnez la discipline fondamentale',
+            'label' => t('notice.division', domain: 'EasyAdminBundle'), 'choices' => $children ?? [], 'help' => t('notice.division_help', domain: 'EasyAdminBundle'),
+            'placeholder' => $children ? 'Sélectionnez la division' : 'Sélectionnez la discipline fondamentale',
         ]);
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             $form = $event->getForm();
-            $this->addCode($form->getParent(), $form->getData());
+            /** @var Dewey $dewe */
+            $dewe = $form->getData();
+            $this->addCode($form->getParent(), $dewe?->getChildren()->toArray());
         });
 
         $form->add($builder->getForm());
     }
 
-    private function addSpec(FormInterface $form, ?Discipline $child): void {
+    private function addSpec(FormInterface $form, ?array $children): void {
         $form->add('specialite', EntityType::class, [
             'label' => t('notice.specialite', domain: 'EasyAdminBundle'), 'class' => Discipline::class,
-            'choices' => $child ? $child->getChildren() : [], 'help' => t('notice.specialite_help', domain: 'EasyAdminBundle'),
-            'placeholder' => $child ? 'Sélectionnez la spécialité' : 'Sélectionnez la discipline',
+            'choices' => $children ?? [], 'help' => t('notice.specialite_help', domain: 'EasyAdminBundle'),
+            'placeholder' => $children ? 'Sélectionnez la spécialité' : 'Sélectionnez la discipline',
         ]);
     }
-    private function addCode(FormInterface $form, ?Dewey $child): void {
+    private function addCode(FormInterface $form, ?array $children): void {
         $form->add('codewey', EntityType::class, [
             'label' => t('notice.codewey', domain: 'EasyAdminBundle'), 'class' => Dewey::class, 'required' => true,
-            'choices' => $child ? $child->getChildren() : [], 'help' => t('notice.codewey_help', domain: 'EasyAdminBundle'),
-            'placeholder' => $child ? 'Sélectionnez le code dewey' : 'Sélectionnez la division',
+            'choices' => $children ?? [], 'help' => t('notice.codewey_help', domain: 'EasyAdminBundle'),
+            'placeholder' => $children ? 'Sélectionnez le code dewey' : 'Sélectionnez la division',
         ]);
     }
 
@@ -624,11 +628,15 @@ class NoticeCrudController extends AbstractCrudController
     {
         $builder->get('champDisc')->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             $form = $event->getForm();
-            $this->addDisc($form->getParent(), $form->getData());
+            /** @var Discipline $disc */
+            $disc = $form->getData();
+            $this->addDisc($form->getParent(), $disc?->getChildren()->toArray());
         });
         if ($builder->has('disciFond')) $builder->get('disciFond')->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             $form = $event->getForm();
-            $this->addDivi($form->getParent(), $form->getData());
+            /** @var Dewey $divi */
+            $divi = $form->getData();
+            $this->addDivi($form->getParent(), $divi?->getChildren()->toArray());
         });
 
         return $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
@@ -640,8 +648,19 @@ class NoticeCrudController extends AbstractCrudController
             $discipline = $specialite?->getParent();
             $champ = $discipline?->getParent();
 
-            $this->addDisc($form, $champ);
-            $this->addSpec($form, $discipline);
+            $itr = function(array $arr) {
+                usort($arr, fn($a,$b) => strcmp($a->getNom(), $b->getNom()));
+                return $arr;
+            };
+
+            $this->addDisc($form, $champ ?
+                $itr($champ->getChildren()->toArray()):
+                $champ?->getChildren()->toArray()
+            );
+            $this->addSpec($form, $discipline ?
+                $itr($discipline->getChildren()->toArray()):
+                $discipline?->getChildren()->toArray()
+            );
             if ($specialite) {
                 $form->get('champDisc')->setData($champ);
                 $form->get('discipline')->setData($discipline);
@@ -652,8 +671,14 @@ class NoticeCrudController extends AbstractCrudController
                 $division = $codewey?->getParent();
                 $discip = $division?->getParent();
 
-                $this->addDivi($form, $discip);
-                $this->addCode($form, $division);
+                $this->addDivi($form, $codewey ?
+                    $itr($discip->getChildren()->toArray()):
+                    $discip?->getChildren()->toArray()
+                );
+                $this->addCode($form, $codewey ?
+                    $itr($division->getChildren()->toArray()):
+                    $division?->getChildren()->toArray()
+                );
                 if ($codewey) {
                     $form->get('disciFond')->setData($discip);
                     $form->get('division')->setData($division);
