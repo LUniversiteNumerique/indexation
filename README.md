@@ -5,12 +5,10 @@ L'application d'indexation des notices des Universités Numériques et Thématiq
 d'une architecture découplée.  
 
 Les composants de cette application sont les suivants :
-- lunt-backoffice : Interface de contribution et d'administration Php / Symphony
+- lunt-backoffice : Interface de contribution et d'administration et Chaîne d'indexation Php / Symphony
 - Entrepôt des notices MariaDB
-- Stockage des ressources Filesystem
-- lunt-indexation : Chaîne d'indexation Php
+- Entrepôt OAI jOAI et Stockage des ressources Filesystem
 - Moteur de recherche Solr
-- Entrepôt OAI jOAI
 - Site internet WordPress
 
 ## Démarrer le projet
@@ -22,18 +20,13 @@ docker-compose up -d --build
 ## Initialisation schéma base de données backoffice
 
 ```bash
-# A ne faire qu'une fois
-docker-compose exec backoffice php bin/console m:mi -n
-docker-compose exec backoffice php bin/console d:m:mi -n
-
 # Si besoin pour réinitialiser sa base de données
 docker-compose exec backoffice php bin/console d:d:d --force
 docker-compose exec backoffice php bin/console d:d:c
-docker-compose exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat data/sql/univerique.sql)"'
-docker-compose exec backoffice php bin/console m:mi -n
-docker-compose exec backoffice php bin/console d:m:mi -n
-docker-compose exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat /var/www/site/data/sql/groupe.sql)"'
-docker-compose exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat /var/www/site/data/sql/user.sql)"'
+docker-compose exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat data/univerique.sql)"'
+docker-compose exec backoffice php bin/console d:s:u -f
+docker-compose exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat /var/www/site/data/groupe.sql)"'
+docker-compose exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat /var/www/site/data/user.sql)"'
 ```
 
 ## Initialisation données de test

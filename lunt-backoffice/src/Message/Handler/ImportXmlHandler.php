@@ -120,9 +120,9 @@ readonly class ImportXmlHandler
     private function setEtab(array $prop): Etablissement
     {
         $etab = $this->etabRep->findOneBy(['abrege' => $prop['id']]) ?? Etablissement::create($prop);
-        if(isset($prop['logo_uoh'])) $etab->setLogo($prop['logo_uoh']);
+        //if(isset($prop['logo_uoh'])) $etab->setLogo($prop['logo_uoh']);
 
-        return $etab->setNom($prop['libelle_import'])->setAdherent($prop['adherent_uoh']);
+        return $etab->setNom($prop['libelle_import']);
     }
 
     private function setTped(array $prop): TPedagogie

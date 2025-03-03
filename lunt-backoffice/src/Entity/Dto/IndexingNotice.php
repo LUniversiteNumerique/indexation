@@ -18,7 +18,7 @@ class IndexingNotice
             new Field('uuid', $notice->getUuid()),
             new Field('titre', $notice->getTitre()),
             new Field('entrepot_nom',$core->getLabel()),
-            new Field('entrepot_logo', $core->getName()),
+            new Field('entrepot_logo', $user->getSchool()?->getLogo()),
             new Field('entrepot_url',"http://www.uoh.fr"),
             new Field('vignette', $notice->getVignette()),
             new Field('ressource_lien', $notice->getRessUrl()),

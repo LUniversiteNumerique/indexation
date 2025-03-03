@@ -6,8 +6,10 @@ use App\Entity\Etablissement;
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Actions, Crud, Filters};
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\{BooleanField, DateTimeField, IdField, TextField};
+use EasyCorp\Bundle\EasyAdminBundle\Field\{DateTimeField, IdField, ImageField, TextField};
+use Symfony\Component\Validator\Constraints\Image;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\{TextFilter, DateTimeFilter};
+use function Symfony\Component\Translation\t;
 
 class EtablissementCrudController extends AbstractCrudController
 {
@@ -48,10 +50,11 @@ class EtablissementCrudController extends AbstractCrudController
     {
         return [
             IdField::new('id')->onlyOnDetail(),
-            TextField::new('logo', ),
             TextField::new('nom', 'Intitulé'),
             TextField::new('abrege', 'Nom abrégé'),
-            BooleanField::new('adherent', 'Adhérent UNT')->renderAsSwitch(false),
+            ImageField::new('logo')->setUploadDir('public/uploads/images')->setBasePath('/uploads/images')
+                ->setUploadedFileNamePattern('[timestamp]-[slug].[extension]')->setSortable(false)
+                ->setFileConstraints([new Image(maxWidth:500, maxHeight:500)])->setHelp(t('notice.logo_help', domain: 'EasyAdminBundle')),
             DateTimeField::new('creeLe')->onlyOnDetail(),
             DateTimeField::new('editeLe')->onlyOnDetail()
         ];
@@ -86,5 +89,4 @@ class EtablissementCrudController extends AbstractCrudController
         $this->denyAccessUnlessGranted('ROLE_DROP_ETAB');
         return parent::delete($context);
     }
-
 }

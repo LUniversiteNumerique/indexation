@@ -22,9 +22,6 @@ class Etablissement
     #[ORM\Column(length: 225, unique: true), Assert\NotBlank]
     private ?string $abrege;
 
-    #[ORM\Column, Assert\Type('bool')]
-    private bool $adherent = false;
-
     public function __construct(?string $abrege=null, ?string $nom=null)
     {
         $this->creeLe = new \DateTimeImmutable();
@@ -68,18 +65,6 @@ class Etablissement
     public function setAbrege(?string $abrege): static
     {
         $this->abrege = $abrege;
-
-        return $this;
-    }
-
-    public function isAdherent(): ?bool
-    {
-        return $this->adherent;
-    }
-
-    public function setAdherent(?bool $adherent): static
-    {
-        $this->adherent = $adherent;
 
         return $this;
     }
