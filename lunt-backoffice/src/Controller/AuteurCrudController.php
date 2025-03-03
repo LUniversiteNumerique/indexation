@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Auteur;
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Actions, Crud, Filters, Option\SearchMode};
+use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\{AssociationField, DateTimeField, EmailField, IdField, TextField};
@@ -43,7 +44,7 @@ class AuteurCrudController extends AbstractCrudController
         yield TextField::new('prenom', 'Prénom')->setSortable(true);
         yield TextField::new('nom')->setSortable(true);
         yield EmailField::new('email');
-        yield AssociationField::new('etablissement');
+        yield AssociationField::new('etablissement')->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.nom'));
         yield DateTimeField::new('creeLe', 'Date de création')->hideOnForm();
         yield DateTimeField::new('editeLe', "Date d'édition'")->onlyOnDetail();
     }

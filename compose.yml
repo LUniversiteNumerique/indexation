@@ -10,7 +10,7 @@ services:
       - ${JOAI_BASE_URI:-/opt}:/opt
 
   mariadb:
-    image: mariadb:latest
+    image: mariadb:11.7.2
     environment:
       MYSQL_DATABASE: ${MARIADB_DB}
       MYSQL_ROOT_PASSWORD: ${MARIADB_PASS}
@@ -19,7 +19,7 @@ services:
       - db_data:/var/lib/mysql
 
   solr:
-    image: solr:latest
+    image: solr:9.8-slim
     network_mode: "host"
     volumes:
       - ${JOAI_BASE_URI}/lunt-solr/data:/var/solr/data
