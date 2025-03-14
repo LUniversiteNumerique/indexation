@@ -113,10 +113,11 @@ readonly class EntityConfigurator implements FieldConfiguratorInterface
             } catch (UnexpectedTypeException) {}
         } else {
 
+            $isIndexAction = Action::INDEX === $context->getCrud()->getCurrentAction();
             if ($mapped === false || $entityDto->isToOneAssociation($propertyName))
-                $field->setFormattedValue($this->configureToOneAssociation($field));
+                $field->setFormattedValue($this->configureToOneAssociation($field,$isIndexAction));
             elseif ($entityDto->isToManyAssociation($propertyName))
-                $field->setFormattedValue($this->configureToManyAssociation($field,$context));
+                $field->setFormattedValue($this->configureToManyAssociation($field,$isIndexAction));
 
         }
 
@@ -148,7 +149,7 @@ readonly class EntityConfigurator implements FieldConfiguratorInterface
 
     }
 
-    private function configureToOneAssociation(FieldDto $field): ?string
+    private function configureToOneAssociation(FieldDto $field, bool $isIndex): ?string
     {
         $mapped = $field->getFormTypeOption('mapped');
         $field->setCustomOption(EntityField::OPTION_DOCTRINE_ASSOCIATION_TYPE, 'toOne');
@@ -163,6 +164,7 @@ readonly class EntityConfigurator implements FieldConfiguratorInterface
 
         $targetCrudControllerFqcn = $field->getCustomOption(EntityField::OPTION_EMBEDDED_CRUD_FORM_CONTROLLER);
 
+
         $targetEntityDto = null === $field->getValue()
             ? $this->entityFactory->create($targetEntityFqcn)
             : $this->entityFactory->createForEntityInstance($field->getValue());
@@ -170,10 +172,12 @@ readonly class EntityConfigurator implements FieldConfiguratorInterface
 
         $field->setCustomOption(EntityField::OPTION_RELATED_URL, $this->generateLinkToAssociatedEntity($targetCrudControllerFqcn, $targetEntityDto));
 
-        return $this->formatAsString($field->getValue(), $targetEntityDto);
+        $toto = $this->formatAsString($field->getValue(), $targetEntityDto);
+
+        return $isIndex ? u($toto)->truncate(32, '…')->toString() : $toto;
     }
 
-    private function configureToManyAssociation(FieldDto $field, AdminContext $context): string|array|int
+    private function configureToManyAssociation(FieldDto $field, bool $isIndex): string|array|int
     {
         $field->setCustomOption(EntityField::OPTION_DOCTRINE_ASSOCIATION_TYPE, 'toMany');
 
@@ -184,9 +188,8 @@ readonly class EntityConfigurator implements FieldConfiguratorInterface
 
         if (null === $field->getTextAlign()) $field->setTextAlign(TextAlign::RIGHT);
         $targetCrudControllerFqcn = $field->getCustomOption(EntityField::OPTION_EMBEDDED_CRUD_FORM_CONTROLLER);
-        $isDetailAction = Action::DETAIL === $context->getCrud()->getCurrentAction();
 
-        $collectionItemsAsText = []; $resource = $targetCrudControllerFqcn === NoticeCrudController::class && $isDetailAction;
+        $collectionItemsAsText = []; $resource = $targetCrudControllerFqcn === NoticeCrudController::class && $isIndex;
         foreach ($field->getValue() ?? [] as $item) {
             if (!\is_string($item) && !(\is_object($item) && method_exists($item, '__toString')))
                 return $this->countNumElements($field->getValue());
@@ -196,7 +199,7 @@ readonly class EntityConfigurator implements FieldConfiguratorInterface
             } else $collectionItemsAsText[] = (string) $item;
         }
 
-        return $resource ? $collectionItemsAsText : u(', ')->join($collectionItemsAsText)->truncate($isDetailAction ? 512 : 32, '…')->toString();
+        return $resource ? $collectionItemsAsText : u(', ')->join($collectionItemsAsText)->truncate($isIndex ? 32 : 512, '…')->toString();
     }
 
     private function formatAsString($entityInstance, EntityDto $entityDto): ?string

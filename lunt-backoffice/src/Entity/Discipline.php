@@ -35,7 +35,7 @@ class Discipline
 
     public static function create(array $o): self
     {
-        return new self($o['id'],$o['libelle_import']);
+        return new self($o['id'],$o['libelle_uoh']);
     }
 
     public function getCode(): ?string

@@ -22,6 +22,10 @@ class Univerique
         Assert\Regex('/^[a-zA-Z0-9-_]+$/', "Le nom du répertoire ne peut contenir que des caractères alphanumériques, un tiret ou un tiret bas.")]
     private ?string $name = null;
 
+    #[ORM\Column(length: 255, nullable: true),
+        Assert\Url, Assert\NotBlank]
+    private ?string $siteWeb = null;
+
     #[ORM\ManyToMany(targetEntity: Discipline::class)]
     private Collection $fields;
     
@@ -56,6 +60,18 @@ class Univerique
     public function setName(string $name): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getSiteWeb(): ?string
+    {
+        return $this->siteWeb;
+    }
+
+    public function setSiteWeb(string $url): static
+    {
+        $this->siteWeb = $url;
 
         return $this;
     }

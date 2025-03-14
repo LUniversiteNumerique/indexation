@@ -9,7 +9,7 @@ use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action,Actions,Crud,Filters};
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\{AssociationField,DateTimeField,IdField,TextField};
+use EasyCorp\Bundle\EasyAdminBundle\Field\{AssociationField, DateTimeField, IdField, TextField, UrlField};
 use Psr\EventDispatcher\EventDispatcherInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\{TextFilter, DateTimeFilter};
 
@@ -50,6 +50,7 @@ class UniveriqueCrudController extends AbstractCrudController
         return [
             IdField::new('id')->onlyOnDetail(),
             TextField::new('label', 'Nom'),
+            UrlField::new('siteWeb', "Lien du site web"),
             TextField::new('name', "Nom du répertoire")->hideWhenUpdating(),
             AssociationField::new('fields', "Champs disciplinaires")->setTemplatePath('admin/fields/badge.html.twig')
                 ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->where('entity.parent is null')->orderBy('entity.nom'))->setSortable(false),

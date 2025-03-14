@@ -8,6 +8,7 @@ services:
       - solr
     volumes:
       - ${JOAI_BASE_URI:-/opt}:/opt
+      - ${JOAI_BASE_URI}/lunt-resources/uploads:/var/www/site/public/uploads
 
   mariadb:
     image: mariadb:11.7.2

@@ -142,7 +142,7 @@ class NoticeCrudController extends AbstractCrudController
             yield Field\TextField::new('ressUrl', t('notice.ressurl', domain: 'EasyAdminBundle'))->setHelp(t('notice.ressurl_help', domain: 'EasyAdminBundle'))
                 ->setFormTypeOptions(['attr' => ['placeholder' => 'https://...'], 'required' => true])->setSortable(false);
             yield FileField::new('ressZip', 'Contenu Zip')->setUploadDir('public/uploads/files')->setHelp(t('notice.ressurl_help', domain: 'EasyAdminBundle'))
-                ->setUploadedFileNamePattern('[timestamp]-[randomhash].[extension]')->setBasePath('/uploads/files')->setRequired(true)->onlyOnForms()
+                ->setUploadedFileNamePattern('[timestamp]-[randomhash].[extension]')->setBasePath('uploads/files')->setRequired(true)->onlyOnForms()
                 ->setFileConstraints([new File(maxSize: '64M', mimeTypes: ["application/zip", "application/x-zip-compressed", "multipart/x-zip"])]);
         } else yield Field\UrlField::new('ressUrl', t('notice.ressurl', domain: 'EasyAdminBundle'))->setHelp(t('notice.ressurl_help', domain: 'EasyAdminBundle'));
 
@@ -216,8 +216,8 @@ class NoticeCrudController extends AbstractCrudController
             yield EntityField::new('codewey','Code Dewey')->setFormTypeOptions(['class' => Dewey::class])->setSortable(false);
             yield Field\TextField::new('label',t('notice.label', domain: 'EasyAdminBundle'))->setHelp(t('notice.label_help', domain: 'EasyAdminBundle'))->onlyOnDetail();
             yield EntityField::new('repertoire',t('notice.repertoire', domain: 'EasyAdminBundle'))->setHelp(t('notice.repertoire_help', domain: 'EasyAdminBundle'))
-                ->setFormType(TreeChoiceType::class)->setQueryBuilder(fn(QueryBuilder $qb) => $qb->join('entity.children','s')->leftJoin('s.children','d')->addSelect('s,d'));
-            yield Field\BooleanField::new('editDemande', 'Demande de rectification ?')->renderAsSwitch(false)->setSortable(false)->onlyOnIndex();
+                ->setFormType(TreeChoiceType::class)->setQueryBuilder(fn(QueryBuilder $qb) => $qb->join('entity.children','s')->leftJoin('s.children','d')->addSelect('s,d'))->hideOnIndex();
+            yield Field\BooleanField::new('editDemande', 'Rectifiée ?')->renderAsSwitch(false)->setSortable(false)->onlyOnIndex();
             yield Field\DateTimeField::new('publieLe',t('notice.publiele', domain: 'EasyAdminBundle'))->onlyOnDetail();
         }
     }
@@ -325,22 +325,17 @@ class NoticeCrudController extends AbstractCrudController
             $filePaths = (array) $child->getData();
             $uploadDir = $config->getOption('upload_dir');
             $uploadNew = $config->getOption('upload_new');
-            $extractNew = function (UploadedFile $file, string $uploadDir, string $fileName) {
-                $target = $uploadDir .DIRECTORY_SEPARATOR. pathinfo($fileName, PATHINFO_FILENAME);
-                $zip = new \ZipArchive();
-                try {
-                    if ($zip->open($file->getRealPath()) === true)
-                        $zip->extractTo($target);
-                    $zip->close();
-                }catch (\Exception $error){
-                    throw new FileException(sprintf('Could not extract the file "%s" to "%s" (%s).', $file->getRealPath(), $target, $error->getMessage()));
-                }
-            };
 
             foreach ($state->getUploadedFiles() as $index => $file) {
                 $fileName = u($filePaths[$index])->replace($uploadDir, '')->toString();
-                if ("zip" === $file->guessExtension()) $extractNew($file, $uploadDir, $fileName);
-                else $uploadNew($file, $uploadDir, $fileName);
+                $target = $uploadDir.pathinfo($fileName, PATHINFO_FILENAME);
+
+                if ("zip" === $file->guessExtension()) {
+                    $zip = new \ZipArchive(); dump($target);
+                    if($zip->open($file->getRealPath())) $zip->extractTo($target);
+                    $zip->close();
+                } else $uploadNew($file, $uploadDir, $fileName);
+
             }
         }
     }

@@ -10,10 +10,10 @@ class IndexingNotice
 {
     public function __construct(#[Jms\XmlList(entry: "field", inline: true), Jms\Type("array<".Field::class.">")] public array $fields = []){}
 
-    static function fromNotice(Notice $notice, Univerique $core): IndexingNotice
+    static function fromNotice(Notice $notice): IndexingNotice
     {
-        $user = $notice->getCreateur();
-        $dewe = $notice->getCodewey(); $disc = $notice->getSpecialite();
+        $user = $notice->getCreateur(); $dewe = $notice->getCodewey();
+        $core = $user->getUntheme(); $disc = $notice->getSpecialite();
         return new self([
             new Field('uuid', $notice->getUuid()),
             new Field('titre', $notice->getTitre()),
@@ -63,23 +63,37 @@ class IndexingNotice
         /** @var Contribute $creat */ $creat = $suplom->metadata->contributes[0];
         /** @var Contribute $valid */ $valid = $suplom->metadata->contributes[1];
 
-        $auteurs = []; $porteurs = []; /** @var Contribute $c */
+        $ator_teurs = [
+            "author" => [],
+            "publisher" => [],
+            "validator" => [],
+            "initiator" => []
+        ]; /** @var Contribute $c */
         foreach ($suplom->lifeCycle?->contributes as $c) {
             $entities = self::getContribute($c->entities);
-            if (!empty($entities)) list($auteurs[], $porteurs[]) = $entities;
+            if($c->role->value === "contributeur" || $c->role->value === "initiator")
+                $ator_teurs["creator"] = $entities;
+            else $ator_teurs[$c->role->value] = $entities;
         }
-        $porteurs = array_unique($porteurs);
+
+        foreach ($suplom->metadata?->contributes as $c) {
+            $entities = self::getContribute($c->entities);
+            if($c->role->value === "contributeur" || $c->role->value === "initiator")
+                $ator_teurs["creator"] = $entities;
+            else $ator_teurs[$c->role->value] = $entities;
+        }
 
         $inotice = new self([
             new Field('uuid', substr($suplom->general?->identifier?->entry, -36)),
             new Field('titre', $suplom->general->title[0]?->value),
             new Field('entrepot_nom',$core?->getLabel()),
             new Field('entrepot_logo', $core?->getName()),
-            new Field('entrepot_url',"http://www.uoh.fr"),
+            new Field('entrepot_url', $core?->getSiteWeb()),
             new Field('vignette', null),
-            new Field('ressource_lien', null),
             new Field('description', $suplom->general->description[0]?->value),
-            //new Field('dure_apprentissage', $notice->getDureAppr()),
+            new Field('ressource_lien', $suplom->technical?->location),
+            new Field('dure_execution', $suplom->technical?->dureexec),
+            //new Field('dure_apprentissage', $suplom->technical?->location),
             //new Field('estampillage', $notice->getLabel()??''),
             //new Field('objectifs_pedagogiques', $notice->getObjectif()),
             //new Field('evaluation_form_url', $notice->getFormEvalUrl()),
@@ -91,11 +105,12 @@ class IndexingNotice
             new Field('types_pedagogiques', array_reduce($suplom->educational?->learningResourceTypes, fn(string $acc, Source $s) => $acc.$s->value.", ", "")),
             new Field('proposition_utilisation', array_reduce($suplom->educational?->description, fn(string $acc, Field $f) => $acc.$f->value.", ", '')),
 
-            new Field('contributions', array_reduce($auteurs,fn(string $tmp, string $etab): string => $tmp.sprintf("%s, ",$etab),"")),
+            new Field('correspondant', $ator_teurs["creator"]),
+            new Field('validateur', $ator_teurs["validator"]),
+            new Field('contributions', array_reduce(array_unique($ator_teurs["author"]),fn(string $tmp, string $etab): string => $tmp.sprintf("%s, ",$etab),"")),
             //new Field('associations_associate', array_map(fn(Resource $r) => sprintf('%s|%s', $r->identifier->entry, $r->description[0]?->value), $suplom->relation?->resources)),
-            new Field('etablissements_co_editeurs', array_reduce($porteurs,fn(string $tmp, string $etab): string => $tmp.sprintf("%s, ",$etab),"")),
-            new Field('date_modification', $creat?->date[0]),
-            new Field('date_publication', $valid?->date[0]),
+            new Field('etablissement_porteurs', array_reduce(array_unique($ator_teurs["publisher"]),fn(string $tmp, string $etab): string => $tmp.sprintf("%s, ",$etab),"")),
+            //new Field('date_modification', $creat?->date[0]), new Field('date_publication', $valid?->date[0]),
 
             new Field('langues_utilisateur', implode(', ',$suplom->educational->languages)),
             new Field('langues_ressource', implode(', ',$suplom->general->languages)),
@@ -104,35 +119,15 @@ class IndexingNotice
             new Field('ressource_payante', $suplom->rights?->cost?->value!=='No'),
             new Field('droit', $suplom->rights?->description[0]?->value),
 
-            new Field('ressource_lien', $suplom->technical?->location),
             new Field('exposition_oai', 0),
             new Field('external_resource', 1),
         ]);
 
-        $validators = ""; $porteurs = ""; $creators = "";
-        /** @var Contribute $c */
-        foreach ($suplom->metadata?->contributes as $c) {
-            $entities = self::getContribute($c->entities);
-            if (!empty($entities)) {
-                list($auteur, $porteur) = $entities;
-                if ($c->role->value == 'creator') {
-                    $creators .= "$auteur, ";
-                    $porteurs .= "$porteur, ";
-                }elseif ($c->role->value == 'publisher'||$c->role->value == 'validator') $validators .= "$auteur, ";
-            }
-        }
-        $inotice->fields[] = new Field('correspondant', $creators);
-        $inotice->fields[] = new Field('etablissement_porteur', $porteurs);
-        $inotice->fields[] = new Field('validateur', $validators);
-
         $taxons = [];
         /** @var Classification $class */
         foreach ($suplom->classifications as $class) {
-            if($class->purpose && isset($class->taxonPath->taxons)) {
-                /** @var Taxon $taxon */
-                $taxon = $class->taxonPath->taxons[0];
-                $taxons[$class->purpose->value] = $taxon?->entry[0]?->value;
-            }
+            if($class->taxonPath->source[0]->value)
+            array_map(fn(Taxon $taxon) => $taxon->entry[0]?->value, $class->taxonPath->taxons);
         }
         $inotice->fields[] = new Field('specialites', $taxons['discipline']);
         return $inotice;
