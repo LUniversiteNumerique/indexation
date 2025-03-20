@@ -12,8 +12,8 @@ class IndexingNotice
 
     static function fromNotice(Notice $notice): IndexingNotice
     {
-        $user = $notice->getCreateur(); $dewe = $notice->getCodewey();
-        $core = $user->getUntheme(); $disc = $notice->getSpecialite();
+        $user = $notice->getCreateur(); $dewe = $notice->getCodeweys();
+        $core = $user->getUntheme(); $disc = $notice->getSpecialites();
         return new self([
             new Field('uuid', $notice->getUuid()),
             new Field('titre', $notice->getTitre()),
@@ -69,13 +69,6 @@ class IndexingNotice
             "validator" => [],
             "initiator" => []
         ]; /** @var Contribute $c */
-        foreach ($suplom->lifeCycle?->contributes as $c) {
-            $entities = self::getContribute($c->entities);
-            if($c->role->value === "contributeur" || $c->role->value === "initiator")
-                $ator_teurs["creator"] = $entities;
-            else $ator_teurs[$c->role->value] = $entities;
-        }
-
         foreach ($suplom->metadata?->contributes as $c) {
             $entities = self::getContribute($c->entities);
             if($c->role->value === "contributeur" || $c->role->value === "initiator")
@@ -93,43 +86,48 @@ class IndexingNotice
             new Field('description', $suplom->general->description[0]?->value),
             new Field('ressource_lien', $suplom->technical?->location),
             new Field('dure_execution', $suplom->technical?->dureexec),
-            //new Field('dure_apprentissage', $suplom->technical?->location),
-            //new Field('estampillage', $notice->getLabel()??''),
-            //new Field('objectifs_pedagogiques', $notice->getObjectif()),
-            //new Field('evaluation_form_url', $notice->getFormEvalUrl()),
             new Field('description_text', strip_tags($suplom->general->description[0]?->value)),
-            //new Field('date_creation', $notice->getRessDate()),
+            new Field('langues_ressource', implode(', ',$suplom->general->languages)),
+            new Field('langues_utilisateur', implode(', ',$suplom->educational->languages)),
+            new Field('dure_apprentissage', $suplom->educational->typicalLearningTime?->value), //new Field('objectifs_pedagogiques', $notice->getObjectif()),
             new Field('mots_cles', array_reduce($suplom->general?->keywords, fn(string $acc, Motcle $s) => $acc.$s->string?->value.", ", "")),
             new Field('niveaux', array_reduce($suplom->educational?->contexts, fn(string $acc, Source $s) => $acc.$s->value.", ", '')),
             new Field('types_documentaires', array_reduce($suplom->general?->documentTypes, fn(string $acc, Source $s) => $acc.$s->value.", ", "")),
             new Field('types_pedagogiques', array_reduce($suplom->educational?->learningResourceTypes, fn(string $acc, Source $s) => $acc.$s->value.", ", "")),
             new Field('proposition_utilisation', array_reduce($suplom->educational?->description, fn(string $acc, Field $f) => $acc.$f->value.", ", '')),
-
-            new Field('correspondant', $ator_teurs["creator"]),
-            new Field('validateur', $ator_teurs["validator"]),
-            new Field('contributions', array_reduce(array_unique($ator_teurs["author"]),fn(string $tmp, string $etab): string => $tmp.sprintf("%s, ",$etab),"")),
             //new Field('associations_associate', array_map(fn(Resource $r) => sprintf('%s|%s', $r->identifier->entry, $r->description[0]?->value), $suplom->relation?->resources)),
-            new Field('etablissement_porteurs', array_reduce(array_unique($ator_teurs["publisher"]),fn(string $tmp, string $etab): string => $tmp.sprintf("%s, ",$etab),"")),
-            //new Field('date_modification', $creat?->date[0]), new Field('date_publication', $valid?->date[0]),
-
-            new Field('langues_utilisateur', implode(', ',$suplom->educational->languages)),
-            new Field('langues_ressource', implode(', ',$suplom->general->languages)),
-
-            new Field('propriete_intellectuelle', $suplom->rights?->copyrightAndOtherRestrictions?->value!=='No'),
-            new Field('ressource_payante', $suplom->rights?->cost?->value!=='No'),
+            new Field('propriete_intellectuelle', strtolower($suplom->rights?->copyrightAndOtherRestrictions?->value??'')!=="no"),
+            new Field('ressource_payante', strtolower($suplom->rights?->cost?->value??'')!=="no"),
             new Field('droit', $suplom->rights?->description[0]?->value),
 
             new Field('exposition_oai', 0),
             new Field('external_resource', 1),
+            //new Field('estampillage', $notice->getLabel()??''),
+            //new Field('evaluation_form_url', $notice->getFormEvalUrl()),
         ]);
 
-        $taxons = [];
+        foreach ($suplom->lifeCycle?->contributes as $c) {
+            $entities = self::getContribute($c->entities);
+            if($c->role->value === "contributeur" || $c->role->value === "initiator")
+                $ator_teurs["creator"] = $entities;
+            else $ator_teurs[$c->role->value] = $entities;
+        }
+        //new Field('date_creation', $notice->getRessDate()), new Field('date_publication', $valid?->date[0]),
+        array_push($inotice->fields,
+            new Field('correspondant', $ator_teurs["creator"]),
+            new Field('validateur', $ator_teurs["validator"]),
+            new Field('contributions', array_reduce(array_unique($ator_teurs["author"]),fn(string $tmp, string $etab): string => $tmp.sprintf("%s, ",$etab),"")),
+            new Field('etablissement_porteurs', array_reduce(array_unique($ator_teurs["publisher"]),fn(string $tmp, string $etab): string => $tmp.sprintf("%s, ",$etab),""))
+        );
+
         /** @var Classification $class */
         foreach ($suplom->classifications as $class) {
-            if($class->taxonPath->source[0]->value)
-            array_map(fn(Taxon $taxon) => $taxon->entry[0]?->value, $class->taxonPath->taxons);
+            $key = array_reduce($class->taxonPath->source, fn(string $a, Field $s) => "$a $s->value", "");
+            $value = array_map(fn(Taxon $taxon) => $taxon->entry[0]?->value, $class->taxonPath->taxons);
+
+            if(str_contains($key, 'lassification')) $inotice->fields[] = new Field('specialites', $value);
+            if(str_contains($key, 'CDD 22')) $inotice->fields[] = new Field('dewey', $value);
         }
-        $inotice->fields[] = new Field('specialites', $taxons['discipline']);
         return $inotice;
     }
 

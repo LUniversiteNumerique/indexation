@@ -77,15 +77,13 @@ class Notice
         ORM\JoinColumn(nullable: false)]
     private ?Licence $droit = null;
 
-    #[ORM\ManyToOne, Assert\Valid,
-        Assert\Type(Dewey::class)]
-    private ?Dewey $codewey = null;
-
-    #[ORM\ManyToOne, ORM\JoinColumn(nullable: false),
-        Assert\Valid, Assert\Type(Discipline::class)]
-    private ?Discipline $specialite = null;
-
     #[ORM\ManyToOne] private ?Dossier $repertoire = null;
+
+    #[ORM\ManyToMany(targetEntity: Dewey::class)]
+    private Collection $codeweys;
+
+    #[ORM\ManyToMany(targetEntity: Discipline::class), Assert\Count(min: 1)]
+    private Collection $specialites;
 
     #[ORM\ManyToMany(targetEntity: Etablissement::class),
         Assert\Count(min: 1)]
@@ -128,6 +126,8 @@ class Notice
         $this->docTypes = new ArrayCollection();
         $this->pedTypes = new ArrayCollection();
         $this->ressources = new ArrayCollection();
+        $this->specialites = new ArrayCollection();
+        $this->codeweys = new ArrayCollection();
         $this->porteurs = new ArrayCollection();
         $this->auteurs = new ArrayCollection();
         $this->tags = new ArrayCollection();
@@ -397,30 +397,6 @@ class Notice
         return $this;
     }
 
-    public function getCodewey(): ?Dewey
-    {
-        return $this->codewey;
-    }
-
-    public function setCodewey(?Dewey $codewey): self
-    {
-        $this->codewey = $codewey;
-
-        return $this;
-    }
-
-    public function getSpecialite(): ?Discipline
-    {
-        return $this->specialite;
-    }
-
-    public function setSpecialite(?Discipline $specialite): self
-    {
-        $this->specialite = $specialite;
-
-        return $this;
-    }
-
     public function getRepertoire(): ?Dossier
     {
       return $this->repertoire;
@@ -431,6 +407,54 @@ class Notice
       $this->repertoire = $repertoire;
 
       return $this;
+    }
+
+    /**
+     * @return Collection<int, Dewey>
+     */
+    public function getCodeweys(): Collection
+    {
+        return $this->codeweys;
+    }
+
+    public function addCodewey(Dewey $dewey): self
+    {
+        if (!$this->codeweys->contains($dewey)) {
+            $this->codeweys->add($dewey);
+        }
+
+        return $this;
+    }
+
+    public function removeCodewey(Dewey $dewey): self
+    {
+        $this->codeweys->removeElement($dewey);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Discipline>
+     */
+    public function getSpecialites(): Collection
+    {
+        return $this->specialites;
+    }
+
+    public function addSpecialite(Discipline $specialite): self
+    {
+        if (!$this->specialites->contains($specialite)) {
+            $this->specialites->add($specialite);
+        }
+
+        return $this;
+    }
+
+    public function removeSpecialite(Discipline $specialite): self
+    {
+        $this->specialites->removeElement($specialite);
+
+        return $this;
     }
 
     /**
@@ -726,12 +750,13 @@ class Notice
      */
     public function belongsToUNT(Univerique $unt): bool
     {
-        if($this->getSpecialite()) {
+        if($this->getSpecialites()->isEmpty()) return false; else {
             // Extract IDs of the fields (disciplines) associated with the Univerique
             $untFieldIds = $unt->getFields()->map(fn($discipline) => $discipline->getId());
+            $specialites = $this->getSpecialites()->map(fn(Discipline $spec) => $spec->getParent()?->getParent()?->getId());
 
             // Check if the grandparent discipline is part of the Univerique's fields
-            return in_array($this->getSpecialite()->getParent()?->getParent()?->getId(), $untFieldIds->toArray(), true);
-        } return false;
+            return !empty(array_intersect($specialites->toArray(), $untFieldIds->toArray()));
+        }
     }
 }

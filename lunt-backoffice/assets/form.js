@@ -4,10 +4,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (null === form) return; //formSelector.includes('-new-') ? 'new' : 'edit')
 
         handleFieldsWithErrors(form, formSelector.includes('-new-') ? 'new' : 'edit');
-        changeOptions(form,'Notice_champDisc','Notice_discipline','Notice_specialite')
+        changeOptions(form,'Notice_champDisc','Notice_discipline','Notice_specialites')
 
         if(null !== document.getElementById('Notice_disciFond'))
-            changeOptions(form,'Notice_disciFond','Notice_division','Notice_codewey')
+            changeOptions(form,'Notice_disciFond','Notice_division','Notice_codeweys')
     })
 });
 const filedErrors = (input, inputEvent) => {

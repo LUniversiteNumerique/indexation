@@ -52,7 +52,7 @@ class EtablissementCrudController extends AbstractCrudController
             IdField::new('id')->onlyOnDetail(),
             TextField::new('nom', 'Intitulé'),
             TextField::new('abrege', 'Nom abrégé'),
-            ImageField::new('logo')->setUploadDir('public/uploads/images')->setBasePath('/uploads/images')
+            ImageField::new('logo')->setUploadDir('public/uploads/logos')->setBasePath('/uploads/logos')
                 ->setUploadedFileNamePattern('[timestamp]-[slug].[extension]')->setSortable(false)
                 ->setFileConstraints([new Image(maxWidth:500, maxHeight:500)])->setHelp(t('notice.logo_help', domain: 'EasyAdminBundle')),
             DateTimeField::new('creeLe')->onlyOnDetail(),

@@ -51,8 +51,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     private array $roles = [self::ROLE_DEFAULT];
 
-    public function __construct(string $email=null, string $password=null, array $roles=[])
+    public function __construct(string $name=null, string $email=null, string $password=null, array $roles=[])
     {
+        $this->name = $name;
         $this->email = $email;
         $this->password = $password;
         if(!empty($roles)) $this->roles = $roles;

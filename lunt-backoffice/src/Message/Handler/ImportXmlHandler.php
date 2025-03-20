@@ -8,6 +8,7 @@ use App\Message\ImportXmlMessage;
 use App\Service\FileService;
 use Doctrine\ORM\{EntityRepository,EntityManagerInterface};
 use JMS\Serializer\SerializerInterface;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -119,8 +120,10 @@ readonly class ImportXmlHandler
 
     private function setEtab(array $prop): Etablissement
     {
+        $name = $prop['id'].".png";
+        $logo = $this->fs->readFilesFrom(null, "uploads/logos/", $name);
         $etab = $this->etabRep->findOneBy(['abrege' => $prop['id']]) ?? Etablissement::create($prop);
-        //if(isset($prop['logo_uoh'])) $etab->setLogo($prop['logo_uoh']);
+        if($logo->hasResults()) $etab->setLogo($name);
 
         return $etab->setNom($prop['libelle_import']);
     }
@@ -129,7 +132,7 @@ readonly class ImportXmlHandler
     {
         $tped = $this->tpedRep->findOneBy(['code' => $prop['id']]) ?? TPedagogie::create($prop);
 
-        return $tped->setNom($prop['libelle_import']);
+        return $tped->setNom($prop['libelle_uoh']);
     }
 
     private function setDisc(array $prop): Discipline

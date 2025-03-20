@@ -15,7 +15,7 @@ use Symfony\Component\Scheduler\Attribute\AsPeriodicTask;
     ),
     //AsPeriodicTask(frequency: '1 month', from: '00:00')
 ]
-class ImportXmlCommand extends Command
+class ImportDataXmlCommand extends Command
 {
     public function __construct(
         private readonly FileService $fileService,

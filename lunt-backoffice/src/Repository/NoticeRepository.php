@@ -32,7 +32,7 @@ class NoticeRepository extends ServiceEntityRepository
 
     public function findFrom(IndexingConfig $cfg, int $limit, int $offset): array
     {
-        $qr = $this->createQueryBuilder('n')->join('n.specialite', 's')
+        $qr = $this->createQueryBuilder('n')->leftJoin('n.specialites', 's')
             ->join('s.parent', 'u')->where('n.etat = :etat');
         if(!$cfg->isFullMode()) $qr->andWhere('n.publieLe is null OR n.editeLe > :date')->setParameter('date', $cfg->getScheduleAt());
         $qr->orWhere('n.etat != :etat AND n.publieLe is not null');
@@ -45,7 +45,7 @@ class NoticeRepository extends ServiceEntityRepository
     public function findLatestBy(User $user, int $limit = 10): array
     {
         $qb = $this->createQueryBuilder('n')->select('n,a,e,s')
-            ->leftJoin('n.auteurs','a')->leftJoin('n.codewey','e')->join('n.specialite', 's')
+            ->leftJoin('n.auteurs','a')->leftJoin('n.codeweys','e')->leftJoin('n.specialites', 's')
             ->where('n.deleted = 0 AND n.etat = :etat')->setParameter('etat', NoticEtat::Approved);
 
         if ($sch = $user->getSchool()) $qb->andWhere(':school MEMBER OF n.porteurs')->setParameter('school', $sch->getId());
@@ -78,14 +78,15 @@ class NoticeRepository extends ServiceEntityRepository
 
     private function forUser(User $u): \Doctrine\ORM\QueryBuilder
     {
-        $qb = $this->createQueryBuilder('n')->where('n.deleted = 0');
+        $qb = $this->createQueryBuilder('n')->leftJoin('n.specialites', 's')
+            ->join('s.parent', 'u')->where('n.deleted = 0');
         $andX = $qb->expr()->andX('n.etat != :etat');
 
         if ($sch = $u->getSchool()) {
             $qb->setParameter('school', $sch->getId());
             $andX->add(':school MEMBER OF n.porteurs');
         } elseif ($unt = $u->getUntheme()) {
-            $qb->join('n.specialite', 's')->join('s.parent', 'u')->setParameter('champs', $unt->getFields());
+            $qb->setParameter('champs', $unt->getFields());
             $andX->add('u.parent in (:champs)');
         }
 

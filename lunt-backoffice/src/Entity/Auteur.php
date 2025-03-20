@@ -14,18 +14,21 @@ class Auteur
     use Timestamps;
 
     #[ORM\Column(length: 255), Assert\NotBlank]
-    private ?string $nom = null;
+    private ?string $nom;
 
     #[ORM\Column(length: 255),
         Assert\NotBlank, Assert\Length(max: 225)]
-    private ?string $prenom = null;
+    private ?string $prenom;
 
     #[ORM\Column(length: 255, unique: true),
         Assert\NotNull, Assert\Email]
-    private ?string $email = null;
+    private ?string $email;
 
-    public function __construct()
+    public function __construct(?string $nom=null,?string $prenom=null,?string $email=null)
     {
+        $this->nom = $nom;
+        $this->prenom = $prenom;
+        $this->email = $email;
         $this->creeLe = new \DateTimeImmutable();
     }
 

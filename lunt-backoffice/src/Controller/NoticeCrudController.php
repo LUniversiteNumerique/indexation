@@ -20,7 +20,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field as Field;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\{FormBuilderInterface, FormEvent, FormEvents, FormInterface};
-use Symfony\Component\HttpFoundation\{File\Exception\FileException, File\UploadedFile, RedirectResponse, Request, Response};
+use Symfony\Component\HttpFoundation\{RedirectResponse, Request, Response};
 use Symfony\Component\{Intl\Languages, Routing\Generator\UrlGeneratorInterface, Uid\Uuid};
 use Symfony\Component\Validator\Constraints\{File, Image};
 use function Symfony\Component\{String\u,Translation\t};
@@ -184,7 +184,8 @@ class NoticeCrudController extends AbstractCrudController
             })->setSortable(false)->onlyOnForms();
         yield EntityField::new('discipline')->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.nom', 'ASC'))->setHelp(t('notice.discipline_help', domain: 'EasyAdminBundle'))
             ->setFormTypeOptions(['class' => Discipline::class, 'auto_initialize' => false, 'mapped' => false])->setSortable(false)->onlyOnForms();
-        yield EntityField::new('specialite', 'Specialité')->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.nom', 'ASC'))->setFormTypeOption('class', Discipline::class)->setSortable(false);
+        yield EntityField::new('specialites', 'Specialités')->setFormTypeOption('class', Discipline::class)->setFormTypeOption('autocomplete', true)
+            ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.nom', 'ASC'))->setFormTypeOption('multiple', true)->setSortable(false);
         yield Field\DateTimeField::new('creeLe',t('notice.creele', domain: 'EasyAdminBundle'))->onlyOnDetail();
         yield Field\DateTimeField::new('editeLe', t('notice.editele', domain: 'EasyAdminBundle'))->hideOnForm();
 
@@ -213,7 +214,7 @@ class NoticeCrudController extends AbstractCrudController
             yield EntityField::new('disciFond',t('notice.discifond', domain: 'EasyAdminBundle'))->setHelp(t('notice.discifond_help', domain: 'EasyAdminBundle'))->onlyOnForms()->setFormTypeOptions(['class' => Dewey::class,'mapped' => false,'required' => true])->setSortable(false)
                 ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->join('entity.children','s')->leftJoin('s.children','d')->where('entity.parent is null')->addSelect('s,d')->orderBy('entity.nom', 'ASC')->addOrderBy('s.nom', 'ASC')->addOrderBy('d.nom', 'ASC'));
             yield EntityField::new('division')->setFormTypeOptions(['class' => Dewey::class,'auto_initialize' => false,'mapped' => false,'required' => true])->onlyOnForms();
-            yield EntityField::new('codewey','Code Dewey')->setFormTypeOptions(['class' => Dewey::class])->setSortable(false);
+            yield EntityField::new('codeweys','Codes Dewey')->setFormTypeOptions(['class' => Dewey::class,'multiple' => true,'autocomplete' => true])->setSortable(false);
             yield Field\TextField::new('label',t('notice.label', domain: 'EasyAdminBundle'))->setHelp(t('notice.label_help', domain: 'EasyAdminBundle'))->onlyOnDetail();
             yield EntityField::new('repertoire',t('notice.repertoire', domain: 'EasyAdminBundle'))->setHelp(t('notice.repertoire_help', domain: 'EasyAdminBundle'))
                 ->setFormType(TreeChoiceType::class)->setQueryBuilder(fn(QueryBuilder $qb) => $qb->join('entity.children','s')->leftJoin('s.children','d')->addSelect('s,d'))->hideOnIndex();
@@ -243,9 +244,9 @@ class NoticeCrudController extends AbstractCrudController
     {
         /** @var User $user */$user = $this->getUser();
         $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)->select('entity,d,e,r,k,p,a,n,dd,pp,l,s')
-            ->leftJoin('entity.repertoire','d')->leftJoin('entity.codewey','e')->leftJoin('entity.ressources','r')->leftJoin('entity.tags','k')
+            ->leftJoin('entity.repertoire','d')->leftJoin('entity.codeweys','e')->leftJoin('entity.ressources','r')->leftJoin('entity.tags','k')
             ->leftJoin('entity.porteurs','p')->leftJoin('entity.auteurs','a')->leftJoin('entity.niveaux','n')
-            ->leftJoin('entity.docTypes','dd')->leftJoin('entity.pedTypes','pp')->join('entity.droit','l')->join('entity.specialite','s');
+            ->leftJoin('entity.docTypes','dd')->leftJoin('entity.pedTypes','pp')->leftJoin('entity.specialites','s')->join('entity.droit','l');
 
         $andX = $qb->expr()->andX('entity.etat != :etat');
         if ($sch = $user->getSchool()) {
@@ -605,17 +606,17 @@ class NoticeCrudController extends AbstractCrudController
     }
 
     private function addSpec(FormInterface $form, ?array $children): void {
-        $form->add('specialite', EntityType::class, [
-            'label' => t('notice.specialite', domain: 'EasyAdminBundle'), 'class' => Discipline::class,
+        $form->add('specialites', EntityType::class, [
+            'label' => t('notice.specialite', domain: 'EasyAdminBundle'), 'class' => Discipline::class, 'multiple' => true,
             'choices' => $children ?? [], 'help' => t('notice.specialite_help', domain: 'EasyAdminBundle'),
-            'placeholder' => $children ? 'Sélectionnez la spécialité' : 'Sélectionnez la discipline',
+            'placeholder' => $children ? 'Sélectionnez la spécialité' : 'Sélectionnez la discipline', 'autocomplete' => true
         ]);
     }
     private function addCode(FormInterface $form, ?array $children): void {
-        $form->add('codewey', EntityType::class, [
+        $form->add('codeweys', EntityType::class, [
             'label' => t('notice.codewey', domain: 'EasyAdminBundle'), 'class' => Dewey::class, 'required' => true,
-            'choices' => $children ?? [], 'help' => t('notice.codewey_help', domain: 'EasyAdminBundle'),
-            'placeholder' => $children ? 'Sélectionnez le code dewey' : 'Sélectionnez la division',
+            'choices' => $children ?? [], 'help' => t('notice.codewey_help', domain: 'EasyAdminBundle'), 'multiple' => true,
+            'placeholder' => $children ? 'Sélectionnez le code dewey' : 'Sélectionnez la division', 'autocomplete' => true
         ]);
     }
 
@@ -635,11 +636,12 @@ class NoticeCrudController extends AbstractCrudController
         });
 
         return $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+            /* @var $data Notice */
             $data = $event->getData();
             $form = $event->getForm();
 
             /* @var $specialite Discipline */
-            $specialite = $data->getSpecialite();
+            $specialite = $data->getSpecialites()->current()?:null;
             $discipline = $specialite?->getParent();
             $champ = $discipline?->getParent();
 
@@ -662,7 +664,7 @@ class NoticeCrudController extends AbstractCrudController
             }
             if($form->has('disciFond')) {
                 /* @var $codewey Dewey */
-                $codewey = $data->getCodewey();
+                $codewey = $data->getCodeweys()->first()?:null;
                 $division = $codewey?->getParent();
                 $discip = $division?->getParent();
 
