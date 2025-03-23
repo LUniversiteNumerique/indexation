@@ -21,7 +21,7 @@ class SuplomDto {
         #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(Technical::class)] public ?Technical $technical = null,
         #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(Educational::class)] public ?Educational $educational = null,
         #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(Right::class)] public ?Right $rights = null,
-        #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(Relation::class)] public ?Relation $relation = null,
+        #[Jms\XmlList(entry: "relation", inline: true, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Relation::class.">")] public array  $relations = [],
         #[Jms\XmlList(entry: "classification", inline: true, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Classification::class.">"), Jms\XmlElement(cdata: false)] public array $classifications = [],
     ){ $this->schemaLocation = "http://ltsc.ieee.org/xsd/LOM http://lom-fr.fr/xsd/lomfrv1.0/std/lomfr.xsd"; }
 
@@ -157,7 +157,7 @@ class Resource {
 class Relation {
     public function __construct(
         #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(Source::class)] public ?Source $kind = null,
-        #[Jms\XmlList(entry: "resource", namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Resource::class.">"), Jms\XmlElement(cdata: false)] public array $resources = [],
+        #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(Resource::class)] public ?Resource $resource = null,
     ){}
 }
 
@@ -174,7 +174,7 @@ class Classification {
     public function __construct(
         #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(Source::class)] public ?Source $purpose = null,
         #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(TaxonPath::class), Jms\SerializedName('taxonPath')] public ?TaxonPath $taxonPath = null,
-        #[Jms\XmlList(entry: "string", namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Field::class.">"), Jms\XmlElement(cdata: false)] public array $description = [],
+        #[Jms\XmlList(entry: "description", inline: true, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Motcle::class.">")] public array $description = [],
     ){}
 }
 

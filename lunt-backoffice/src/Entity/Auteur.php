@@ -7,8 +7,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\Repository\AuteurRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: AuteurRepository::class),
-    UniqueEntity('email', 'Un auteur avec cet email existe déjà.')]
+#[
+    ORM\Entity(repositoryClass: AuteurRepository::class),
+    UniqueEntity(fields: ['prenom', 'nom']) //UniqueEntity('email', 'Un auteur avec cet email existe déjà.'),
+]
 class Auteur
 {
     use Timestamps;
@@ -20,8 +22,7 @@ class Auteur
         Assert\NotBlank, Assert\Length(max: 225)]
     private ?string $prenom;
 
-    #[ORM\Column(length: 255, unique: true),
-        Assert\NotNull, Assert\Email]
+    #[ORM\Column(length: 255, unique: true, nullable: true), Assert\Email]
     private ?string $email;
 
     public function __construct(?string $nom=null,?string $prenom=null,?string $email=null)

@@ -20,7 +20,7 @@ class Notice
     private ?Uuid $uuid;
 
     #[ORM\Column(length: 255), Assert\NotBlank]
-    private ?string $titre = null;
+    private ?string $ressUrl, $titre = null;
 
     #[ORM\Column(type: Types::TEXT), Assert\NotNull]
     private ?string $description = null;
@@ -37,7 +37,7 @@ class Notice
     #[ORM\Column(nullable: true)]
     private ?string $dureAppr = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $objectif = null;
 
     #[ORM\Column(nullable: true)]
@@ -53,6 +53,10 @@ class Notice
     #[ORM\Column(nullable: true)]
     private ?float $ressSize = null;
 
+    #[ORM\Column(length: 255)]
+    private ?int $ressDate = null;
+    private ?string $ressZip = null;
+
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $publieLe = null;
 
@@ -65,10 +69,6 @@ class Notice
 
     #[ORM\ManyToOne]
     private ?User $createur,$validateur;
-
-    #[ORM\Column(length: 255)]
-    private ?string $ressDate, $ressUrl = null;
-    private ?string $ressZip = null;
 
     #[ORM\Column(length: 255, nullable: true),Assert\Url]
     private ?string $formEvalUrl = null;
@@ -109,7 +109,7 @@ class Notice
         Assert\Count(min: 1)]
     private Collection $tags;
 
-    #[ORM\ManyToMany(targetEntity: self::class)]
+    #[ORM\ManyToMany(targetEntity: self::class, cascade: ['all'])]
     private Collection $ressources;
 
     #[ORM\Column]
@@ -314,11 +314,11 @@ class Notice
         return $this;
     }
 
-    public function getRessDate(): ?string
+    public function getRessDate(): ?int
     {
         return $this->ressDate;
     }
-    public function setRessDate(?string $ressDate): self
+    public function setRessDate(?int $ressDate): self
     {
         $this->ressDate = $ressDate;
 

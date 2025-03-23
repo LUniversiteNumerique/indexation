@@ -42,7 +42,7 @@ class NoticeRepository extends ServiceEntityRepository
             ->setFirstResult($offset)->setMaxResults($limit)->getQuery()->getResult();
     }
 
-    public function findLatestBy(User $user, int $limit = 10): array
+    public function findLatestBy(User $user, int $limit = 20): array
     {
         $qb = $this->createQueryBuilder('n')->select('n,a,e,s')
             ->leftJoin('n.auteurs','a')->leftJoin('n.codeweys','e')->leftJoin('n.specialites', 's')
@@ -73,20 +73,19 @@ class NoticeRepository extends ServiceEntityRepository
         $qb = $this->forUser($user);
         if($date) $qb->andWhere('n.creeLe > :date')->setParameter('date', new \DateTIME("-1 $date"));
 
-        return $qb->groupBy('n.etat')->select('n.etat, COUNT(n.id) as nombre')->getQuery()->getResult();
+        return $qb->groupBy('n.etat')->select('n.etat, COUNT(DISTINCT n.id) as nombre')->getQuery()->getResult();
     }
 
     private function forUser(User $u): \Doctrine\ORM\QueryBuilder
     {
-        $qb = $this->createQueryBuilder('n')->leftJoin('n.specialites', 's')
-            ->join('s.parent', 'u')->where('n.deleted = 0');
+        $qb = $this->createQueryBuilder('n')->where('n.deleted = 0');
         $andX = $qb->expr()->andX('n.etat != :etat');
 
         if ($sch = $u->getSchool()) {
             $qb->setParameter('school', $sch->getId());
             $andX->add(':school MEMBER OF n.porteurs');
         } elseif ($unt = $u->getUntheme()) {
-            $qb->setParameter('champs', $unt->getFields());
+            $qb->join('n.specialites', 's')->join('s.parent', 'u')->setParameter('champs', $unt->getFields());
             $andX->add('u.parent in (:champs)');
         }
 

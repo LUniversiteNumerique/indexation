@@ -122,7 +122,7 @@ readonly class ImportXmlHandler
     {
         $name = $prop['id'].".png";
         $logo = $this->fs->readFilesFrom(null, "uploads/logos/", $name);
-        $etab = $this->etabRep->findOneBy(['abrege' => $prop['id']]) ?? Etablissement::create($prop);
+        $etab = $this->etabRep->findOneBy(['code' => $prop['id']]) ?? Etablissement::create($prop);
         if($logo->hasResults()) $etab->setLogo($name);
 
         return $etab->setNom($prop['libelle_import']);
@@ -132,7 +132,7 @@ readonly class ImportXmlHandler
     {
         $tped = $this->tpedRep->findOneBy(['code' => $prop['id']]) ?? TPedagogie::create($prop);
 
-        return $tped->setNom($prop['libelle_uoh']);
+        return $tped->setNom($prop['libelle_uoh'])->setSuplom($prop['libelle_suplomfr']);
     }
 
     private function setDisc(array $prop): Discipline

@@ -126,14 +126,15 @@ class NoticeCrudController extends AbstractCrudController
         yield Field\TextField::new('titre')->setHelp(t('notice.titre_help', domain: 'EasyAdminBundle'));
         yield Field\TextEditorField::new('description')->setHelp(t('notice.description_help', domain: 'EasyAdminBundle'))->setTemplatePath('admin/fields/text_editor.html.twig')->hideOnIndex()->setRequired(true);
         yield EntityField::new('porteurs', t('notice.porteurs', domain: 'EasyAdminBundle'))->setHelp(t('notice.porteurs_help', domain: 'EasyAdminBundle'))
-            ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.abrege', 'ASC'))->setSortable(false)->setRequired(true)->hideOnIndex();
+            ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.code', 'ASC'))->setSortable(false)->setRequired(true)->hideOnIndex();
         yield EntityField::new('auteurs',t('notice.auteurs', domain: 'EasyAdminBundle'))->setFormType(AuteurAutoField::class)
             ->setHelp(t('notice.auteurs_help', domain: 'EasyAdminBundle'))->setSortable(false)->setRequired(true);
         yield EntityField::new('tags', t('notice.tags', domain: 'EasyAdminBundle'))->setRequired(true)->hideOnIndex()
             ->setHelp(t('notice.tags_help', domain: 'EasyAdminBundle'))->setFormType(TagAutoField::class)->setFormTypeOption('attr', [
                 'data-tag-autocreate-url-value' => $this->router->generate('app_keywork_new'), 'data-controller' => 'tag-autocreate'
             ]);
-        yield Field\ChoiceField::new('ressDate', t('notice.date', domain: 'EasyAdminBundle'))->setChoices(array_flip(range((int) date('Y'), (int) date('Y') - 100)))->hideOnIndex();
+        yield Field\ChoiceField::new('ressDate', t('notice.date', domain: 'EasyAdminBundle'))->setChoices(array_combine(
+            $years = range((int) date('Y'), (int) date('Y') - 100), $years))->hideOnIndex();
 
         yield Field\FormField::addFieldset('Liens de la ressource')->setIcon('fa fa-paperclip');
 

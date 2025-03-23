@@ -8,24 +8,24 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: EtablissementRepository::class),
-    UniqueEntity('abrege')]
+    UniqueEntity('code')]
 class Etablissement
 {
     use Timestamps;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $logo;
+    #[ORM\Column(length: 225, unique: true), Assert\NotBlank]
+    private ?string $code;
 
     #[ORM\Column(length: 255), Assert\NotBlank]
     private ?string $nom;
 
-    #[ORM\Column(length: 225, unique: true), Assert\NotBlank]
-    private ?string $abrege;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $logo;
 
-    public function __construct(?string $abrege=null, ?string $nom=null)
+    public function __construct(?string $code=null, ?string $nom=null)
     {
         $this->creeLe = new \DateTimeImmutable();
-        $this->abrege = $abrege;
+        $this->code = $code;
         $this->nom = $nom;
     }
     public static function create(array $o): self
@@ -33,14 +33,14 @@ class Etablissement
         return new self($o['id'],$o['libelle_import']);
     }
 
-    public function getLogo(): ?string
+    public function getCode(): ?string
     {
-        return $this->logo;
+        return $this->code;
     }
 
-    public function setLogo(?string $logo): static
+    public function setCode(?string $code): static
     {
-        $this->logo = $logo;
+        $this->code = $code;
 
         return $this;
     }
@@ -57,14 +57,14 @@ class Etablissement
         return $this;
     }
 
-    public function getAbrege(): ?string
+    public function getLogo(): ?string
     {
-        return $this->abrege;
+        return $this->logo;
     }
 
-    public function setAbrege(?string $abrege): static
+    public function setLogo(?string $logo): static
     {
-        $this->abrege = $abrege;
+        $this->logo = $logo;
 
         return $this;
     }
