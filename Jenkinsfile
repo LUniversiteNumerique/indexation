@@ -20,7 +20,8 @@ pipeline {
 
   environment {
     def tagName = tagName()
-    def SONARPROJECTKEY = 'lunt-indexation-notice-develop'
+    def SONARPROJECTKEY = 'universite-numerique:lunt-indexation-notice'
+    def SONARPROJECTNAME = 'Université Numérique / lunt-indexation-notice'
   }
 
   triggers {
@@ -58,7 +59,7 @@ pipeline {
         withSonarQubeEnv('SonarQube SSL') {
           script {
             // Execution de l'analyse sonar
-            sh 'sonar-scanner -Dsonar.projectKey=$SONARPROJECTKEY -Dsonar.projectVersion=$BUILD_NUMBER -Dproject.settings=sonar-project.properties'
+            sh 'sonar-scanner -Dsonar.projectKey=$SONARPROJECTKEY -Dsonar.projectName=$SONARPROJECTNAME -Dsonar.projectVersion=$BUILD_NUMBER -Dproject.settings=sonar-project.properties'
           }
         }
       }
