@@ -59,7 +59,7 @@ pipeline {
         withSonarQubeEnv('SonarQube SSL') {
           script {
             // Execution de l'analyse sonar
-            sh 'sonar-scanner -Dsonar.projectKey=$SONARPROJECTKEY -Dsonar.projectName=$SONARPROJECTNAME -Dsonar.projectVersion=$BUILD_NUMBER -Dproject.settings=sonar-project.properties'
+            sh 'sonar-scanner -Dsonar.projectKey=`$SONARPROJECTKEY` -Dsonar.projectName=`$SONARPROJECTNAME` -Dsonar.projectVersion=$BUILD_NUMBER -Dproject.settings=sonar-project.properties'
           }
         }
       }
