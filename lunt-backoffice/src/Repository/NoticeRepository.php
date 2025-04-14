@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use App\Entity\{IndexingConfig, Notice, NoticEtat, Univerique, User};
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -30,15 +31,18 @@ class NoticeRepository extends ServiceEntityRepository
             ->getQuery()->execute();
     }
 
-    public function findFrom(IndexingConfig $cfg, int $limit, int $offset): array
+    public function findFrom(IndexingConfig $cfg, int $limit=20, int $offset=0): array
     {
-        $qr = $this->createQueryBuilder('n')->leftJoin('n.specialites', 's')
-            ->join('s.parent', 'u')->where('n.etat = :etat');
-        if(!$cfg->isFullMode()) $qr->andWhere('n.publieLe is null OR n.editeLe > :date')->setParameter('date', $cfg->getScheduleAt());
+        $qr = $this->createQueryBuilder('n')->leftJoin('n.specialites','s')
+            ->leftJoin('n.codeweys','e')->leftJoin('n.ressources','r')->leftJoin('n.tags','k')
+            ->leftJoin('n.porteurs','p')->leftJoin('n.auteurs','a')->leftJoin('n.niveaux','t')
+            ->leftJoin('n.docTypes','dd')->leftJoin('n.pedTypes','pp')->join('n.droit','l')
+            ->join('s.parent', 'u')->where('n.etat = :etat')->distinct();
+        if(!$cfg->isFullMode()) $qr->andWhere('n.publieLe is null AND n.editeLe > :date')->setParameter('date', $cfg->getScheduleAt());
         $qr->orWhere('n.etat != :etat AND n.publieLe is not null');
 
-        return $qr->andWhere("u.parent = :core")
-            ->setParameter("core", $cfg->getIndexCore())->setParameter("etat", NoticEtat::Approved)
+        return $qr->andWhere("u.parent IN (:fields)")
+            ->setParameter("fields", $cfg->getIndexCore()?->getFields())->setParameter("etat", NoticEtat::Approved)
             ->setFirstResult($offset)->setMaxResults($limit)->getQuery()->getResult();
     }
 

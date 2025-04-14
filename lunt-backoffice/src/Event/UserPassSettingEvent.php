@@ -7,12 +7,5 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class UserPassSettingEvent  extends Event
 {
-    public function __construct(private readonly User $user)
-    {
-    }
-
-    public function getUser(): User
-    {
-        return $this->user;
-    }
+    public function __construct(public User $user, public bool $type = false){}
 }

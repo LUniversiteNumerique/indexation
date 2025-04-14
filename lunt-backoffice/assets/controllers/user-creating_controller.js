@@ -10,7 +10,9 @@ export default class extends Controller {
     }
 
     connect() {
+        this.selectOptionsChange({target: this.masterSelectTarget.value});
         this.schoolParent.remove(); this.unthemeParent.remove();
+        debugger
         this.masterSelectTarget.addEventListener("change", this.selectOptionsChange.bind(this));
     }
 

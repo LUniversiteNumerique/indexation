@@ -19,7 +19,7 @@ class Notice
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private ?Uuid $uuid;
 
-    #[ORM\Column(length: 255), Assert\NotBlank]
+    #[ORM\Column(length: 285), Assert\NotBlank]
     private ?string $ressUrl, $titre = null;
 
     #[ORM\Column(type: Types::TEXT), Assert\NotNull]

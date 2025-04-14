@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[
     ORM\Entity(repositoryClass: AuteurRepository::class),
-    UniqueEntity(fields: ['prenom', 'nom']) //UniqueEntity('email', 'Un auteur avec cet email existe déjà.'),
+    UniqueEntity(['prenom', 'nom'],'La combinaison du prénom et du nom renseignés existe déjà.')
 ]
 class Auteur
 {

@@ -36,7 +36,7 @@ readonly class InterIndexingHandler
 
         /** @var Notice[] $data */
         while (!empty($data = $this->noticeRep->findFrom($task, $task->getBatchSize(), $offset))) {
-            $news = []; $olds = [];
+            $news = []; $olds = []; dump(count($data));
 
             foreach ($data as $d) {
                 if($d->getEtat() === NoticEtat::Approved) { //=> $d->isDeleted()!=1

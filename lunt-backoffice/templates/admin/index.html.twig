@@ -55,7 +55,7 @@
                         <td><a target="_blank" rel="noopener" href="{{ entity.ressUrl }}">{{ entity.ressUrl|slice(0, 15) }}...</a></td>
                         <td>
                             {% for key,value in entity.specialites %}
-                                <span class="badge badge-custom">{{ value }}</span>
+                                <span class="badge badge-custom">{{ value|slice(0, 30) }}...</span>
                             {% endfor %}
                         </td>
                         <td><time datetime="{{ entity.editeLe|date('c') }}" title="{{ entity.editeLe|date('r') }}">{{ entity.editeLe|date("d/m/Y") }}</time></td>

@@ -106,7 +106,7 @@ class NoticeCrudController extends AbstractCrudController
     {
         return $filters->add(ChoiceFilter::new('etat')->setChoices(NoticEtat::getLabels())->renderExpanded())
             ->add(TextFilter::new('titre'))
-            ->add(EntityFilter::new('specialite', 'Spécialité'))
+            ->add(EntityFilter::new('specialites', 'Spécialité'))
             ->add(EntityFilter::new('auteurs'))
             ->add(DateTimeFilter::new('creeLe', 'Créée le'))
             ->add(DateTimeFilter::new('editeLe', 'Date de modification'));
@@ -655,10 +655,6 @@ class NoticeCrudController extends AbstractCrudController
                 $itr($champ->getChildren()->toArray()):
                 $champ?->getChildren()->toArray()
             );
-            $this->addSpec($form, $discipline ?
-                $itr($discipline->getChildren()->toArray()):
-                $discipline?->getChildren()->toArray()
-            );
             if ($specialite) {
                 $form->get('champDisc')->setData($champ);
                 $form->get('discipline')->setData($discipline);
@@ -672,10 +668,6 @@ class NoticeCrudController extends AbstractCrudController
                 $this->addDivi($form, $codewey ?
                     $itr($discip->getChildren()->toArray()):
                     $discip?->getChildren()->toArray()
-                );
-                $this->addCode($form, $codewey ?
-                    $itr($division->getChildren()->toArray()):
-                    $division?->getChildren()->toArray()
                 );
                 if ($codewey) {
                     $form->get('disciFond')->setData($discip);

@@ -189,13 +189,13 @@ readonly class EntityConfigurator implements FieldConfiguratorInterface
         if (null === $field->getTextAlign()) $field->setTextAlign(TextAlign::RIGHT);
         $targetCrudControllerFqcn = $field->getCustomOption(EntityField::OPTION_EMBEDDED_CRUD_FORM_CONTROLLER);
 
-        $collectionItemsAsText = []; $resource = $targetCrudControllerFqcn === NoticeCrudController::class && $isIndex;
+        $collectionItemsAsText = []; $resource = $targetCrudControllerFqcn === NoticeCrudController::class;
         foreach ($field->getValue() ?? [] as $item) {
             if (!\is_string($item) && !(\is_object($item) && method_exists($item, '__toString')))
                 return $this->countNumElements($field->getValue());
             if($resource) {
                 $targetEntityDto = $this->entityFactory->createForEntityInstance($item);
-                $collectionItemsAsText[$this->generateLinkToAssociatedEntity($targetCrudControllerFqcn, $targetEntityDto)] = $this->formatAsString($item, $targetEntityDto);
+                $collectionItemsAsText[$this->generateLinkToAssociatedEntity($targetCrudControllerFqcn, $targetEntityDto)] = u($this->formatAsString($item, $targetEntityDto))->truncate(100,'..')->toString();
             } else $collectionItemsAsText[] = (string) $item;
         }
 

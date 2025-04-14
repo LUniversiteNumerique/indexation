@@ -17,8 +17,8 @@ final readonly class UserPassSettingListener
 
     public function __invoke(UserPassSettingEvent $event): void
     {
-        $user = $event->getUser();
-        $type = null === $user->getPassword();
+        $user = $event->user;
+        $type = $event->type;
 
         $url = $this->generator->generate(
             'app_reset_response',

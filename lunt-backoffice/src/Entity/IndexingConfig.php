@@ -18,10 +18,10 @@ class IndexingConfig
     private ?bool $fullMode, $indexType;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTime $scheduleAt=null;
+    private ?\DateTime $scheduleAt;
 
     #[ORM\Column, Assert\NotNull]
-    private ?int $batchSize = 10;
+    private ?int $batchSize;
 
     #[ORM\Embedded(Frequence::class, "every_"),
         Assert\NotNull]
@@ -31,8 +31,11 @@ class IndexingConfig
         Assert\Type(Univerique::class)]
     private ?Univerique $indexCore = null;
 
-    public function __construct()
+    public function __construct(bool $fullMode = true, ?\DateTime $scheduleAt=null)
     {
+        $this->fullMode = $fullMode;
+        $this->scheduleAt = $scheduleAt;
+        $this->batchSize = 10;
         $this->frequency = new Frequence();
     }
 

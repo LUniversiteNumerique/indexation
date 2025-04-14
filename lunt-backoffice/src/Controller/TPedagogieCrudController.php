@@ -41,9 +41,10 @@ class TPedagogieCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id')->hideOnForm(),
+            IdField::new('id')->onlyOnDetail(),
             TextField::new('code'),
             TextField::new('nom'),
+            TextField::new('suplom'),
             DateTimeField::new('creeLe')->onlyOnDetail(),
             DateTimeField::new('editeLe')->onlyOnDetail()
         ];

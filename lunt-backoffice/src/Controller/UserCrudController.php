@@ -99,7 +99,7 @@ class UserCrudController extends AbstractCrudController
      */
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        $this->dispatcher->dispatch(new UserPassSettingEvent($entityInstance->setReseToken($this->tokGenerator->generateToken())));
+        $this->dispatcher->dispatch(new UserPassSettingEvent($entityInstance->setReseToken($this->tokGenerator->generateToken()),true));
 
         parent::persistEntity($entityManager, $entityInstance->setTokenExpiresAt(new \DateTimeImmutable(User::VALIDATIME_TOKEN.' min')));
     }
