@@ -183,7 +183,6 @@ class ImportNoticeXmlCommand extends Command
         ->setUuid(Uuid::fromString($uid)) //->setVignette("$uid.jpg")
         ->setTitre($item->general->title[0]?->value)
         ->setDescription($item->general->description[0]?->value)
-        ->setRessUrl(trim($item->technical?->location))
         ->setDureExec($item->technical?->duration->duration ?? null)
         ->setRessLang($item->general->languages)
         ->setUserLang($item->educational->languages)
@@ -192,6 +191,15 @@ class ImportNoticeXmlCommand extends Command
         ->setRessPayant(strtolower($item->rights?->cost?->value ?? '') !== "no")
         ->setPropUser(array_map(fn(Motcle $s) => $s->string?->value, $item->educational?->description))
         ->setDroit($this->droiRep[strtolower(preg_replace('/\s+/', '', $item->rights?->description[0]?->value))]);
+
+      if (str_contains(trim($item->technical?->location), 'document/')) {
+        //$notice->setRessZip(trim($item->technical?->location));
+        $output->writeln("Lien trouvé pour format ZIP : " . $notice->getRessUrl());
+      } else {
+        $notice->setRessUrl(trim($item->technical?->location));
+      }
+
+
       foreach ($item->educational?->contexts as $s) $notice->addNiveau($this->niveRep[strtolower($s->value)]);
       foreach ($item->general?->documentTypes as $s) $notice->addDocType($this->tdocRep[strtolower($s->value)]);
       foreach ($item->educational?->learningResourceTypes as $s) $notice->addPedType($this->tpedRep[strtolower($s->value)]);
