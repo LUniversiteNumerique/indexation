@@ -72,9 +72,9 @@ class ImportNoticeXmlCommand extends Command
   {
     $io = new SymfonyStyle($input, $output);
     $io->title('Suplom Importing');
-    $notfound = 0;
+    $notfound = [];
 
-    //Ré utilisation de la fonction readFilesFrom en dur car non fonctionnel avec un appel simple de celle-ci avec le mem répertoire
+    //Ré utilisation de la fonction readFilesFrom en dur car non fonctionnel avec un appel simple de celle-ci avec le meme répertoire
     $finder = new Finder();
     $path = "data/suplom/";
     $names = ['*.xml'];
@@ -86,8 +86,6 @@ class ImportNoticeXmlCommand extends Command
     if ($since) $finder->date('>= ' . $since->format('Y-m-d H:i:s'));
     $data = $finder;
 
-
-//  $data = $this->fs->readFilesFrom(null, "data/suplom/");
     $io->progressStart(count($data));
     $nr = $this->em->getRepository(Notice::class);
 
@@ -141,7 +139,10 @@ class ImportNoticeXmlCommand extends Command
 
       // Ajouter un utilisateur par défaut quand une notice en a pas
       if ($notice->getCreateur() == null) {
-        $notfound += 1;
+        $notfound[] = [
+          'titre' => $item->general->title[0]?->value,
+          'lien' => 'https://ressources.luniversitenumerique.fr/'
+        ];
         $existingUser = $this->userRep->findOneBy(['name' => 'créateur inconnu']);
         if ($existingUser === null) {
           $entity = new User('créateur inconnu', 'créateurinconnu@créateurinconnu.com');
@@ -157,7 +158,6 @@ class ImportNoticeXmlCommand extends Command
       if (!array_key_exists("publisher", $roleNotice)) {
         $roleNotice["publisher"] = [];
       }
-      $output->writeln("notice : " . json_encode($roleNotice, JSON_PRETTY_PRINT));
 
 
       if (isset($item->technical?->size)) $notice->setRessSize(floatval($item->technical->size));
@@ -215,8 +215,12 @@ class ImportNoticeXmlCommand extends Command
     }
 
     $io->progressFinish();
-    //$this->em->flush();
-    $output->writeln("Suplom imported successfully !($notfound)");
+    $this->em->flush();
+    $output->writeln("Suplom imported successfully ! count of suplom with creator not found : ".count($notfound));
+    foreach ($notfound as $nf) {
+      $output->writeln("title : " . $nf['titre']);
+      $output->writeln("link : " . $nf['lien'] . "\n");
+    }
     return Command::SUCCESS;
   }
 }
