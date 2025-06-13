@@ -29,3 +29,12 @@ services:
     App\Field\Configurator\EntityConfigurator:
         tags:
             - { name: 'ea.field_configurator', priority: 0 }
+
+    App\Form\DisciplineGroupType:
+      arguments:
+        $em: '@doctrine.orm.entity_manager'
+
+    App\Form\DeweyGroupType:
+      arguments:
+        $em: '@doctrine.orm.entity_manager'
+      tags: ['form.type']
