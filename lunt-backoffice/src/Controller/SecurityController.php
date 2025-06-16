@@ -47,7 +47,7 @@ class SecurityController extends AbstractController
                     ->setTokenExpiresAt(new \DateTimeImmutable(User::VALIDATIME_TOKEN.' min')));
                 $this->dispatcher->dispatch(new UserPassSettingEvent($user));
 
-                $this->addFlash('success', 'Vous recevez dans quelques instants un mail avec la procédure de réinitialisation.');
+                $this->addFlash('success', 'Vous recevrez dans quelques instants un mail avec la procédure de réinitialisation.');
             } else $this->addFlash('danger', 'Cette adresse email est inconnue.');
         }
         return $this->render('security/reset_req.html.twig');
