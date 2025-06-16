@@ -180,29 +180,10 @@ class NoticeCrudController extends AbstractCrudController
       ->setFormTypeOption('expanded', true)->setHelp(t('notice.niveaux_help', domain: 'EasyAdminBundle'))->setColumns(6)->setRequired(true);
 
     yield Field\FormField::addFieldset('Classification thématique')->setIcon('fa fa-book');
-    yield EntityField::new('champDisc', t('notice.champdisc', domain: 'EasyAdminBundle'))->setHelp(t('notice.champdisc_help', domain: 'EasyAdminBundle'))
-      ->setFormTypeOptions(['class' => Discipline::class, 'mapped' => false, 'required' => true])->setQueryBuilder(function (QueryBuilder $qb) use ($user) {
-        if ($user->getUntheme() instanceof Univerique)
-          $qb->where('entity IN (:champs)')->setParameter('champs', $user->getUntheme()->getFields());
-        else $qb->where('entity.parent IS NULL');
 
-        return $qb
-          ->join('entity.children','s')->leftJoin('s.children','d')->addSelect('s,d')
-          ->orderBy('entity.nom', 'ASC')->addOrderBy('s.nom', 'ASC')->addOrderBy('d.nom', 'ASC');
-      })->setSortable(false)->onlyOnForms();
-    yield EntityField::new('discipline')->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.nom', 'ASC'))->setHelp(t('notice.discipline_help', domain: 'EasyAdminBundle'))
-      ->setFormTypeOptions(['class' => Discipline::class, 'auto_initialize' => false, 'mapped' => false])->setSortable(false)->onlyOnForms();
     yield TextField::new('allSpecialitesString', 'Spécialités')
       ->onlyOnDetail()
       ->renderAsHtml();
-
-    yield EntityField::new('specialites', 'Specialités')
-      ->setFormTypeOption('class', Discipline::class)
-      ->setFormTypeOption('autocomplete', true)
-      ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.nom', 'ASC'))
-      ->setFormTypeOption('multiple', true)
-      ->setSortable(false)
-      ->onlyOnForms();
 
     yield CollectionField::new('disciplineGroups')
       ->setEntryType(DisciplineGroupType::class)
@@ -211,7 +192,7 @@ class NoticeCrudController extends AbstractCrudController
       ->allowAdd()
       ->allowDelete()
       ->onlyOnForms()
-      ->setLabel('Champs disciplinaires');
+      ->setLabel(false);
 
     yield Field\DateTimeField::new('creeLe',t('notice.creele', domain: 'EasyAdminBundle'))->onlyOnDetail();
     yield Field\DateTimeField::new('editeLe', t('notice.editele', domain: 'EasyAdminBundle'))->hideOnForm();
@@ -308,15 +289,13 @@ class NoticeCrudController extends AbstractCrudController
   public function createNewFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
   {
     $formOptions->setIfNotSet('action', $context->getRequest()->getRequestUri());
-    $builder = $this->factory->createNewFormBuilder($entityDto, $formOptions, $context);
-    return $this->addFormEvent($builder);
+    return $this->factory->createNewFormBuilder($entityDto, $formOptions, $context);
   }
 
   public function createEditFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
   {
     $formOptions->setIfNotSet('action', $context->getRequest()->getRequestUri());
-    $builder = $this->factory->createEditFormBuilder($entityDto, $formOptions, $context);
-    return $this->addFormEvent($builder);
+    return $this->factory->createEditFormBuilder($entityDto, $formOptions, $context);
   }
 
   protected function getRedirectResponseAfterSave(AdminContext $context, string $action): RedirectResponse
@@ -658,61 +637,6 @@ class NoticeCrudController extends AbstractCrudController
       'choices' => $children ?? [], 'help' => t('notice.codewey_help', domain: 'EasyAdminBundle'), 'multiple' => true,
       'placeholder' => $children ? 'Sélectionnez le code dewey' : 'Sélectionnez la division', 'autocomplete' => true
     ]);
-  }
-
-  private function addFormEvent(FormBuilderInterface $builder): FormBuilderInterface
-  {
-    $builder->get('champDisc')->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
-      $form = $event->getForm();
-      /** @var Discipline $disc */
-      $disc = $form->getData();
-      $this->addDisc($form->getParent(), $disc?->getChildren()->toArray());
-    });
-    if ($builder->has('disciFond')) $builder->get('disciFond')->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
-      $form = $event->getForm();
-      /** @var Dewey $divi */
-      $divi = $form->getData();
-      $this->addDivi($form->getParent(), $divi?->getChildren()->toArray());
-    });
-
-    return $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
-      /* @var $data Notice */
-      $data = $event->getData();
-      $form = $event->getForm();
-
-      $specialite = $data->getSpecialites()->current() ?: null;
-      $discipline = $specialite?->getParent();
-      $champ = $discipline?->getParent();
-
-      $itr = function(array $arr) {
-        usort($arr, fn($a,$b) => strcmp($a->getNom(), $b->getNom()));
-        return $arr;
-      };
-
-      $this->addDisc($form, $champ ? $itr($champ->getChildren()->toArray()) : []);
-
-      if ($discipline) {
-        $form->get('champDisc')->setData($champ);
-        $form->get('discipline')->setData($discipline);
-        $this->addSpec($form, $itr($discipline->getChildren()->toArray()));
-      } else {
-        $this->addSpec($form, []);
-      }
-
-      // Gestion des codes Dewey (inchangé)
-      if($form->has('disciFond')) {
-        /* @var $codewey Dewey */
-        $codewey = $data->getCodeweys()->first() ?: null;
-        $division = $codewey?->getParent();
-        $discip = $division?->getParent();
-
-        $this->addDivi($form, $codewey ? $itr($discip->getChildren()->toArray()) : []);
-        if ($codewey) {
-          $form->get('disciFond')->setData($discip);
-          $form->get('division')->setData($division);
-        }
-      }
-    });
   }
 
   private function redirecTo(Request $req): AdminUrlGenerator

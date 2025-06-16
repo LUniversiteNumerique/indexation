@@ -35,6 +35,11 @@ class DisciplineGroup
     $this->specialites = new ArrayCollection();
   }
 
+  public function __toString(): string
+  {
+      return '';
+  }
+
   public function getId(): ?int
   {
     return $this->id;

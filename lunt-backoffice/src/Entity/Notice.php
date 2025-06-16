@@ -857,7 +857,7 @@ class Notice
    */
   public function getAllSpecialites(): array
   {
-    $specialites = $this->getSpecialites() ? $this->getSpecialites()->toArray() : [];
+    $specialites = [];
     foreach ($this->getDisciplineGroups() as $group) {
       foreach ($group->getSpecialites() as $spec) {
         if (!in_array($spec, $specialites, true)) {
