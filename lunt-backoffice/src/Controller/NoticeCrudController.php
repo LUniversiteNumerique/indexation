@@ -202,6 +202,8 @@ class NoticeCrudController extends AbstractCrudController
       yield Field\FormField::addColumn(6);
 
       yield Field\FormField::addFieldset('Liens de la ressource')->setIcon('fa fa-folder-open');
+      yield EntityField::new('repertoire',t('notice.repertoire', domain: 'EasyAdminBundle'))->setHelp(t('notice.repertoire_help', domain: 'EasyAdminBundle'))
+        ->setFormType(TreeChoiceType::class)->setQueryBuilder(fn(QueryBuilder $qb) => $qb->join('entity.children','s')->leftJoin('s.children','d')->addSelect('s,d'))->hideOnIndex();
       yield Field\ImageField::new('vignette')->setUploadDir('public/uploads/images')->setHelp(t('notice.vignette_help', domain: 'EasyAdminBundle'))->setBasePath('/uploads/images')
         ->setUploadedFileNamePattern('[timestamp]-[contenthash].[extension]')->setFileConstraints([new Image(['maxWidth' => 620, 'maxHeight' => 390])])->setSortable(false);
       yield TextField::new('AllDeweyString', 'Codes Dewey')
@@ -222,23 +224,49 @@ class NoticeCrudController extends AbstractCrudController
       yield Field\FormField::addColumn(6);
 
       yield Field\FormField::addFieldset('Classification thématique')->setIcon('fa fa-book');
-      yield EntityField::new('disciFond',t('notice.discifond', domain: 'EasyAdminBundle'))->setHelp(t('notice.discifond_help', domain: 'EasyAdminBundle'))->onlyOnForms()->setFormTypeOptions(['class' => Dewey::class,'mapped' => false,'required' => true])->setSortable(false)
-        ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->join('entity.children','s')->leftJoin('s.children','d')->where('entity.parent is null')->addSelect('s,d')->orderBy('entity.nom', 'ASC')->addOrderBy('s.nom', 'ASC')->addOrderBy('d.nom', 'ASC'));
-      yield EntityField::new('division')->setFormTypeOptions(['class' => Dewey::class,'auto_initialize' => false,'mapped' => false,'required' => true])->onlyOnForms();
-      yield EntityField::new('codeweys','Codes Dewey')->setFormTypeOptions(['class' => Dewey::class,'multiple' => true,'autocomplete' => true])->setSortable(false)->onlyOnForms();
       yield TextField::new('AllDeweyString', 'Codes Dewey')
         ->onlyOnDetail()
         ->renderAsHtml();
       yield Field\TextField::new('label',t('notice.label', domain: 'EasyAdminBundle'))->setHelp(t('notice.label_help', domain: 'EasyAdminBundle'))->onlyOnDetail();
-      yield EntityField::new('repertoire',t('notice.repertoire', domain: 'EasyAdminBundle'))->setHelp(t('notice.repertoire_help', domain: 'EasyAdminBundle'))
-        ->setFormType(TreeChoiceType::class)->setQueryBuilder(fn(QueryBuilder $qb) => $qb->join('entity.children','s')->leftJoin('s.children','d')->addSelect('s,d'))->hideOnIndex();
       yield CollectionField::new('deweyGroups')
         ->setEntryType(DeweyGroupType::class)
         ->setFormTypeOption('by_reference', false)
         ->allowAdd()
         ->allowDelete()
         ->onlyOnForms()
-        ->setLabel('Codes Dewey personnalisés');
+        ->setLabel(false);
+      yield EntityField::new('deweyPersos', 'Dewey personnalisés')
+        ->setFormTypeOption('choice_label', 'nom')
+        ->setFormTypeOption('multiple', true)
+        ->setFormTypeOption('autocomplete', true)
+        ->onlyOnForms();
+      yield Field\TextareaField::new('dummy_dewey_perso', '')
+        ->setHelp('
+          <div id="dewey-perso-add-form" class="mb-3">
+            <div class="row g-2 align-items-center">
+              <div class="col-12">
+                <label class="form-label">Créer un Dewey</label>
+              </div>
+              <div class="col-auto">
+                <input type="text" class="form-control" id="dewey_perso_code" placeholder="Code Dewey" style="width:120px;" />
+              </div>
+              <div class="col-auto">
+                <input type="text" class="form-control" id="dewey_perso_nom" placeholder="Libellé Dewey" style="width:200px;" />
+              </div>
+              <div class="col-auto">
+                <button type="button" class="btn btn-primary" id="add_dewey_perso_btn">Ajouter</button>
+              </div>
+              <div class="col-auto">
+                <span id="dewey_perso_add_msg" style="color:green;"></span>
+              </div>
+            </div>
+          </div>
+        ')
+        ->onlyOnForms()
+        ->setLabel(false)
+        ->setFormTypeOption('mapped', false)
+        ->setFormTypeOption('required', false)
+        ->setFormTypeOption('attr', ['style' => 'display:none']);
       yield Field\BooleanField::new('editDemande', 'Rectifiée ?')->renderAsSwitch(false)->setSortable(false)->onlyOnIndex();
       yield Field\DateTimeField::new('publieLe',t('notice.publiele', domain: 'EasyAdminBundle'))->onlyOnDetail();
     }

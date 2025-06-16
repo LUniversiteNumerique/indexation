@@ -27,13 +27,16 @@ class DeweyGroup
   #[ORM\ManyToMany(targetEntity: Dewey::class)]
   private $codeweys;
 
-  // Dans le constructeur
   public function __construct()
   {
     $this->codeweys = new \Doctrine\Common\Collections\ArrayCollection();
   }
 
-  // getters/setters...
+  public function __toString(): string
+  {
+    return '';
+  }
+
   public function getId(): ?int
   {
     return $this->id;

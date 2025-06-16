@@ -1,11 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
+  ajoutDeweyPerso();
   ['.ea-new-form', '.ea-edit-form'].forEach((formSelector) => {
     const form = document.querySelector(formSelector);
     if (form === null) return;
 
-    if (null !== document.getElementById('Notice_disciFond'))
-      changeOptions(form, 'Notice_disciFond', 'Notice_division', 'Notice_codeweys');
-    changeOptionsDewey(form, 'Notice_disciFond', 'Notice_division', 'Notice_codeweys');
 
     handleFieldsWithErrors(form, formSelector.includes('-new-') ? 'new' : 'edit');
 
@@ -82,17 +80,8 @@ document.addEventListener('DOMContentLoaded', () => {
       childList: true,
       subtree: true,
     });
-
-    // Initialisation du groupe de sélecteur initial
-    initializeBaseSelectGroups(form);
   });
 });
-
-// Initialisation Groupe de sélecteur initial
-const initializeBaseSelectGroups = (form) => {
-  changeOptions(form, 'Notice_champDisc', 'Notice_discipline', 'Notice_specialites');
-  changeOptionsDewey(form, 'Notice_disciFond', 'Notice_division', 'Notice_codeweys');
-};
 
 // Fonction pour initialiser un groupe de sélection dynamique
 const initializeNewSelectGroup = (index) => {
@@ -158,7 +147,6 @@ const changeOptions = (form, champId, disciId, speciId) => {
   const form_select_disci = document.getElementById(disciId);
   const form_select_speci = document.getElementById(speciId);
 
-  // Empêche les doublons
   if (!form_select_champ.dataset.listenerAttached) {
     form_select_champ.addEventListener('change', async ({ target }) => {
       const resText = await updateForm(`${target.getAttribute('name')}=${target.value}`, form);
@@ -272,3 +260,58 @@ const updateForm = async (data, form) => {
 
   return (new DOMParser()).parseFromString(await req.text(), 'text/html');
 };
+
+function ajoutDeweyPerso() {
+  const btn = document.getElementById("add_dewey_perso_btn");
+  if (!btn) return;
+
+  btn.onclick = function() {
+    const code = document.getElementById("dewey_perso_code").value;
+    const nom = document.getElementById("dewey_perso_nom").value;
+    fetch("/admin/dewey-perso/add", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({code, nom})
+    })
+      .then(r => r.json())
+      .then(data => {
+        const msg = document.getElementById("dewey_perso_add_msg");
+        if (data.success) {
+          msg.textContent = "Ajouté !";
+          msg.style.color = "green";
+          document.getElementById("dewey_perso_code").value = "";
+          document.getElementById("dewey_perso_nom").value = "";
+
+          const select = document.querySelector("select[name$='[deweyPersos][]']");
+          if (select) {
+            let exists = false;
+            for (let i = 0; i < select.options.length; i++) {
+              if (select.options[i].value == data.id) {
+                exists = true;
+                select.options[i].selected = true;
+                break;
+              }
+            }
+            if (!exists) {
+              const opt = document.createElement("option");
+              opt.value = data.id;
+              opt.text = data.nom;
+              opt.selected = true;
+              select.appendChild(opt);
+            }
+            if (window.jQuery && $(select).data("select2")) {
+              $(select).trigger("change");
+            }
+          }
+        } else {
+          msg.textContent = data.error || "Erreur";
+          msg.style.color = "red";
+        }
+      })
+      .catch(() => {
+        const msg = document.getElementById("dewey_perso_add_msg");
+        msg.textContent = "Erreur technique ou accès refusé";
+        msg.style.color = "red";
+      });
+  };
+}
