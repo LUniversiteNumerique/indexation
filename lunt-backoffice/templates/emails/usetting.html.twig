@@ -1,9 +1,14 @@
-<span>Bonjour <b>{{ user }}</b>,</span><p>
-{% if(type) %}
-    Votre espace UNT vient d'être créé. <br/>
-    <br/>Vous pouvez l'activer et <a href="{{ url }}">définir votre mot de passe</a>
-{% else %}
-    Vous avez demandé à réinitialiser le mot de passe de votre compte UNT.<br/>
-    <br/>Merci de bien vouloir cliquer sur le lien suivant pour <a href="{{ url }}">mettre à jour votre mot de passe</a>
-{% endif %}
-</p><br/>Cordialement
+<p>Bonjour {{ user }},
+  <br>
+  {% if(type) %}
+    Votre espace UNT vient d'être créé.
+    <br>
+    Vous pouvez l'activer et <a href="{{ url }}">définir votre mot de passe</a>
+  {% else %}
+    Vous avez demandé à réinitialiser le mot de passe de votre compte UNT.
+    <br>
+    Merci de bien vouloir cliquer sur le lien suivant pour <a href="{{ url }}">mettre à jour votre mot de passe</a>
+  {% endif %}
+  <br>
+  Cordialement
+</p>

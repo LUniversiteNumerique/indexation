@@ -117,6 +117,14 @@ class Notice
 
     #[ORM\Column(nullable: true)]
     private ?string $champExt1, $champExt2, $champExt3, $champExt4, $champExt5;
+    #[ORM\ManyToMany(targetEntity: DeweyPerso::class)]
+    private Collection $deweyPersos;
+
+    #[ORM\OneToMany(mappedBy: 'notice', targetEntity: DisciplineGroup::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $disciplineGroups;
+
+    #[ORM\OneToMany(mappedBy: 'notice', targetEntity: DeweyGroup::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $deweyGroups;
 
     public function __construct()
     {
@@ -132,6 +140,9 @@ class Notice
         $this->auteurs = new ArrayCollection();
         $this->tags = new ArrayCollection();
         $this->creeLe = new \DateTimeImmutable();
+        $this->deweyPersos = new ArrayCollection();
+        $this->disciplineGroups = new ArrayCollection();
+        $this->deweyGroups = new ArrayCollection();
     }
 
     public function getUuid(): ?Uuid
@@ -733,6 +744,82 @@ class Notice
         return $this;
     }
 
+    public function getDeweyPersos(): Collection
+    {
+      return $this->deweyPersos;
+    }
+
+    public function addDeweyPerso(DeweyPerso $deweyPerso): static
+    {
+      if (!$this->deweyPersos->contains($deweyPerso)) {
+        $this->deweyPersos->add($deweyPerso);
+      }
+      return $this;
+    }
+
+    public function removeDeweyPerso(DeweyPerso $deweyPerso): static
+    {
+      $this->deweyPersos->removeElement($deweyPerso);
+      return $this;
+    }
+    /**
+   * @return Collection<int, DisciplineGroup>
+   */
+    public function getDisciplineGroups(): Collection
+    {
+      return $this->disciplineGroups;
+    }
+
+    public function addDisciplineGroup(DisciplineGroup $disciplineGroup): self
+    {
+      if (!$this->disciplineGroups->contains($disciplineGroup)) {
+        $this->disciplineGroups->add($disciplineGroup);
+        $disciplineGroup->setNotice($this);
+      }
+
+      return $this;
+    }
+
+    public function removeDisciplineGroup(DisciplineGroup $disciplineGroup): self
+    {
+      if ($this->disciplineGroups->removeElement($disciplineGroup)) {
+        // set the owning side to null (unless already changed)
+        if ($disciplineGroup->getNotice() === $this) {
+          $disciplineGroup->setNotice(null);
+        }
+      }
+
+      return $this;
+    }
+
+    public function setDeweyGroups(Collection $groups): self
+    {
+      $this->deweyGroups = $groups;
+      return $this;
+    }
+
+    public function getDeweyGroups(): Collection
+    {
+      return $this->deweyGroups;
+    }
+    public function addDeweyGroup(DeweyGroup $group): self
+    {
+      if (!$this->deweyGroups->contains($group)) {
+        $this->deweyGroups->add($group);
+        $group->setNotice($this);
+      }
+      return $this;
+    }
+    public function removeDeweyGroup(DeweyGroup $group): self
+    {
+      if ($this->deweyGroups->removeElement($group)) {
+        if ($group->getNotice() === $this) {
+          $group->setNotice(null);
+        }
+      }
+      return $this;
+    }
+
     public function __toString(): string
     {
         return sprintf('%s', $this->titre);
@@ -758,5 +845,69 @@ class Notice
             // Check if the grandparent discipline is part of the Univerique's fields
             return !empty(array_intersect($specialites->toArray(), $untFieldIds->toArray()));
         }
+    }
+
+  /**
+   * Retrieves all specialities associated with the Notice, including those from its DisciplineGroups.
+   *
+   * This method aggregates specialities from both the Notice's direct specialities
+   * and those from its DisciplineGroups, ensuring no duplicates.
+   *
+   * @return Discipline[] An array of unique specialities associated with the Notice.
+   */
+  public function getAllSpecialites(): array
+  {
+    $specialites = [];
+    foreach ($this->getDisciplineGroups() as $group) {
+      foreach ($group->getSpecialites() as $spec) {
+        if (!in_array($spec, $specialites, true)) {
+          $specialites[] = $spec;
+        }
+      }
+    }
+    return $specialites;
+  }
+
+  /**
+   * Returns a string representation of all specialities associated with the Notice.
+   *
+   * Each speciality is wrapped in a badge for styling purposes.
+   * If no specialities are found, a default message is returned.
+   *
+   * @return string A string of badges representing the specialities or a default message.
+   */
+    public function getAllSpecialitesString(): string
+    {
+      $specs = $this->getAllSpecialites();
+      if (!$specs) return '<span class="badge bg-secondary">Aucune</span>';
+      return implode('<br>', array_map(fn($s) => '<span class="badge badge-custom">'.$s->getNom().'</span>', $specs));
+    }
+
+
+    public function getAllDewey(): array
+    {
+        $codeweys = [];
+        // Ajoute les Dewey classiques via les groupes
+        foreach ($this->getDeweyGroups() as $group) {
+            foreach ($group->getCodeweys() as $code) {
+                if (!in_array($code, $codeweys, true)) {
+                    $codeweys[] = $code;
+                }
+            }
+        }
+        // Ajoute les DeweyPerso sélectionnés
+        foreach ($this->getDeweyPersos() as $perso) {
+            if (!in_array($perso, $codeweys, true)) {
+                $codeweys[] = $perso;
+            }
+        }
+        return $codeweys;
+    }
+
+    public function getAllDeweyString(): string
+    {
+        $codeDew = $this->getAllDewey();
+        if (!$codeDew) return '<span class="badge bg-secondary">Aucune</span>';
+        return implode('<br>', array_map(fn($s) => '<span class="badge badge-custom">'.$s->getNom().'</span>', $codeDew));
     }
 }
