@@ -75,6 +75,8 @@ class ImportNoticeXmlCommand extends Command
     $io = new SymfonyStyle($input, $output);
     $io->title('Suplom Importing');
     $notfound = [];
+    $disciplineGroupsByParent = [];
+    $deweyGroupsByParent = [];
 
     //Ré utilisation de la fonction readFilesFrom en dur car non fonctionnel avec un appel simple de celle-ci avec le meme répertoire
     $finder = new Finder();
@@ -237,7 +239,6 @@ class ImportNoticeXmlCommand extends Command
 
           // Gestion des spécialités
           if (str_contains($key, 'lassification')) {
-            $disciplineGroupsByParent = [];
             foreach ($class->taxonPath->taxons as $taxon) {
               $spec = $taxon->entry[0]?->value;
               $exist = $this->discRep->findOneBy(['nom' => $spec]);
@@ -247,15 +248,21 @@ class ImportNoticeXmlCommand extends Command
                 if ($champDisc && $disc) {
                   $groupKey = $champDisc->getId() . '-' . $disc->getId();
                   if (!isset($disciplineGroupsByParent[$groupKey])) {
-                    $this->em->persist($notice);
-                    $group = new \App\Entity\DisciplineGroup();
-                    $group->setChampDisc($champDisc);
-                    $group->setDiscipline($disc);
-                    $notice->addDisciplineGroup($group);
-                    $disciplineGroupsByParent[$groupKey] = $group;
-                    $this->em->persist($group);
+                    $existingGroup = $this->em->getRepository(\App\Entity\DisciplineGroup::class)
+                      ->findOneBy(['champDisc' => $champDisc, 'discipline' => $disc]);
+                    if ($existingGroup) {
+                      $disciplineGroupsByParent[$groupKey] = $existingGroup;
+                    } else {
+                      $group = new \App\Entity\DisciplineGroup();
+                      $group->setChampDisc($champDisc);
+                      $group->setDiscipline($disc);
+                      $this->em->persist($group);
+                      $disciplineGroupsByParent[$groupKey] = $group;
+                    }
                   }
                   $disciplineGroupsByParent[$groupKey]->addSpecialite($exist);
+                  $this->em->persist($notice);
+                  $notice->addDisciplineGroup($disciplineGroupsByParent[$groupKey]);
                 }
               }
             }

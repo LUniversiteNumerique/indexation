@@ -1,15 +1,13 @@
-insert into unt_db.niveau (id, nom, cree_le, edite_le, code)
-values  (1, 'Enseignement supérieur', '2024-03-07 12:40:41', null, 'higher education'),
-        (2, 'L1', '2024-03-07 12:40:48', null, 'bac+1'),
-        (3, 'L2', '2024-03-07 12:40:52', null, 'bac+2'),
-        (4, 'L3', '2024-03-07 12:40:55', null, 'bac+3'),
-        (5, 'Licence', '2024-03-07 12:40:58', null, 'licence'),
-        (6, 'M1', '2024-03-07 12:41:02', null, 'bac+4'),
-        (7, 'M2', '2024-03-07 12:41:05', null, 'bac+5'),
-        (8, 'Master', '2024-03-07 12:41:09', null, 'Master'),
-        (9, 'bac>=6', '2024-03-07 12:41:10', null, 'bac>=6'),
-        (10, 'Doctorat', '2024-03-07 12:41:16', null, 'doctorat'),
-        (11, 'Formation continue', '2024-03-07 12:41:21', null, 'formation continue'),
-        (12, 'Formation en entreprise', '2024-03-07 12:41:24', null, 'formation en entreprise'),
-        (13, 'Formation professionnelle', '2024-03-07 12:41:28', null, 'training'),
-        (14, 'Autres', '2024-03-07 12:41:31', null, 'other');
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+INSERT INTO `niveau` VALUES (1,'higher education','Enseignement supérieur','2024-03-07 12:40:41',NULL),(2,'bac+1','L1','2024-03-07 12:40:48',NULL),(3,'bac+2','L2','2024-03-07 12:40:52',NULL),(4,'bac+3','L3','2024-03-07 12:40:55',NULL),(5,'licence','Licence','2024-03-07 12:40:58',NULL),(6,'bac+4','M1','2024-03-07 12:41:02',NULL),(7,'bac+5','M2','2024-03-07 12:41:05',NULL),(8,'Master','Master','2024-03-07 12:41:09',NULL),(9,'bac>=6','bac>=6','2024-03-07 12:41:10',NULL),(10,'doctorat','Doctorat','2024-03-07 12:41:16',NULL),(11,'formation continue','Formation continue','2024-03-07 12:41:21',NULL),(12,'formation en entreprise','Formation en entreprise','2024-03-07 12:41:24',NULL),(13,'training','Formation professionnelle','2024-03-07 12:41:28',NULL),(14,'other','Autres','2024-03-07 12:41:31',NULL);

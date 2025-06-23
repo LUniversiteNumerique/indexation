@@ -1,9 +1,13 @@
-insert into unt_db.tdocument (id, code, nom, cree_le, edite_le)
-values  (1, 'texte', 'Texte', '2024-03-07 12:42:07', null),
-        (2, 'image fixe', 'Image', '2024-03-07 12:42:12', null),
-        (3, 'son', 'Son', '2024-03-07 12:42:16', null),
-        (4, 'image en mouvement', 'Vidéo', '2024-03-07 12:42:20', null),
-        (5, 'logiciel', 'Logiciel', '2024-03-07 12:42:23', null),
-        (6, 'évènement', 'Evènement', '2024-03-07 12:42:26', null),
-        (7, 'ressource interactive', 'Ressource interactive', '2024-03-07 12:42:30', null),
-        (8, 'application smartphone', 'Application smartphone', '2024-03-07 12:42:33', null);
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+INSERT INTO `tdocument` VALUES (1,'texte','Texte','2024-03-07 12:42:07',NULL),(2,'image fixe','Image','2024-03-07 12:42:12',NULL),(3,'son','Son','2024-03-07 12:42:16',NULL),(4,'image en mouvement','Vidéo','2024-03-07 12:42:20',NULL),(5,'logiciel','Logiciel','2024-03-07 12:42:23',NULL),(6,'évènement','Evènement','2024-03-07 12:42:26',NULL),(7,'ressource interactive','Ressource interactive','2024-03-07 12:42:30',NULL),(8,'application smartphone','Application smartphone','2024-03-07 12:42:33',NULL);

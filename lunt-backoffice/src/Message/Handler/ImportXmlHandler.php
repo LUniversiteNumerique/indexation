@@ -123,7 +123,7 @@ readonly class ImportXmlHandler
         $name = $prop['id'].".png";
         $logo = $this->fs->readFilesFrom(null, "uploads/logos/", $name);
         $etab = $this->etabRep->findOneBy(['code' => $prop['id']]) ?? Etablissement::create($prop);
-        if($logo->hasResults()) $etab->setLogo($name);
+        if($logo?->hasResults()) $etab->setLogo($name);
 
         return $etab->setNom($prop['libelle_import']);
     }
