@@ -89,6 +89,9 @@ class ImportNoticeXmlCommand extends Command
     $finder->files()->in($path)->name($names)->depth($deep);
     if ($since) $finder->date('>= ' . $since->format('Y-m-d H:i:s'));
     $data = $finder;
+    
+    $this->em->createQuery('DELETE FROM App\Entity\DisciplineGroup')->execute();
+    $this->em->createQuery('DELETE FROM App\Entity\DeweyGroup')->execute();
 
     //Suppression de l'enssemble des notices en base actuel
     $notices = $this->em->getRepository(Notice::class)->createQueryBuilder('n')
@@ -209,7 +212,7 @@ class ImportNoticeXmlCommand extends Command
         ->setUuid(Uuid::fromString($uid)) //->setVignette("$uid.jpg")
         ->setTitre($item->general->title[0]?->value)
         ->setDescription($item->general->description[0]?->value)
-        ->setDureExec($item->technical?->duration->duration ?? null)
+        ->setDureExec(normalizeDuration($item->technical?->duration->duration ?? null))
         ->setRessLang($item->general->languages)
         ->setUserLang($item->educational->languages)
         ->setDureAppr(normalizeDuration($item->educational->typicalLearningTime->duration ?? null))
@@ -319,24 +322,43 @@ class ImportNoticeXmlCommand extends Command
     $io->progressFinish();
     $this->em->flush();
     $output->writeln("Suplom imported successfully ! count of suplom with creator not found : ". count($notfound));
-    /*foreach ($notfound as $nf) {
-      $output->writeln("title : " . $nf['titre']. "\n");
-    }*/
     return Command::SUCCESS;
   }
 }
-// Ajout d'une fonction de conversion PT50H en jours/heures car cela causait des erreurs lors de la modification de certaines notices
 function normalizeDuration($duration) {
-  // Si la durée est du type PT50H, convertis en jours/heures
-  if (preg_match('/^PT(\d+)H$/', $duration, $matches)) {
-    $hours = (int)$matches[1];
-    $days = intdiv($hours, 24);
-    $restHours = $hours % 24;
-    $result = 'P';
-    if ($days > 0) $result .= $days . 'D';
-    $result .= 'T';
-    if ($restHours > 0) $result .= $restHours . 'H';
-    return $result;
-  }
-  return $duration;
+    // PT seul -> PT0H00M00S
+    if ($duration === 'PT') {
+        return 'PT0H00M00S';
+    }
+    // P1DT12H -> PT36H00M00S
+    if (preg_match('/^P(\d+)DT(\d+)H$/', $duration, $matches)) {
+        $hours = $matches[1] * 24 + $matches[2];
+        return sprintf('PT%dH00M00S', $hours);
+    }
+    // P1DT -> PT24H00M00S
+    if (preg_match('/^P(\d+)DT$/', $duration, $matches)) {
+        $hours = $matches[1] * 24;
+        return sprintf('PT%dH00M00S', $hours);
+    }
+    // PT50H -> PT50H00M00S
+    if (preg_match('/^PT(\d+)H$/', $duration, $matches)) {
+        return sprintf('PT%dH00M00S', $matches[1]);
+    }
+    // PT3H30M -> PT3H30M00S
+    if (preg_match('/^PT(\d+)H(\d+)M$/', $duration, $matches)) {
+        return sprintf('PT%dH%dM00S', $matches[1], $matches[2]);
+    }
+    // PT30M -> PT0H30M00S
+    if (preg_match('/^PT(\d+)M$/', $duration, $matches)) {
+        return sprintf('PT0H%dM00S', $matches[1]);
+    }
+    // PT21M04S -> PT0H21M04S
+    if (preg_match('/^PT(\d+)M(\d+)S$/', $duration, $matches)) {
+        return sprintf('PT0H%dM%dS', $matches[1], $matches[2]);
+    }
+    // PT3H30M15S, laisse tel quel
+    if (preg_match('/^PT\d+H\d+M\d+S$/', $duration)) {
+        return $duration;
+    }
+    return $duration;
 }

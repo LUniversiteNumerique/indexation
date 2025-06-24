@@ -82,7 +82,7 @@ class Notice
     #[ORM\ManyToMany(targetEntity: Dewey::class)]
     private Collection $codeweys;
 
-    #[ORM\ManyToMany(targetEntity: Discipline::class), Assert\Count(min: 1)]
+    #[ORM\ManyToMany(targetEntity: Discipline::class)]
     private Collection $specialites;
 
     #[ORM\ManyToMany(targetEntity: Etablissement::class),
@@ -121,6 +121,7 @@ class Notice
     private Collection $deweyPersos;
 
     #[ORM\OneToMany(mappedBy: 'notice', targetEntity: DisciplineGroup::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[Assert\Count(min: 1)]
     private Collection $disciplineGroups;
 
     #[ORM\OneToMany(mappedBy: 'notice', targetEntity: DeweyGroup::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
