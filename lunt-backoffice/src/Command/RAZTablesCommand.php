@@ -45,6 +45,17 @@ class RAZTablesCommand extends Command
     $jointureTables = [
       'dewey_group_dewey',
       'discipline_group_specialites',
+      'notice_auteur',
+      'notice_dewey',
+      'notice_dewey_perso',
+      'notice_discipline',
+      'notice_etablissement',
+      'notice_keyword',
+      'notice_niveau',
+      'notice_notice',
+      'notice_tdocument',
+      'notice_tpedagogie',
+      'univerique_discipline'
     ];
     foreach ($jointureTables as $table) {
       $sql = $platform->getTruncateTableSQL($table, true);
