@@ -101,10 +101,10 @@ const initializeNewSelectGroup = (index) => {
       champ.classList.add('initialized');
       // Désactive les sélecteurs discipline et spécialités
       if(disci.options.length === 0){
-        disci.add(new Option('— Sélectionnez un champ disciplinaire —', ''));
+        disci.add(new Option('— Sélectionner un champ disciplinaire —', ''));
       }
       if(speci.options.length === 0){
-        speci.add(new Option('— Sélectionnez une discipline —', ''));
+        speci.add(new Option('— Sélectionner une discipline —', ''));
       }
 
       changeOptions(form, champId, disciId, speciId);
@@ -131,11 +131,11 @@ const initializeNewDeweyGroup = (index) => {
       dewey.classList.add('initialized');
       // Désactive les sélecteurs division et codedewey
       if (division.options.length === 0) {
-        division.add(new Option('— Sélectionnez un champ division —', ''));
+        division.add(new Option('— Sélectionner un champ division —', ''));
       }
 
       if (codeDewey.options.length === 0) {
-        codeDewey.add(new Option('— Sélectionnez un codeDewey —', ''));
+        codeDewey.add(new Option('— Sélectionner un codeDewey —', ''));
       }
 
       changeOptionsDewey(form, deweyId, divisionId, codedeweyId);

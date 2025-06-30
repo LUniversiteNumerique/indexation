@@ -34,7 +34,7 @@ class DisciplineGroupType extends AbstractType
       ->add('champDisc', EntityType::class, [
         'class' => Discipline::class,
         'required' => true,
-        'placeholder' => '-- Sélectionner un champ --',
+        'placeholder' => 'Sélectionner un champ',
         'label' => 'Domaine de connaissance',
         'query_builder' => function ($repo) use ($user) {
           $qb = $repo->createQueryBuilder('entity');
@@ -58,7 +58,7 @@ class DisciplineGroupType extends AbstractType
         'choices' => [],
         'choice_loader' => null,
         'required' => false,
-        'placeholder' => '-- Sélectionner une discipline --',
+        'placeholder' => 'Sélectionner une discipline',
       ])
       ->add('specialites', EntityType::class, [
         'class' => Discipline::class,
@@ -67,7 +67,7 @@ class DisciplineGroupType extends AbstractType
         'choices' => [],
         'choice_loader' => null,
         'required' => false,
-        'placeholder' => '-- Sélectionner des spécialités --',
+        'placeholder' => 'Sélectionner des spécialités',
       ]);
 
     $formModifier = function (FormInterface $form, Discipline $champDisc = null, Discipline $selectedDiscipline = null) {
@@ -79,7 +79,7 @@ class DisciplineGroupType extends AbstractType
         'class' => Discipline::class,
         'choices' => $disciplines,
         'required' => false,
-        'placeholder' => 'Sélectionnez la discipline',
+        'placeholder' => 'Sélectionner la discipline',
         'label' => t('notice.discipline', domain: 'EasyAdminBundle'),
         'help' => t('notice.discipline_help', domain: 'EasyAdminBundle'),
         'data' => $selectedDiscipline,
@@ -92,7 +92,7 @@ class DisciplineGroupType extends AbstractType
           'multiple' => true,
           'autocomplete' => true,
           'required' => false,
-          'placeholder' => 'Sélectionnez la spécialité',
+          'placeholder' => 'Sélectionner la spécialité',
           'label' => t('notice.specialite', domain: 'EasyAdminBundle'),
           'help' => t('notice.specialite_help', domain: 'EasyAdminBundle'),
         ]);
@@ -114,7 +114,7 @@ class DisciplineGroupType extends AbstractType
         'multiple' => true,
         'autocomplete' => true,
         'required' => false,
-        'placeholder' => 'Sélectionnez la spécialité',
+        'placeholder' => 'Sélectionner la spécialité',
         'label' => t('notice.specialite', domain: 'EasyAdminBundle'),
         'help' => t('notice.specialite_help', domain: 'EasyAdminBundle'),
         'data' => $selectedSpecialites,
