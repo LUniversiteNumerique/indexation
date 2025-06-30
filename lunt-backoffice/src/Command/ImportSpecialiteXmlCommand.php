@@ -7,6 +7,7 @@ use App\Repository\GroupeRepository;
 use Symfony\Component\Console\{Attribute\AsCommand,Command\Command,Input\InputInterface,Output\OutputInterface,Style\SymfonyStyle};
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Input\InputArgument;
+use App\Entity\Univerique;
 
 #[AsCommand(
   name: 'import:specialites-data',
@@ -36,6 +37,8 @@ class ImportSpecialiteXmlCommand extends Command
     $prefix = $input->getArgument('prefix');
     $xmlFilePath ='data/specialite_'.$prefix.'.xml';
     $xml = simplexml_load_file($xmlFilePath);
+    $univeriqueMaj = strtoupper($prefix);
+    $univerique = $this->em->getRepository(Univerique::class)->findOneBy(['label' => $univeriqueMaj]);
     $io->progressStart(count($xml));
 
     foreach ($xml->item as $item1) {
@@ -58,6 +61,9 @@ class ImportSpecialiteXmlCommand extends Command
         $this->em->persist($discipline1);
         // 1er niveau parent = null
         $discipline1->setParent(null);
+        // liaison de l'UNT avec le champs disc
+        $univerique->addField($discipline1);
+        $this->em->persist($univerique);
 
         // niveau 2
         foreach ($item1->item as $item2) {
