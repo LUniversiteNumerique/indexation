@@ -75,8 +75,6 @@ class ImportNoticeXmlCommand extends Command
     $io = new SymfonyStyle($input, $output);
     $io->title('Suplom Importing');
     $notfound = [];
-    $disciplineGroupsByParent = [];
-    $deweyGroupsByParent = [];
 
     //Ré utilisation de la fonction readFilesFrom en dur car non fonctionnel avec un appel simple de celle-ci avec le meme répertoire
     $finder = new Finder();
@@ -89,7 +87,7 @@ class ImportNoticeXmlCommand extends Command
     $finder->files()->in($path)->name($names)->depth($deep);
     if ($since) $finder->date('>= ' . $since->format('Y-m-d H:i:s'));
     $data = $finder;
-    
+
     $this->em->createQuery('DELETE FROM App\Entity\DisciplineGroup')->execute();
     $this->em->createQuery('DELETE FROM App\Entity\DeweyGroup')->execute();
 
@@ -104,6 +102,8 @@ class ImportNoticeXmlCommand extends Command
       $this->em->remove($notice);
     }
     $this->em->flush();
+    $conn = $this->em->getConnection();
+    $conn->executeStatement('ALTER TABLE notice AUTO_INCREMENT = 1');
 
     $io->progressStart(count($data));
     $nr = $this->em->getRepository(Notice::class);
@@ -111,10 +111,23 @@ class ImportNoticeXmlCommand extends Command
     foreach ($data as $file) {
       /** @var SuplomDto $item */
       $item = $this->serializer->deserialize($this->fs->readFile($file->getRealPath()), SuplomDto::class, 'xml');
-      $uid = substr($item->general?->identifier?->entry, -36);
+      $uid = $item->general?->identifier?->entry;
+      $existingNotice = $this->em->getRepository(Notice::class)->findOneBy(['uuid' => $uid]);
+      if ($existingNotice) {
+        continue;
+      }
       $notice = new Notice();
       $io->progressAdvance();
       $motcles = array_map(fn(Motcle $s) => trim($s->string?->value), $item->general?->keywords);
+
+      if (isset($item->relations)) {
+          foreach ($item->relations as $relation) {
+              parse_str(parse_url($relation->resource->identifier?->entry, PHP_URL_QUERY), $params);
+              if (isset($params['uuid'])) {
+                  $relationsToLink[$uid][] = $params['uuid'];
+              }
+          }
+      }
 
       /*if(isset($item->relations)) {
           $resources = array_reduce($item->relations, function(array $arr, Relation $res) use ($authors) {
@@ -152,18 +165,52 @@ class ImportNoticeXmlCommand extends Command
           $notice->setPublieLe(\DateTime::createFromFormat("Y-m-d", $role->date[0]));
         }
       }
-
-      $creatorName = $roleNotice["creator"][0] ?? null;
-      $notice->setCreateur($this->userRep->findOneBy(['name' => $creatorName]));
-      $validatorName = $roleNotice["validator"][0] ?? null;
-      $notice->setValidateur($this->userRep->findOneBy(['name' => $validatorName]));
+      $validateur = null;
+      foreach ($roleNotice["validator"] ?? [] as $validatorName) {
+        if ($validatorName) {
+          // Teste tel quel
+          $validateur = $this->userRep->findOneBy(['name' => $validatorName]);
+          if (!$validateur) {
+            // Teste avec l'ordre inversé
+            $parts = explode(' ', $validatorName);
+            if (count($parts) >= 2) {
+              $inverted = implode(' ', array_reverse($parts));
+              $validateur = $this->userRep->findOneBy(['name' => $inverted]);
+            }
+          }
+          if ($validateur) {
+            break;
+          }
+        }
+      }
+      $notice->setValidateur($validateur);
+      if ($notice->getValidateur() == null) {
+        $notfound[] = [
+          'nom' => $validatorName
+        ];
+      }
+      $creator = null;
+      foreach ($roleNotice["creator"] ?? [] as $creatorName) {
+        if ($creatorName) {
+          // Teste tel quel
+          $creator = $this->userRep->findOneBy(['name' => $creatorName]);
+          if (!$creator) {
+            // Teste avec l'ordre inversé
+            $parts = explode(' ', $creatorName);
+            if (count($parts) >= 2) {
+              $inverted = implode(' ', array_reverse($parts));
+              $creator = $this->userRep->findOneBy(['name' => $inverted]);
+            }
+          }
+          if ($creator) {
+            break;
+          }
+        }
+      }
+      $notice->setCreateur($creator);
 
       // Ajouter un utilisateur par défaut quand une notice en a pas
       if ($notice->getCreateur() == null) {
-        $notfound[] = [
-          'titre' => $item->general->title[0]?->value,
-          'lien' => 'https://ressources.luniversitenumerique.fr/'
-        ];
         $existingUser = $this->userRep->findOneBy(['name' => 'créateur inconnu']);
         if ($existingUser === null) {
           $entity = new User('créateur inconnu', 'noreply@luniversitenumerique.fr');
@@ -206,10 +253,13 @@ class ImportNoticeXmlCommand extends Command
           $notice->addAuteur($entity);
         }
       }
-      array_map(fn(Etablissement $etab) => $notice->addPorteur($etab), $this->etabRep->findBy(['nom' => $roleNotice["publisher"]]));
+      $publishers = array_unique($roleNotice["publisher"] ?? []);
+      foreach ($this->etabRep->findBy(['nom' => $publishers]) as $etab) {
+        $notice->addPorteur($etab);
+      }
       array_map(fn(Keyword $kywd) => $notice->addTag($kywd), $this->kwrdRep->findBy(['nom' => $motcles]));
       $notice->setExportOAI(false)->setEtat(NoticEtat::Forward)
-        ->setUuid(Uuid::fromString($uid)) //->setVignette("$uid.jpg")
+        ->setUuid($uid) //->setVignette("$uid.jpg")
         ->setTitre($item->general->title[0]?->value)
         ->setDescription($item->general->description[0]?->value)
         ->setDureExec(normalizeDuration($item->technical?->duration->duration ?? null))
@@ -242,32 +292,39 @@ class ImportNoticeXmlCommand extends Command
 
           // Gestion des spécialités
           if (str_contains($key, 'lassification')) {
+            $disciplineGroupsByParent = [];
             foreach ($class->taxonPath->taxons as $taxon) {
-              $spec = $taxon->entry[0]?->value;
+              $spec = trim($taxon->entry[0]?->value ?? '');
+              if (str_contains($spec, '.')) {
+                $parts = explode('.', $spec);
+                $spec = trim(end($parts));
+              }
               $exist = $this->discRep->findOneBy(['nom' => $spec]);
-              if ($exist) {
-                $disc = $exist->getParent();
-                $champDisc = $disc?->getParent();
-                if ($champDisc && $disc) {
-                  $groupKey = $champDisc->getId() . '-' . $disc->getId();
-                  if (!isset($disciplineGroupsByParent[$groupKey])) {
-                    $existingGroup = $this->em->getRepository(\App\Entity\DisciplineGroup::class)
-                      ->findOneBy(['champDisc' => $champDisc, 'discipline' => $disc]);
-                    if ($existingGroup) {
-                      $disciplineGroupsByParent[$groupKey] = $existingGroup;
-                    } else {
-                      $group = new \App\Entity\DisciplineGroup();
-                      $group->setChampDisc($champDisc);
-                      $group->setDiscipline($disc);
-                      $this->em->persist($group);
-                      $disciplineGroupsByParent[$groupKey] = $group;
-                    }
-                  }
-                  $disciplineGroupsByParent[$groupKey]->addSpecialite($exist);
-                  $this->em->persist($notice);
-                  $notice->addDisciplineGroup($disciplineGroupsByParent[$groupKey]);
+              if (!$exist) {
+                continue;
+              }
+              $disc = $exist->getParent();
+              $champDisc = $disc?->getParent();
+              if (!$champDisc || !$disc) {
+                continue;
+              }
+              $groupKey = $champDisc->getId() . '-' . $disc->getId();
+              if (!isset($disciplineGroupsByParent[$groupKey])) {
+                $existingGroup = $this->em->getRepository(\App\Entity\DisciplineGroup::class)
+                  ->findOneBy(['champDisc' => $champDisc, 'discipline' => $disc]);
+                if ($existingGroup) {
+                  $disciplineGroupsByParent[$groupKey] = $existingGroup;
+                } else {
+                  $group = new \App\Entity\DisciplineGroup();
+                  $group->setChampDisc($champDisc);
+                  $group->setDiscipline($disc);
+                  $this->em->persist($group);
+                  $disciplineGroupsByParent[$groupKey] = $group;
                 }
               }
+              $disciplineGroupsByParent[$groupKey]->addSpecialite($exist);
+              $this->em->persist($notice);
+              $notice->addDisciplineGroup($disciplineGroupsByParent[$groupKey]);
             }
           }
 
@@ -277,7 +334,6 @@ class ImportNoticeXmlCommand extends Command
             foreach ($class->taxonPath->taxons as $taxon) {
               $spec = $taxon->entry[0]?->value;
               $id = $taxon->id ?? null;
-
               // code dewey original
               $exist = $this->deweRep->findOneBy(['nom' => $spec]);
               if ($exist) {
@@ -318,9 +374,31 @@ class ImportNoticeXmlCommand extends Command
       }
       $this->em->persist($notice);
     }
+    $this->em->flush();
+
+    // Appliquer les liens entre notices
+    foreach ($relationsToLink as $noticeUuid => $linkedUuids) {
+        $notice = $this->em->getRepository(Notice::class)->findOneBy(['uuid' => Uuid::fromString($noticeUuid)]);
+        foreach ($linkedUuids as $linkedUuid) {
+            $linkedNotice = $this->em->getRepository(Notice::class)->findOneBy(['uuid' => Uuid::fromString($linkedUuid)]);
+            if ($notice && $linkedNotice) {
+                $notice->addRessource($linkedNotice);
+            }
+        }
+    }
+    $this->em->flush();
 
     $io->progressFinish();
-    $this->em->flush();
+    if (count($notfound) > 0) {
+      $output->writeln("\nListe des créateurs non trouvés (uniques) :");
+      // Récupère uniquement les noms
+      $noms = array_map(fn($nf) => $nf['nom'] ?? '[nom inconnu]', $notfound);
+      // Supprime les doublons
+      $nomsUniques = array_unique($noms);
+      foreach ($nomsUniques as $nom) {
+        $output->writeln('- ' . $nom);
+      }
+    }
     $output->writeln("Suplom imported successfully ! count of suplom with creator not found : ". count($notfound));
     return Command::SUCCESS;
   }
