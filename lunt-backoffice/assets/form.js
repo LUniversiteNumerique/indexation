@@ -101,10 +101,10 @@ const initializeNewSelectGroup = (index) => {
       champ.classList.add('initialized');
       // Désactive les sélecteurs discipline et spécialités
       if(disci.options.length === 0){
-        disci.add(new Option('— Sélectionner un champ disciplinaire —', ''));
+        disci.add(new Option('Sélectionner un champ disciplinaire', ''));
       }
       if(speci.options.length === 0){
-        speci.add(new Option('— Sélectionner une discipline —', ''));
+        speci.add(new Option('', ''));
       }
 
       changeOptions(form, champId, disciId, speciId);
@@ -131,11 +131,11 @@ const initializeNewDeweyGroup = (index) => {
       dewey.classList.add('initialized');
       // Désactive les sélecteurs division et codedewey
       if (division.options.length === 0) {
-        division.add(new Option('— Sélectionner un champ division —', ''));
+        division.add(new Option('Sélectionner un champ division', ''));
       }
 
       if (codeDewey.options.length === 0) {
-        codeDewey.add(new Option('— Sélectionner un codeDewey —', ''));
+        codeDewey.add(new Option('', ''));
       }
 
       changeOptionsDewey(form, deweyId, divisionId, codedeweyId);
@@ -149,6 +149,12 @@ const changeOptions = (form, champId, disciId, speciId) => {
 
   if (!form_select_champ.dataset.listenerAttached) {
     form_select_champ.addEventListener('change', async ({ target }) => {
+      // Réinitialise discipline et spécialités à chaque changement de champDisc
+      form_select_disci.innerHTML = '';
+      form_select_disci.add(new Option('Sélectionner un champ disciplinaire', ''));
+      form_select_speci.innerHTML = '';
+      form_select_speci.add(new Option('', ''));
+      // Puis met à jour discipline et spécialités si besoin
       const resText = await updateForm(`${target.getAttribute('name')}=${target.value}`, form);
       form_select_disci.innerHTML = resText.getElementById(disciId).innerHTML;
       form_select_speci.innerHTML = resText.getElementById(speciId).innerHTML;
@@ -172,6 +178,10 @@ const changeOptionsDewey = (form, deweyId, diviId, codeDeId) => {
   // Empêche les doublons
   if (!form_select_dewey.dataset.listenerAttached) {
     form_select_dewey.addEventListener('change', async ({ target }) => {
+      form_select_divi.innerHTML = '';
+      form_select_divi.add(new Option('Sélectionner une division', ''));
+      form_select_codeDe.innerHTML = '';
+      form_select_codeDe.add(new Option('', ''));
       const resText = await updateForm(`${target.getAttribute('name')}=${target.value}`, form);
       form_select_divi.innerHTML = resText.getElementById(diviId).innerHTML;
       form_select_codeDe.innerHTML = resText.getElementById(codeDeId).innerHTML;

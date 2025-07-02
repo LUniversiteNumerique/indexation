@@ -3,11 +3,15 @@
 {# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
 
 {% if field.formattedValue is iterable %}
-    {% for key, value in field.formattedValue %}
-        <span class="badge badge-custom">
-            <a href="{{ key }}" target="_blank">{{ value }}</a>
-        </span>
-    {% endfor %}
+  {% for key, value in field.formattedValue %}
+    <span class="badge badge-custom">
+            {% if key starts with 'http' %}
+              <a href="{{ key }}" target="_blank">{{ value }}</a>
+            {% else %}
+              {{ value }}
+            {% endif %}
+        </span><br>
+  {% endfor %}
 {% else %}
-    <span class="badge badge-custom">{{ field.formattedValue }}</span>
+  <span class="badge badge-custom">{{ field.formattedValue }}</span>
 {% endif %}
