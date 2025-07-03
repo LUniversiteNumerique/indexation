@@ -14,10 +14,8 @@ class Notice
 {
     use Timestamps;
 
-    #[ORM\Column(type: UuidType::NAME, unique: true)]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    private ?Uuid $uuid;
+    #[ORM\Column(type: "string", length: 128, unique: true)]
+    private ?string $uuid = null;
 
     #[ORM\Column(length: 285), Assert\NotBlank]
     private ?string $ressUrl, $titre = null;
@@ -122,9 +120,12 @@ class Notice
 
     #[ORM\OneToMany(mappedBy: 'notice', targetEntity: DisciplineGroup::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[Assert\Count(min: 1)]
+    #[Assert\Valid]
     private Collection $disciplineGroups;
 
     #[ORM\OneToMany(mappedBy: 'notice', targetEntity: DeweyGroup::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[Assert\Count(min: 1)]
+    #[Assert\Valid]
     private Collection $deweyGroups;
 
     public function __construct()
@@ -146,12 +147,12 @@ class Notice
         $this->deweyGroups = new ArrayCollection();
     }
 
-    public function getUuid(): ?Uuid
+    public function getUuid(): ?string
     {
         return $this->uuid;
     }
 
-    public function setUuid(?Uuid $uuid): self
+    public function setUuid(?string $uuid): self
     {
         $this->uuid = $uuid;
 
