@@ -1,0 +1,1075 @@
+<?xml version='1.0' encoding='utf-8'?>
+<table>
+	<item>
+		<property key="id">Sciences_de_l_ingenieur_technologies_et_sciences_appliquees</property>
+		<property key="libelle">Sciences de l’ingénieur, technologies et sciences appliquées</property>
+		<item>
+			<property key="id">automatique</property>
+			<property key="libelle">Automatique</property>
+			<item>
+				<property key="id">fondamentaux_theorie_des_systemes_simulation_informatique_des_systemes</property>
+				<property key="libelle">Fondamentaux : Théorie des systèmes, simulation informatique des systèmes</property>
+			</item>
+			<item>
+				<property key="id">commande_automatique</property>
+				<property key="libelle">Commande automatique</property>
+			</item>
+			<item>
+				<property key="id">instrumentation_capteurs_et_actionneurs</property>
+				<property key="libelle">Instrumentation, capteurs et actionneurs</property>
+			</item>
+			<item>
+				<property key="id">systemes_hommemachine</property>
+				<property key="libelle">Systèmes Homme-Machine</property>
+			</item>
+			<item>
+				<property key="id">systemes_de_production_de_biens_et_de_services</property>
+				<property key="libelle">Systèmes de production, de biens et de services</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">chimie</property>
+			<property key="libelle">Chimie</property>
+			<item>
+				<property key="id">fondamentaux</property>
+				<property key="libelle">Fondamentaux</property>
+			</item>
+			<item>
+				<property key="id">chimie_analytique</property>
+				<property key="libelle">Chimie analytique</property>
+			</item>
+			<item>
+				<property key="id">chimie_minerale</property>
+				<property key="libelle">Chimie minérale</property>
+			</item>
+			<item>
+				<property key="id">chimie_organique</property>
+				<property key="libelle">Chimie organique</property>
+			</item>
+			<item>
+				<property key="id">chimie_physique</property>
+				<property key="libelle">Chimie physique</property>
+			</item>
+			<item>
+				<property key="id">chimie_quantique_et_simulation_des_materiaux</property>
+				<property key="libelle">Chimie quantique et simulation des matériaux</property>
+			</item>
+			<item>
+				<property key="id">cristallographie</property>
+				<property key="libelle">Cristallographie</property>
+			</item>
+			<item>
+				<property key="id">genie_chimique</property>
+				<property key="libelle">Génie chimique</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">electricite_et_electrotechnique</property>
+			<property key="libelle">Electricité et électrotechnique</property>
+			<item>
+				<property key="id">fondamentaux</property>
+				<property key="libelle">Fondamentaux</property>
+			</item>
+			<item>
+				<property key="id">aspects_pedagogiques_economiques_histoire_epistemologie</property>
+				<property key="libelle">Aspects pédagogiques, économiques, histoire, épistémologie,…</property>
+			</item>
+			<item>
+				<property key="id">compatibilite_electromagnetique_cem</property>
+				<property key="libelle">Compatibilité électromagnétique (CEM)</property>
+			</item>
+			<item>
+				<property key="id">conversion_electromecanique_de_lenergie</property>
+				<property key="libelle">Conversion électromécanique de l'énergie</property>
+			</item>
+			<item>
+				<property key="id">electronique_de_puissance</property>
+				<property key="libelle">Electronique de puissance</property>
+			</item>
+			<item>
+				<property key="id">magnetisme</property>
+				<property key="libelle">Magnétisme</property>
+			</item>
+			<item>
+				<property key="id">materiaux_pour_lelectrotechnique</property>
+				<property key="libelle">Matériaux pour l'électrotechnique</property>
+			</item>
+			<item>
+				<property key="id">production_transport_et_distribution_de_lenergie_electrique</property>
+				<property key="libelle">Production, transport et distribution de l'énergie électrique</property>
+			</item>
+			<item>
+				<property key="id">stockage_de_lenergie</property>
+				<property key="libelle">Stockage de l'énergie</property>
+			</item>
+			<item>
+				<property key="id">systemes_electriques_et_applications_de_lenergie_electrique</property>
+				<property key="libelle">Systèmes électriques et applications de l'énergie électrique</property>
+			</item>
+			<item>
+				<property key="id">systemes_pour_energie_renouvelable</property>
+				<property key="libelle">Systèmes pour énergie renouvelable</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">electronique</property>
+			<property key="libelle">Électronique</property>
+			<item>
+				<property key="id">fondamentaux</property>
+				<property key="libelle">Fondamentaux</property>
+			</item>
+			<item>
+				<property key="id">circuits_integres_microelectronique_microsystemes</property>
+				<property key="libelle">Circuits intégrés, microélectronique, microsystèmes</property>
+			</item>
+			<item>
+				<property key="id">compatibilite_electromagnetique_cem</property>
+				<property key="libelle">Compatibilité électromagnétique (CEM)</property>
+			</item>
+			<item>
+				<property key="id">electronique_analogique</property>
+				<property key="libelle">Électronique analogique</property>
+			</item>
+			<item>
+				<property key="id">electronique_embarquee</property>
+				<property key="libelle">Electronique embarquée</property>
+			</item>
+			<item>
+				<property key="id">electronique_numerique_genie_informatique_microprocesseur_microcontroleur</property>
+				<property key="libelle">Électronique numérique, génie informatique, microprocesseur, microcontrôleur</property>
+			</item>
+			<item>
+				<property key="id">instrumentation_et_capteurs</property>
+				<property key="libelle">Instrumentation et Capteurs</property>
+			</item>
+			<item>
+				<property key="id">materiaux_et_composants</property>
+				<property key="libelle">Matériaux et Composants</property>
+			</item>
+			<item>
+				<property key="id">nanosystemes</property>
+				<property key="libelle">Nanosystèmes</property>
+			</item>
+			<item>
+				<property key="id">optique_et_optoelectronique</property>
+				<property key="libelle">Optique et optoélectronique</property>
+			</item>
+			<item>
+				<property key="id">puissance_et_energie</property>
+				<property key="libelle">Puissance et énergie</property>
+			</item>
+			<item>
+				<property key="id">radiofrequences_hyperfrequences_microondes_antennes</property>
+				<property key="libelle">Radiofréquences, hyperfréquences micro-ondes, antennes</property>
+			</item>
+			<item>
+				<property key="id">tests_et_mesures_en_electronique</property>
+				<property key="libelle">Tests et mesures en électronique</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">energetique_energie</property>
+			<property key="libelle">Energétique, Energie</property>
+			<item>
+				<property key="id">fondamentaux_chaleur_thermodynamique</property>
+				<property key="libelle">Fondamentaux : chaleur, thermodynamique</property>
+			</item>
+			<item>
+				<property key="id">compression_et_detente_des_fluides_compressibles</property>
+				<property key="libelle">Compression et détente des fluides compressibles</property>
+			</item>
+			<item>
+				<property key="id">cycles_combines_et_cogeneration</property>
+				<property key="libelle">Cycles combinés et cogénération</property>
+			</item>
+			<item>
+				<property key="id">genie_nucleaire</property>
+				<property key="libelle">Génie nucléaire</property>
+			</item>
+			<item>
+				<property key="id">moteurs_a_combustion_interne_alternatifs_et_continus</property>
+				<property key="libelle">Moteurs à combustion interne (alternatifs et continus)</property>
+			</item>
+			<item>
+				<property key="id">refrigeration_cryogenie</property>
+				<property key="libelle">Réfrigération, cryogénie</property>
+			</item>
+			<item>
+				<property key="id">technologies_de_lair_humide_et_climatisation</property>
+				<property key="libelle">Technologies de l'air humide et climatisation</property>
+			</item>
+			<item>
+				<property key="id">technologies_de_la_vapeur_et_cycles_a_vapeur</property>
+				<property key="libelle">Technologies de la vapeur et cycles à vapeur</property>
+			</item>
+			<item>
+				<property key="id">technologies_de_lenergie_eolienne</property>
+				<property key="libelle">Technologies de l'énergie éolienne</property>
+			</item>
+			<item>
+				<property key="id">technologies_de_lenergie_geothermique</property>
+				<property key="libelle">Technologies de l'énergie géothermique</property>
+			</item>
+			<item>
+				<property key="id">technologies_de_lenergie_hydraulique</property>
+				<property key="libelle">Technologies de l'énergie hydraulique</property>
+			</item>
+			<item>
+				<property key="id">technologies_de_lenergie_solaire</property>
+				<property key="libelle">Technologies de l'énergie solaire</property>
+			</item>
+			<item>
+				<property key="id">technologies_des_energies_renouvelables</property>
+				<property key="libelle">Technologies des énergies renouvelables</property>
+			</item>
+			<item>
+				<property key="id">technologie_des_combustibles</property>
+				<property key="libelle">Technologie des combustibles</property>
+			</item>
+			<item>
+				<property key="id">technologies_des_piles_a_combustible</property>
+				<property key="libelle">Technologies des piles à combustible</property>
+			</item>
+			<item>
+				<property key="id">thermique_combustibles_et_combustion_transmission_de_la_chaleur_echange_de_chaleur</property>
+				<property key="libelle">Thermique, combustibles et combustion, transmission de la chaleur, échange de chaleur</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">genie_civil_genie_urbain_amenagement</property>
+			<property key="libelle">Génie civil, génie urbain, aménagement</property>
+			<item>
+				<property key="id">fondamentaux</property>
+				<property key="libelle">Fondamentaux</property>
+			</item>
+			<item>
+				<property key="id">analyse_et_conception_des_structures</property>
+				<property key="libelle">Analyse et conception des structures</property>
+			</item>
+			<item>
+				<property key="id">batiments</property>
+				<property key="libelle">Bâtiments</property>
+			</item>
+			<item>
+				<property key="id">geomatique_topographie</property>
+				<property key="libelle">Géomatique, topographie</property>
+			</item>
+			<item>
+				<property key="id">geotechnique_et_fondations</property>
+				<property key="libelle">Géotechnique et fondations</property>
+			</item>
+			<item>
+				<property key="id">materiaux_pour_le_genie_civil</property>
+				<property key="libelle">Matériaux pour le génie civil</property>
+			</item>
+			<item>
+				<property key="id">ouvrages_dart_ponts_tunnels_routes</property>
+				<property key="libelle">Ouvrages d'art, ponts, tunnels, routes</property>
+			</item>
+			<item>
+				<property key="id">sismologie_et_structures_parasismiques</property>
+				<property key="libelle">Sismologie et structures parasismiques</property>
+			</item>
+			<item>
+				<property key="id">technologie_hydraulique</property>
+				<property key="libelle">Technologie hydraulique</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">genie_des_procedes</property>
+			<property key="libelle">Génie des procédés</property>
+			<item>
+				<property key="id">agitation</property>
+				<property key="libelle">Agitation</property>
+			</item>
+			<item>
+				<property key="id">chimie_physique</property>
+				<property key="libelle">Chimie physique</property>
+			</item>
+			<item>
+				<property key="id">commande_informatisee_des_procedes</property>
+				<property key="libelle">Commande informatisée des procédés</property>
+			</item>
+			<item>
+				<property key="id">conception_et_integration_des_procedes</property>
+				<property key="libelle">Conception et intégration des procédés</property>
+			</item>
+			<item>
+				<property key="id">elaboration_des_materiaux</property>
+				<property key="libelle">Elaboration des Matériaux</property>
+			</item>
+			<item>
+				<property key="id">genie_agroalimentaire_et_biotechnologique</property>
+				<property key="libelle">Génie Agroalimentaire et Biotechnologique</property>
+			</item>
+			<item>
+				<property key="id">procedes_de_formulation_stoechiometrie</property>
+				<property key="libelle">Procédés de formulation, stoechiométrie</property>
+			</item>
+			<item>
+				<property key="id">procedes_de_separation_chimique</property>
+				<property key="libelle">Procédés de séparation chimique</property>
+			</item>
+			<item>
+				<property key="id">procedes_de_separation_physique</property>
+				<property key="libelle">Procédés de séparation physique</property>
+			</item>
+			<item>
+				<property key="id">reacteurs</property>
+				<property key="libelle">Réacteurs</property>
+			</item>
+			<item>
+				<property key="id">securite</property>
+				<property key="libelle">Sécurité</property>
+			</item>
+			<item>
+				<property key="id">solides_divises_metallurgie_des_poudres_frittage</property>
+				<property key="libelle">Solides Divisés, métallurgie des poudres, frittage</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">informatique</property>
+			<property key="libelle">Informatique</property>
+			<item>
+				<property key="id">generalites</property>
+				<property key="libelle">Généralités</property>
+			</item>
+			<item>
+				<property key="id">architecture_des_ordinateurs</property>
+				<property key="libelle">Architecture des ordinateurs</property>
+			</item>
+			<item>
+				<property key="id">bases_de_donnees</property>
+				<property key="libelle">Bases de données</property>
+			</item>
+			<item>
+				<property key="id">bio_informatique</property>
+				<property key="libelle">Bio-informatique</property>
+			</item>
+			<item>
+				<property key="id">conception_et_analyse_des_systemes_methodes_de_modelisation</property>
+				<property key="libelle">Conception et analyse des systèmes,  méthodes de modélisation</property>
+			</item>
+			<item>
+				<property key="id">bureautique_outils_et_usages_informatiques_de_base</property>
+				<property key="libelle">Bureautique, outils et usages informatiques de base</property>
+			</item>
+			<item>
+				<property key="id">environnements_informatiques_pour_lapprentissage_humain_et_methodes_pour_leducation_et_la_formation</property>
+				<property key="libelle">Environnements Informatiques pour l'Apprentissage Humain et méthodes pour l’éducation et la formation</property>
+			</item>
+			<item>
+				<property key="id">genie_logiciel_conception_qualite_documentation_maintenance</property>
+				<property key="libelle">Génie logiciel : conception, qualité, documentation, maintenance</property>
+			</item>
+			<item>
+				<property key="id">informatique_theorique</property>
+				<property key="libelle">Informatique théorique</property>
+			</item>
+			<item>
+				<property key="id">informatique_ubiquitaire/informatique_ambiante</property>
+				<property key="libelle">Informatique ubiquitaire/informatique ambiante</property>
+			</item>
+			<item>
+				<property key="id">intelligence_artificielle_apprentissage_representation</property>
+				<property key="libelle">Intelligence artificielle : apprentissage, représentation</property>
+			</item>
+			<item>
+				<property key="id">interfaces_et_interactions_homme___machine</property>
+				<property key="libelle">Interfaces et interactions Homme - machine</property>
+			</item>
+			<item>
+				<property key="id">mode_de_traitement_des_donnees_temps_reel_en_parallele_distribues_…</property>
+				<property key="libelle">Mode de traitement des données: temps réel, en parallèle, distribués, …</property>
+			</item>
+			<item>
+				<property key="id">multimedia__infographie_outils_et_techniques_de_programmation_synthese_vocale</property>
+				<property key="libelle">Multimédia :  infographie, outils et techniques de programmation, synthèse vocale</property>
+			</item>
+			<item>
+				<property key="id">programmation_algorithmique_langages_conception_objet_programmes</property>
+				<property key="libelle">Programmation : Algorithmique, langages, conception objet, programmes</property>
+			</item>
+			<item>
+				<property key="id">realite_virtuelle_retour_deffort</property>
+				<property key="libelle">Réalité virtuelle, retour d'effort</property>
+			</item>
+			<item>
+				<property key="id">securite_des_donnees_chiffrement_virus_cryptographie_…</property>
+				<property key="libelle">Sécurité des données: chiffrement, virus, cryptographie, …</property>
+			</item>
+			<item>
+				<property key="id">systemes_dexploitation_interpreteurs_compilateurs</property>
+				<property key="libelle">Systèmes d'exploitation, interpréteurs, compilateurs</property>
+			</item>
+			<item>
+				<property key="id">systemes_embarques</property>
+				<property key="libelle">Systèmes embarqués</property>
+			</item>
+			<item>
+				<property key="id">web_formalisme_et_outils</property>
+				<property key="libelle">Web : formalisme et outils</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">ingenierie_de_lenvironnement</property>
+			<property key="libelle">Ingénierie de l'environnement</property>
+			<item>
+				<property key="id">droit_de_lenvironnement</property>
+				<property key="libelle">Droit de l'environnement</property>
+			</item>
+			<item>
+				<property key="id">ecologie___ecosystemes</property>
+				<property key="libelle">Ecologie - Ecosystèmes</property>
+			</item>
+			<item>
+				<property key="id">economie_de_la_terre_et_de_lenergie</property>
+				<property key="libelle">Economie de la terre et de l'énergie</property>
+			</item>
+			<item>
+				<property key="id">politique_administration_et_developpement_durable</property>
+				<property key="libelle">Politique, administration et développement durable</property>
+			</item>
+			<item>
+				<property key="id">problemes_denvironnement</property>
+				<property key="libelle">Problèmes d'environnement</property>
+			</item>
+			<item>
+				<property key="id">traitements_de_problemes_denvironnement</property>
+				<property key="libelle">Traitements de problèmes d'environnement</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">materiaux</property>
+			<property key="libelle">Matériaux</property>
+			<item>
+				<property key="id">ceramiques_et_verres</property>
+				<property key="libelle">Céramiques et verres</property>
+			</item>
+			<item>
+				<property key="id">choix_des_materiaux_en_mecanique_et_en_genie_civil</property>
+				<property key="libelle">Choix des matériaux en mécanique et en génie civil</property>
+			</item>
+			<item>
+				<property key="id">composites</property>
+				<property key="libelle">Composites</property>
+			</item>
+			<item>
+				<property key="id">elaboration_des_materiaux_metalliques</property>
+				<property key="libelle">Elaboration des matériaux métalliques</property>
+			</item>
+			<item>
+				<property key="id">elaboration_des_polymeres_des_ceramiques_et_des_verres</property>
+				<property key="libelle">Elaboration des polymères, des céramiques et des verres</property>
+			</item>
+			<item>
+				<property key="id">fibres_textiles_et_tissus</property>
+				<property key="libelle">Fibres textiles et tissus</property>
+			</item>
+			<item>
+				<property key="id">essais_et_controle_des_materiaux</property>
+				<property key="libelle">Essais et contrôle des matériaux</property>
+			</item>
+			<item>
+				<property key="id">materiaux_metalliques_alliages_ferreux_non_ferreux</property>
+				<property key="libelle">Matériaux métalliques, alliages, ferreux, non ferreux</property>
+			</item>
+			<item>
+				<property key="id">nanomateriaux</property>
+				<property key="libelle">Nanomatériaux</property>
+			</item>
+			<item>
+				<property key="id">polymeres</property>
+				<property key="libelle">Polymères</property>
+			</item>
+			<item>
+				<property key="id">proprietes_mecaniques_et_lois_de_comportement</property>
+				<property key="libelle">Propriétés mécaniques et lois de comportement</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">mathematiques</property>
+			<property key="libelle">Mathématiques</property>
+			<item>
+				<property key="id">generalites_philosophie_theorie_des_mathematiques</property>
+				<property key="libelle">Généralités, philosophie, théorie des mathématiques</property>
+			</item>
+			<item>
+				<property key="id">algebre</property>
+				<property key="libelle">Algèbre</property>
+			</item>
+			<item>
+				<property key="id">analyse</property>
+				<property key="libelle">Analyse</property>
+			</item>
+			<item>
+				<property key="id">arithmetique</property>
+				<property key="libelle">Arithmétique</property>
+			</item>
+			<item>
+				<property key="id">analyse_numerique_appliquee_calcul_numerique_mathematiques_numeriques</property>
+				<property key="libelle">Analyse numérique appliquée, calcul numérique, mathématiques numériques</property>
+			</item>
+			<item>
+				<property key="id">geometrie</property>
+				<property key="libelle">Géométrie</property>
+			</item>
+			<item>
+				<property key="id">mathematiques_inductives_deductives</property>
+				<property key="libelle">Mathématiques inductives déductives</property>
+			</item>
+			<item>
+				<property key="id">probabilites_et_statistiques</property>
+				<property key="libelle">Probabilités et statistiques</property>
+			</item>
+			<item>
+				<property key="id">topologie</property>
+				<property key="libelle">Topologie</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">mecanique_appliquee</property>
+			<property key="libelle">Mécanique appliquée</property>
+			<item>
+				<property key="id">acoustique_son_lutte_contre_le_bruit</property>
+				<property key="libelle">Acoustique, son, lutte contre le bruit</property>
+			</item>
+			<item>
+				<property key="id">applications_aeronautique_automobile_astronautique</property>
+				<property key="libelle">Applications: aéronautique, automobile, astronautique</property>
+			</item>
+			<item>
+				<property key="id">conception_et_construction_de_machines</property>
+				<property key="libelle">Conception et construction de machines</property>
+			</item>
+			<item>
+				<property key="id">hydraulique_et_machines_hydrauliques</property>
+				<property key="libelle">Hydraulique et machines hydrauliques</property>
+			</item>
+			<item>
+				<property key="id">moteurs_a_combustion_interne_alternatifs_et_continus</property>
+				<property key="libelle">Moteurs à combustion interne (alternatifs et continus)</property>
+			</item>
+			<item>
+				<property key="id">outils_et_equipements_pour_la_fabrication_et_lusinage</property>
+				<property key="libelle">Outils et équipements pour la fabrication et l'usinage</property>
+			</item>
+			<item>
+				<property key="id">technologie_de_mise_en_œuvre_des_produits_organiques_plasturgie</property>
+				<property key="libelle">Technologie de mise en œuvre des produits organiques, plasturgie</property>
+			</item>
+			<item>
+				<property key="id">technologie_pneumatique</property>
+				<property key="libelle">Technologie pneumatique</property>
+			</item>
+			<item>
+				<property key="id">travail_et_traitement_des_metaux</property>
+				<property key="libelle">Travail et traitement des métaux</property>
+			</item>
+			<item>
+				<property key="id">tribologie</property>
+				<property key="libelle">Tribologie</property>
+			</item>
+			<item>
+				<property key="id">turbomachine</property>
+				<property key="libelle">Turbomachine</property>
+			</item>
+			<item>
+				<property key="id">vibrations_mecaniques</property>
+				<property key="libelle">Vibrations mécaniques</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">mecanique_des_fluides</property>
+			<property key="libelle">Mécanique des fluides</property>
+			<item>
+				<property key="id">fondamentaux</property>
+				<property key="libelle">Fondamentaux</property>
+			</item>
+			<item>
+				<property key="id">interactions_fluide_structure</property>
+				<property key="libelle">Interactions fluide-structure</property>
+			</item>
+			<item>
+				<property key="id">modelisation_mathematique</property>
+				<property key="libelle">Modélisation mathématique</property>
+			</item>
+			<item>
+				<property key="id">simulation_numerique_et_traitement_de_donnees</property>
+				<property key="libelle">Simulation numérique et traitement de données</property>
+			</item>
+			<item>
+				<property key="id">tests_mesures_experimentations</property>
+				<property key="libelle">Tests, mesures, expérimentations</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">mecanique_des_solides_et_des_structures</property>
+			<property key="libelle">Mécanique des solides et des structures</property>
+			<item>
+				<property key="id">fondamentaux</property>
+				<property key="libelle">Fondamentaux</property>
+			</item>
+			<item>
+				<property key="id">modelisation_mathematique</property>
+				<property key="libelle">Modélisation mathématique</property>
+			</item>
+			<item>
+				<property key="id">resistance_des_materiaux/_calculs_des_structures</property>
+				<property key="libelle">Résistance des matériaux/ calculs des structures</property>
+			</item>
+			<item>
+				<property key="id">simulation_numerique_et_traitement_de_donnees</property>
+				<property key="libelle">Simulation numérique et traitement de données</property>
+			</item>
+			<item>
+				<property key="id">tests_mesures_experimentations</property>
+				<property key="libelle">Tests, mesures, expérimentations</property>
+			</item>
+			<item>
+				<property key="id">vibration_des_structures</property>
+				<property key="libelle">Vibration des structures</property>
+			</item>
+			<item>
+				<property key="id">deformation_des_structures</property>
+				<property key="libelle">Déformation des structures</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">modelisation_et_simulation</property>
+			<property key="libelle">Modélisation et simulation</property>
+			<item>
+				<property key="id">fondamentaux_et_modeles_mathematiques</property>
+				<property key="libelle">Fondamentaux et modèles mathématiques</property>
+			</item>
+			<item>
+				<property key="id">approches_paralleles</property>
+				<property key="libelle">Approches parallèles</property>
+			</item>
+			<item>
+				<property key="id">graphes_arbres_et_simulation_discrete</property>
+				<property key="libelle">Graphes, arbres et simulation discrète</property>
+			</item>
+			<item>
+				<property key="id">methodes_numeriques_elements_finis</property>
+				<property key="libelle">Méthodes numériques, éléments finis</property>
+			</item>
+			<item>
+				<property key="id">modelisation_et_simulation_par_ordinateur</property>
+				<property key="libelle">Modélisation et simulation par ordinateur</property>
+			</item>
+			<item>
+				<property key="id">optimisation_mathematique_optimisation_des_structures</property>
+				<property key="libelle">Optimisation mathématique, optimisation des structures</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">optique</property>
+			<property key="libelle">Optique</property>
+			<item>
+				<property key="id">fondamentaux</property>
+				<property key="libelle">Fondamentaux</property>
+			</item>
+			<item>
+				<property key="id">electromagnetisme_optique_classique_optique_ondulatoire</property>
+				<property key="libelle">Electromagnétisme, optique classique, optique ondulatoire</property>
+			</item>
+			<item>
+				<property key="id">imagerie</property>
+				<property key="libelle">Imagerie</property>
+			</item>
+			<item>
+				<property key="id">instrumentation_optique_capteurs</property>
+				<property key="libelle">Instrumentation optique, capteurs</property>
+			</item>
+			<item>
+				<property key="id">optique_des_milieux</property>
+				<property key="libelle">Optique des milieux</property>
+			</item>
+			<item>
+				<property key="id">photonique_communications_optiques</property>
+				<property key="libelle">Photonique, communications optiques</property>
+			</item>
+			<item>
+				<property key="id">physique_atomique_et_moleculaire_optique_quantique_lasers</property>
+				<property key="libelle">Physique atomique et moléculaire, optique quantique, lasers</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">outils_et_methodes_de_lingenieur</property>
+			<property key="libelle">Outils et méthodes de l'ingénieur</property>
+			<item>
+				<property key="id">commerce_et_vente</property>
+				<property key="libelle">Commerce et vente</property>
+			</item>
+			<item>
+				<property key="id">conception_fabrication_ingenierie_industrielle</property>
+				<property key="libelle">Conception, fabrication, ingénierie industrielle</property>
+			</item>
+			<item>
+				<property key="id">gestion_de_la_distribution_et_publicite</property>
+				<property key="libelle">Gestion de la distribution et publicité</property>
+			</item>
+			<item>
+				<property key="id">gestion_de_la_production_transport_et_logistique</property>
+				<property key="libelle">Gestion de la production, transport et logistique</property>
+			</item>
+			<item>
+				<property key="id">gestion_dentreprise</property>
+				<property key="libelle">Gestion d'entreprise</property>
+			</item>
+			<item>
+				<property key="id">gestion_des_ressources_humaines_techniques_manageriales</property>
+				<property key="libelle">Gestion des ressources humaines, techniques managériales</property>
+			</item>
+			<item>
+				<property key="id">innovation_technologique</property>
+				<property key="libelle">Innovation technologique</property>
+			</item>
+			<item>
+				<property key="id">metier_de_lingenieur</property>
+				<property key="libelle">Métier de l'Ingénieur</property>
+			</item>
+			<item>
+				<property key="id">metrologie</property>
+				<property key="libelle">Métrologie</property>
+			</item>
+			<item>
+				<property key="id">normalisation_et_regulation</property>
+				<property key="libelle">Normalisation et régulation</property>
+			</item>
+			<item>
+				<property key="id">qualite_et_fiabilite</property>
+				<property key="libelle">Qualité et fiabilité</property>
+			</item>
+			<item>
+				<property key="id">securite_et_gestion_des_risques</property>
+				<property key="libelle">Sécurité et gestion des risques</property>
+			</item>
+			<item>
+				<property key="id">savoir_enseignement_recherche_scientifique</property>
+				<property key="libelle">Savoir, enseignement, recherche scientifique</property>
+			</item>
+			<item>
+				<property key="id">technologies_de_defense_ingenierie_militaire_et_navale</property>
+				<property key="libelle">Technologies de défense, ingénierie militaire et navale</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">physique</property>
+			<property key="libelle">Physique</property>
+			<item>
+				<property key="id">acoustique</property>
+				<property key="libelle">Acoustique</property>
+			</item>
+			<item>
+				<property key="id">physique_classique</property>
+				<property key="libelle">Physique classique</property>
+			</item>
+			<item>
+				<property key="id">physique_moderne</property>
+				<property key="libelle">Physique moderne</property>
+			</item>
+			<item>
+				<property key="id">physique_theorique</property>
+				<property key="libelle">Physique théorique</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">reseaux_informatiques_ou_de_transports_de_donnees</property>
+			<property key="libelle">Réseaux informatiques ou de transports de données</property>
+			<item>
+				<property key="id">notions_fondamentales_sur_les_reseaux_informatiques</property>
+				<property key="libelle">Notions fondamentales sur les réseaux informatiques</property>
+			</item>
+			<item>
+				<property key="id">administration_de_reseaux</property>
+				<property key="libelle">Administration de réseaux</property>
+			</item>
+			<item>
+				<property key="id">conception_planification_et_architecture_des_systemes_et_reseaux</property>
+				<property key="libelle">Conception, planification et architecture des systèmes et réseaux</property>
+			</item>
+			<item>
+				<property key="id">evaluation_de_performances</property>
+				<property key="libelle">Evaluation de performances</property>
+			</item>
+			<item>
+				<property key="id">maintenance_des_reseaux</property>
+				<property key="libelle">Maintenance des réseaux</property>
+			</item>
+			<item>
+				<property key="id">protocoles_des_reseaux_de_telecommunications</property>
+				<property key="libelle">Protocoles des réseaux de télécommunications</property>
+			</item>
+			<item>
+				<property key="id">protocole_tcp/ip</property>
+				<property key="libelle">Protocole TCP/IP</property>
+			</item>
+			<item>
+				<property key="id">reseaux_de_donnees</property>
+				<property key="libelle">Réseaux de données</property>
+			</item>
+			<item>
+				<property key="id">reseaux_et_services_dentreprises</property>
+				<property key="libelle">Réseaux et services d'entreprises</property>
+			</item>
+			<item>
+				<property key="id">reseaux_etendus_internet</property>
+				<property key="libelle">Réseaux étendus, Internet</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">sciences_humaines_et_sociales_pour_lingenieur</property>
+			<property key="libelle">Sciences humaines et sociales pour l'ingénieur</property>
+			<item>
+				<property key="id">droit</property>
+				<property key="libelle">Droit</property>
+			</item>
+			<item>
+				<property key="id">economie</property>
+				<property key="libelle">Economie</property>
+			</item>
+			<item>
+				<property key="id">effets_sociaux_de_la_science_et_de_la_technologie</property>
+				<property key="libelle">Effets sociaux de la science et de la technologie</property>
+			</item>
+			<item>
+				<property key="id">geographie</property>
+				<property key="libelle">Géographie</property>
+			</item>
+			<item>
+				<property key="id">histoire_des_sciences_et_des_techniques</property>
+				<property key="libelle">Histoire des sciences et des techniques</property>
+			</item>
+			<item>
+				<property key="id">langues</property>
+				<property key="libelle">Langues</property>
+			</item>
+			<item>
+				<property key="id">marketing</property>
+				<property key="libelle">Marketing</property>
+			</item>
+			<item>
+				<property key="id">philosophie_ethique_metaphysique_epistemologie</property>
+				<property key="libelle">Philosophie, éthique, métaphysique, épistémologie</property>
+			</item>
+			<item>
+				<property key="id">philosophie_metaphysique_epistemologie</property>
+				<property key="libelle">Philosophie, métaphysique, épistémologie</property>
+			</item>
+			<item>
+				<property key="id">psychologie_et_cognition</property>
+				<property key="libelle">Psychologie et cognition</property>
+			</item>
+			<item>
+				<property key="id">sociologie_processus_sociaux_interaction_sociale</property>
+				<property key="libelle">Sociologie, processus sociaux, interaction sociale</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">sciences_de_la_terre_de_lunivers</property>
+			<property key="libelle">Sciences de la terre, de l'univers</property>
+			<item>
+				<property key="id">astronomie_astrophysique_cosmologie_planetologie…</property>
+				<property key="libelle">Astronomie, astrophysique, cosmologie, planétologie…</property>
+			</item>
+			<item>
+				<property key="id">geophysique_geologie_hydrologie_meteorologie_climatologie_oceanographie…</property>
+				<property key="libelle">Géophysique, Géologie, hydrologie, météorologie, climatologie, océanographie…</property>
+			</item>
+			<item>
+				<property key="id">sols_roches_et_techniques_minieres</property>
+				<property key="libelle">Sols, roches et techniques minières</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">sciences_du_vivant</property>
+			<property key="libelle">Sciences du vivant</property>
+			<item>
+				<property key="id">agronomie_agriculture_elevage</property>
+				<property key="libelle">Agronomie, agriculture, élevage</property>
+			</item>
+			<item>
+				<property key="id">bio_informatique</property>
+				<property key="libelle">Bio-informatique</property>
+			</item>
+			<item>
+				<property key="id">biologie_biochimie_genetique</property>
+				<property key="libelle">Biologie, biochimie, génétique</property>
+			</item>
+			<item>
+				<property key="id">biotechnologies</property>
+				<property key="libelle">Biotechnologies</property>
+			</item>
+			<item>
+				<property key="id">sante_et_medical</property>
+				<property key="libelle">Santé et médical</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">systemes_dinformation</property>
+			<property key="libelle">Systèmes d'information</property>
+			<item>
+				<property key="id">fondamentaux</property>
+				<property key="libelle">Fondamentaux</property>
+			</item>
+			<item>
+				<property key="id">conception_et_management_des_si</property>
+				<property key="libelle">Conception et management des SI</property>
+			</item>
+			<item>
+				<property key="id">fouille_de_donnees</property>
+				<property key="libelle">Fouille de données</property>
+			</item>
+			<item>
+				<property key="id">gestion_des_connaissances</property>
+				<property key="libelle">Gestion des connaissances</property>
+			</item>
+			<item>
+				<property key="id">normes_et_qualite_des_si</property>
+				<property key="libelle">Normes et qualité des SI</property>
+			</item>
+			<item>
+				<property key="id">recherche_dinformation_classifications_indexation_ontologies</property>
+				<property key="libelle">Recherche d'information, classifications, indexation, ontologies</property>
+			</item>
+			<item>
+				<property key="id">securite_des_si</property>
+				<property key="libelle">Sécurité des SI</property>
+			</item>
+			<item>
+				<property key="id">systemes_dinformations_geographiques</property>
+				<property key="libelle">Systèmes d'informations géographiques</property>
+			</item>
+			<item>
+				<property key="id">traitement_du_document_et_du_texte</property>
+				<property key="libelle">Traitement du document et du texte</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">telecommunications</property>
+			<property key="libelle">Télécommunications</property>
+			<item>
+				<property key="id">antennes_et_propagation</property>
+				<property key="libelle">Antennes et propagation</property>
+			</item>
+			<item>
+				<property key="id">aspects_pedagogiques_economiques_histoire_epistemologie…</property>
+				<property key="libelle">Aspects pédagogiques, économiques, histoire, épistémologie,…</property>
+			</item>
+			<item>
+				<property key="id">communications_acoustiques</property>
+				<property key="libelle">Communications acoustiques</property>
+			</item>
+			<item>
+				<property key="id">communications_analogiques</property>
+				<property key="libelle">Communications analogiques</property>
+			</item>
+			<item>
+				<property key="id">communications_militaires</property>
+				<property key="libelle">Communications militaires</property>
+			</item>
+			<item>
+				<property key="id">communications_mobiles</property>
+				<property key="libelle">Communications mobiles</property>
+			</item>
+			<item>
+				<property key="id">communications_numeriques</property>
+				<property key="libelle">Communications numériques</property>
+			</item>
+			<item>
+				<property key="id">communications_optiques</property>
+				<property key="libelle">Communications optiques</property>
+			</item>
+			<item>
+				<property key="id">communications_radiofrequences_et_hyperfrequences</property>
+				<property key="libelle">Communications radiofréquences et hyperfréquences</property>
+			</item>
+			<item>
+				<property key="id">communications_spatiales</property>
+				<property key="libelle">Communications spatiales</property>
+			</item>
+			<item>
+				<property key="id">reseaux_telecom</property>
+				<property key="libelle">Réseaux télécom</property>
+			</item>
+			<item>
+				<property key="id">securite_et_surveillance</property>
+				<property key="libelle">Sécurité et surveillance</property>
+			</item>
+			<item>
+				<property key="id">theorie_de_linformation</property>
+				<property key="libelle">Théorie de l'information</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">traitement_signal_et_image</property>
+			<property key="libelle">Traitement signal et image</property>
+			<item>
+				<property key="id">fondamentaux</property>
+				<property key="libelle">Fondamentaux</property>
+			</item>
+			<item>
+				<property key="id">analyse_et_theorie_du_signal</property>
+				<property key="libelle">Analyse et théorie du signal</property>
+			</item>
+			<item>
+				<property key="id">architectures_systemes_et_circuits_pour_lacquisition_et_le_traitement_des_signaux_et_des_images</property>
+				<property key="libelle">Architectures, systèmes et circuits pour l'acquisition et le traitement des signaux et des images.</property>
+			</item>
+			<item>
+				<property key="id">aspects_techniques_du_cinema_et_de_la_video</property>
+				<property key="libelle">Aspects techniques du cinéma et de la vidéo</property>
+			</item>
+			<item>
+				<property key="id">classification_fusion_indexation_par_analyse_automatique_des_images_et_des_sons</property>
+				<property key="libelle">Classification, fusion, indexation par analyse automatique des images et des sons.</property>
+			</item>
+			<item>
+				<property key="id">compression_et_codage_synthese_dimages</property>
+				<property key="libelle">Compression et codage, synthèse d'images</property>
+			</item>
+			<item>
+				<property key="id">imagerie_medicale</property>
+				<property key="libelle">Imagerie médicale</property>
+			</item>
+			<item>
+				<property key="id">images_fixes_analyse_et_traitement_dimages</property>
+				<property key="libelle">Images fixes : analyse et traitement d'images</property>
+			</item>
+			<item>
+				<property key="id">image_video</property>
+				<property key="libelle">Image vidéo</property>
+			</item>
+			<item>
+				<property key="id">interferences_bruit_parasites_electroniques</property>
+				<property key="libelle">Interférences, bruit, parasites électroniques</property>
+			</item>
+			<item>
+				<property key="id">reconnaissance_optique_et_acoustique_des_formes_synthese_des_sons</property>
+				<property key="libelle">Reconnaissance optique et acoustique des formes, synthèse des sons</property>
+			</item>
+			<item>
+				<property key="id">securite_des_transmissions___chiffrement_des_donnees_cryptographie</property>
+				<property key="libelle">Sécurité des transmissions - Chiffrement des données, Cryptographie.</property>
+			</item>
+			<item>
+				<property key="id">traitement_statistique_du_signal</property>
+				<property key="libelle">Traitement statistique du signal</property>
+			</item>
+			<item>
+				<property key="id">vision_perception</property>
+				<property key="libelle">Vision, perception</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">robotique</property>
+			<property key="libelle">Robotique</property>
+			<item>
+				<property key="id">automatique_electronique_informatique_et_mecanique_pour_la_robotique</property>
+				<property key="libelle">Automatique, électronique, informatique et mécanique pour la robotique</property>
+			</item>
+		</item>
+	</item>
+</table>

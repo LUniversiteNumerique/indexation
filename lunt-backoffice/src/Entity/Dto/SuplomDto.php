@@ -71,12 +71,18 @@ class Source {
     ){}
 }
 class Sources extends Source {
-    public function __construct(
-        #[Jms\Type('string'), Jms\XmlElement(cdata:false, namespace:"http://www.lom-fr.fr/xsd/LOMFR"),] public ?string $source = null,
-        #[Jms\Type('string'), Jms\XmlElement(cdata:false, namespace:"http://www.lom-fr.fr/xsd/LOMFR"),] public ?string $value = null,
-    ){
-        parent::__construct($source, $value);
-    }
+  public function __construct(
+    #[Jms\Type('string')]
+    #[Jms\XmlElement(cdata:false, namespace:"http://www.lom-fr.fr/xsd/LOMFR")]
+    #[Jms\XmlElement(cdata:false, namespace:"http://ltsc.ieee.org/xsd/LOM")]
+    ?string $source = null,
+    #[Jms\Type('string')]
+    #[Jms\XmlElement(cdata:false, namespace:"http://www.lom-fr.fr/xsd/LOMFR")]
+    #[Jms\XmlElement(cdata:false, namespace:"http://ltsc.ieee.org/xsd/LOM")]
+    ?string $value = null,
+  ){
+    parent::__construct($source, $value);
+  }
 }
 
 class Catalog {
@@ -100,7 +106,8 @@ class General {
         #[Jms\XmlList(entry: "string", namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Field::class.">"), Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM")] public array $title = [],
         #[Jms\XmlList(entry: "string", namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Field::class.">"), Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM")] public array $description = [],
         #[Jms\XmlList(entry: "keyword", inline: true, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Motcle::class.">")] public array $keywords = [],
-        #[Jms\XmlList(entry: "documentType", inline: true, namespace: "http://www.lom-fr.fr/xsd/LOMFR"), Jms\Type("array<".Sources::class.">")] public array $documentTypes = [],
+        #[Jms\XmlList(entry: "documentType", inline: true, namespace: "http://www.lom-fr.fr/xsd/LOMFR"), Jms\Type("array<".Sources::class.">")] public array $documentTypesLOMFR = [],
+        #[Jms\XmlList(entry: "documentType", inline: true, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Sources::class.">")] public array $documentTypesLOM = [],
         #[Jms\XmlList(entry: "language", inline: true, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<string>"),Jms\XmlElement(cdata: false)] public array $languages = [],//#[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(Source::class), Jms\SerializedName('aggregationLevel')] public ?Source $aggregationLevel = null,
     ){}
 }

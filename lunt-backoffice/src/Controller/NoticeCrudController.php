@@ -130,16 +130,19 @@ class NoticeCrudController extends AbstractCrudController
     yield Field\TextField::new('titre')->setHelp(t('notice.titre_help', domain: 'EasyAdminBundle'));
     yield Field\TextEditorField::new('description')->setHelp(t('notice.description_help', domain: 'EasyAdminBundle'))->setTemplatePath('admin/fields/text_editor.html.twig')->hideOnIndex()->setRequired(true);
     yield EntityField::new('porteurs', t('notice.porteurs', domain: 'EasyAdminBundle'))->setHelp(t('notice.porteurs_help', domain: 'EasyAdminBundle'))
-      ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.code', 'ASC'))->setSortable(false)->setRequired(true)->hideOnIndex();
+      ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.code', 'ASC'))->setSortable(false)->setRequired(true)->hideOnIndex()
+      ->formatValue(fn($value, $entity) => $this->renderEntityCollectionBadges($value));
     yield EntityField::new('auteurs',t('notice.auteurs', domain: 'EasyAdminBundle'))->setFormType(AuteurAutoField::class)
-      ->setHelp(t('notice.auteurs_help', domain: 'EasyAdminBundle'))->setSortable(false)->setRequired(true);
+      ->setHelp(t('notice.auteurs_help', domain: 'EasyAdminBundle'))->setSortable(false)->setRequired(true)
+      ->formatValue(fn($value, $entity) => $this->renderEntityCollectionBadges($value));
     yield TextField::new('allSpecialitesString', 'Spécialités')
       ->onlyOnIndex()
       ->renderAsHtml();
     yield EntityField::new('tags', t('notice.tags', domain: 'EasyAdminBundle'))->setRequired(true)->hideOnIndex()
       ->setHelp(t('notice.tags_help', domain: 'EasyAdminBundle'))->setFormType(TagAutoField::class)->setFormTypeOption('attr', [
         'data-tag-autocreate-url-value' => $this->router->generate('app_keywork_new'), 'data-controller' => 'tag-autocreate'
-      ]);
+      ])
+      ->formatValue(fn($value, $entity) => $this->renderEntityCollectionBadges($value));
     yield Field\ChoiceField::new('ressDate', t('notice.date', domain: 'EasyAdminBundle'))->setChoices(array_combine(
       $years = range((int) date('Y'), (int) date('Y') - 100), $years))->hideOnIndex();
 
@@ -172,12 +175,15 @@ class NoticeCrudController extends AbstractCrudController
       ->setHelp(t('notice.resslang_help', domain: 'EasyAdminBundle'))->renderAsBadges()->setColumns(6)->setRequired(true)->hideOnIndex();
     yield DurationField::new('dureAppr', "Durée d'apprentissage")->setHelp(t('notice.dureappr_help', domain: 'EasyAdminBundle'))->hideOnIndex()->setColumns(6);
     yield EntityField::new('pedTypes', t('notice.pedtypes', domain: 'EasyAdminBundle'))->setHelp(t('notice.pedtypes_help', domain: 'EasyAdminBundle'))
-      ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.nom', 'ASC'))->setRequired(true)->setSortable(false)->hideOnIndex();
+      ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.nom', 'ASC'))->setRequired(true)->setSortable(false)->hideOnIndex()
+      ->formatValue(fn($value, $entity) => $this->renderEntityCollectionBadges($value));
     yield Field\ArrayField::new('propUser', t('notice.propuser', domain: 'EasyAdminBundle'))->setHelp(t('notice.propuser_help', domain: 'EasyAdminBundle'))->hideOnIndex();
     yield EntityField::new('docTypes', t('notice.doctypes', domain: 'EasyAdminBundle'))->setHelp(t('notice.doctypes_help', domain: 'EasyAdminBundle'))
-      ->setFormTypeOption('multiple', true)->setFormTypeOption('expanded', true)->setColumns(6)->hideOnIndex()->setRequired(true);
+      ->setFormTypeOption('multiple', true)->setFormTypeOption('expanded', true)->setColumns(6)->hideOnIndex()->setRequired(true)
+      ->formatValue(fn($value, $entity) => $this->renderEntityCollectionBadges($value));
     yield EntityField::new('niveaux', t('notice.niveaux', domain: 'EasyAdminBundle'))->setFormTypeOption('multiple', true)->hideOnIndex()
-      ->setFormTypeOption('expanded', true)->setHelp(t('notice.niveaux_help', domain: 'EasyAdminBundle'))->setColumns(6)->setRequired(true);
+      ->setFormTypeOption('expanded', true)->setHelp(t('notice.niveaux_help', domain: 'EasyAdminBundle'))->setColumns(6)->setRequired(true)
+      ->formatValue(fn($value, $entity) => $this->renderEntityCollectionBadges($value));
 
     yield Field\FormField::addFieldset('Classification thématique')->setIcon('fa fa-book');
 
@@ -674,5 +680,17 @@ class NoticeCrudController extends AbstractCrudController
     return $folderId ?
       $this->generator->setController(DossierCrudController::class)->setAction(Action::DETAIL)->setEntityId($folderId):
       $this->generator->setController(self::class)->setAction(Action::INDEX);
+  }
+
+  private function renderEntityCollectionBadges($collection, string $emptyLabel = 'Aucune')
+  {
+    if (empty($collection) || (is_iterable($collection) && count($collection) === 0)) {
+      return [$emptyLabel];
+    }
+    $labels = [];
+    foreach ($collection as $item) {
+      $labels[] = method_exists($item, 'getNom') ? $item->getNom() : (string)$item;
+    }
+    return $labels;
   }
 }

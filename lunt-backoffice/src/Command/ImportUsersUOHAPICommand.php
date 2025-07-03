@@ -77,6 +77,7 @@ class ImportUsersUOHAPICommand extends Command
                         $entity->setGroup($docuGroup);
                         $usersWithGroupsCount++;
                         $groupAssigned = true;
+                        $entity->setUntheme($uohId);
                       } elseif (!$groupAssigned && strpos($group['itemName'], 'CONTRIBUTEUR') !== false) {
                         $entity->setGroup($ctrbGroup);
                         $usersWithGroupsCount++;
@@ -97,7 +98,6 @@ class ImportUsersUOHAPICommand extends Command
                       }
                     }
                   }
-                  $entity->setUntheme($uohId);
                   $this->em->persist($entity);
                   $emails[] = $item['email'];
                 }

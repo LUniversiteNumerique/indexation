@@ -36,7 +36,7 @@ class DeweyGroupType extends AbstractType
         'class' => Dewey::class,
         'choice_label' => 'nom',
         'required' => true,
-        'placeholder' => '-- Sélectionner un Dewey --',
+        'placeholder' => 'Sélectionner un Dewey',
         'label' => 'Discipline fondamentale',
         'help' => t('Le premier niveau de classification dewey', domain: 'EasyAdminBundle'),
         'query_builder' => function (EntityRepository $er) {
@@ -50,7 +50,7 @@ class DeweyGroupType extends AbstractType
         'choices' => [],
         'choice_loader' => null,
         'required' => false,
-        'placeholder' => '-- Sélectionner une division --',
+        'placeholder' => 'Sélectionner une division',
       ])
       ->add('codeweys', EntityType::class, [
         'class' => Dewey::class,
@@ -59,7 +59,7 @@ class DeweyGroupType extends AbstractType
         'choices' => [],
         'choice_loader' => null,
         'required' => false,
-        'placeholder' => '-- Sélectionner des codes --',
+        'placeholder' => 'Sélectionner des codes',
         'label' => 'Codes Dewey',
       ]);
 
@@ -72,7 +72,7 @@ class DeweyGroupType extends AbstractType
         'class' => Dewey::class,
         'choices' => $divisions,
         'required' => false,
-        'placeholder' => '-- Sélectionner une division --',
+        'placeholder' => 'Sélectionner une division',
         'label' => t('notice.division', domain: 'EasyAdminBundle'),
         'help' => t('notice.division_help', domain: 'EasyAdminBundle'),
         'data' => $selectedDivision,
@@ -85,7 +85,7 @@ class DeweyGroupType extends AbstractType
           'multiple' => true,
           'autocomplete' => true,
           'required' => false,
-          'placeholder' => 'Sélectionnez le code Dewey',
+          'placeholder' => 'Sélectionner le code Dewey',
           'label' => 'Codes Dewey',
         ]);
       } else {
@@ -107,7 +107,7 @@ class DeweyGroupType extends AbstractType
         'multiple' => true,
         'autocomplete' => true,
         'required' => false,
-        'placeholder' => 'Sélectionnez des codes',
+        'placeholder' => 'Sélectionner des codes',
         'label' => 'Codes Dewey',
         'data' => $selectedCodes,
       ]);

@@ -1,762 +1,1191 @@
+<?xml version='1.0' encoding='utf-8'?>
 <table>
-	<item>
-		<property key="id">EHESS</property>
-		<property key="libelle_uoh">Ecole des hautes études en sciences sociales</property>
-		<property key="libelle_import">Ecole des hautes études en sciences sociales</property>
-		<property key="libelle_uoh_tri">Ecole des hautes études en sciences sociales</property>
-		<property key="libelle_legifrance">Ecole des hautes études en sciences sociales</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">URFIST de Paris</property>
-		<property key="libelle_uoh">URFIST de Paris</property>
-		<property key="libelle_import">URFIST de Paris</property>
-		<property key="libelle_uoh_tri">URFIST de Paris</property>
-		<property key="libelle_legifrance">URFIST de Paris</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">INALCO</property>
-		 <property key="libelle_uoh">Institut National des Langues et Civilisations Orientales</property>
-		 <property key="libelle_import">Institut National des Langues et Civilisations Orientales</property>
-		 <property key="libelle_uoh_tri">Institut National des Langues et Civilisations Orientales</property>
-		<property key="libelle_legifrance">Institut National des Langues et Civilisations Orientales</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">ENS</property>
-		<property key="libelle_uoh">Ecole normale supérieure</property>
-		<property key="libelle_import">Ecole normale supérieure</property>
-		<property key="libelle_uoh_tri">Ecole normale supérieure</property>
-		<property key="libelle_legifrance">Ecole normale supérieure</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">ENS_LYON</property>
-		<property key="libelle_uoh">Ecole normale supérieure de Lyon</property>
-		<property key="libelle_import">Ecole normale supérieure de Lyon</property>
-		<property key="libelle_uoh_tri">Ecole normale supérieure de Lyon</property>
-		<property key="libelle_legifrance">Ecole normale supérieure de Lyon</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">AIX_MARSEILLE_1</property>
-		<property key="libelle_uoh">Aix-Marseille Université</property>
-		<property key="libelle_import">Université de Provence - Aix-Marseille 1</property>
-		<property key="libelle_uoh_tri">Aix-Marseille Université</property>
-		<property key="libelle_legifrance">Université Aix-Marseille-I</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">LILLE_3</property>
-		<property key="libelle_uoh">Université de Lille</property>
-		<property key="libelle_import">Université de Lille </property>
-		<property key="libelle_uoh_tri">Université de Lille</property>
-		<property key="libelle_legifrance">Université de Lille</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">METZ</property>
-		<property key="libelle_uoh">Université Paul Verlaine - Metz</property>
-		<property key="libelle_import">Université Paul Verlaine - Metz</property>
-		<property key="libelle_uoh_tri">Université Paul Verlaine - Metz</property>
-		<property key="libelle_legifrance">Université Metz</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">MONTPELLIER_3</property>
-		<property key="libelle_uoh">Université Paul-Valéry - Montpellier 3</property>
-		<property key="libelle_import">Université Paul-Valéry - Montpellier 3</property>
-		<property key="libelle_uoh_tri">Université Paul-Valéry - Montpellier 3</property>
-		<property key="libelle_legifrance">Université Montpellier-III</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">NANCY_2</property>
-		<property key="libelle_uoh">Université Nancy 2</property>
-		<property key="libelle_import">Université Nancy 2</property>
-		<property key="libelle_uoh_tri">Université Nancy 2</property>
-		<property key="libelle_legifrance">Université Nancy-II</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">NICE</property>
-		<property key="libelle_uoh">Université Côte d'Azur</property>
-		<property key="libelle_import">Université Côte d'Azur</property>
-		<property key="libelle_uoh_tri">Université Côte d'Azur</property>
-		<property key="libelle_legifrance">Université Nice</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">PARIS_1</property>
-		<property key="libelle_uoh">Université Panthéon Sorbonne - Paris 1</property>
-		<property key="libelle_import">Université Panthéon Sorbonne - Paris 1</property>
-		<property key="libelle_uoh_tri">Université Panthéon Sorbonne - Paris 1</property>
-		<property key="libelle_legifrance">Université Paris-I</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">PARIS_3</property>
-		<property key="libelle_uoh">Université Sorbonne Nouvelle - Paris 3</property>
-		<property key="libelle_import">Université Sorbonne Nouvelle - Paris 3</property>
-		<property key="libelle_uoh_tri">Université Sorbonne Nouvelle - Paris 3</property>
-		<property key="libelle_legifrance">Université Paris-III</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">RENNES_2</property>
-		<property key="libelle_uoh">Université Haute Bretagne - Rennes 2</property>
-		<property key="libelle_import">Université Haute Bretagne - Rennes 2</property>
-		<property key="libelle_uoh_tri">Université Haute Bretagne - Rennes 2</property>
-		<property key="libelle_legifrance">Université Rennes-II</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">STRASBOURG</property>
-		<property key="libelle_uoh">Université de Strasbourg</property>
-		<property key="libelle_import">Université de Strasbourg</property>
-		<property key="libelle_uoh_tri">Université de Strasbourg</property>
-		<property key="libelle_legifrance">Université Strasbourg</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">TOULOUSE_2</property>
-		<property key="libelle_uoh">Université Toulouse - Jean Jaurès</property>
-		<property key="libelle_import">Université Toulouse - Jean Jaurès</property>
-		<property key="libelle_uoh_tri">Université Toulouse - Jean Jaurès</property>
-		<property key="libelle_legifrance">Université Toulouse - Jean Jaurès</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">GRENOBLE_2</property>
-		<property key="libelle_uoh">Université Grenoble Alpes</property>
-		<property key="libelle_import">Université Grenoble Alpes</property>
-		<property key="libelle_uoh_tri">Université Grenoble Alpes</property>
-		<property key="libelle_legifrance">Université Grenoble Alpes</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">DIJON</property>
-		<property key="libelle_uoh">Université de Bourgogne - Dijon</property>
-		<property key="libelle_import">Université de Bourgogne - Dijon</property>
-		<property key="libelle_uoh_tri">Université de Bourgogne - Dijon</property>
-		<property key="libelle_legifrance">Université Dijon</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">BORDEAUX_2</property>
-		<property key="libelle_uoh">Université de Bordeaux </property>
-		<property key="libelle_import">Université de Bordeaux</property>
-		<property key="libelle_uoh_tri">Université de Bordeaux</property>
-		<property key="libelle_legifrance">Université de Bordeaux</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">PERPIGNAN</property>
-		<property key="libelle_uoh">Université de Perpignan - Via Domitia</property>
-		<property key="libelle_import">Université de Perpignan - Via Domitia</property>
-		<property key="libelle_uoh_tri">Université de Perpignan - Via Domitia</property>
-		<property key="libelle_legifrance">Université Perpignan</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">ROUEN</property>
-		<property key="libelle_uoh">Université de Rouen</property>
-		<property key="libelle_import">Université de Rouen</property>
-		<property key="libelle_uoh_tri">Université de Rouen</property>
-		<property key="libelle_legifrance">Université Rouen</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item> 
-		<property key="id">LYON_1</property> 
-		<property key="libelle_uoh">Université Claude Bernard Lyon 1</property> 
-		<property key="libelle_import">Université Claude Bernard Lyon 1</property> 
-		<property key="libelle_uoh_tri">Université Claude Bernard Lyon 1</property> 
-		<property key="libelle_legifrance">Université Lyon 1</property> 
-		<property key="adherent_uoh">true</property> 
-	 </item>
-	<item>
-		<property key="id">LYON_2</property>
-		<property key="libelle_uoh">Université Lumière - Lyon 2</property>
-		<property key="libelle_import">Université Lumière - Lyon 2</property>
-		<property key="libelle_uoh_tri">Université Lumière - Lyon 2</property>
-		<property key="libelle_legifrance">Université Lyon-II</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">LIEGE</property>
-		<property key="libelle_uoh">Université de Liège</property>
-		<property key="libelle_import">Université de Liège</property>
-		<property key="libelle_uoh_tri">Université de Liège</property>
-		<property key="libelle_legifrance">Université de Liège</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">REUNION</property>
-		<property key="libelle_uoh">Université de la Réunion</property>
-		<property key="libelle_import">Université de la Réunion</property>
-		<property key="libelle_uoh_tri">Université de la Réunion</property>
-		<property key="libelle_legifrance">Université Réunion</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">BESANCON</property>
-		<property key="libelle_uoh">Université de Franche-Comté</property>
-		<property key="libelle_import">Université de Franche-Comté</property>
-		<property key="libelle_uoh_tri">Université de Franche-Comté</property>
-		<property key="libelle_legifrance">Université Besançon</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">LA_ROCHELLE</property>
-		<property key="libelle_uoh">Université de La Rochelle</property>
-		<property key="libelle_import">Université de La Rochelle</property>
-		<property key="libelle_uoh_tri">Université de La Rochelle</property>
-		<property key="libelle_legifrance">Université La Rochelle</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">BORDEAUX_3</property>
-		<property key="libelle_uoh">Université Michel de Montaigne - Bordeaux 3</property>
-		<property key="libelle_import">Université Michel de Montaigne - Bordeaux 3</property>
-		<property key="libelle_uoh_tri">Université Michel de Montaigne - Bordeaux 3</property>
-		<property key="libelle_legifrance">Université Bordeaux-III</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">PARIS_4</property>
-		<property key="libelle_uoh">Université Paris Sorbonne Paris 4</property>
-		<property key="libelle_import">Université Paris Sorbonne Paris 4</property>
-		<property key="libelle_uoh_tri">Université Paris Sorbonne Paris 4</property>
-		<property key="libelle_legifrance">Université Paris-IV</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">UOH</property>
-		<property key="libelle_uoh">Université Ouverte des Humanités</property>
-		<property key="libelle_import">Universit&amp;#233; Ouverte des Humanit&amp;#233;s</property>
-		<property key="libelle_uoh_tri">0_Université Ouverte des Humanités</property> 
-		<property key="libelle_legifrance">Université Ouverte des Humanités</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">PARIS_10</property>
-		<property key="libelle_uoh">Université Paris Nanterre </property>
-		<property key="libelle_import">Université Paris Nanterre</property>
-		<property key="libelle_uoh_tri">Université Paris Nanterre</property>
-		<property key="libelle_legifrance">Université Paris Nanterre</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">POITIERS</property>
-		<property key="libelle_uoh">Université de Poitiers</property>
-		<property key="libelle_import">Université de Poitiers</property>
-		<property key="libelle_uoh_tri">Université de Poitiers</property>
-		<property key="libelle_legifrance">Université Poitiers</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">CHAMBERY</property>
-		<property key="libelle_uoh">Université de Savoie - Chambéry - Annecy</property>
-		<property key="libelle_import">Université de Savoie - Chambéry - Annecy</property>
-		<property key="libelle_uoh_tri">Université de Savoie - Chambéry - Annecy</property>
-		<property key="libelle_legifrance">Université Chambéry</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">EVRY</property>
-		<property key="libelle_uoh">Université d'Evry-Val d'Essonne</property>
-		<property key="libelle_import">Université d'Evry-Val d'Essonne</property>
-		<property key="libelle_uoh_tri">Université d'Evry-Val d'Essonne</property>
-		<property key="libelle_legifrance">Université Evry-Val d'Essonne</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">AVIGNON</property>
-		<property key="libelle_uoh">Université d'Avignon et des pays de Vaucluse</property>
-		<property key="libelle_import">Université d'Avignon et des pays de Vaucluse</property>
-		<property key="libelle_uoh_tri">Université d'Avignon et des pays de Vaucluse</property>
-		<property key="libelle_legifrance">Université Avignon</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">CLERMONT_FERRAND_2</property>
-		<property key="libelle_uoh">Université Blaise Pascal - Clermont-Ferrand</property>
-		<property key="libelle_import">Université Blaise Pascal - Clermont-Ferrand</property>
-		<property key="libelle_uoh_tri">Université Blaise Pascal - Clermont-Ferrand</property>
-		<property key="libelle_legifrance">Université Clermont-Ferrand-II</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">ANGERS</property>
-		<property key="libelle_uoh">Université d'Angers</property>
-		<property key="libelle_import">Université d'Angers</property>
-		<property key="libelle_uoh_tri">Université d'Angers</property>
-		<property key="libelle_legifrance">Université Angers</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">LYON_3</property>
-		<property key="libelle_uoh">Université Jean Moulin - Lyon 3</property>
-		<property key="libelle_import">Université Jean Moulin - Lyon 3</property>
-		<property key="libelle_uoh_tri">Université Jean Moulin - Lyon 3</property>
-		<property key="libelle_legifrance">Lyon-III</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">ARTOIS</property>
-		<property key="libelle_uoh">Université d'Artois</property>
-		<property key="libelle_import">Université d'Artois</property>
-		<property key="libelle_uoh_tri">Université d'Artois</property>
-		<property key="libelle_legifrance">Université Artois</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">PARIS_8</property>
-		<property key="libelle_uoh">Université Vincennes - Saint Denis - Paris 8</property>
-		<property key="libelle_import">Université Vincennes - Saint Denis - Paris 8</property>
-		<property key="libelle_uoh_tri">Université Vincennes - Saint Denis - Paris 8</property>
-		<property key="libelle_legifrance">Université Paris-VIII</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">TOURS</property>
-		<property key="libelle_uoh">Université François Rabelais - Tours</property>
-		<property key="libelle_import">Université François Rabelais - Tours</property>
-		<property key="libelle_uoh_tri">Université François Rabelais - Tours</property>
-		<property key="libelle_legifrance">Université Tours</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">MULHOUSE</property>
-		<property key="libelle_uoh">Université de Haute-Alsace - Mulhouse - Colmar</property>
-		<property key="libelle_import">Université de Haute-Alsace - Mulhouse - Colmar</property>
-		<property key="libelle_uoh_tri">Université de Haute-Alsace - Mulhouse - Colmar</property>
-		<property key="libelle_legifrance">Université Mulhouse</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">MINES_NANTES</property>
-		<property key="libelle_uoh">Ecole des Mines de Nantes</property>
-		<property key="libelle_import">Ecole des Mines de Nantes</property>
-		<property key="libelle_uoh_tri">Ecole des Mines de Nantes</property>
-		<property key="libelle_legifrance">Ecole des Mines de Nantes</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">MINES_DOUAI</property>
-		<property key="libelle_uoh">Ecole des Mines de Douai</property>
-		<property key="libelle_import">Ecole des Mines de Douai</property>
-		<property key="libelle_uoh_tri">Ecole des Mines de Douai</property>
-		<property key="libelle_legifrance">Ecole des Mines de Douai</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">MINES_NANCY</property>
-		<property key="libelle_uoh">Ecole des Mines de Nancy</property>
-		<property key="libelle_import">Ecole des Mines de Nancy</property>
-		<property key="libelle_uoh_tri">Ecole des Mines de Nancy</property>
-		<property key="libelle_legifrance">Ecole des Mines de Nancy</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">GEM</property>
-		<property key="libelle_uoh">Groupe des Ecoles des Mines</property>
-		<property key="libelle_import">Groupe des Ecoles des Mines</property>
-		<property key="libelle_uoh_tri">Groupe des Ecoles des Mines</property>
-		<property key="libelle_legifrance">Groupe des Ecoles des Mines</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">Paris_7</property>
-		<property key="libelle_uoh">Université Paris 7</property>
-		<property key="libelle_import">Université Paris 7</property>
-		<property key="libelle_uoh_tri">Université Paris 7</property>
-		<property key="libelle_legifrance">Université Paris-VII</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">Paris_13</property>
-		<property key="libelle_uoh">Université Paris 13</property>
-		<property key="libelle_import">Université Paris 13</property>
-		<property key="libelle_uoh_tri">Université Paris 13</property>
-		<property key="libelle_legifrance">Université Paris-XIII</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">Antilles_Guyane</property>
-		<property key="libelle_uoh">Université des Antilles et de la Guyane</property>
-		<property key="libelle_import">Université des Antilles et de la Guyane</property>
-		<property key="libelle_uoh_tri">Université des Antilles et de la Guyane</property>
-		<property key="libelle_legifrance">Université Antilles Guyane</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">BERNE</property>
-		<property key="libelle_uoh">Université de Berne</property>
-		<property key="libelle_import">Université de Berne</property>
-		<property key="libelle_uoh_tri">Université de Berne</property>
-		<property key="libelle_legifrance">Université de Berne</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">ASUNCION</property>
-		<property key="libelle_uoh">Université nationale d'Asuncion</property>
-		<property key="libelle_import">Université nationale d'Asuncion</property>
-		<property key="libelle_uoh_tri">Université nationale d'Asuncion</property>
-		<property key="libelle_legifrance">Université nationale d'Asuncion</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">DUBLIN</property>
-		<property key="libelle_uoh">Université Dublin</property>
-		<property key="libelle_import">Université Dublin</property>
-		<property key="libelle_uoh_tri">Université Dublin</property>
-		<property key="libelle_legifrance">Université Dublin</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">LISBONNE</property>
-		<property key="libelle_uoh">Université nouvelle de Lisbonne</property>
-		<property key="libelle_import">Université nouvelle de Lisbonne</property>
-		<property key="libelle_uoh_tri">Université nouvelle de Lisbonne</property>
-		<property key="libelle_legifrance">Université nouvelle de Lisbonne</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">EPHE</property>
-		<property key="libelle_uoh">Ecole pratique des hautes études</property>
-		<property key="libelle_import">Ecole pratique des hautes études</property>
-		<property key="libelle_uoh_tri">Ecole pratique des hautes études</property>
-		<property key="libelle_legifrance">Ecole pratique des hautes études</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">ARCHI_GRENOBLE</property>
-		<property key="libelle_uoh">Ecole nationale supérieure d'architecture de Grenoble</property>
-		<property key="libelle_import">Ecole nationale supérieure d'architecture de Grenoble</property>
-		<property key="libelle_uoh_tri">Ecole nationale supérieure d'architecture de Grenoble</property>
-		<property key="libelle_legifrance">Ecole nationale supérieure d'architecture de Grenoble</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">INSEE</property>
-		<property key="libelle_uoh">Institut national de la statistique et des études économiques</property>
-		<property key="libelle_import">Institut national de la statistique et des études économiques</property>
-		<property key="libelle_uoh_tri">Institut national de la statistique et des études économiques</property>
-		<property key="libelle_legifrance">Institut national de la statistique et des études économiques</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">IRESCO</property>
-		<property key="libelle_uoh">CNRS - Institut de Recherche sur les Sociétés Contemporaines</property>
-		<property key="libelle_import">CNRS - Institut de Recherche sur les Sociétés Contemporaines</property>
-		<property key="libelle_uoh_tri">CNRS - Institut de Recherche sur les Sociétés Contemporaines</property>
-		<property key="libelle_legifrance">CNRS - Institut de Recherche sur les Sociétés Contemporaines</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">VERSAILLES</property>
-		<property key="libelle_uoh">Université de Versailles St Quentin en Yvelines</property>
-		<property key="libelle_import">Université de Versailles St Quentin en Yvelines</property>
-		<property key="libelle_uoh_tri">Université de Versailles St Quentin en Yvelines</property>
-		<property key="libelle_legifrance">Versailles-Saint-Quentin-en-Yvelines</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">MINES_PARIS_TECH</property>
-		<property key="libelle_uoh">Ecole nationale supérieure des mines de Paris</property>
-		<property key="libelle_import">Ecole nationale supérieure des mines de Paris</property>
-		<property key="libelle_uoh_tri">Ecole nationale supérieure des mines de Paris</property>
-		<property key="libelle_legifrance">Ecole nationale supérieure des mines de Paris</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">NEW_YORK</property>
-		<property key="libelle_uoh">Université de New-York</property>
-		<property key="libelle_import">Université de New-York</property>
-		<property key="libelle_uoh_tri">Université de New-York</property>
-		<property key="libelle_legifrance">Université de New-York</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">STANFORD</property>
-		<property key="libelle_uoh">Université Stanford</property>
-		<property key="libelle_import">Université Stanford</property>
-		<property key="libelle_uoh_tri">Université Stanford</property>
-		<property key="libelle_legifrance">Université Stanford</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">SANTIAGO_COMPOSTELA</property>
-		<property key="libelle_uoh">Université de Santiago de Compostela</property>
-		<property key="libelle_import">Université de Santiago de Compostela</property>
-		<property key="libelle_uoh_tri">Université de Santiago de Compostela</property>
-		<property key="libelle_legifrance">Université de Santiago de Compostela</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">ORLEANS</property>
-		<property key="libelle_uoh">Université d'Orléans</property>
-		<property key="libelle_import">Université d'Orléans</property>
-		<property key="libelle_uoh_tri">Université d'Orléans</property>
-		<property key="libelle_legifrance">Université Orléans</property>
-		<property key="adherent_uoh">false</property>sta
-	</item>
-	<item>
-		<property key="id">MOM</property>
-		<property key="libelle_uoh">Maison de l'Orient et de la Méditerranée Jean Pouilloux</property>
-		<property key="libelle_import">Maison de l'Orient et de la Méditerranée Jean Pouilloux</property>
-		<property key="libelle_uoh_tri">Maison de l'Orient et de la Méditerranée Jean Pouilloux</property>
-		<property key="libelle_legifrance">Maison de l'Orient et de la Méditerranée Jean Pouilloux</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">UMR_7044</property>
-		<property key="libelle_uoh">Etude des civilisations de l'Antiquité : de la Préhistoire à Byzance (Strasbourg)</property>
-		<property key="libelle_import">Etude des civilisations de l'Antiquité : de la Préhistoire à Byzance (Strasbourg)</property>
-		<property key="libelle_uoh_tri">Etude des civilisations de l'Antiquité : de la Préhistoire à Byzance (Strasbourg)</property>
-		<property key="libelle_legifrance">Etude des civilisations de l'Antiquité : de la Préhistoire à Byzance (Strasbourg)</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">ECOLE_LOUVRE</property>
-		<property key="libelle_uoh">Ecole du Louvre</property>
-		<property key="libelle_import">Ecole du Louvre</property>
-		<property key="libelle_uoh_tri">Ecole du Louvre</property>
-		<property key="libelle_legifrance">Ecole du Louvre</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">MUSEE_CONFLUENCES</property>
-		<property key="libelle_uoh">Musée des Confluences</property>
-		<property key="libelle_import">Musée des Confluences</property>
-		<property key="libelle_uoh_tri">Musée des Confluences</property>
-		<property key="libelle_legifrance">Musée des Confluences</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">ENS_ARCHITECTURE_LYON</property>
-		<property key="libelle_uoh">Ecole Nationale Supérieure d'Architecture de Lyon</property>
-		<property key="libelle_import">Ecole Nationale Supérieure d'Architecture de Lyon</property>
-		<property key="libelle_uoh_tri">Ecole Nationale Supérieure d'Architecture de Lyon</property>
-		<property key="libelle_legifrance">Ecole Nationale Supérieure d'Architecture de Lyon</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">QUAI_BRANLY</property>
-		<property key="libelle_uoh">Musée du quai Branly</property>
-		<property key="libelle_import">Musée du quai Branly</property>
-		<property key="libelle_uoh_tri">Musée du quai Branly</property>
-		<property key="libelle_legifrance">Musée du quai Branly</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">OUAGADOUGOU</property>
-		<property key="libelle_uoh">Université de Ouagadougou</property>
-		<property key="libelle_import">Université de Ouagadougou</property>
-		<property key="libelle_uoh_tri">Université de Ouagadougou</property>
-		<property key="libelle_legifrance">Université de Ouagadougou</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">CHEIK_DAKAR</property>
-		<property key="libelle_uoh">Université Cheik Anta Diop de Dakar</property>
-		<property key="libelle_import">Université Cheik Anta Diop de Dakar</property>
-		<property key="libelle_uoh_tri">Université Cheik Anta Diop de Dakar</property>
-		<property key="libelle_legifrance">Université Cheik Anta Diop de Dakar</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">SILLAGES</property>
-		<property key="libelle_uoh">sillages.info</property>
-		<property key="libelle_import">sillages.info</property>
-		<property key="libelle_uoh_tri">sillages.info</property>
-		<property key="libelle_legifrance">SILLAGES.info</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">LORRAINE</property>
-		<property key="libelle_uoh">Université de Lorraine</property>
-		<property key="libelle_import">Université de Lorraine</property>
-		<property key="libelle_uoh_tri">Université de Lorraine</property>
-		<property key="libelle_legifrance">Université Lorraine</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">MAINE</property>
-		<property key="libelle_uoh">Le Mans Université</property>
-		<property key="libelle_import">Le Mans Université</property>
-		<property key="libelle_uoh_tri">Le Mans Université</property>
-		<property key="libelle_legifrance">Le Mans Université</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">IBN_ZOHR</property>
-		<property key="libelle_uoh">Université Ibn Zohr</property>
-		<property key="libelle_import">Université Ibn Zohr</property>
-		<property key="libelle_uoh_tri">Université Ibn Zohr</property>
-		<property key="libelle_legifrance">Université Ibn Zohr</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">GENEVE</property>
-		<property key="libelle_uoh">Université de Genève</property>
-		<property key="libelle_import">Université de Genève</property>
-		<property key="libelle_uoh_tri">Université de Genève</property>
-		<property key="libelle_legifrance">Université de Genève</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">SAINT_ESPRIT</property>
-		<property key="libelle_uoh">Université Saint-Esprit De Kaslik</property>
-		<property key="libelle_import">Université Saint-Esprit De Kaslik</property>
-		<property key="libelle_uoh_tri">Université Saint-Esprit De Kaslik</property>
-		<property key="libelle_legifrance">Université Saint-Esprit De Kaslik</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">UQAM</property>
-		<property key="libelle_uoh">Université du Québec à Montréal</property>
-		<property key="libelle_import">Université du Québec à Montréal</property>
-		<property key="libelle_uoh_tri">Université du Québec à Montréal</property>
-		<property key="libelle_legifrance">Université du Québec à Montréal</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">LAUSANNE</property>
-		<property key="libelle_uoh">Université de Lausanne</property>
-		<property key="libelle_import">Université de Lausanne</property>
-		<property key="libelle_uoh_tri">Université de Lausanne</property>
-		<property key="libelle_legifrance">Université de Lausanne</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">BARCELONE</property>
-		<property key="libelle_uoh">Université de Barcelone</property>
-		<property key="libelle_import">Université de Barcelone</property>
-		<property key="libelle_uoh_tri">Université de Barcelone</property>
-		<property key="libelle_legifrance">Université de Barcelone</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">HAVRE</property>
-		<property key="libelle_uoh">Université du Havre</property>
-		<property key="libelle_import">Université du Havre</property>
-		<property key="libelle_uoh_tri">Université du Havre</property>
-		<property key="libelle_legifrance">Université du Havre</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">LOUVAIN</property>
-		<property key="libelle_uoh">Université catholique de Louvain</property>
-		<property key="libelle_import">Université catholique de Louvain</property>
-		<property key="libelle_uoh_tri">Université catholique de Louvain</property>
-		<property key="libelle_legifrance">Université catholique de Louvain</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">ULCO</property>
-		<property key="libelle_uoh">Université du Littoral Côte d'Opale</property>
-		<property key="libelle_import">Université du Littoral Côte d'Opale</property>
-		<property key="libelle_uoh_tri">Université du Littoral Côte d'Opale</property>
-		<property key="libelle_legifrance">Université du Littoral Côte d'Opale</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">CCDMD</property>
-		<property key="libelle_uoh">Centre collégial de développement de matériel didactique</property>
-		<property key="libelle_import">Centre collégial de développement de matériel didactique</property>
-		<property key="libelle_uoh_tri">Centre collégial de développement de matériel didactique</property>
-		<property key="libelle_legifrance">Centre collégial de développement de matériel didactique</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">CAEN</property>
-		<property key="libelle_uoh">Université de Caen Basse Normandie</property>
-		<property key="libelle_import">Université de Caen Basse Normandie</property>
-		<property key="libelle_uoh_tri">Université de Caen Basse Normandie</property>
-		<property key="libelle_legifrance">Université de Caen Basse Normandie</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">CONCORDIA</property>
-		<property key="libelle_uoh">Université Concordia</property>
-		<property key="libelle_import">Université Condordia</property>
-		<property key="libelle_uoh_tri">Université Concordia</property>
-		<property key="libelle_legifrance">Université Concordia</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">NANTES</property>
-		<property key="libelle_uoh">Université de Nantes</property>
-		<property key="libelle_import">Université de Nantes</property>
-		<property key="libelle_uoh_tri">Université de Nantes</property>
-		<property key="libelle_legifrance">Université de Nantes</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">HEAR</property>
-		<property key="libelle_uoh">Haute école des arts du Rhin</property>
-		<property key="libelle_import">Haute école des arts du Rhin</property>
-		<property key="libelle_uoh_tri">Haute école des arts du Rhin</property>
-		<property key="libelle_legifrance">Haute école des arts du Rhin</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">Universités PV Montpellier 3 - Paris Nanterre - Nice SA</property>
-		<property key="libelle_uoh">Universités PV Montpellier 3 - Paris Nanterre - Nice SA</property>
-		<property key="libelle_import">Universités PV Montpellier 3 - Paris Nanterre - Nice SA</property>
-		<property key="libelle_uoh_tri">Universités PV Montpellier 3 - Paris Nanterre - Nice SA</property>
-		<property key="libelle_legifrance">Universités PV Montpellier 3 - Paris Nanterre - Nice SA</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">Université de Rouen - Le Mans Université - Unisciel</property>
-		<property key="libelle_uoh">Université de Rouen - Le Mans Université - Unisciel</property>
-		<property key="libelle_import">Université de Rouen - Le Mans Université - Unisciel</property>
-		<property key="libelle_uoh_tri">Université de Rouen - Le Mans Université - Unisciel</property>
-		<property key="libelle_legifrance">Université de Rouen - Le Mans Université - Unisciel</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">MINES ParisTech</property>
-		<property key="libelle_uoh">MINES ParisTech</property>
-		<property key="libelle_import">MINES ParisTech</property>
-		<property key="libelle_uoh_tri">MINES ParisTech</property>
-		<property key="libelle_legifrance">MINES ParisTech</property>
-		<property key="adherent_uoh">true</property>
-	</item>
-	<item>
-		<property key="id">BRUXELLES</property>
-		<property key="libelle_uoh">Université Libre de Bruxelles</property>
-		<property key="libelle_import">Université Libre de Bruxelles</property>
-		<property key="libelle_uoh_tri">Université Libre de Bruxelles</property>
-		<property key="libelle_legifrance">Université Libre de Bruxelles</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">INRIA LearningLab</property>
-		<property key="libelle_uoh">INRIA LearningLab</property>
-		<property key="libelle_import">INRIA LearningLab</property>
-		<property key="libelle_uoh_tri">INRIA LearningLab</property>
-		<property key="libelle_legifrance">INRIA LearningLab</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">Communauté d'Apprentissage de l'Informatique</property>
-		<property key="libelle_uoh">Communauté d'Apprentissage de l'Informatique</property>
-		<property key="libelle_import">Communauté d'Apprentissage de l'Informatique</property>
-		<property key="libelle_uoh_tri">Communauté d'Apprentissage de l'Informatique</property>
-		<property key="libelle_legifrance">Communauté d'Apprentissage de l'Informatique</property>
-		<property key="adherent_uoh">false</property>
-	</item>
-	<item>
-		<property key="id">Grenoble INP - UGA  - Institut d'ingénierie et de management</property>
-		<property key="libelle_uoh">Grenoble INP - UGA - Institut d'ingénierie et de management</property>
-		<property key="libelle_import">Grenoble INP - UGA</property>
-		<property key="libelle_uoh_tri">Grenoble INO - UGA</property>
-		<property key="libelle_legifrance">Grenoble INO - UGA</property>
-		<property key="adherent_uoh">false</property>
-	</item>
+
+ <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+ <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+ <!-- ===== Établissement d'enseignement supérieur français ===== -->
+ <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+ <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+<item>
+    <property key="id">UBE</property>
+    <property key="libelle_import">Université Bourgogne Europe</property>
+  </item>
+  <item>
+    <property key="id">UMPV</property>
+    <property key="libelle_import">Université de Montpellier Paul-Valéry</property>
+  </item>
+  <item>
+    <property key="id">INSA-CENTRE-VAL-DE-LOIRE</property>
+    <property key="libelle_import">Institut national des sciences appliquées Centre Val de Loire</property>
+  </item>
+  <item>
+    <property key="id">UNISTRA</property>
+    <property key="libelle_import">Université de Strasbourg</property>
+  </item>
+  <item>
+    <property key="id">UPHF</property>
+    <property key="libelle_import">Université Polytechnique Hauts-de-France</property>
+  </item>
+  <item>
+    <property key="id">UNIVERSITE-BREST</property>
+    <property key="libelle_import">Université de Brest</property>
+  </item>
+  <item>
+    <property key="id">UPPA</property>
+    <property key="libelle_import">Université de Pau et des Pays de l'Adour</property>
+  </item>
+  <item>
+    <property key="id">UTC</property>
+    <property key="libelle_import">Université de Technologie de Compiègne</property>
+  </item>
+  <item>
+    <property key="id">INSA-ROUEN-NORMANDIE</property>
+    <property key="libelle_import">Institut national des sciences appliquées de Rouen Normandie</property>
+  </item>
+  <item>
+    <property key="id">UMLP</property>
+    <property key="libelle_import">Université Marie et Louis Pasteur</property>
+  </item>
+  <item>
+    <property key="id">ENSAM</property>
+    <property key="libelle_import">Arts et Métiers Sciences et Technologies</property>
+  </item>
+  <item>
+    <property key="id">ESAD_AMIENS</property>
+    <property key="libelle_import">École supérieure d'art et de design d'Amiens</property>
+  </item>
+  <item>
+    <property key="id">ISAE-ENSMA</property>
+    <property key="libelle_import">École nationale supérieure de mécanique et d'aérotechnique de Poitiers</property>
+  </item>
+  <item>
+    <property key="id">ENS-LYON</property>
+    <property key="libelle_import">École normale supérieure de Lyon</property>
+  </item>
+  <item>
+    <property key="id">UPVD</property>
+    <property key="libelle_import">Université de Perpignan Via Domitia</property>
+  </item>
+  <item>
+    <property key="id">ENSG-GEOMATIQUE</property>
+    <property key="libelle_import">École nationale des sciences géographiques</property>
+  </item>
+  <item>
+    <property key="id">ENSM</property>
+    <property key="libelle_import">École nationale supérieure maritime</property>
+  </item>
+  <item>
+    <property key="id">UCLY</property>
+    <property key="libelle_import">Institut catholique de Lyon</property>
+  </item>
+  <item>
+    <property key="id">UCA-NICE</property>
+    <property key="libelle_import">Université Côte d'Azur</property>
+  </item>
+  <item>
+    <property key="id">UNICAEN</property>
+    <property key="libelle_import">Université de Caen Normandie</property>
+  </item>
+  <item>
+    <property key="id">UGA</property>
+    <property key="libelle_import">Université Grenoble Alpes</property>
+  </item>
+  <item>
+    <property key="id">UNIVERSITE-MAYOTTE</property>
+    <property key="libelle_import">Université de Mayotte</property>
+  </item>
+  <item>
+    <property key="id">ENSACF</property>
+    <property key="libelle_import">École nationale supérieure d'architecture de Clermont-Ferrand</property>
+  </item>
+  <item>
+    <property key="id">ENSAN-NORMANDIE</property>
+    <property key="libelle_import">École nationale supérieure d'architecture de Normandie</property>
+  </item>
+  <item>
+    <property key="id">UNIVERSITE-POITIERS</property>
+    <property key="libelle_import">Université de Poitiers</property>
+  </item>
+  <item>
+    <property key="id">UNIVERSITE-TOULON</property>
+    <property key="libelle_import">Université de Toulon</property>
+  </item>
+  <item>
+    <property key="id">UNIVRENNES</property>
+    <property key="libelle_import">Université de Rennes</property>
+  </item>
+  <item>
+    <property key="id">ENSAPM</property>
+    <property key="libelle_import">École nationale supérieure d'architecture de Paris-Malaquais</property>
+  </item>
+  <item>
+    <property key="id">ENSA-TOULOUSE</property>
+    <property key="libelle_import">École nationale supérieure d'architecture de Toulouse</property>
+  </item>
+  <item>
+    <property key="id">ENSAD-PARIS</property>
+    <property key="libelle_import">École nationale supérieure des arts décoratifs</property>
+  </item>
+  <item>
+    <property key="id">INSA-STRASBOURG</property>
+    <property key="libelle_import">Institut national des sciences appliquées de Strasbourg</property>
+  </item>
+  <item>
+    <property key="id">UNIVERSITE-GUYANE</property>
+    <property key="libelle_import">Université de Guyane</property>
+  </item>
+  <item>
+    <property key="id">NIMES-UNIVERSITE</property>
+    <property key="libelle_import">Nîmes université</property>
+  </item>
+  <item>
+    <property key="id">UJM</property>
+    <property key="libelle_import">Université Jean Monnet</property>
+  </item>
+  <item>
+    <property key="id">UM</property>
+    <property key="libelle_import">Université de Montpellier</property>
+  </item>
+  <item>
+    <property key="id">UNILASALLE</property>
+    <property key="libelle_import">Institut polytechnique UniLaSalle</property>
+  </item>
+  <item>
+    <property key="id">UCA</property>
+    <property key="libelle_import">Université Clermont Auvergne</property>
+  </item>
+  <item>
+    <property key="id">ENS-LOUIS-LUMIERE</property>
+    <property key="libelle_import">École nationale supérieure Louis Lumière</property>
+  </item>
+  <item>
+    <property key="id">UNILIM</property>
+    <property key="libelle_import">Université de Limoges</property>
+  </item>
+  <item>
+    <property key="id">UTT</property>
+    <property key="libelle_import">Université de technologie de Troyes</property>
+  </item>
+  <item>
+    <property key="id">ENSAPC</property>
+    <property key="libelle_import">École nationale supérieure d'arts de Paris-Cergy</property>
+  </item>
+  <item>
+    <property key="id">ENSSIB</property>
+    <property key="libelle_import">École nationale supérieure des sciences de l'information et des bibliothèques</property>
+  </item>
+  <item>
+    <property key="id">ENSATT</property>
+    <property key="libelle_import">École nationale supérieure des arts et techniques du théâtre</property>
+  </item>
+  <item>
+    <property key="id">UNIVERSITE-ARTOIS</property>
+    <property key="libelle_import">Université d'Artois</property>
+  </item>
+  <item>
+    <property key="id">UBS</property>
+    <property key="libelle_import">Université Bretagne Sud</property>
+  </item>
+  <item>
+    <property key="id">ULCO</property>
+    <property key="libelle_import">Université du Littoral Côte d’Opale</property>
+  </item>
+  <item>
+    <property key="id">UPEC</property>
+    <property key="libelle_import">Université Paris-Est Créteil</property>
+  </item>
+  <item>
+    <property key="id">UPF</property>
+    <property key="libelle_import">Université de la Polynésie Française</property>
+  </item>
+  <item>
+    <property key="id">UT</property>
+    <property key="libelle_import">Université de Toulouse</property>
+  </item>
+  <item>
+    <property key="id">USMB</property>
+    <property key="libelle_import">Université Savoie Mont Blanc</property>
+  </item>
+  <item>
+    <property key="id">ENSAPLV</property>
+    <property key="libelle_import">École nationale supérieure d'architecture de Paris-La Villette</property>
+  </item>
+  <item>
+    <property key="id">ENSIIE</property>
+    <property key="libelle_import">École nationale supérieure d'informatique pour l'industrie et l'entreprise</property>
+  </item>
+  <item>
+    <property key="id">UNIVERISTE-PSL</property>
+    <property key="libelle_import">Université Paris sciences et lettres</property>
+  </item>
+  <item>
+    <property key="id">ENSAPB</property>
+    <property key="libelle_import">École nationale supérieure d'architecture de Paris-Belleville</property>
+  </item>
+  <item>
+    <property key="id">ENSEA</property>
+    <property key="libelle_import">École nationale supérieure de l'électronique et de ses applications de Cergy</property>
+  </item>
+  <item>
+    <property key="id">UNC</property>
+    <property key="libelle_import">Université de la Nouvelle-Calédonie</property>
+  </item>
+  <item>
+    <property key="id">UNIVERSITE-TOURS</property>
+    <property key="libelle_import">Université de Tours</property>
+  </item>
+  <item>
+    <property key="id">UNIVERSITE-ANTILLES</property>
+    <property key="libelle_import">Université des Antilles</property>
+  </item>
+  <item>
+    <property key="id">UEVE</property>
+    <property key="libelle_import">Université d'Évry-Val-d'Essonne</property>
+  </item>
+  <item>
+    <property key="id">ENSFEA</property>
+    <property key="libelle_import">École nationale supérieure de formation de l’enseignement agricole</property>
+  </item>
+  <item>
+    <property key="id">UP-CITE</property>
+    <property key="libelle_import">Université Paris Cité</property>
+  </item>
+  <item>
+    <property key="id">UPJV</property>
+    <property key="libelle_import">Université de Picardie Jules-Verne</property>
+  </item>
+  <item>
+    <property key="id">URCA</property>
+    <property key="libelle_import">Université de Reims Champagne-Ardenne</property>
+  </item>
+  <item>
+    <property key="id">UA</property>
+    <property key="libelle_import">Université d'Angers</property>
+  </item>
+  <item>
+    <property key="id">UVSQ</property>
+    <property key="libelle_import">Université de Versailles Saint-Quentin-en-Yvelines</property>
+  </item>
+  <item>
+    <property key="id">UNIVERSITE-ORLEANS</property>
+    <property key="libelle_import">Université d'Orléans</property>
+  </item>
+  <item>
+    <property key="id">UNILEHAVRE</property>
+    <property key="libelle_import">Université Le Havre Normandie</property>
+  </item>
+  <item>
+    <property key="id">ENSCI-LES-ATELIERS</property>
+    <property key="libelle_import">École nationale supérieure de création industrielle - Les Ateliers</property>
+  </item>
+  <item>
+    <property key="id">UNIVERSITE-CORSE</property>
+    <property key="libelle_import">Université de Corse Pasquale Paoli</property>
+  </item>
+  <item>
+    <property key="id">ENSICAEN</property>
+    <property key="libelle_import">École nationale supérieure d'ingénieurs de Caen</property>
+  </item>
+  <item>
+    <property key="id">UBM</property>
+    <property key="libelle_import">Université Bordeaux Montaigne</property>
+  </item>
+  <item>
+    <property key="id">UBX</property>
+    <property key="libelle_import">Université de Bordeaux</property>
+  </item>
+  <item>
+    <property key="id">UGE</property>
+    <property key="libelle_import">Université Gustave Eiffel</property>
+  </item>
+  <item>
+    <property key="id">ENSA-V</property>
+    <property key="libelle_import">École nationale supérieure d’architecture de Versailles</property>
+  </item>
+  <item>
+    <property key="id">ENSP</property>
+    <property key="libelle_import">École nationale supérieure de paysage</property>
+  </item>
+  <item>
+    <property key="id">ENSAS</property>
+    <property key="libelle_import">École nationale supérieure d'architecture de Strasbourg</property>
+  </item>
+  <item>
+    <property key="id">INSA Lyon</property>
+    <property key="libelle_import">Institut national des sciences appliquées de Lyon</property>
+  </item>
+  <item>
+    <property key="id">UHA</property>
+    <property key="libelle_import">Université de Haute-Alsace</property>
+  </item>
+  <item>
+    <property key="id">UR</property>
+    <property key="libelle_import">Université de La Réunion</property>
+  </item>
+  <item>
+    <property key="id">UNIROUEN</property>
+    <property key="libelle_import">Université de Rouen Normandie</property>
+  </item>
+  <item>
+    <property key="id">UT-CAPITOLE</property>
+    <property key="libelle_import">Université Toulouse Capitole</property>
+  </item>
+  <item>
+    <property key="id">UTTOP</property>
+    <property key="libelle_import">Université de technologie Tarbes Occitanie Pyrénées</property>
+  </item>
+  <item>
+    <property key="id">INSA-TOULOUSE</property>
+    <property key="libelle_import">Institut national des sciences appliquées de Toulouse</property>
+  </item>
+  <item>
+    <property key="id">UNIVERSITE-LA-ROCHELLE</property>
+    <property key="libelle_import">La Rochelle Université</property>
+  </item>
+  <item>
+    <property key="id">UL</property>
+    <property key="libelle_import">Université de Lorraine</property>
+  </item>
+  <item>
+    <property key="id">USPN</property>
+    <property key="libelle_import">Université Sorbonne Paris Nord</property>
+  </item>
+  <item>
+    <property key="id">UT2</property>
+    <property key="libelle_import">Université Toulouse - Jean Jaurès</property>
+  </item>
+  <item>
+    <property key="id">UNIVERSITE-LILLE</property>
+    <property key="libelle_import">Université de Lille</property>
+  </item>
+  <item>
+    <property key="id">EC-LYON</property>
+    <property key="libelle_import">Centrale Lyon</property>
+  </item>
+  <item>
+    <property key="id">ECE</property>
+    <property key="libelle_import">École centrale d'électronique</property>
+  </item>
+  <item>
+    <property key="id">ESSEC</property>
+    <property key="libelle_import">École supérieure des sciences économiques et commerciales</property>
+  </item>
+  <item>
+    <property key="id">IEP-PARIS</property>
+    <property key="libelle_import">Sciences Po</property>
+  </item>
+  <item>
+    <property key="id">NEOMA-BS</property>
+    <property key="libelle_import">Neoma Business School</property>
+  </item>
+  <item>
+    <property key="id">PARIS-SACLAY</property>
+    <property key="libelle_import">Université Paris-Saclay</property>
+  </item>
+  <item>
+    <property key="id">IMT</property>
+    <property key="libelle_import">Institut Mines-Télécom</property>
+  </item>
+  <item>
+    <property key="id">ECAM-EPMI</property>
+    <property key="libelle_import">ECAM-EPMI</property>
+  </item>
+  <item>
+    <property key="id">ENGEES</property>
+    <property key="libelle_import">École nationale du génie de l'eau et de l'environnement de Strasbourg</property>
+  </item>
+  <item>
+    <property key="id">LA-FEMIS</property>
+    <property key="libelle_import">École nationale supérieure des métiers de l'image et du son</property>
+  </item>
+  <item>
+    <property key="id">EPF</property>
+    <property key="libelle_import">EPF - École d'ingénieurs</property>
+  </item>
+  <item>
+    <property key="id">INP</property>
+    <property key="libelle_import">Institut national du patrimoine</property>
+  </item>
+  <item>
+    <property key="id">ISAE-SUPAERO</property>
+    <property key="libelle_import">Institut supérieur de l'aéronautique et de l'espace</property>
+  </item>
+  <item>
+    <property key="id">ECAM-LASALLE</property>
+    <property key="libelle_import">École catholique des arts et métiers</property>
+  </item>
+  <item>
+    <property key="id">EMLV</property>
+    <property key="libelle_import">École de management Léonard De Vinci</property>
+  </item>
+  <item>
+    <property key="id">BSB</property>
+    <property key="libelle_import">Burgundy School of Business</property>
+  </item>
+  <item>
+    <property key="id">ESCP</property>
+    <property key="libelle_import">ESCP Business School</property>
+  </item>
+  <item>
+    <property key="id">IFAO</property>
+    <property key="libelle_import">Institut français d'archéologie orientale du Caire</property>
+  </item>
+  <item>
+    <property key="id">CNAC</property>
+    <property key="libelle_import">Centre national des arts du cirque</property>
+  </item>
+  <item>
+    <property key="id">EXCELIA</property>
+    <property key="libelle_import">Excelia Group</property>
+  </item>
+  <item>
+    <property key="id">3IL</property>
+    <property key="libelle_import">Institut d'ingénierie informatique de Limoges</property>
+  </item>
+  <item>
+    <property key="id">NU</property>
+    <property key="libelle_import">Nantes Université</property>
+  </item>
+  <item>
+    <property key="id">CYU</property>
+    <property key="libelle_import">CY Cergy Paris Université</property>
+  </item>
+  <item>
+    <property key="id">ENTPE</property>
+    <property key="libelle_import">École nationale des travaux publics de l'État</property>
+  </item>
+  <item>
+    <property key="id">ICN</property>
+    <property key="libelle_import">ICN Business School</property>
+  </item>
+  <item>
+    <property key="id">ICT</property>
+    <property key="libelle_import">Institut catholique de Toulouse</property>
+  </item>
+  <item>
+    <property key="id">IESEG</property>
+    <property key="libelle_import">Institut d'économie scientifique et de gestion</property>
+  </item>
+  <item>
+    <property key="id">IRCOM</property>
+    <property key="libelle_import">Institut des relations publiques et de la communication d’Angers</property>
+  </item>
+  <item>
+    <property key="id">ESTA-BELFORT</property>
+    <property key="libelle_import">École supérieure des technologies et des affaires de Belfort</property>
+  </item>
+  <item>
+    <property key="id">CENTRALE-MEDITERRANEE</property>
+    <property key="libelle_import">Centrale Méditerranée</property>
+  </item>
+  <item>
+    <property key="id">EFR</property>
+    <property key="libelle_import">École française de Rome</property>
+  </item>
+  <item>
+    <property key="id">ESTACA</property>
+    <property key="libelle_import">École supérieure des techniques aéronautiques et de construction automobile</property>
+  </item>
+  <item>
+    <property key="id">ESITC-PARIS</property>
+    <property key="libelle_import">École supérieure d'ingénieurs des travaux de la construction de Paris</property>
+  </item>
+  <item>
+    <property key="id">ISBA-TP</property>
+    <property key="libelle_import">Institut supérieur du bâtiment et des travaux publics</property>
+  </item>
+  <item>
+    <property key="id">BEAUX-ARTS-DE-PARIS</property>
+    <property key="libelle_import">Ecole Nationale Supérieure des Beaux-Arts de Paris</property>
+  </item>
+  <item>
+    <property key="id">ESIEE</property>
+    <property key="libelle_import">ESIEE Paris</property>
+  </item>
+  <item>
+    <property key="id">IAE-PARIS</property>
+    <property key="libelle_import">IAE Paris - Sorbonne Business School</property>
+  </item>
+  <item>
+    <property key="id">IEP-LYON</property>
+    <property key="libelle_import">Sciences Po Lyon</property>
+  </item>
+  <item>
+    <property key="id">ISBP</property>
+    <property key="libelle_import">Institut Sup'Biotech de Paris</property>
+  </item>
+  <item>
+    <property key="id">ISC-PARIS-BUSINESS-SCHOOL</property>
+    <property key="libelle_import">Institut supérieur du commerce de Paris</property>
+  </item>
+  <item>
+    <property key="id">LYON-II</property>
+    <property key="libelle_import">Université Lumière - Lyon 2</property>
+  </item>
+  <item>
+    <property key="id">EM-NORMANDIE</property>
+    <property key="libelle_import">École de management de Normandie</property>
+  </item>
+  <item>
+    <property key="id">IEP-AIX</property>
+    <property key="libelle_import">Sciences Po Aix</property>
+  </item>
+  <item>
+    <property key="id">IEP-BORDEAUX</property>
+    <property key="libelle_import">Sciences Po Bordeaux</property>
+  </item>
+  <item>
+    <property key="id">INSEP</property>
+    <property key="libelle_import">Institut national du sport, de l'expertise et de la performance</property>
+  </item>
+  <item>
+    <property key="id">IP-PARIS</property>
+    <property key="libelle_import">Institut polytechnique de Paris</property>
+  </item>
+  <item>
+    <property key="id">PSPBB</property>
+    <property key="libelle_import">Pôle supérieur d'enseignement artistique Paris - Boulogne-Billancourt</property>
+  </item>
+  <item>
+    <property key="id">TBS-EDUCATION</property>
+    <property key="libelle_import">TBS Education</property>
+  </item>
+  <item>
+    <property key="id">ESA</property>
+    <property key="libelle_import">École spéciale d'architecture</property>
+  </item>
+  <item>
+    <property key="id">AMU</property>
+    <property key="libelle_import">Aix-Marseille Université</property>
+  </item>
+  <item>
+    <property key="id">EDL</property>
+    <property key="libelle_import">École du Louvre</property>
+  </item>
+  <item>
+    <property key="id">IPCIPC</property>
+    <property key="libelle_import">Facultés Libres de Philosophie et de Psychologie</property>
+  </item>
+  <item>
+    <property key="id">CHEC</property>
+    <property key="libelle_import">Centre des hautes études de la construction</property>
+  </item>
+  <item>
+    <property key="id">ECAM-RENNES</property>
+    <property key="libelle_import">ECAM Rennes Louis de Broglie</property>
+  </item>
+  <item>
+    <property key="id">CPE-LYON</property>
+    <property key="libelle_import">École supérieure de chimie physique électronique de Lyon</property>
+  </item>
+  <item>
+    <property key="id">ESEO</property>
+    <property key="libelle_import">École supérieure d'électronique de l'Ouest</property>
+  </item>
+  <item>
+    <property key="id">INALCO</property>
+    <property key="libelle_import">Institut national des langues et civilisations orientales</property>
+  </item>
+  <item>
+    <property key="id">COLLEGE-DE-FRANCE</property>
+    <property key="libelle_import">Collège de France</property>
+  </item>
+  <item>
+    <property key="id">INSEAD</property>
+    <property key="libelle_import">Institut européen d'administration des affaires</property>
+  </item>
+  <item>
+    <property key="id">INSEI</property>
+    <property key="libelle_import">Institut national supérieur de formation et de recherche pour l'éducation inclusive</property>
+  </item>
+  <item>
+    <property key="id">ISEP</property>
+    <property key="libelle_import">Institut supérieur d'électronique de Paris</property>
+  </item>
+  <item>
+    <property key="id">LYON-1</property>
+    <property key="libelle_import">Université Claude Bernard - Lyon 1</property>
+  </item>
+  <item>
+    <property key="id">CNSMDP</property>
+    <property key="libelle_import">Conservatoire national supérieur de musique et de danse de Paris</property>
+  </item>
+  <item>
+    <property key="id">ENVT</property>
+    <property key="libelle_import">École nationale vétérinaire de Toulouse</property>
+  </item>
+  <item>
+    <property key="id">ESTP</property>
+    <property key="libelle_import">École spéciale des travaux publics, du bâtiment et de l'industrie</property>
+  </item>
+  <item>
+    <property key="id">ESIEA</property>
+    <property key="libelle_import">École supérieure d'informatique électronique automatique</property>
+  </item>
+  <item>
+    <property key="id">ICP</property>
+    <property key="libelle_import">Institut catholique de Paris</property>
+  </item>
+  <item>
+    <property key="id">VET-AGRO-SUP</property>
+    <property key="libelle_import">Vet Agro Sup</property>
+  </item>
+  <item>
+    <property key="id">IRTS-CHAMPAGNE-ARDENNE</property>
+    <property key="libelle_import">Institut régional du travail social de Champagne-Ardennes</property>
+  </item>
+  <item>
+    <property key="id">SORBONNE-U</property>
+    <property key="libelle_import">Sorbonne Université</property>
+  </item>
+  <item>
+    <property key="id">PARIS-III</property>
+    <property key="libelle_import">Université Sorbonne Nouvelle - Paris 3</property>
+  </item>
+  <item>
+    <property key="id">ENVA</property>
+    <property key="libelle_import">École nationale vétérinaire d'Alfort</property>
+  </item>
+  <item>
+    <property key="id">ESAESA</property>
+    <property key="libelle_import">École supérieure d’agriculture</property>
+  </item>
+  <item>
+    <property key="id">ESAD-REIMS</property>
+    <property key="libelle_import">École supérieure d'art et de design de Reims</property>
+  </item>
+  <item>
+    <property key="id">INSTN</property>
+    <property key="libelle_import">Institut national des sciences et techniques nucléaires</property>
+  </item>
+  <item>
+    <property key="id">YNCREA-OUEST</property>
+    <property key="libelle_import">Institut supérieur de l'électronique et du numérique de Brest</property>
+  </item>
+  <item>
+    <property key="id">IPAG</property>
+    <property key="libelle_import">IPAG Business School</property>
+  </item>
+  <item>
+    <property key="id">MNHN</property>
+    <property key="libelle_import">Muséum national d'histoire naturelle</property>
+  </item>
+  <item>
+    <property key="id">AU</property>
+    <property key="libelle_import">Avignon Université</property>
+  </item>
+  <item>
+    <property key="id">Y-SCHOOLS</property>
+    <property key="libelle_import">Y SCHOOLS</property>
+  </item>
+  <item>
+    <property key="id">BREST-BS</property>
+    <property key="libelle_import">Brest Business School</property>
+  </item>
+  <item>
+    <property key="id">EFA</property>
+    <property key="libelle_import">École française d'Athènes</property>
+  </item>
+  <item>
+    <property key="id">ESM-ST-CYR</property>
+    <property key="libelle_import">École spéciale militaire de Saint-Cyr</property>
+  </item>
+  <item>
+    <property key="id">ESFF</property>
+    <property key="libelle_import">École supérieure de fonderie et de forge</property>
+  </item>
+  <item>
+    <property key="id">GROUPE-ICAM</property>
+    <property key="libelle_import">Groupe Institut catholique d'arts et métiers</property>
+  </item>
+  <item>
+    <property key="id">ISARA-LYON</property>
+    <property key="libelle_import">Institut supérieur d’agriculture Rhône-Alpes</property>
+  </item>
+  <item>
+    <property key="id">ISMANS-CESI</property>
+    <property key="libelle_import">ISMANS</property>
+  </item>
+  <item>
+    <property key="id">ISIPCA</property>
+    <property key="libelle_import">Institut supérieur international du parfum, de la cosmétique et de l'aromatique alimentaire</property>
+  </item>
+  <item>
+    <property key="id">KEDGE-BS</property>
+    <property key="libelle_import">KEDGE Business School</property>
+  </item>
+  <item>
+    <property key="id">PARIS_NANTERRE</property>
+    <property key="libelle_import">Université Paris Nanterre</property>
+  </item>
+  <item>
+    <property key="id">RENNES-II</property>
+    <property key="libelle_import">Université Rennes 2</property>
+  </item>
+  <item>
+    <property key="id">CNAM</property>
+    <property key="libelle_import">Conservatoire national des arts et métiers</property>
+  </item>
+  <item>
+    <property key="id">ESSCA</property>
+    <property key="libelle_import">École supérieure des sciences commerciales d'Angers</property>
+  </item>
+  <item>
+    <property key="id">ICR</property>
+    <property key="libelle_import">Institut catholique de Rennes</property>
+  </item>
+  <item>
+    <property key="id">INHA</property>
+    <property key="libelle_import">Institut national d'histoire de l'art</property>
+  </item>
+  <item>
+    <property key="id">INUC</property>
+    <property key="libelle_import">Institut national universitaire Jean-François Champollion</property>
+  </item>
+  <item>
+    <property key="id">IPSA</property>
+    <property key="libelle_import">Institut polytechnique des sciences avancées</property>
+  </item>
+  <item>
+    <property key="id">MBS</property>
+    <property key="libelle_import">MBS Business School</property>
+  </item>
+  <item>
+    <property key="id">CLI</property>
+    <property key="libelle_import">Centrale Lille Institut</property>
+  </item>
+  <item>
+    <property key="id">ISTOM</property>
+    <property key="libelle_import">École d'ingénieur d'agro-développement international</property>
+  </item>
+  <item>
+    <property key="id">EPITA</property>
+    <property key="libelle_import">École pour l'informatique et les techniques avancées</property>
+  </item>
+  <item>
+    <property key="id">IEP-TOULOUSE</property>
+    <property key="libelle_import">Sciences Po Toulouse</property>
+  </item>
+  <item>
+    <property key="id">YNCREA-MEDITERRANEE</property>
+    <property key="libelle_import">ISEN Yncréa Méditerranée</property>
+  </item>
+  <item>
+    <property key="id">AUDENCIA</property>
+    <property key="libelle_import">Audencia Business School</property>
+  </item>
+  <item>
+    <property key="id">EHESS</property>
+    <property key="libelle_import">École des hautes études en sciences sociales</property>
+  </item>
+  <item>
+    <property key="id">ESADHAR</property>
+    <property key="libelle_import">École supérieure d'art et design Le Havre-Rouen</property>
+  </item>
+  <item>
+    <property key="id">BUILDERS-CAEN</property>
+    <property key="libelle_import">BUILDERS École d'ingénieurs</property>
+  </item>
+  <item>
+    <property key="id">HEI</property>
+    <property key="libelle_import">Hautes études d'ingénieur</property>
+  </item>
+  <item>
+    <property key="id">SKEMA</property>
+    <property key="libelle_import">Skema Business School</property>
+  </item>
+  <item>
+    <property key="id">ECOLE-DE-L-AIR</property>
+    <property key="libelle_import">Ecole de l'air et de l'espace</property>
+  </item>
+  <item>
+    <property key="id">EIGSI</property>
+    <property key="libelle_import">EIGSI La Rochelle</property>
+  </item>
+  <item>
+    <property key="id">EFEO</property>
+    <property key="libelle_import">École française d'Extrême-Orient</property>
+  </item>
+  <item>
+    <property key="id">ENPC</property>
+    <property key="libelle_import">École nationale des ponts et chaussées</property>
+  </item>
+  <item>
+    <property key="id">ONIRIS</property>
+    <property key="libelle_import">École nationale vétérinaire, agroalimentaire et de l'alimentation, Nantes-Atlantique</property>
+  </item>
+  <item>
+    <property key="id">TOULOUSE-INP</property>
+    <property key="libelle_import">Toulouse INP</property>
+  </item>
+  <item>
+    <property key="id">IPB</property>
+    <property key="libelle_import">Bordeaux INP</property>
+  </item>
+  <item>
+    <property key="id">ITECH</property>
+    <property key="libelle_import">Institut textile et chimique</property>
+  </item>
+  <item>
+    <property key="id">PARIS-VIII</property>
+    <property key="libelle_import">Université Paris 8 - Vincennes - Saint-Denis</property>
+  </item>
+  <item>
+    <property key="id">IFM-PARIS</property>
+    <property key="libelle_import">Institut français de la mode</property>
+  </item>
+  <item>
+    <property key="id">EBI</property>
+    <property key="libelle_import">École de biologie industrielle</property>
+  </item>
+  <item>
+    <property key="id">ENM</property>
+    <property key="libelle_import">École nationale de la météorologie</property>
+  </item>
+  <item>
+    <property key="id">EN</property>
+    <property key="libelle_import">École navale</property>
+  </item>
+  <item>
+    <property key="id">FLO</property>
+    <property key="libelle_import">Facultés libres de l'Ouest</property>
+  </item>
+  <item>
+    <property key="id">INESAAE</property>
+    <property key="libelle_import">Institut national d'enseignement supérieur pour l'agriculture, l'alimentation et l'environnement</property>
+  </item>
+  <item>
+    <property key="id">ISAE-SUPMECA</property>
+    <property key="libelle_import">ISAE-Supméca</property>
+  </item>
+  <item>
+    <property key="id">ISDAT</property>
+    <property key="libelle_import">Institut supérieur des arts de Toulouse</property>
+  </item>
+  <item>
+    <property key="id">PANTHEON-ASSAS</property>
+    <property key="libelle_import">Université Paris-Panthéon-Assas</property>
+  </item>
+  <item>
+    <property key="id">CVZ</property>
+    <property key="libelle_import">Casa de Velázquez de Madrid</property>
+  </item>
+  <item>
+    <property key="id">HEC-PARIS</property>
+    <property key="libelle_import">École des hautes études commerciales de Paris</property>
+  </item>
+  <item>
+    <property key="id">ESCOM</property>
+    <property key="libelle_import">École supérieure de chimie organique et minérale</property>
+  </item>
+  <item>
+    <property key="id">ESITC-METZ</property>
+    <property key="libelle_import">École supérieure d'ingénieurs des travaux de la construction de Metz</property>
+  </item>
+  <item>
+    <property key="id">ESIGELEC</property>
+    <property key="libelle_import">École supérieure d'ingénieurs en génie électrique</property>
+  </item>
+  <item>
+    <property key="id">ESILV</property>
+    <property key="libelle_import">École supérieure d'ingénieurs Léonard-de-Vinci</property>
+  </item>
+  <item>
+    <property key="id">ESIEE-IT</property>
+    <property key="libelle_import">ESIEE-IT</property>
+  </item>
+  <item>
+    <property key="id">LMU</property>
+    <property key="libelle_import">Le Mans Université</property>
+  </item>
+  <item>
+    <property key="id">PARIS-I</property>
+    <property key="libelle_import">Université Paris 1 - Panthéon Sorbonne</property>
+  </item>
+  <item>
+    <property key="id">INSP</property>
+    <property key="libelle_import">Institut national du service public</property>
+  </item>
+  <item>
+    <property key="id">BORDEAUX-SCIENCE-AGRO</property>
+    <property key="libelle_import">École nationale supérieure des sciences agronomiques de Bordeaux Aquitaine</property>
+  </item>
+  <item>
+    <property key="id">ESTIA</property>
+    <property key="libelle_import">École supérieure des technologies industrielles avancées</property>
+  </item>
+  <item>
+    <property key="id">ESB-NANTES</property>
+    <property key="libelle_import">École supérieure du bois</property>
+  </item>
+  <item>
+    <property key="id">ISA-LILLE</property>
+    <property key="libelle_import">Institut supérieur d'agriculture de Lille</property>
+  </item>
+  <item>
+    <property key="id">RENNES-SB</property>
+    <property key="libelle_import">Rennes School of Business</property>
+  </item>
+  <item>
+    <property key="id">JUNIA</property>
+    <property key="libelle_import">Junia</property>
+  </item>
+  <item>
+    <property key="id">CESI</property>
+    <property key="libelle_import">CESI</property>
+  </item>
+  <item>
+    <property key="id">IFP-SCHOOL</property>
+    <property key="libelle_import">École nationale supérieure du pétrole et des moteurs</property>
+  </item>
+  <item>
+    <property key="id">ESAM-CAEN-CHERBOURG</property>
+    <property key="libelle_import">École supérieure d'arts et médias de Caen - Cherbourg</property>
+  </item>
+  <item>
+    <property key="id">LYON-III</property>
+    <property key="libelle_import">Université Jean Moulin - Lyon 3</property>
+  </item>
+  <item>
+    <property key="id">CREPS-TOULOUSE</property>
+    <property key="libelle_import">Centre de ressources, d'expertise et de performance sportives de Toulouse</property>
+  </item>
+  <item>
+    <property key="id">EDHEC</property>
+    <property key="libelle_import">École des hautes études commerciales du nord</property>
+  </item>
+  <item>
+    <property key="id">ELISA</property>
+    <property key="libelle_import">École d'ingénieurs des sciences aérospatiales</property>
+  </item>
+  <item>
+    <property key="id">ENAC</property>
+    <property key="libelle_import">École nationale de l'aviation civile</property>
+  </item>
+  <item>
+    <property key="id">ESAIP</property>
+    <property key="libelle_import">École supérieure angevine en informatique et productique</property>
+  </item>
+  <item>
+    <property key="id">HEAR</property>
+    <property key="libelle_import">Haute école des arts du Rhin</property>
+  </item>
+  <item>
+    <property key="id">ICL</property>
+    <property key="libelle_import">Institut catholique de Lille</property>
+  </item>
+  <item>
+    <property key="id">IPT</property>
+    <property key="libelle_import">Institut protestant de théologie</property>
+  </item>
+  <item>
+    <property key="id">ESME-SUDRIA</property>
+    <property key="libelle_import">École spéciale de mécanique et d'électricité</property>
+  </item>
+  <item>
+    <property key="id">ICESICES</property>
+    <property key="libelle_import">Institut catholique de Vendée</property>
+  </item>
+
+
+  <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <!-- ======================= Autres entités ==================== -->
+  <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+
+  <item>
+    <property key="id">UNIT</property>
+    <property key="libelle_import">Université Numérique Ingénierie et Technologie</property>
+  </item>
+  <item>
+    <property key="id">UVED</property>
+    <property key="libelle_import">Université Virtuelle Environnement et Développement Durable</property>
+  </item>
+  <item>
+    <property key="id">IEL</property>
+    <property key="libelle_import">IUT en ligne</property>
+  </item>
+  <item>
+    <property key="id">UOH</property>
+    <property key="libelle_import">Université Ouverte des Humanités</property>
+  </item>
+  <item>
+    <property key="id">UNISCIEL</property>
+    <property key="libelle_import">UNiversité des Sciences En Ligne</property>
+  </item>
+  <item>
+    <property key="id">AUNEGE</property>
+    <property key="libelle_import">Association des Universités pour le développement de l’enseignement Numérique en Economie et Gestion</property>
+  </item>
+  <item>
+    <property key="id">UNJF</property>
+    <property key="libelle_import">Université Numérique Juridique Francophone</property>
+  </item>
+  <item>
+    <property key="id">CSTB</property>
+    <property key="libelle_import">Centre Scientifique et Technique du Bâtiment</property>
+  </item>
+  <item>
+    <property key="id">UNESS</property>
+    <property key="libelle_import">Université Numérique en Santé et Sport</property>
+  </item>
+  <item>
+    <property key="id">CNRS</property>
+    <property key="libelle_import">Centre national de la recherche scientifique</property>
+  </item>
+  <item>
+    <property key="id">CNED</property>
+    <property key="libelle_import">Centre national d'enseignement à distance</property>
+  </item>
+  <item>
+    <property key="id">CETIM</property>
+    <property key="libelle_import">Centre Technique des Industries Mécaniques</property>
+  </item>
+  <item>
+    <property key="id">INRIA</property>
+    <property key="libelle_import">Institut national de recherche en informatique et automatique</property>
+  </item>
+ <item>
+    <property key="id">INES</property>
+    <property key="libelle_import">Institut national de l'énergie solaire</property>
+  </item>
+ <item>
+    <property key="id">EPFL</property>
+    <property key="libelle_import">École polytechnique fédérale de Lausanne</property>
+  </item>
+ <item>
+    <property key="id">ETS</property>
+    <property key="libelle_import">École de technologie supérieure</property>
+  </item>
+  <item>
+    <property key="id">ONERA</property>
+    <property key="libelle_import">Office National d'Études et de Recherches Aérospatiales</property>
+  </item>
+  <item>
+    <property key="id">ULLIEGE</property>
+    <property key="libelle_import">Université de Liège</property>
+  </item>
+  <item>
+    <property key="id">POLIMI</property>
+    <property key="libelle_import">École polytechnique de Milan</property>
+  </item>
+  <item>
+    <property key="id">UGENT</property>
+    <property key="libelle_import">Université de Gand</property>
+  </item>
+  <item>
+    <property key="id">SFGP</property>
+    <property key="libelle_import">Société française de génie des procédés</property>
+  </item>
+  <item>
+    <property key="id">MEDIACONSTRUCT</property>
+    <property key="libelle_import">Building SMART France - Mediaconstruct</property>
+  </item>
+  <item>
+    <property key="id">OPEN-TEZOS</property>
+    <property key="libelle_import">Open Tezos</property>
+  </item>
+  <item>
+    <property key="id">INSEE</property>
+    <property key="libelle_import">Institut National de la Statistique et des Études Économiques</property>
+  </item>
+  <item>
+    <property key="id">MOM</property>
+    <property key="libelle_import">Maison de l’Orient et de la Méditerranée Jean Pouilloux</property>
+  </item>
+  <item>
+    <property key="id">SILLAGES-INFO</property>
+    <property key="libelle_import">sillages.info</property>
+  </item>
+  <item>
+    <property key="id">MUSEE-DES-CONFLUENCES</property>
+    <property key="libelle_import">Musée des Confluences</property>
+  </item>
+  <item>
+    <property key="id">MUSEE-DU-QUAI-BRANLY</property>
+    <property key="libelle_import">Musée du Quai Branly - Jacques-Chirac</property>
+  </item>
+  <item>
+    <property key="id">ENSAL</property>
+    <property key="libelle_import">École Nationale Supérieure d'Architecture de Lyon</property>
+  </item>
+  <item>
+    <property key="id">CCDMD</property>
+    <property key="libelle_import">Centre Collégial de Développement de Matériel Didactique</property>
+  </item>
+  <item>
+    <property key="id">UNIBE</property>
+    <property key="libelle_import">Université de Berne</property>
+  </item>
+  <item>
+    <property key="id">UNA</property>
+    <property key="libelle_import">Universidad Nacional de Asunción</property>
+  </item>
+  <item>
+    <property key="id">UCD</property>
+    <property key="libelle_import">University College Dublin</property>
+  </item>
+  <item>
+    <property key="id">NOVA</property>
+    <property key="libelle_import">Universidade Nova de Lisboa</property>
+  </item>
+  <item>
+    <property key="id">NYU</property>
+    <property key="libelle_import">New York University</property>
+  </item>
+  <item>
+    <property key="id">STANFORD</property>
+    <property key="libelle_import">Stanford University</property>
+  </item>
+  <item>
+    <property key="id">USC</property>
+    <property key="libelle_import">Universidade de Santiago de Compostela</property>
+  </item>
+  <item>
+    <property key="id">UJKZ</property>
+    <property key="libelle_import">Université Joseph Ki-Zerbo</property>
+  </item>
+  <item>
+    <property key="id">UCAD</property>
+    <property key="libelle_import">Université Cheikh Anta Diop de Dakar</property>
+  </item>
+  <item>
+    <property key="id">UIZ</property>
+    <property key="libelle_import">Université Ibn Zohr</property>
+  </item>
+  <item>
+    <property key="id">UNIGE</property>
+    <property key="libelle_import">Université de Genève</property>
+   </item>
+   <item>
+    <property key="id">USEK</property>
+    <property key="libelle_import">Université Saint-Esprit de Kaslik</property>
+   </item>
+   <item>
+     <property key="id">UQAM</property>
+     <property key="libelle_import">Université du Québec à Montréal</property>
+   </item>
+   <item>
+     <property key="id">UNIL</property>
+     <property key="libelle_import">Université de Lausanne</property>
+   </item>
+   <item>
+  <property key="id">UB</property>
+  <property key="libelle_import">Universitat de Barcelona</property>
+   </item>
+   <item>
+     <property key="id">ULB</property>
+     <property key="libelle_import">Université libre de Bruxelles</property>
+   </item>
+   <item>
+     <property key="id">UCL</property>
+     <property key="libelle_import">Université catholique de Louvain</property>
+   </item>
+   <item>
+     <property key="id">CONCORDIA</property>
+     <property key="libelle_import">Université Concordia</property>
+  </item>
 </table>

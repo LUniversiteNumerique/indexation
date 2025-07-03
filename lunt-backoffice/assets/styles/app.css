@@ -59,3 +59,30 @@
     min-width: 66% !important;
     text-align: left !important;
 }
+
+.table th,
+.table td {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  word-break: break-word;
+}
+.form-fieldset,
+.field-form_fieldset {
+  white-space: normal !important;
+  word-break: break-word !important;
+}
+
+form select {
+  width: 100%;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.field-group.field-text .field-value,
+.field-group.field-text .field-value * {
+  white-space: normal;
+}
