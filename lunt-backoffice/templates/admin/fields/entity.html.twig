@@ -5,7 +5,7 @@
 {% if field.formattedValue is iterable %}
   {% for key, value in field.formattedValue %}
     <span class="badge badge-custom">
-            {% if key starts with 'http' %}
+            {% if key starts with '?' %}
               <a href="{{ key }}" target="_blank">{{ value }}</a>
             {% else %}
               {{ value }}

@@ -75,6 +75,17 @@ class ImportNoticeXmlCommand extends Command
     $io = new SymfonyStyle($input, $output);
     $io->title('Suplom Importing');
     $notfound = [];
+    $notfoundPedagogie = [];
+    $notfoundContext = [];
+    $notfoundCreateur = [];
+    $notfoundSpecialites = [];
+    $codeDeweyNameDiff = [];
+    $specialitesWithoutParent = [];
+    $relationsToLink = [];
+    $noticeWithoutPublisher = [];
+    $noticeWithoutRelation = [];
+    $noticeWithoutPublieeLe = [];
+    $noticeWithZIP = [];
 
     //Ré utilisation de la fonction readFilesFrom en dur car non fonctionnel avec un appel simple de celle-ci avec le meme répertoire
     $finder = new Finder();
@@ -87,24 +98,6 @@ class ImportNoticeXmlCommand extends Command
     $finder->files()->in($path)->name($names)->depth($deep);
     if ($since) $finder->date('>= ' . $since->format('Y-m-d H:i:s'));
     $data = $finder;
-
-    $this->em->createQuery('DELETE FROM App\Entity\DisciplineGroup')->execute();
-    $this->em->createQuery('DELETE FROM App\Entity\DeweyGroup')->execute();
-
-    //Suppression de l'enssemble des notices en base actuel
-    $notices = $this->em->getRepository(Notice::class)->createQueryBuilder('n')
-      ->where('n.id >= :id')
-      ->setParameter('id', 4)
-      ->getQuery()
-      ->getResult();
-
-    foreach ($notices as $notice) {
-      $this->em->remove($notice);
-    }
-    $this->em->flush();
-    $conn = $this->em->getConnection();
-    $conn->executeStatement('ALTER TABLE notice AUTO_INCREMENT = 1');
-
     $io->progressStart(count($data));
     $nr = $this->em->getRepository(Notice::class);
 
@@ -118,29 +111,29 @@ class ImportNoticeXmlCommand extends Command
       }
       $notice = new Notice();
       $io->progressAdvance();
-      $motcles = array_map(fn(Motcle $s) => trim($s->string?->value), $item->general?->keywords);
 
       if (isset($item->relations)) {
-          foreach ($item->relations as $relation) {
-              parse_str(parse_url($relation->resource->identifier?->entry, PHP_URL_QUERY), $params);
-              if (isset($params['uuid'])) {
-                  $relationsToLink[$uid][] = $params['uuid'];
-              }
+        foreach ($item->relations as $relation) {
+          if (
+            isset($relation->resource)
+            && isset($relation->resource->identifier)
+            && isset($relation->resource->identifier->entry)
+          ) {
+            if (substr($file->getFilename(), 0, 8) === 'suplomfr'){
+              parse_str(parse_url($relation->resource->identifier->entry, PHP_URL_QUERY), $params);
+            } else if (substr($file->getFilename(), 0, 7) === 'oai_www') {
+              $params['uuid'] = $relation->resource->identifier->entry;
+            }
+            if (isset($params['uuid'])) {
+              $relationsToLink[$uid][] = $params['uuid'];
+            }
+          } else {
+            $noticeWithoutRelation[] = [
+              'nom' => $file->getFilename()
+            ];
           }
+        }
       }
-
-      /*if(isset($item->relations)) {
-          $resources = array_reduce($item->relations, function(array $arr, Relation $res) use ($authors) {
-              parse_str(parse_url($res->resource->identifier?->entry, PHP_URL_QUERY), $params);
-              if (isset($params['uuid'])) $arr[] = Uuid::fromString($params['uuid'])->toBinary();
-              return $arr;
-          }, []);
-          if (count($resources) > 0) {
-              $notice = $nr->findOneBy(['uuid' => $uid]);
-              $notices = $nr->findBy(['uuid' => $resources]);
-              if($notice && count($notices) > 0) array_map(fn (Notice $etab) => $notice->addRessource($etab),$notices);
-          }
-      } continue;*/
 
       $contributes = array_merge(
         $item->metadata?->contributes,
@@ -149,35 +142,77 @@ class ImportNoticeXmlCommand extends Command
       $roleNotice = [];
       /** @var Contribute $role */
       foreach ($contributes as $role) {
-        // Gestion des roles
-        preg_match('/FN:(.*)/', $role->entities[0], $fnMatches);
-        $name = $fnMatches[1] ?? null;
-        $roleNotice[$role->role->value][] = $name;
+        if (isset($role->entities[0])) {
+          $roleValue = $role->role->value ?? null;
+          $vcardFields = parseVCard($role->entities[0]);
+          $firstName = $vcardFields['FIRSTNAME'] ?? '';
+          $lastName  = $vcardFields['LASTNAME'] ?? '';
+          $org       = $vcardFields['ORG'] ?? '';
+          $email     = $vcardFields['EMAIL'] ?? '';
+          $fn        = $vcardFields['FN'] ?? '';
+          $name      = trim($firstName . ' ' . $lastName) ?: $org ?: $fn;
 
-        // Gestion date de création et ressdate
-        if (ctype_digit($role->date[0])) {
-          if ($role->role->value === "author") {
-            $notice->setRessDate($role->date[0]);
-          }
-        } elseif ($role->role->value === "publisher") {
-          $notice->setPublieLe(\DateTime::createFromFormat("Y-m-d", $role->date[0]));
-        } elseif ($role->role->value === "validator" && $notice->getPublieLe() == null) {
-          $notice->setPublieLe(\DateTime::createFromFormat("Y-m-d", $role->date[0]));
+          // Stocke toutes les infos utiles pour ce rôle
+          $roleNotice[$roleValue][] = [
+            'name'      => $name,
+            'firstname' => $firstName,
+            'lastname'  => $lastName,
+            'org'       => $org,
+            'email'     => $email,
+            'fn'        => $fn,
+            'date'      => $role->date[0] ?? null,
+          ];
         }
       }
-      $validateur = null;
-      foreach ($roleNotice["validator"] ?? [] as $validatorName) {
-        if ($validatorName) {
-          // Teste tel quel
-          $validateur = $this->userRep->findOneBy(['name' => $validatorName]);
-          if (!$validateur) {
-            // Teste avec l'ordre inversé
-            $parts = explode(' ', $validatorName);
-            if (count($parts) >= 2) {
-              $inverted = implode(' ', array_reverse($parts));
-              $validateur = $this->userRep->findOneBy(['name' => $inverted]);
+      if (isset($roleNotice['author'])) {
+        foreach ($roleNotice['author'] as $author) {
+          if (!empty($author['date']) && ctype_digit($author['date'])) {
+            $notice->setRessDate($author['date']);
+            break;
+          }
+        }
+      }
+      // PublieLe : première date valide d'un publisher, sinon validator
+      $publieLe = null;
+      if (isset($roleNotice['publisher'])) {
+        foreach ($roleNotice['publisher'] as $publisher) {
+          if (!empty($publisher['date'])) {
+            $date = \DateTime::createFromFormat("Y-m-d", $publisher['date']);
+            if ($date !== false) {
+              $publieLe = $date;
+              break;
             }
           }
+        }
+      }
+      if ($publieLe === null && isset($roleNotice['validator'])) {
+        foreach ($roleNotice['validator'] as $validator) {
+          if (!empty($validator['date'])) {
+            $date = \DateTime::createFromFormat("Y-m-d", $validator['date']);
+            if ($date !== false) {
+              $publieLe = $date;
+              break;
+            }
+          }
+        }
+      }
+      if ($publieLe !== null) {
+        $notice->setPublieLe($publieLe);
+      } else {
+        $noticeWithoutPublieeLe[] = [
+          'nom' => $file->getFilename()
+        ];
+      }
+      if ($notice->getRessDate() === null) {
+        $notice->setRessDate(time());
+      }
+      //Validateur
+      $validateur = null;
+      $validatorName = null;
+      foreach ($roleNotice["validator"] ?? [] as $validatorInfo) {
+        $validatorName = trim(($validatorInfo['firstname'] ?? '') . ' ' . ($validatorInfo['lastname'] ?? ''));
+        if ($validatorName) {
+          $validateur = $this->userRep->findOneBy(['name' => $validatorName]);
           if ($validateur) {
             break;
           }
@@ -189,19 +224,13 @@ class ImportNoticeXmlCommand extends Command
           'nom' => $validatorName
         ];
       }
+
       $creator = null;
-      foreach ($roleNotice["creator"] ?? [] as $creatorName) {
+      $creatorName = null;
+      foreach ($roleNotice["creator"] ?? [] as $creatorInfo) {
+        $creatorName = trim(($creatorInfo['firstname'] ?? '') . ' ' . ($creatorInfo['lastname'] ?? ''));
         if ($creatorName) {
-          // Teste tel quel
           $creator = $this->userRep->findOneBy(['name' => $creatorName]);
-          if (!$creator) {
-            // Teste avec l'ordre inversé
-            $parts = explode(' ', $creatorName);
-            if (count($parts) >= 2) {
-              $inverted = implode(' ', array_reverse($parts));
-              $creator = $this->userRep->findOneBy(['name' => $inverted]);
-            }
-          }
           if ($creator) {
             break;
           }
@@ -211,6 +240,9 @@ class ImportNoticeXmlCommand extends Command
 
       // Ajouter un utilisateur par défaut quand une notice en a pas
       if ($notice->getCreateur() == null) {
+        $notfoundCreateur[] = [
+          'nom' => $creatorName
+        ];
         $existingUser = $this->userRep->findOneBy(['name' => 'créateur inconnu']);
         if ($existingUser === null) {
           $entity = new User('créateur inconnu', 'noreply@luniversitenumerique.fr');
@@ -222,69 +254,138 @@ class ImportNoticeXmlCommand extends Command
         }
       }
 
+      if (!empty($roleNotice["author"])) {
+        foreach ($roleNotice["author"] as $authorInfo) {
+          $lName = $authorInfo['lastname'] ?? '';
+          $fName = $authorInfo['firstname'] ?? '';
+          if ($lName || $fName) {
+            $auteur = $this->auteRep->findOneBy(['nom' => $lName, 'prenom' => $fName]);
+            if ($auteur) {
+              $notice->addAuteur($auteur);
+            } else {
+              $entity = new Auteur($lName, $fName);
+              $this->em->persist($entity);
+              $this->em->flush();
+              $notice->addAuteur($entity);
+            }
+          }
+        }
+      }
       // Ajout d'une catégorie publisher car certaines notices n'ont pas de role publisher
-      if (!array_key_exists("publisher", $roleNotice)) {
+      if (empty($roleNotice["publisher"] ?? null)) {
+        $notfoundSpecialites[] = [
+          'nom' => $file->getFilename()
+        ];
         $roleNotice["publisher"] = [];
       }
 
-
-      if (isset($item->technical?->size)) $notice->setRessSize(floatval($item->technical->size));
-      foreach ($roleNotice["author"] as $n) {
-        $name = explode(" ", $n);
-        $cName = count($name);
-        if ($cName == 2) {
-          $lName = $name[0];
-          $fName = $name[1];
-          //if ($fName=='Écri=') $fName = 'Écri+';
-        } elseif ($cName > 2 && str_contains($n, 'niversit')) {
-          $lName = implode(' ', array_slice($name, 2, $cName - 2));
-          $fName = $name[0] . ' ' . $name[1];
-        } else {
-          $lName = implode(' ', array_slice($name, 0, -1));
-          $fName = $name[$cName - 1];
-        }
-        $cName = $this->auteRep->findOneBy(['nom' => $lName, 'prenom' => $fName]);
-        if ($cName) {
-          $notice->addAuteur($cName);
-        } else {
-          $entity = new Auteur($lName, $fName);
-          $this->em->persist($entity);
-          $this->em->flush();
-          $notice->addAuteur($entity);
+      // Récupère tous les noms d'établissement à partir des publishers structurés
+      $publisherNames = [];
+      foreach ($roleNotice["publisher"] as $publisherInfo) {
+        // Prend d'abord ORG si présent, sinon le nom complet
+        $org = trim($publisherInfo['org'] ?? '');
+        $name = trim($publisherInfo['name'] ?? '');
+        if ($org !== '') {
+          $publisherNames[] = $org;
+        } elseif ($name !== '') {
+          $publisherNames[] = $name;
         }
       }
-      $publishers = array_unique($roleNotice["publisher"] ?? []);
-      foreach ($this->etabRep->findBy(['nom' => $publishers]) as $etab) {
+      $publisherNames = array_unique($publisherNames);
+
+      foreach ($this->etabRep->findBy(['nom' => $publisherNames]) as $etab) {
         $notice->addPorteur($etab);
       }
-      array_map(fn(Keyword $kywd) => $notice->addTag($kywd), $this->kwrdRep->findBy(['nom' => $motcles]));
+
+      $motcles = array_map(fn(Motcle $s) => trim($s->string?->value), $item->general?->keywords);
+      // Gestion des mots-clés (keywords)
+      foreach ($motcles as $motcle) {
+        if (!is_string($motcle) || trim($motcle) === '') continue;
+        $motcle = trim($motcle);
+        $keyword = $this->kwrdRep->findOneBy(['nom' => $motcle]);
+        if (!$keyword) {
+          $keyword = new Keyword($motcle);
+          $this->em->persist($keyword);
+          $this->em->flush();
+        }
+        $notice->addTag($keyword);
+      }
+
+      // conversion Octets en Mo
+      if (isset($item->technical?->size)) {
+        $notice->setRessSize(round(floatval($item->technical->size) / 1048576, 2));
+      }
       $notice->setExportOAI(false)->setEtat(NoticEtat::Forward)
         ->setUuid($uid) //->setVignette("$uid.jpg")
         ->setTitre($item->general->title[0]?->value)
         ->setDescription($item->general->description[0]?->value)
         ->setDureExec(normalizeDuration($item->technical?->duration->duration ?? null))
         ->setRessLang($item->general->languages)
-        ->setUserLang($item->educational->languages)
+        ->setUserLang($item->educational->languages ?? null)
         ->setDureAppr(normalizeDuration($item->educational->typicalLearningTime->duration ?? null))
         ->setProprIntel(strtolower($item->rights?->copyrightAndOtherRestrictions?->value ?? '') !== "no")
         ->setRessPayant(strtolower($item->rights?->cost?->value ?? '') !== "no")
-        ->setPropUser(array_map(fn(Motcle $s) => $s->string?->value, $item->educational?->description))
-        ->setDroit($this->droiRep[strtolower(preg_replace('/\s+/', '', $item->rights?->description[0]?->value))]);
+        ->setPropUser(array_map(fn(Motcle $s) => $s->string?->value, $item->educational?->description));
+
+      $licenceKey = null;
+      if (isset($item->rights->description[0]->value)) {
+        $licenceKey = strtolower(preg_replace('/\s+/', '', $item->rights->description[0]->value));
+      }
+      $licence = $this->droiRep[$licenceKey] ?? null;
+      $notice->setDroit($licence);
+
+      // Ajouter une licence par défaut quand une notice en a pas
+      if ($notice->getDroit() == null) {
+        // Recherche la licence par défaut dans la base (pas dans $this->droiRep)
+        $existingLicence = $this->em->getRepository(Licence::class)->findOneBy(['code' => 'LPD']);
+        if ($existingLicence === null) {
+          $entity = new Licence('LPD', 'Licence par défaut');
+          $this->em->persist($entity);
+          $this->em->flush();
+          $notice->setDroit($entity);
+        } else {
+          $notice->setDroit($existingLicence);
+        }
+      }
 
       if (str_contains(trim($item->technical?->location), 'document/')) {
         $notice->setRessUrl(trim($item->technical?->location));
-        //$notice->setRessZip(trim($item->technical?->location));
-        //$output->writeln("Lien trouvé pour format ZIP : " . $notice->getRessUrl() . "\n");
-        $output->writeln("Lien trouvé pour format ZIP : " . trim($item->technical?->location) . "\n");
-        $output->writeln("uuid : ". $notice->getUuid() . "\n");
+        $noticeWithZIP[] = [
+          'fileName' => $file->getFilename(),
+          'lien_ZIP' => $item->technical?->location
+        ];
       } else {
         $notice->setRessUrl(trim($item->technical?->location));
       }
 
 
-      foreach ($item->educational?->contexts as $s) $notice->addNiveau($this->niveRep[strtolower($s->value)]);
-      foreach ($item->general?->documentTypes as $s) $notice->addDocType($this->tdocRep[strtolower($s->value)]);
-      foreach ($item->educational?->learningResourceTypes as $s) $notice->addPedType($this->tpedRep[strtolower($s->value)]);
+      foreach (($item->educational?->contexts ?? []) as $s){
+        $key = strtolower($s->value);
+        if (isset($this->niveRep[$key])){
+          $notice->addNiveau($this->niveRep[$key]);
+        } else {
+          $notfoundContext[$uid][] = [
+            'nom' => $s->value
+          ];
+        }
+      }
+      $allDocumentTypes = array_merge($item->general?->documentTypesLOMFR, $item->general?->documentTypesLOM);
+      foreach ($allDocumentTypes as $s) {
+        $docTypeValue = $s->value ?? null;
+        if (!empty($docTypeValue) && isset($this->tdocRep[strtolower($docTypeValue)])) {
+          $notice->addDocType($this->tdocRep[strtolower($docTypeValue)]);
+        }
+      }
+      foreach ($item->educational?->learningResourceTypes as $s) {
+        $key = trim(strtolower($s->value));
+        if (isset($this->tpedRep[$key])) {
+          $notice->addPedType($this->tpedRep[$key]);
+        } else {
+          $notfoundPedagogie[$uid][] = [
+            'nom' => $s->value
+          ];
+        }
+      }
       /** @var Classification $class */
       foreach ($item->classifications as $class) {
         if (isset($class->taxonPath)) {
@@ -295,36 +396,47 @@ class ImportNoticeXmlCommand extends Command
             $disciplineGroupsByParent = [];
             foreach ($class->taxonPath->taxons as $taxon) {
               $spec = trim($taxon->entry[0]?->value ?? '');
+              $disc = null;
+              $champDisc = null;
+              $exist = null;
+              // Spécialités suplom UOH "discipline. specialité" sinon spécialité autres UNT
               if (str_contains($spec, '.')) {
                 $parts = explode('.', $spec);
+                $discNom = trim(reset($parts));
                 $spec = trim(end($parts));
+                $disc = $this->discRep->findOneBy(['nom' => $discNom]);
+                if ($disc) {
+                  $champDisc = $disc->getParent();
+                  $exist = $this->discRep->findOneBy(['nom' => $spec, 'parent' => $disc]);
+                }
+                if (!$exist) {
+                  $exist = $this->discRep->findOneBy(['nom' => $spec]);
+                }
+              } else {
+                $exist = $this->discRep->findOneBy(['nom' => $spec]);
               }
-              $exist = $this->discRep->findOneBy(['nom' => $spec]);
               if (!$exist) {
+                $notfoundSpecialites[] = ['nom' => $spec];
                 continue;
               }
-              $disc = $exist->getParent();
-              $champDisc = $disc?->getParent();
+              if ($disc === null) {
+                $disc = $exist->getParent();
+                $champDisc = $disc?->getParent();
+              }
               if (!$champDisc || !$disc) {
+                $specialitesWithoutParent[] = ['nom' => $spec];
                 continue;
               }
               $groupKey = $champDisc->getId() . '-' . $disc->getId();
               if (!isset($disciplineGroupsByParent[$groupKey])) {
-                $existingGroup = $this->em->getRepository(\App\Entity\DisciplineGroup::class)
-                  ->findOneBy(['champDisc' => $champDisc, 'discipline' => $disc]);
-                if ($existingGroup) {
-                  $disciplineGroupsByParent[$groupKey] = $existingGroup;
-                } else {
-                  $group = new \App\Entity\DisciplineGroup();
-                  $group->setChampDisc($champDisc);
-                  $group->setDiscipline($disc);
-                  $this->em->persist($group);
-                  $disciplineGroupsByParent[$groupKey] = $group;
-                }
+                $group = new \App\Entity\DisciplineGroup();
+                $group->setChampDisc($champDisc);
+                $group->setDiscipline($disc);
+                $notice->addDisciplineGroup($group);
+                $disciplineGroupsByParent[$groupKey] = $group;
+                $this->em->persist($group);
               }
               $disciplineGroupsByParent[$groupKey]->addSpecialite($exist);
-              $this->em->persist($notice);
-              $notice->addDisciplineGroup($disciplineGroupsByParent[$groupKey]);
             }
           }
 
@@ -335,8 +447,19 @@ class ImportNoticeXmlCommand extends Command
               $spec = $taxon->entry[0]?->value;
               $id = $taxon->id ?? null;
               // code dewey original
-              $exist = $this->deweRep->findOneBy(['nom' => $spec]);
+              $code = "http://dewey.info/class/" . $id . "/";
+              $exist = $this->deweRep->findOneBy(['code' => $code]);
               if ($exist) {
+                $existName = $this->deweRep->findOneBy(['nom' => $spec]);
+                if (!$existName) {
+                  $codeDeweyNameDiff[] = [
+                    'nom' => $spec,
+                    'code' => $code,
+                    'file' => $file->getFilename(),
+                    'nom_en_base' => $exist->getNom(),
+                  ];
+                  continue;
+                }
                 $disc = $exist->getParent();
                 $champDisc = $disc?->getParent();
                 if ($champDisc && $disc) {
@@ -355,9 +478,20 @@ class ImportNoticeXmlCommand extends Command
                 // code dewey personnaliser
                 $code = "http://dewey.info/class/" . $id . "/";
                 $existPerso = $this->dewePersoRep->findOneBy(['code' => $code]);
+                $existDeweRep = $this->deweRep->findOneBy(['code' => $code]);
                 if ($existPerso) {
+                  $existName = $this->dewePersoRep->findOneBy(['nom' => $spec]);
+                  if (!$existName) {
+                    $codeDeweyNameDiff[] = [
+                      'nom' => $spec,
+                      'code' => $code,
+                      'file' => $file->getFilename(),
+                      'nom_en_base' => $existPerso->getNom(),
+                    ];
+                  }
                   $notice->addDeweyPerso($existPerso);
-                } else {
+                }
+                if (!$existPerso && !$existDeweRep) {
                   $deweyPerso = new DeweyPerso();
                   $deweyPerso->setCode($code);
                   $deweyPerso->setNom($spec);
@@ -378,25 +512,149 @@ class ImportNoticeXmlCommand extends Command
 
     // Appliquer les liens entre notices
     foreach ($relationsToLink as $noticeUuid => $linkedUuids) {
-        $notice = $this->em->getRepository(Notice::class)->findOneBy(['uuid' => Uuid::fromString($noticeUuid)]);
-        foreach ($linkedUuids as $linkedUuid) {
-            $linkedNotice = $this->em->getRepository(Notice::class)->findOneBy(['uuid' => Uuid::fromString($linkedUuid)]);
-            if ($notice && $linkedNotice) {
-                $notice->addRessource($linkedNotice);
-            }
+      $notice = $this->em->getRepository(Notice::class)->findOneBy(['uuid' => $noticeUuid]);
+      foreach ($linkedUuids as $linkedUuid) {
+        $linkedNotice = $this->em->getRepository(Notice::class)->findOneBy(['uuid' => $linkedUuid]);
+        if ($notice && $linkedNotice) {
+          $notice->addRessource($linkedNotice);
         }
+      }
     }
     $this->em->flush();
 
     $io->progressFinish();
-    if (count($notfound) > 0) {
+    $output->writeln("Affichage de plusieurs listes de données manquantes lors de l'import : ");
+    if (count($notfoundCreateur) > 0) {
       $output->writeln("\nListe des créateurs non trouvés (uniques) :");
+      // Récupère uniquement les noms
+      $noms = array_map(fn($nf) => $nf['nom'] ?? '[nom inconnu]', $notfoundCreateur);
+      // Supprime les doublons
+      $nomsUniques = array_unique($noms);
+      foreach ($nomsUniques as $nom) {
+        $output->writeln('- ' . $nom);
+      }
+    }
+    if (count($notfound) > 0) {
+      $output->writeln("\nListe des validateurs non trouvés (uniques) :");
       // Récupère uniquement les noms
       $noms = array_map(fn($nf) => $nf['nom'] ?? '[nom inconnu]', $notfound);
       // Supprime les doublons
       $nomsUniques = array_unique($noms);
       foreach ($nomsUniques as $nom) {
         $output->writeln('- ' . $nom);
+      }
+    }
+    if (count($notfoundPedagogie) > 0) {
+      $output->writeln("\nListe des types pédagogiques non trouvés (uniques) :");
+      // Récupère tous les noms
+      $noms = [];
+      foreach ($notfoundPedagogie as $arr) {
+        foreach ($arr as $item) {
+          $noms[] = $item['nom'] ?? '[nom inconnu]';
+        }
+      }
+      // Supprime les doublons
+      $nomsUniques = array_unique($noms);
+      foreach ($nomsUniques as $nom) {
+        $output->writeln('- ' . $nom);
+      }
+    }
+
+    if (count($notfoundContext) > 0) {
+      $output->writeln("\nListe des contextes non trouvés (uniques) :");
+      $noms = [];
+      foreach ($notfoundContext as $arr) {
+        foreach ($arr as $item) {
+          $noms[] = $item['nom'] ?? '[nom inconnu]';
+        }
+      }
+      $nomsUniques = array_unique($noms);
+      foreach ($nomsUniques as $nom) {
+        $output->writeln('- ' . $nom);
+      }
+    }
+
+    if (count($notfoundSpecialites) > 0) {
+      $output->writeln("\nListe des spécialités non trouvés (uniques) :");
+      $noms = [];
+      foreach ($notfoundSpecialites as $item) {
+        $noms[] = $item['nom'] ?? '[nom inconnu]';
+      }
+      $nomsUniques = array_unique($noms);
+      foreach ($nomsUniques as $nom) {
+        $output->writeln('- ' . $nom);
+      }
+    }
+
+    if (count($specialitesWithoutParent) > 0) {
+      $output->writeln("\nListe des spécialités sans parents (uniques) :");
+      $noms = [];
+      foreach ($specialitesWithoutParent as $item) {
+        $noms[] = $item['nom'] ?? '[nom inconnu]';
+      }
+      $nomsUniques = array_unique($noms);
+      foreach ($nomsUniques as $nom) {
+        $output->writeln('- ' . $nom);
+      }
+    }
+    if (count($codeDeweyNameDiff) > 0) {
+      $output->writeln("\nListe des Dewey avec un code existant mais un nom différent (uniques) :");
+      $noms = [];
+      foreach ($codeDeweyNameDiff as $item) {
+        $nom = trim($item['nom'] ?? '');
+        $file = $item['file'] ?? '[fichier inconnu]';
+        $nomSuplom = $nom !== '' ? $nom : '[nom manquant]';
+        $nomEnBase = $item['nom_en_base'] ?? '-';
+        $noms[] = '(nom dans le suplom: ' . $nomSuplom . ') (nom en base existant: ' . $nomEnBase . ') (code: ' . ($item['code'] ?? '-') . ') [fichier: ' . $file . ']';
+      }
+      $nomsUniques = array_unique($noms);
+      foreach ($nomsUniques as $nom) {
+        $output->writeln('- ' . $nom);
+      }
+    }
+
+    if (count($noticeWithoutPublisher) > 0) {
+      $output->writeln("\nListe des notices sans publisher (uniques) :");
+      $noms = [];
+      foreach ($noticeWithoutPublisher as $item) {
+        $noms[] = $item['nom'] ?? '[nom inconnu]';
+      }
+      $nomsUniques = array_unique($noms);
+      foreach ($nomsUniques as $nom) {
+        $output->writeln('- ' . $nom);
+      }
+    }
+    if (count($noticeWithoutRelation) > 0) {
+      $output->writeln("\nListe des notices sans Relations (uniques) :");
+      $noms = [];
+      foreach ($noticeWithoutRelation as $item) {
+        $noms[] = $item['nom'] ?? '[nom inconnu]';
+      }
+      $nomsUniques = array_unique($noms);
+      foreach ($nomsUniques as $nom) {
+        $output->writeln('- ' . $nom);
+      }
+    }
+    if (count($noticeWithoutPublieeLe) > 0) {
+      $output->writeln("\nListe des notices sans Publiee le (uniques) :");
+      $noms = [];
+      foreach ($noticeWithoutPublieeLe as $item) {
+        $noms[] = $item['nom'] ?? '[nom inconnu]';
+      }
+      $nomsUniques = array_unique($noms);
+      foreach ($nomsUniques as $nom) {
+        $output->writeln('- ' . $nom);
+      }
+    }
+
+    if (count($noticeWithZIP) > 0) {
+      $output->writeln("\nListe des notices avec ressources sous format ZIP :");
+      foreach ($noticeWithZIP as $item) {
+        $fileName = $item['fileName'] ?? '[fichier inconnu]';
+        $lienZIP = $item['lien_ZIP'] ?? '[lien inconnu]';
+
+        $output->writeln("Fichier : " . $fileName);
+        $output->writeln("Lien trouvé pour format ZIP : " . trim($lienZIP));
       }
     }
     $output->writeln("Suplom imported successfully ! count of suplom with creator not found : ". count($notfound));
@@ -439,4 +697,28 @@ function normalizeDuration($duration) {
         return $duration;
     }
     return $duration;
+}
+
+function parseVCard($vcardString)
+{
+  $fields = [];
+  // Découpe la vCard
+  $lines = preg_split('/\r\n|\r|\n/', $vcardString);
+  foreach ($lines as $line) {
+    if (strpos($line, 'FN:') === 0) {
+      $fields['FN'] = substr($line, 3);
+    } elseif (strpos($line, 'EMAIL') === 0) {
+      $parts = explode(':', $line, 2);
+      $fields['EMAIL'] = $parts[1] ?? '';
+    } elseif (strpos($line, 'ORG:') === 0) {
+      $parts = explode(':', $line, 2);
+      $fields['ORG'] = isset($parts[1]) ? trim($parts[1]) : '';
+    } elseif (strpos($line, 'N:') === 0) {
+      $fields['N'] = substr($line, 2);
+      $nParts = explode(';', $fields['N']);
+      $fields['LASTNAME'] = $nParts[0] ?? '';
+      $fields['FIRSTNAME'] = $nParts[1] ?? '';
+    }
+  }
+  return $fields;
 }

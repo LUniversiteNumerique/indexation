@@ -26,7 +26,7 @@ class DisciplineGroup
   #[Assert\Count(min: 1, minMessage: 'Au moins une sous-discipline doit être sélectionnée.')]
   private Collection $specialites;
 
-  #[ORM\ManyToOne(targetEntity: Notice::class, inversedBy: 'disciplineGroups')]
+  #[ORM\ManyToOne(targetEntity: Notice::class, inversedBy: 'disciplineGroups', cascade: ['persist'])]
   #[ORM\JoinColumn(nullable: false)]
   private ?Notice $notice = null;
 
