@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 class DisciplineGroup
@@ -15,15 +16,14 @@ class DisciplineGroup
   private ?int $id = null;
 
   #[ORM\ManyToOne(targetEntity: Discipline::class)]
-  #[ORM\JoinColumn(nullable: true)]
   private ?Discipline $champDisc = null;
 
   #[ORM\ManyToOne(targetEntity: Discipline::class)]
-  #[ORM\JoinColumn(nullable: true)]
   private ?Discipline $discipline = null;
 
   #[ORM\ManyToMany(targetEntity: Discipline::class)]
   #[ORM\JoinTable(name: 'discipline_group_specialites')]
+  #[Assert\Count(min: 1, minMessage: 'Au moins une sous-discipline doit être sélectionnée.')]
   private Collection $specialites;
 
   #[ORM\ManyToOne(targetEntity: Notice::class, inversedBy: 'disciplineGroups')]

@@ -2,6 +2,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 class DeweyGroup
@@ -18,13 +19,14 @@ class DeweyGroup
   #[ORM\Column(type: 'string', nullable: true)]
   private $libelle;
 
-  #[ORM\ManyToOne(targetEntity: Notice::class, inversedBy: 'deweyGroups')]
+  #[ORM\ManyToOne(targetEntity: Notice::class, inversedBy: 'deweyGroups', cascade: ['persist'])]
   private $notice;
 
   #[ORM\ManyToOne(targetEntity: Dewey::class)]
   private $division;
 
   #[ORM\ManyToMany(targetEntity: Dewey::class)]
+  #[Assert\Count(min: 1, minMessage: 'Au moins un code Dewey doit être sélectionnée.')]
   private $codeweys;
 
   public function __construct()
