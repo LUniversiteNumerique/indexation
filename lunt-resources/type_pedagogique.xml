@@ -251,4 +251,11 @@
     <property key="libelle_suplomfr">tutoriel</property>
     <property key="libelle_uoh_tri">tutoriel</property>
   </item>
+  <item>
+    <property key="id">exercice</property>
+    <property key="libelle_import">exercice</property>
+    <property key="libelle_uoh">Exercice</property>
+    <property key="libelle_suplomfr">exercice</property>
+    <property key="libelle_uoh_tri">exercice</property>
+  </item>
 </table>
