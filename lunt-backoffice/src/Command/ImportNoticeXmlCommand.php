@@ -82,6 +82,7 @@ class ImportNoticeXmlCommand extends Command
     $codeDeweyNameDiff = [];
     $specialitesWithoutParent = [];
     $relationsToLink = [];
+    $noticeWithoutLicence = [];
     $noticeWithoutPublisher = [];
     $noticeWithoutRelation = [];
     $noticeWithoutPublieeLe = [];
@@ -273,9 +274,6 @@ class ImportNoticeXmlCommand extends Command
       }
       // Ajout d'une catégorie publisher car certaines notices n'ont pas de role publisher
       if (empty($roleNotice["publisher"] ?? null)) {
-        $notfoundSpecialites[] = [
-          'nom' => $file->getFilename()
-        ];
         $roleNotice["publisher"] = [];
       }
 
@@ -336,6 +334,11 @@ class ImportNoticeXmlCommand extends Command
 
       // Ajouter une licence par défaut quand une notice en a pas
       if ($notice->getDroit() == null) {
+        $noticeWithoutLicence[] = [
+          'nom' => $item->rights->description[0]->value ?? '[licence inconnue]',
+          'nomSearchInBase' => $licenceKey,
+          'nameFile' => $file->getFilename()
+        ];
         // Recherche la licence par défaut dans la base (pas dans $this->droiRep)
         $existingLicence = $this->em->getRepository(Licence::class)->findOneBy(['code' => 'LPD']);
         if ($existingLicence === null) {
@@ -364,8 +367,9 @@ class ImportNoticeXmlCommand extends Command
         if (isset($this->niveRep[$key])){
           $notice->addNiveau($this->niveRep[$key]);
         } else {
-          $notfoundContext[$uid][] = [
-            'nom' => $s->value
+          $notfoundContext[] = [
+            'nom' => $s->value,
+            'nameFile' => $file->getFilename()
           ];
         }
       }
@@ -381,8 +385,9 @@ class ImportNoticeXmlCommand extends Command
         if (isset($this->tpedRep[$key])) {
           $notice->addPedType($this->tpedRep[$key]);
         } else {
-          $notfoundPedagogie[$uid][] = [
-            'nom' => $s->value
+          $notfoundPedagogie[] = [
+            'nom' => $s->value,
+            'nameFile' => $file->getFilename()
           ];
         }
       }
@@ -416,7 +421,10 @@ class ImportNoticeXmlCommand extends Command
                 $exist = $this->discRep->findOneBy(['nom' => $spec]);
               }
               if (!$exist) {
-                $notfoundSpecialites[] = ['nom' => $spec];
+                $notfoundSpecialites[] = [
+                  'nom' => $spec,
+                  'nameFile' => $file->getFilename()
+                ];
                 continue;
               }
               if ($disc === null) {
@@ -424,7 +432,10 @@ class ImportNoticeXmlCommand extends Command
                 $champDisc = $disc?->getParent();
               }
               if (!$champDisc || !$disc) {
-                $specialitesWithoutParent[] = ['nom' => $spec];
+                $specialitesWithoutParent[] = [
+                  'nom' => $spec,
+                  'nameFile' => $file->getFilename()
+                ];
                 continue;
               }
               $groupKey = $champDisc->getId() . '-' . $disc->getId();
@@ -546,70 +557,47 @@ class ImportNoticeXmlCommand extends Command
     }
     if (count($notfoundPedagogie) > 0) {
       $output->writeln("\nListe des types pédagogiques non trouvés (uniques) :");
-      // Récupère tous les noms
-      $noms = [];
-      foreach ($notfoundPedagogie as $arr) {
-        foreach ($arr as $item) {
-          $noms[] = $item['nom'] ?? '[nom inconnu]';
-        }
-      }
-      // Supprime les doublons
-      $nomsUniques = array_unique($noms);
-      foreach ($nomsUniques as $nom) {
-        $output->writeln('- ' . $nom);
+      foreach ($notfoundPedagogie as $item) {
+        $nom = $item['nom'] ?? '[nom inconnu]';
+        $nameFile = $item['nameFile'] ?? '[fichier inconnu]';
+        $output->writeln('- ' . $nameFile . ' | ' . $nom);
       }
     }
 
     if (count($notfoundContext) > 0) {
       $output->writeln("\nListe des contextes non trouvés (uniques) :");
-      $noms = [];
-      foreach ($notfoundContext as $arr) {
-        foreach ($arr as $item) {
-          $noms[] = $item['nom'] ?? '[nom inconnu]';
-        }
-      }
-      $nomsUniques = array_unique($noms);
-      foreach ($nomsUniques as $nom) {
-        $output->writeln('- ' . $nom);
+      foreach ($notfoundContext as $item) {
+        $nom = $item['nom'] ?? '[nom inconnu]';
+        $nameFile = $item['nameFile'] ?? '[fichier inconnu]';
+        $output->writeln('- ' . $nameFile . ' | ' . $nom);
       }
     }
 
     if (count($notfoundSpecialites) > 0) {
-      $output->writeln("\nListe des spécialités non trouvés (uniques) :");
-      $noms = [];
+      $output->writeln("\nListe des spécialités non trouvés :");
       foreach ($notfoundSpecialites as $item) {
-        $noms[] = $item['nom'] ?? '[nom inconnu]';
-      }
-      $nomsUniques = array_unique($noms);
-      foreach ($nomsUniques as $nom) {
-        $output->writeln('- ' . $nom);
+        $nom = $item['nom'] ?? '[nom inconnu]';
+        $nameFile = $item['nameFile'] ?? '[fichier inconnu]';
+        $output->writeln('- ' . $nameFile . ' | ' . $nom);
       }
     }
 
     if (count($specialitesWithoutParent) > 0) {
       $output->writeln("\nListe des spécialités sans parents (uniques) :");
-      $noms = [];
       foreach ($specialitesWithoutParent as $item) {
-        $noms[] = $item['nom'] ?? '[nom inconnu]';
-      }
-      $nomsUniques = array_unique($noms);
-      foreach ($nomsUniques as $nom) {
-        $output->writeln('- ' . $nom);
+        $nom = $item['nom'] ?? '[nom inconnu]';
+        $nameFile = $item['nameFile'] ?? '[fichier inconnu]';
+        $output->writeln('- ' . $nameFile . ' | ' . $nom);
       }
     }
     if (count($codeDeweyNameDiff) > 0) {
       $output->writeln("\nListe des Dewey avec un code existant mais un nom différent (uniques) :");
-      $noms = [];
       foreach ($codeDeweyNameDiff as $item) {
         $nom = trim($item['nom'] ?? '');
         $file = $item['file'] ?? '[fichier inconnu]';
         $nomSuplom = $nom !== '' ? $nom : '[nom manquant]';
         $nomEnBase = $item['nom_en_base'] ?? '-';
-        $noms[] = '(nom dans le suplom: ' . $nomSuplom . ') (nom en base existant: ' . $nomEnBase . ') (code: ' . ($item['code'] ?? '-') . ') [fichier: ' . $file . ']';
-      }
-      $nomsUniques = array_unique($noms);
-      foreach ($nomsUniques as $nom) {
-        $output->writeln('- ' . $nom);
+        $output->writeln('- ' . $file . ' | ' . ($item['code'] ?? '-') . ' | ' . $nomSuplom . ' | ' . $nomEnBase);
       }
     }
 
@@ -657,6 +645,16 @@ class ImportNoticeXmlCommand extends Command
         $output->writeln("Lien trouvé pour format ZIP : " . trim($lienZIP));
       }
     }
+    if (count($noticeWithoutLicence) > 0) {
+      $output->writeln("\nListe des licence non trouvés :");
+      foreach ($noticeWithoutLicence as $item) {
+        $nom = $item['nom'] ?? '[nom inconnu]';
+        $nomSearchInBase = $item['nomSearchInBase'] ?? '[nom inconnu]';
+        $nameFile = $item['nameFile'] ?? '[fichier inconnu]';
+        $output->writeln( $nameFile . ' | ' . $nom );
+      }
+    }
+
     $output->writeln("Suplom imported successfully ! count of suplom with creator not found : ". count($notfound));
     return Command::SUCCESS;
   }
