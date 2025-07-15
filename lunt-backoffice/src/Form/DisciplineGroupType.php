@@ -96,10 +96,6 @@ class DisciplineGroupType extends AbstractType
           'label' => t('notice.specialite', domain: 'EasyAdminBundle'),
           'help' => t('notice.specialite_help', domain: 'EasyAdminBundle'),
         ]);
-      } else {
-        if ($form->has('specialites')) {
-          $form->remove('specialites');
-        }
       }
     };
 

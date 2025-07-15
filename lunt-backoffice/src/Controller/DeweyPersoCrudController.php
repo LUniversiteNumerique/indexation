@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Dewey;
 use App\Entity\DeweyPerso;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,23 +16,26 @@ class DeweyPersoCrudController extends AbstractController
   public function addDeweyPerso(Request $request, EntityManagerInterface $em): JsonResponse
   {
     $data = json_decode($request->getContent(), true);
-    $code = $data['code'] ?? null;
-    $nom = $data['nom'] ?? null;
+    $code = isset($data['code']) ? trim($data['code']) : null;
+    $nom = isset($data['nom']) ? trim($data['nom']) : null;
 
     if (!$code || !$nom) {
       return new JsonResponse(['error' => 'Code et nom requis'], 400);
     }
 
-    $exist = $em->getRepository(DeweyPerso::class)
-      ->findOneBy(['code' => 'http://dewey.info/class/' . $code]);
-    if ($exist) {
+    $existDeweyPerso = $em->getRepository(DeweyPerso::class)
+      ->findOneBy(['code' => 'http://dewey.info/class/' . $code . '/']);
+    $existDewey = $em->getRepository(Dewey::class)
+      ->findOneBy(['code' => 'http://dewey.info/class/' . $code . '/']);
+    if ($existDeweyPerso || $existDewey) {
       return new JsonResponse(['error' => 'Ce code existe déjà !'], 409);
+    } else {
+      $deweyPerso = new DeweyPerso();
+      $deweyPerso->setCode('http://dewey.info/class/' . $code . '/')->setNom($nom);
+      $em->persist($deweyPerso);
+      $em->flush();
     }
 
-    $deweyPerso = new DeweyPerso();
-    $deweyPerso->setCode('http://dewey.info/class/' . $code)->setNom($nom);
-    $em->persist($deweyPerso);
-    $em->flush();
 
     return new JsonResponse([
       'success' => true,

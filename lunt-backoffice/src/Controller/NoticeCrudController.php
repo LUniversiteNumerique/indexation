@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Event\{AfterNoticeAdjustingEvent, AfterNoticeApprovingEvent, AfterNoticeRejectingEvent, AfterNoticeStateSetEvent};
+use App\Event\{AfterNoticeAdjustingEvent, AfterNoticeApprovingEvent, AfterNoticeRejectingEvent, AfterNoticeStateSetEvent, AfterNoticeSubmissionEvent};
 use App\Security\Voter\NoticeActionVoter;
 use App\Entity\{Dewey, Discipline, Notice, NoticEtat, Univerique, User};
 use App\Field\{DurationField, EntityField, FileField};
@@ -502,6 +502,7 @@ class NoticeCrudController extends AbstractCrudController
     $this->denyAccessUnlessGranted(NoticeActionVoter::EDIT, $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
 
     $this->repository->add($notice->setEtat(NoticEtat::Forward));
+    $this->dispatcher->dispatch(new AfterNoticeSubmissionEvent($notice));
     $this->dispatcher->dispatch(new AfterNoticeStateSetEvent($notice, ['Soumettre', NoticEtat::Forward->getLabel(), 'Soummision']));
     $this->addFlash('success', sprintf("La notice est bien %s avec succès !",NoticEtat::Forward->getLabel()));
 

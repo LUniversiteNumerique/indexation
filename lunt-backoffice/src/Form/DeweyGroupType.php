@@ -88,10 +88,6 @@ class DeweyGroupType extends AbstractType
           'placeholder' => 'Sélectionner le code Dewey',
           'label' => 'Codes Dewey',
         ]);
-      } else {
-        if ($form->has('codeweys')) {
-          $form->remove('codeweys');
-        }
       }
     };
 

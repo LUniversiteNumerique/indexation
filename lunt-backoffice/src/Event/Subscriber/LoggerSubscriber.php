@@ -4,15 +4,16 @@ namespace App\Event\Subscriber;
 
 use EasyCorp\Bundle\EasyAdminBundle\Event\{AbstractLifecycleEvent, AfterEntityDeletedEvent, AfterEntityPersistedEvent, AfterEntityUpdatedEvent, BeforeEntityUpdatedEvent};
 use App\Controller\NoticeCrudController;
-use App\Event\{AfterNoticeAdjustingEvent,AfterNoticeApprovingEvent,AfterNoticeRejectingEvent,AfterNoticeStateSetEvent};
+use App\Event\{AfterNoticeAdjustingEvent,AfterNoticeApprovingEvent,AfterNoticeRejectingEvent,AfterNoticeStateSetEvent, AfterNoticeSubmissionEvent};
 use App\Service\MailerService;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use App\Entity\{Notice, User};
+use App\Entity\{Groupe, Notice, Univerique, User};
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\{EventSubscriberInterface,Attribute\AsEventListener};
 use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
+use Doctrine\ORM\{EntityManagerInterface};
 
 readonly class LoggerSubscriber implements EventSubscriberInterface
 {
@@ -20,12 +21,14 @@ readonly class LoggerSubscriber implements EventSubscriberInterface
         private Security        $security,
         private MailerService   $mailer,
         private LoggerInterface $untLogger,
-        private AdminUrlGenerator $generator
+        private AdminUrlGenerator $generator,
+        private EntityManagerInterface $em
     ) {}
 
     public static function getSubscribedEvents(): array
     {
         return [
+            AfterNoticeSubmissionEvent::class => 'noticeSubmitting',
             AfterNoticeAdjustingEvent::class => 'noticeAdjusting',
             AfterNoticeApprovingEvent::class => 'noticeApproving',
             AfterNoticeRejectingEvent::class => 'noticeRejecting',
@@ -36,6 +39,76 @@ readonly class LoggerSubscriber implements EventSubscriberInterface
             BeforeEntityUpdatedEvent::class => ['onDateSetting'],
             LoginSuccessEvent::class => 'onLoginSuccess',
         ];
+    }
+
+    public function noticeSubmitting(AfterNoticeSubmissionEvent $event): void
+    {
+      /** @var Notice $entity */ $entity = $event->getEntityInstance();
+      /** @var User $user */ $user = $this->security->getUser();
+
+      $disciplinegroups = $entity->getDisciplineGroups();
+
+      $allUnts = $this->em->getRepository(Univerique::class)->findAll();
+      $allUsers = $this->em->getRepository(User::class)->findAll();
+      $linkedUnts = [];
+
+      foreach ($allUnts as $unt) {
+        $untFields = $unt->getFields();
+
+        foreach ($disciplinegroups as $disciplinegroup) {
+          $champDisc = $disciplinegroup->getChampDisc();
+          if ($champDisc && $untFields->contains($champDisc)) {
+            if (!in_array($unt, $linkedUnts)) {
+              $linkedUnts[] = $unt;
+            }
+            break;
+          }
+        }
+      }
+
+      $documentalisteGroupe = $this->em->getRepository(Groupe::class)->findOneBy(['label' => 'Documentaliste']);
+      $documentalisteId = $documentalisteGroupe ? $documentalisteGroupe->getId() : null;
+
+      $emailsToNotify = [];
+
+      foreach ($linkedUnts as $unt) {
+        foreach ($allUsers as $user) {
+          $userGroup = $user->getGroup();
+          if (!$userGroup || $userGroup->getId() !== $documentalisteId) {
+            continue;
+          }
+
+          $userUntheme = $user->getUntheme();
+          if (!$userUntheme || $userUntheme->getId() !== $unt->getId()) {
+            continue;
+          }
+
+          $userEmail = $user->getEmail();
+          if ($userEmail && !in_array($userEmail, $emailsToNotify)) {
+            $emailsToNotify[] = $userEmail;
+          }
+        }
+      }
+
+      $this->untLogger->notice(sprintf("%s demande de rectifier la notice %s", $user, $entity), [
+        'actionType'=> 'Rectification',
+        'ressType' => Notice::class,
+        'ressInstance' => $entity->getId(),
+        'userInstance' => $user->getId(),
+        'userGroup' => $user->getGroup()
+      ]);
+
+      $url = $this->generator
+        ->setController(NoticeCrudController::class)
+        ->setAction(Action::DETAIL)->setEntityId($entity->getId())
+        ->generateUrl();
+
+      foreach ($emailsToNotify as $email) {
+        $this->mailer->sendTwig($email,
+          sprintf("[UNT] Demande de Soumission de la notice %d", $entity->getId()),
+          'emails/submit.html.twig', ['user' => $user, 'url' => $url, 'notice' => $entity->getTitre()]
+        );
+      }
     }
 
     public function noticeAdjusting(AfterNoticeAdjustingEvent $event): void
