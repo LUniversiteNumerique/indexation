@@ -690,7 +690,14 @@ class NoticeCrudController extends AbstractCrudController
     }
     $labels = [];
     foreach ($collection as $item) {
-      $labels[] = method_exists($item, 'getNom') ? $item->getNom() : (string)$item;
+      // Pour les auteurs, afficher prénom + nom
+      if (method_exists($item, 'getPrenom') && method_exists($item, 'getNom')) {
+        $labels[] = trim($item->getPrenom() . ' ' . $item->getNom());
+      }
+      // Pour les autres entités, utiliser getNom() ou toString()
+      else {
+        $labels[] = method_exists($item, 'getNom') ? $item->getNom() : (string)$item;
+      }
     }
     return $labels;
   }

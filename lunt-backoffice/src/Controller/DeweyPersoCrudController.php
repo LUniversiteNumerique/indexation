@@ -31,7 +31,7 @@ class DeweyPersoCrudController extends AbstractController
       return new JsonResponse(['error' => 'Ce code existe déjà !'], 409);
     } else {
       $deweyPerso = new DeweyPerso();
-      $deweyPerso->setCode('http://dewey.info/class/' . $code . '/')->setNom($nom);
+      $deweyPerso->setCode('http://dewey.info/class/' . $code . '/')->setNom($code. " - " .$nom);
       $em->persist($deweyPerso);
       $em->flush();
     }
