@@ -74,7 +74,7 @@ class ImportNoticeXmlCommand extends Command
   {
     $io = new SymfonyStyle($input, $output);
     $io->title('Suplom Importing');
-    $notfound = [];
+    $notfoundValidateur = [];
     $notfoundPedagogie = [];
     $notfoundContext = [];
     $notfoundCreateur = [];
@@ -86,7 +86,15 @@ class ImportNoticeXmlCommand extends Command
     $noticeWithoutPublisher = [];
     $noticeWithoutRelation = [];
     $noticeWithoutPublieeLe = [];
+    $notfoundPorteur = [];
     $noticeWithZIP = [];
+
+    $contribMailUOH = "info@uoh.eu";
+    $contribMailUNIT = "info@unit.eu";
+    $contribMailAUNGEe = "info@aungee.eu";
+    $docuMailUOH = "contact@uoh.eu";
+    $docuMailUNIT = "contact@unit.eu";
+    $docuMailAUNGEe = "contact@aungee.eu";
 
     //Ré utilisation de la fonction readFilesFrom en dur car non fonctionnel avec un appel simple de celle-ci avec le meme répertoire
     $finder = new Finder();
@@ -212,29 +220,42 @@ class ImportNoticeXmlCommand extends Command
       $validatorName = null;
       foreach ($roleNotice["validator"] ?? [] as $validatorInfo) {
         $validatorName = trim(($validatorInfo['firstname'] ?? '') . ' ' . ($validatorInfo['lastname'] ?? ''));
-        if ($validatorName) {
-          $validateur = $this->userRep->findOneBy(['name' => $validatorName]);
-          if ($validateur) {
-            break;
-          }
+        $validatorNameInverse = trim(($validatorInfo['lastname'] ?? '') . ' ' . ($validatorInfo['firstname'] ?? ''));
+        // Tester nom + prénom et prénom + nom
+        $validateur = $this->userRep->findOneBy(['name' => $validatorName])
+          ?? $this->userRep->findOneBy(['name' => $validatorNameInverse]);
+        if ($validateur) {
+          break;
         }
       }
       $notice->setValidateur($validateur);
       if ($notice->getValidateur() == null) {
-        $notfound[] = [
-          'nom' => $validatorName
+        $notfoundValidateur[] = [
+          'nom' => $validatorName,
+          'nameFile' => $file->getFilename()
         ];
+        $existingUserName = $this->userRep->findOneBy(['name' => 'créateur inconnu']);
+        $existingUserEmail = $this->userRep->findOneBy(['email' => $docuMailUOH]);
+        if ($existingUserName === null || $existingUserEmail === null) {
+          $entity = new User('créateur inconnu', $docuMailUOH);
+          $this->em->persist($entity);
+          $this->em->flush();
+          $notice->setValidateur($entity);
+        } else {
+          $notice->setValidateur($existingUserName);
+        }
       }
 
       $creator = null;
       $creatorName = null;
       foreach ($roleNotice["creator"] ?? [] as $creatorInfo) {
-        $creatorName = trim(($creatorInfo['firstname'] ?? '') . ' ' . ($creatorInfo['lastname'] ?? ''));
-        if ($creatorName) {
-          $creator = $this->userRep->findOneBy(['name' => $creatorName]);
-          if ($creator) {
-            break;
-          }
+        $creatorName = trim(($creatorInfo['lastname'] ?? '') . ' ' . ($creatorInfo['firstname'] ?? ''));
+        $creatorNameInverse = trim(($creatorInfo['firstname'] ?? '') . ' ' . ($creatorInfo['lastname'] ?? ''));
+        // Tester nom + prénom et prénom + nom
+        $creator = $this->userRep->findOneBy(['name' => $creatorName])
+          ?? $this->userRep->findOneBy(['name' => $creatorNameInverse]);
+        if ($creator) {
+          break;
         }
       }
       $notice->setCreateur($creator);
@@ -242,16 +263,18 @@ class ImportNoticeXmlCommand extends Command
       // Ajouter un utilisateur par défaut quand une notice en a pas
       if ($notice->getCreateur() == null) {
         $notfoundCreateur[] = [
-          'nom' => $creatorName
+          'nom' => $creatorName,
+          'nameFile' => $file->getFilename()
         ];
-        $existingUser = $this->userRep->findOneBy(['name' => 'créateur inconnu']);
-        if ($existingUser === null) {
-          $entity = new User('créateur inconnu', 'noreply@luniversitenumerique.fr');
+        $existingUserName = $this->userRep->findOneBy(['name' => 'créateur inconnu']);
+        $existingUserEmail = $this->userRep->findOneBy(['email' => $contribMailUOH]);
+        if ($existingUserName === null || $existingUserEmail === null) {
+          $entity = new User('créateur inconnu', $contribMailUOH);
           $this->em->persist($entity);
           $this->em->flush();
           $notice->setCreateur($entity);
         } else {
-          $notice->setCreateur($existingUser);
+          $notice->setCreateur($existingUserName);
         }
       }
 
@@ -291,8 +314,24 @@ class ImportNoticeXmlCommand extends Command
       }
       $publisherNames = array_unique($publisherNames);
 
-      foreach ($this->etabRep->findBy(['nom' => $publisherNames]) as $etab) {
+      // Récupérer les établissements trouvés en base
+      $etablissementsTrouves = $this->etabRep->findBy(['nom' => $publisherNames]);
+      $nomsEtablissementsTrouves = [];
+
+      foreach ($etablissementsTrouves as $etab) {
         $notice->addPorteur($etab);
+        $nomsEtablissementsTrouves[] = $etab->getNom(); // Supposant que vous avez une méthode getNom()
+      }
+
+      // Identifier les établissements non trouvés
+      $etablissementsNonTrouves = array_diff($publisherNames, $nomsEtablissementsTrouves);
+
+      // Ajouter les établissements non trouvés à votre liste
+      foreach ($etablissementsNonTrouves as $nomNonTrouve) {
+        $notfoundPorteur[] = [
+          'nom' => $nomNonTrouve,
+          'nameFile' => $file->getFilename()
+        ];
       }
 
       $motcles = array_map(fn(Motcle $s) => trim($s->string?->value), $item->general?->keywords);
@@ -303,6 +342,7 @@ class ImportNoticeXmlCommand extends Command
         $keyword = $this->kwrdRep->findOneBy(['nom' => $motcle]);
         if (!$keyword) {
           $keyword = new Keyword($motcle);
+          $keyword->setValide(true);
           $this->em->persist($keyword);
           $this->em->flush();
         }
@@ -491,7 +531,7 @@ class ImportNoticeXmlCommand extends Command
                 $existPerso = $this->dewePersoRep->findOneBy(['code' => $code]);
                 $existDeweRep = $this->deweRep->findOneBy(['code' => $code]);
                 if ($existPerso) {
-                  $existName = $this->dewePersoRep->findOneBy(['nom' => $spec]);
+                  $existName = $this->dewePersoRep->findOneBy(['nom' => $id. " - " .$spec]);
                   if (!$existName) {
                     $codeDeweyNameDiff[] = [
                       'nom' => $spec,
@@ -505,7 +545,7 @@ class ImportNoticeXmlCommand extends Command
                 if (!$existPerso && !$existDeweRep) {
                   $deweyPerso = new DeweyPerso();
                   $deweyPerso->setCode($code);
-                  $deweyPerso->setNom($spec);
+                  $deweyPerso->setNom($id. " - " .$spec);
                   $this->em->persist($deweyPerso);
                   $this->em->flush();
                   $notice->addDeweyPerso($deweyPerso);
@@ -537,22 +577,18 @@ class ImportNoticeXmlCommand extends Command
     $output->writeln("Affichage de plusieurs listes de données manquantes lors de l'import : ");
     if (count($notfoundCreateur) > 0) {
       $output->writeln("\nListe des créateurs non trouvés (uniques) :");
-      // Récupère uniquement les noms
-      $noms = array_map(fn($nf) => $nf['nom'] ?? '[nom inconnu]', $notfoundCreateur);
-      // Supprime les doublons
-      $nomsUniques = array_unique($noms);
-      foreach ($nomsUniques as $nom) {
-        $output->writeln('- ' . $nom);
+      foreach ($notfoundCreateur as $item) {
+        $nom = $item['nom'] ?? '[nom inconnu]';
+        $nameFile = $item['nameFile'] ?? '[fichier inconnu]';
+        $output->writeln('- ' . $nameFile . ' | ' . $nom);
       }
     }
-    if (count($notfound) > 0) {
+    if (count($notfoundValidateur) > 0) {
       $output->writeln("\nListe des validateurs non trouvés (uniques) :");
-      // Récupère uniquement les noms
-      $noms = array_map(fn($nf) => $nf['nom'] ?? '[nom inconnu]', $notfound);
-      // Supprime les doublons
-      $nomsUniques = array_unique($noms);
-      foreach ($nomsUniques as $nom) {
-        $output->writeln('- ' . $nom);
+      foreach ($notfoundValidateur as $item) {
+        $nom = $item['nom'] ?? '[nom inconnu]';
+        $nameFile = $item['nameFile'] ?? '[fichier inconnu]';
+        $output->writeln('- ' . $nameFile . ' | ' . $nom);
       }
     }
     if (count($notfoundPedagogie) > 0) {
@@ -655,7 +691,16 @@ class ImportNoticeXmlCommand extends Command
       }
     }
 
-    $output->writeln("Suplom imported successfully ! count of suplom with creator not found : ". count($notfound));
+    if (count($notfoundPorteur) > 0) {
+      $output->writeln("\nListe des Etablissement non trouvés :");
+      foreach ($notfoundPorteur as $item) {
+        $nom = $item['nom'] ?? '[nom inconnu]';
+        $nameFile = $item['nameFile'] ?? '[fichier inconnu]';
+        $output->writeln( $nameFile . ' | ' . $nom );
+      }
+    }
+
+    $output->writeln("Suplom imported successfully ! count of suplom with creator not found : ". count($notfoundCreateur));
     return Command::SUCCESS;
   }
 }
