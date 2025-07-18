@@ -128,17 +128,17 @@ class NoticeCrudController extends AbstractCrudController
     yield Field\FormField::addFieldset('Description générale')->setIcon('fa fa-pencil');
     yield Field\IdField::new('id')->onlyOnDetail();
     yield Field\TextField::new('titre')->setHelp(t('notice.titre_help', domain: 'EasyAdminBundle'));
-    yield Field\TextEditorField::new('description')->setHelp(t('notice.description_help', domain: 'EasyAdminBundle'))->setTemplatePath('admin/fields/text_editor.html.twig')->hideOnIndex()->setRequired(true);
+    yield Field\TextEditorField::new('description')->setHelp(t('notice.description_help', domain: 'EasyAdminBundle'))->setTemplatePath('admin/fields/text_editor.html.twig')->hideOnIndex();
     yield EntityField::new('porteurs', t('notice.porteurs', domain: 'EasyAdminBundle'))->setHelp(t('notice.porteurs_help', domain: 'EasyAdminBundle'))
-      ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.code', 'ASC'))->setSortable(false)->setRequired(true)->hideOnIndex()
+      ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.code', 'ASC'))->setSortable(false)->hideOnIndex()
       ->formatValue(fn($value, $entity) => $this->renderEntityCollectionBadges($value));
     yield EntityField::new('auteurs',t('notice.auteurs', domain: 'EasyAdminBundle'))->setFormType(AuteurAutoField::class)
-      ->setHelp(t('notice.auteurs_help', domain: 'EasyAdminBundle'))->setSortable(false)->setRequired(true)
+      ->setHelp(t('notice.auteurs_help', domain: 'EasyAdminBundle'))->setSortable(false)
       ->formatValue(fn($value, $entity) => $this->renderEntityCollectionBadges($value));
     yield TextField::new('allSpecialitesString', 'Spécialités')
       ->onlyOnIndex()
       ->renderAsHtml();
-    yield EntityField::new('tags', t('notice.tags', domain: 'EasyAdminBundle'))->setRequired(true)->hideOnIndex()
+    yield EntityField::new('tags', t('notice.tags', domain: 'EasyAdminBundle'))->hideOnIndex()
       ->setHelp(t('notice.tags_help', domain: 'EasyAdminBundle'))->setFormType(TagAutoField::class)->setFormTypeOption('attr', [
         'data-tag-autocreate-url-value' => $this->router->generate('app_keywork_new'), 'data-controller' => 'tag-autocreate'
       ])
@@ -151,7 +151,7 @@ class NoticeCrudController extends AbstractCrudController
     if (Crud::PAGE_NEW  === $pageName || $pageName === Crud::PAGE_EDIT) {
       yield Field\BooleanField::new('zipFile', 'Fichier Zip')->setFormTypeOptions(['mapped' => false, 'attr' => ['data-notice-setting-target' => 'ressToggle',]])->onlyOnForms();
       yield Field\TextField::new('ressUrl', t('notice.ressurl', domain: 'EasyAdminBundle'))->setHelp(t('notice.ressurl_help', domain: 'EasyAdminBundle'))
-        ->setFormTypeOptions(['attr' => ['placeholder' => 'https://...'], 'required' => true])->setSortable(false);
+        ->setFormTypeOptions(['attr' => ['placeholder' => 'https://...']])->setSortable(false);
       yield FileField::new('ressZip', 'Contenu Zip')->setUploadDir('public/uploads/files')->setHelp(t('notice.ressurl_help', domain: 'EasyAdminBundle'))
         ->setUploadedFileNamePattern('[timestamp]-[randomhash].[extension]')->setBasePath('uploads/files')->setRequired(true)->onlyOnForms()
         ->setFileConstraints([new File(maxSize: '64M', mimeTypes: ["application/zip", "application/x-zip-compressed", "multipart/x-zip"])]);
@@ -172,17 +172,17 @@ class NoticeCrudController extends AbstractCrudController
 
     yield Field\FormField::addFieldset('Indications pédagogiques')->setIcon('fa fa-th-list');
     yield Field\ChoiceField::new('ressLang', t('notice.resslang', domain: 'EasyAdminBundle'))->setChoices($langList)->allowMultipleChoices()
-      ->setHelp(t('notice.resslang_help', domain: 'EasyAdminBundle'))->renderAsBadges()->setColumns(6)->setRequired(true)->hideOnIndex();
+      ->setHelp(t('notice.resslang_help', domain: 'EasyAdminBundle'))->renderAsBadges()->setColumns(6)->hideOnIndex();
     yield DurationField::new('dureAppr', "Durée d'apprentissage")->setHelp(t('notice.dureappr_help', domain: 'EasyAdminBundle'))->hideOnIndex()->setColumns(6);
     yield EntityField::new('pedTypes', t('notice.pedtypes', domain: 'EasyAdminBundle'))->setHelp(t('notice.pedtypes_help', domain: 'EasyAdminBundle'))
-      ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.nom', 'ASC'))->setRequired(true)->setSortable(false)->hideOnIndex()
+      ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.nom', 'ASC'))->setSortable(false)->hideOnIndex()
       ->formatValue(fn($value, $entity) => $this->renderEntityCollectionBadges($value));
     yield Field\ArrayField::new('propUser', t('notice.propuser', domain: 'EasyAdminBundle'))->setHelp(t('notice.propuser_help', domain: 'EasyAdminBundle'))->hideOnIndex();
     yield EntityField::new('docTypes', t('notice.doctypes', domain: 'EasyAdminBundle'))->setHelp(t('notice.doctypes_help', domain: 'EasyAdminBundle'))
-      ->setFormTypeOption('multiple', true)->setFormTypeOption('expanded', true)->setColumns(6)->hideOnIndex()->setRequired(true)
+      ->setFormTypeOption('multiple', true)->setFormTypeOption('expanded', true)->setColumns(6)->hideOnIndex()
       ->formatValue(fn($value, $entity) => $this->renderEntityCollectionBadges($value));
     yield EntityField::new('niveaux', t('notice.niveaux', domain: 'EasyAdminBundle'))->setFormTypeOption('multiple', true)->hideOnIndex()
-      ->setFormTypeOption('expanded', true)->setHelp(t('notice.niveaux_help', domain: 'EasyAdminBundle'))->setColumns(6)->setRequired(true)
+      ->setFormTypeOption('expanded', true)->setHelp(t('notice.niveaux_help', domain: 'EasyAdminBundle'))->setColumns(6)
       ->formatValue(fn($value, $entity) => $this->renderEntityCollectionBadges($value));
 
     yield Field\FormField::addFieldset('Classification thématique')->setIcon('fa fa-book');
@@ -220,7 +220,7 @@ class NoticeCrudController extends AbstractCrudController
       yield Field\UrlField::new('formEvalUrl',t('notice.formevalurl', domain: 'EasyAdminBundle'))
         ->setFormTypeOptions(['default_protocol' => 'https', 'attr' => ['class' => 'isUrl', 'placeholder' => 'https://...']])->setHelp(t('notice.formevalurl_help', domain: 'EasyAdminBundle'))->hideOnIndex();
       yield Field\ChoiceField::new('userLang',t('notice.userlang', domain: 'EasyAdminBundle'))->setHelp(t('notice.userlang_help', domain: 'EasyAdminBundle'))->hideOnIndex()
-        ->setChoices($langList)->allowMultipleChoices()->renderAsBadges()->setFormTypeOption('autocomplete',true)->setRequired(true);
+        ->setChoices($langList)->allowMultipleChoices()->renderAsBadges()->setFormTypeOption('autocomplete',true);
       yield Field\TextEditorField::new('objectif',t('notice.objectif', domain: 'EasyAdminBundle'))->setHelp(t('notice.objectif_help', domain: 'EasyAdminBundle'))->hideOnIndex()->formatValue(function ($value, $entity) { return $value;});
       yield Field\TextField::new('champExt1',"Champ d'extension 1")->hideOnIndex(); yield Field\TextField::new('champExt2',"Champ d'extension 2")->hideOnIndex();
       yield Field\TextField::new('champExt3',"Champ d'extension 3")->hideOnIndex(); yield Field\TextField::new('champExt4',"Champ d'extension 4")->hideOnIndex();
@@ -242,7 +242,6 @@ class NoticeCrudController extends AbstractCrudController
         ->onlyOnForms()
         ->setLabel(false);
       yield EntityField::new('deweyPersos', 'Dewey personnalisés')
-        ->setFormTypeOption('choice_label', 'nom')
         ->setFormTypeOption('multiple', true)
         ->setFormTypeOption('autocomplete', true)
         ->onlyOnForms();
@@ -690,14 +689,7 @@ class NoticeCrudController extends AbstractCrudController
     }
     $labels = [];
     foreach ($collection as $item) {
-      // Pour les auteurs, afficher prénom + nom
-      if (method_exists($item, 'getPrenom') && method_exists($item, 'getNom')) {
-        $labels[] = trim($item->getPrenom() . ' ' . $item->getNom());
-      }
-      // Pour les autres entités, utiliser getNom() ou toString()
-      else {
-        $labels[] = method_exists($item, 'getNom') ? $item->getNom() : (string)$item;
-      }
+      $labels[] = method_exists($item, 'getNom') ? $item->getNom() : (string)$item;
     }
     return $labels;
   }
