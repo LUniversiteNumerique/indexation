@@ -300,38 +300,35 @@ class ImportNoticeXmlCommand extends Command
         $roleNotice["publisher"] = [];
       }
 
-      // Récupère tous les noms d'établissement à partir des publishers structurés
-      $publisherNames = [];
       foreach ($roleNotice["publisher"] as $publisherInfo) {
-        // Prend d'abord ORG si présent, sinon le nom complet
         $org = trim($publisherInfo['org'] ?? '');
-        $name = trim($publisherInfo['name'] ?? '');
+        $fn = trim($publisherInfo['fn'] ?? '');
+
+        $etablissementTrouve = null;
+
+        // Test 1 : Recherche avec ORG d'abord
         if ($org !== '') {
-          $publisherNames[] = $org;
-        } elseif ($name !== '') {
-          $publisherNames[] = $name;
+          $etablissementTrouve = $this->etabRep->findOneBy(['nom' => $org]);
         }
-      }
-      $publisherNames = array_unique($publisherNames);
 
-      // Récupérer les établissements trouvés en base
-      $etablissementsTrouves = $this->etabRep->findBy(['nom' => $publisherNames]);
-      $nomsEtablissementsTrouves = [];
+        // Test 2 : Si pas trouvé avec ORG, essayer avec FN
+        if (!$etablissementTrouve && $fn !== '') {
+          $etablissementTrouve = $this->etabRep->findOneBy(['nom' => $fn]);
+        }
 
-      foreach ($etablissementsTrouves as $etab) {
-        $notice->addPorteur($etab);
-        $nomsEtablissementsTrouves[] = $etab->getNom(); // Supposant que vous avez une méthode getNom()
-      }
-
-      // Identifier les établissements non trouvés
-      $etablissementsNonTrouves = array_diff($publisherNames, $nomsEtablissementsTrouves);
-
-      // Ajouter les établissements non trouvés à votre liste
-      foreach ($etablissementsNonTrouves as $nomNonTrouve) {
-        $notfoundPorteur[] = [
-          'nom' => $nomNonTrouve,
-          'nameFile' => $file->getFilename()
-        ];
+        // Traitement du résultat
+        if ($etablissementTrouve) {
+          $notice->addPorteur($etablissementTrouve);
+        } else {
+          // Prendre ORG en priorité, sinon FN
+          $nomNonTrouve = $org !== '' ? $org : $fn;
+          if ($nomNonTrouve !== '') {
+            $notfoundPorteur[] = [
+              'nom' => $nomNonTrouve,
+              'nameFile' => $file->getFilename()
+            ];
+          }
+        }
       }
 
       $motcles = array_map(fn(Motcle $s) => trim($s->string?->value), $item->general?->keywords);
@@ -545,7 +542,7 @@ class ImportNoticeXmlCommand extends Command
                 if (!$existPerso && !$existDeweRep) {
                   $deweyPerso = new DeweyPerso();
                   $deweyPerso->setCode($code);
-                  $deweyPerso->setNom($id. " - " .$spec);
+                  $deweyPerso->setNom($spec);
                   $this->em->persist($deweyPerso);
                   $this->em->flush();
                   $notice->addDeweyPerso($deweyPerso);
@@ -700,7 +697,7 @@ class ImportNoticeXmlCommand extends Command
       }
     }
 
-    $output->writeln("Suplom imported successfully ! count of suplom with creator not found : ". count($notfoundCreateur));
+    $output->writeln("Suplom imported successfully !");
     return Command::SUCCESS;
   }
 }
