@@ -305,7 +305,7 @@ function ajoutDeweyPerso() {
             if (!exists) {
               const opt = document.createElement("option");
               opt.value = data.id;
-              opt.text = data.nom;
+              opt.text = code + ' - ' + data.nom;
               opt.selected = true;
               select.appendChild(opt);
             }

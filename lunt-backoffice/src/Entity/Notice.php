@@ -8,6 +8,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\{Uid\Uuid,Validator\Constraints as Assert};
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: NoticeRepository::class)]
 class Notice
@@ -17,10 +18,16 @@ class Notice
     #[ORM\Column(type: "string", length: 128, unique: true)]
     private ?string $uuid = null;
 
-    #[ORM\Column(length: 285), Assert\NotBlank]
-    private ?string $ressUrl, $titre = null;
+    #[ORM\Column(length: 285, nullable: true)]
+    #[Assert\NotNull(message: 'La notice doit contenir au moins 1 titre.')]
+    private ?string $titre = null;
 
-    #[ORM\Column(type: Types::TEXT), Assert\NotNull]
+  #[ORM\Column(length: 285, nullable: true)]
+  #[Assert\NotNull(message: 'La notice doit contenir au moins 1 Contenu Url.')]
+  private ?string $ressUrl = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Assert\NotNull(message: 'La notice doit contenir au moins 1 desciption.')]
     private ?string $description = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -41,17 +48,25 @@ class Notice
     #[ORM\Column(nullable: true)]
     private ?array $propUser = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(nullable: true),
+      Assert\Count(min: 1,
+        minMessage: 'La notice doit contenir au moins 1 Langue de l\'utilisateur ou plus.'
+      )
+    ]
     private ?array $userLang = null;
 
     #[ORM\Column(nullable: true),
-        Assert\Count(min: 1)]
+        Assert\Count(min: 1,
+          minMessage: 'La notice doit contenir au moins 1 langue de la ressource ou plus.'
+        )
+    ]
     private ?array $ressLang = null;
 
     #[ORM\Column(nullable: true)]
     private ?float $ressSize = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotNull(message: 'La notice doit contenir au moins 1 année de création.')]
     private ?int $ressDate = null;
     private ?string $ressZip = null;
 
@@ -71,8 +86,8 @@ class Notice
     #[ORM\Column(length: 255, nullable: true),Assert\Url]
     private ?string $formEvalUrl = null;
 
-    #[ORM\ManyToOne, Assert\NotNull,
-        ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne, ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull(message: 'La notice doit contenir au moins 1 Licence et conditions d\'utilisation.')]
     private ?Licence $droit = null;
 
     #[ORM\ManyToOne] private ?Dossier $repertoire = null;
@@ -84,27 +99,45 @@ class Notice
     private Collection $specialites;
 
     #[ORM\ManyToMany(targetEntity: Etablissement::class),
-        Assert\Count(min: 1)]
+        Assert\Count(min: 1,
+          minMessage: 'La notice doit contenir au moins 1 établissement porteur ou plus.'
+        )
+    ]
     private Collection $porteurs;
 
     #[ORM\ManyToMany(targetEntity: Auteur::class, cascade: ['persist']),
-        Assert\Count(min: 1)]
+        Assert\Count(min: 1,
+          minMessage: 'La notice doit contenir au moins 1 auteur ou plus.'
+        )
+    ]
     private Collection $auteurs;
 
     #[ORM\ManyToMany(targetEntity: TDocument::class),
-        Assert\Count(min: 1)]
+        Assert\Count(min: 1,
+          minMessage: 'La notice doit contenir au moins 1 type documentaire ou plus.'
+        )
+    ]
     private Collection $docTypes;
 
     #[ORM\ManyToMany(targetEntity: TPedagogie::class),
-        Assert\Count(min: 1)]
+        Assert\Count(min: 1,
+          minMessage: 'La notice doit contenir au moins 1 type pédagogique ou plus.'
+        )
+    ]
     private Collection $pedTypes;
 
     #[ORM\ManyToMany(targetEntity: Niveau::class),
-        Assert\Count(min: 1)]
+        Assert\Count(min: 1,
+          minMessage: 'La notice doit contenir au moins 1 niveau du public cible ou plus.'
+        )
+    ]
     private Collection $niveaux;
 
     #[ORM\ManyToMany(targetEntity: Keyword::class, cascade: ['persist']),
-        Assert\Count(min: 1)]
+        Assert\Count(min: 1,
+          minMessage: 'La notice doit contenir au moins 1 mots-clé ou plus.'
+        )
+    ]
     private Collection $tags;
 
     #[ORM\ManyToMany(targetEntity: self::class, cascade: ['all'])]
@@ -119,12 +152,13 @@ class Notice
     private Collection $deweyPersos;
 
     #[ORM\OneToMany(mappedBy: 'notice', targetEntity: DisciplineGroup::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[Assert\Count(min: 1)]
+    #[Assert\Count(min: 1,
+      minMessage: 'La notice doit contenir au moins 1 sous-discipline ou plus.'
+    )]
     #[Assert\Valid]
     private Collection $disciplineGroups;
 
     #[ORM\OneToMany(mappedBy: 'notice', targetEntity: DeweyGroup::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[Assert\Count(min: 1)]
     #[Assert\Valid]
     private Collection $deweyGroups;
 
@@ -911,5 +945,24 @@ class Notice
         $codeDew = $this->getAllDewey();
         if (!$codeDew) return '<span class="badge bg-secondary">Aucune</span>';
         return implode('<br>', array_map(fn($s) => '<span class="badge badge-custom">'.$s->getNom().'</span>', $codeDew));
+    }
+
+    #[Assert\Callback]
+    public function validateDeweyGroups(ExecutionContextInterface $context): void
+    {
+      // Seuls les états "Soumise" et "Validée" nécessitent des classifications Dewey
+      $etatsNecessitantDewey = [NoticEtat::Forward, NoticEtat::Approved];
+
+      if (in_array($this->etat, $etatsNecessitantDewey)) {
+        $hasClassificationDewey = $this->deweyGroups->count() > 0 || $this->deweyPersos->count() > 0;
+
+        if (!$hasClassificationDewey) {
+          $labelEtat = $this->etat->getLabel();
+          $context->buildViolation('Une notice "{{ etat }}" doit avoir au moins une classification Dewey (groupe ou personnalisé)')
+            ->setParameter('{{ etat }}', $labelEtat)
+            ->atPath('deweyGroups')
+            ->addViolation();
+        }
+      }
     }
 }

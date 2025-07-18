@@ -24,5 +24,17 @@ class DeweyPerso
   public function getNom(): ?string { return $this->nom; }
   public function setNom(string $nom): static { $this->nom = $nom; return $this; }
 
-  public function __toString(): string { return $this->nom ?? ''; }
+  public function __toString(): string
+  {
+    $numero = '';
+    $parts = explode('/', trim($this->code, '/'));
+
+    $classIndex = array_search('class', $parts);
+    // recupère l'élément après class dans l'url
+    if ($classIndex !== false && isset($parts[$classIndex + 1])) {
+      $numero = $parts[$classIndex + 1];
+    }
+
+    return $numero . ' - ' . $this->nom;
+  }
 }
