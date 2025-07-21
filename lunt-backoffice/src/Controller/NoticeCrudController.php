@@ -301,7 +301,7 @@ class NoticeCrudController extends AbstractCrudController
       ->leftJoin('entity.repertoire','d')->leftJoin('entity.codeweys','e')->leftJoin('entity.ressources','r')->leftJoin('entity.tags','k')
       ->leftJoin('entity.porteurs','p')->leftJoin('entity.auteurs','a')->leftJoin('entity.niveaux','n')
       ->leftJoin('entity.docTypes','dd')->leftJoin('entity.pedTypes','pp')->leftJoin('entity.specialites','s')->join('entity.droit','l')
-      ->join('entity.disciplineGroups','dg')
+      ->leftjoin('entity.disciplineGroups','dg')
       ->leftJoin('dg.specialites', 'sp')
       ->leftJoin('entity.deweyGroups', 'dgw')
       ->leftJoin('dgw.codeweys', 'dpw')

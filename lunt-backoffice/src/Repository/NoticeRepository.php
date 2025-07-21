@@ -52,7 +52,7 @@ class NoticeRepository extends ServiceEntityRepository
       ->select('n,a,e,dg,s,dgw,dpw,dp')
       ->leftJoin('n.auteurs','a')
       ->leftJoin('n.codeweys','e')
-      ->join('n.disciplineGroups', 'dg')
+      ->leftJoin('n.disciplineGroups', 'dg')
       ->leftJoin('dg.specialites', 's')
       ->leftJoin('n.deweyGroups', 'dgw')
       ->leftJoin('dgw.codeweys', 'dpw')
@@ -67,9 +67,8 @@ class NoticeRepository extends ServiceEntityRepository
         ->andWhere('cd in (:champs)')
         ->setParameter('champs', $unt->getFields());
     }
-
-        return $qb->orderBy('n.creeLe', 'DESC')->setMaxResults($limit)->getQuery()->getResult();
-    }
+    return $qb->orderBy('n.creeLe', 'DESC')->setMaxResults($limit)->getQuery()->getResult();
+  }
 
     public function add(Notice $n=null): ?Notice
     {
