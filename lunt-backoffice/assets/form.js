@@ -101,7 +101,7 @@ const initializeNewSelectGroup = (index) => {
       champ.classList.add('initialized');
       // Désactive les sélecteurs discipline et spécialités
       if(disci.options.length === 0){
-        disci.add(new Option('Sélectionner un champ disciplinaire', ''));
+        disci.add(new Option('Sélectionner la disicipline', ''));
       }
       if(speci.options.length === 0){
         speci.add(new Option('', ''));
@@ -151,7 +151,7 @@ const changeOptions = (form, champId, disciId, speciId) => {
     form_select_champ.addEventListener('change', async ({ target }) => {
       // Réinitialise discipline et spécialités à chaque changement de champDisc
       form_select_disci.innerHTML = '';
-      form_select_disci.add(new Option('Sélectionner un champ disciplinaire', ''));
+      form_select_disci.add(new Option('Sélectionner la disicipline', ''));
       form_select_speci.innerHTML = '';
       form_select_speci.add(new Option('', ''));
       // Puis met à jour discipline et spécialités si besoin
