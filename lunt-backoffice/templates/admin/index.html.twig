@@ -49,21 +49,13 @@
                         <td>{{ entity.titre }}</td>
                         <td>
                             {% for key,value in entity.auteurs %}
-                                <span class="badge badge-custom">{{ value }}</span>
+                                <span class="badge badge-custom">{{ value }}</span><br>
                             {% endfor %}
                         </td>
                         <td><a target="_blank" rel="noopener" href="{{ entity.ressUrl }}">{{ entity.ressUrl|slice(0, 15) }}...</a></td>
-                        <td>
-                            {% for key,value in entity.specialites %}
-                                <span class="badge badge-custom">{{ value|slice(0, 30) }}...</span>
-                            {% endfor %}
-                        </td>
+                        <td>{{ entity.getAllSpecialitesString()|raw }}</td>
                         <td><time datetime="{{ entity.editeLe|date('c') }}" title="{{ entity.editeLe|date('r') }}">{{ entity.editeLe|date("d/m/Y") }}</time></td>
-                        <td>
-                            {% for key,value in entity.codeweys %}
-                                <span class="badge badge-custom">{{ value }}</span>
-                            {% endfor %}
-                        </td>
+                        <td>{{ entity.getAllDeweyString()|raw }}</td>
                         <td><div class="ea-lightbox-thumbnail">
                             {% if entity.vignette %}<img src="{{ asset('uploads/images/'~entity.vignette) }}">{% endif %}
                         </div></td>
