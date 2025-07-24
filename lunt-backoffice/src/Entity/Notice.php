@@ -916,6 +916,30 @@ class Notice
         if (!$codeDew) return '<span class="badge bg-secondary">Aucune</span>';
         return implode('<br>', array_map(fn($s) => '<span class="badge badge-custom">'.$s->getNom().'</span>', $codeDew));
     }
+    public function getAllDeweyGroup(): array
+    {
+      $codeweys = [];
+      // Ajoute les Dewey classiques via les groupes
+      foreach ($this->getDeweyGroups() as $group) {
+        foreach ($group->getCodeweys() as $code) {
+          if (!in_array($code, $codeweys, true)) {
+            $codeweys[] = $code;
+          }
+        }
+      }
+      return $codeweys;
+    }
+    public function getAllDeweyPerso(): array
+    {
+      $codeweys = [];
+      // Ajoute les DeweyPerso sélectionnés
+      foreach ($this->getDeweyPersos() as $perso) {
+        if (!in_array($perso, $codeweys, true)) {
+          $codeweys[] = $perso;
+        }
+      }
+      return $codeweys;
+    }
 
     #[Assert\Callback]
     public function validateDeweyGroups(ExecutionContextInterface $context): void
