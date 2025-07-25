@@ -2,7 +2,7 @@
 
 namespace App\Entity\Dto;
 
-use App\Entity\{Auteur, Dewey, Discipline, Notice, NoticEtat, Univerique};
+use App\Entity\{Auteur, Dewey, DeweyGroup, DeweyPerso, Discipline, DisciplineGroup, Notice, NoticEtat, Univerique};
 use JMS\Serializer\Annotation as Jms;
 
 #[Jms\XmlRoot("doc")]
@@ -12,7 +12,11 @@ class IndexingNotice
 
     static function fromNotice(Notice $notice, Univerique $core): IndexingNotice
     {
-        $user = $notice->getCreateur(); $dewe = $notice->getCodeweys(); $disc = $notice->getSpecialites();
+        $user = $notice->getCreateur();
+        $deweyGroups = $notice->getDeweyGroups();
+        $disciplineGroups = $notice->getDisciplineGroups();
+        $dewePerso = $notice->getDeweyPersos();
+
         return new self([
             new Field('uuid', $notice->getUuid()),
             new Field('titre', $notice->getTitre()),
@@ -33,9 +37,16 @@ class IndexingNotice
             new Field('types_pedagogiques', implode(",", $notice->getPedTypes()->toArray())),
             new Field('types_documentaires', implode(",", $notice->getDocTypes()->toArray())),
             new Field('proposition_utilisation', implode(";",(array)$notice->getPropUser())),
-            new Field('dewey', json_encode(array_map(fn(Dewey $d) => ["id"=>$d->getCode(), "libelle"=>$d->getNom()],$dewe->toArray()))),
-            new Field('specialites', json_encode(array_map(fn(Discipline $d) => sprintf("%s - %s", $d->getParent(), $d->getNom()),$disc->toArray()))),
-            //new Field('domaines', sprintf("%s/%s/%s",$disc?->getParent()?->getParent(),$disc?->getParent(), $disc)),
+            new Field('dewey', json_encode(array_map(function(DeweyGroup $group) {
+              return ["id" => $group->getDewey()?->getCode(), "libelle" => $group->getDewey()?->getNom()];
+            }, $deweyGroups->toArray()))),
+            new Field('deweyPerso', json_encode(array_map(fn(DeweyPerso $d) => ["id"=>$d->getCode(), "libelle"=>$d->getNom()], $dewePerso->toArray()))),
+            new Field('specialites', json_encode(array_merge(...array_map(function(DisciplineGroup $group) {
+              return array_map(fn(Discipline $spec) => [
+                "id" => $spec->getCode(),
+                "libelle" => $spec->getNom()
+              ], $group->getSpecialites()->toArray());
+            }, $disciplineGroups->toArray())))),
             new Field('correspondant', json_encode(["nom"=>$user?->getName(), "email"=>$user->getEmail(), "etablissement"=>$user->getSchool()])),
             new Field('contributions', json_encode(array_map(fn(Auteur $a) => ["prenom"=>$a->getPrenom(), "nom"=>$a->getNom(), "email"=>$a->getEmail()??''],$notice->getAuteurs()->toArray()))),
             new Field('associations_associate', json_encode(array_map(fn(Notice $n) => ["id"=>$n->getId(),"uuid"=>$n->getUuid(),"titre"=>$n->getTitre()], $notice->getRessources()->filter(fn(Notice $n) => !$n->isDeleted() && $n->getEtat()===NoticEtat::Approved)->toArray()))),

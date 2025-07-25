@@ -33,30 +33,42 @@ class NoticeRepository extends ServiceEntityRepository
 
     public function findFrom(IndexingConfig $cfg, int $limit=20, int $offset=0): array
     {
-        $qr = $this->createQueryBuilder('n')->leftJoin('n.specialites','s')
+        $qr = $this->createQueryBuilder('n')->join('n.disciplineGroups','dg')
             ->leftJoin('n.codeweys','e')->leftJoin('n.ressources','r')->leftJoin('n.tags','k')
             ->leftJoin('n.porteurs','p')->leftJoin('n.auteurs','a')->leftJoin('n.niveaux','t')
             ->leftJoin('n.docTypes','dd')->leftJoin('n.pedTypes','pp')->join('n.droit','l')
-            ->join('s.parent', 'u')->where('n.etat = :etat')->distinct();
+            ->join('dg.champDisc', 'cd')->where('n.etat = :etat')->distinct();
         if(!$cfg->isFullMode()) $qr->andWhere('n.publieLe is null AND n.editeLe > :date')->setParameter('date', $cfg->getScheduleAt());
         $qr->orWhere('n.etat != :etat AND n.publieLe is not null');
 
-        return $qr->andWhere("u.parent IN (:fields)")
+        return $qr->andWhere("cd IN (:fields)")
             ->setParameter("fields", $cfg->getIndexCore()?->getFields())->setParameter("etat", NoticEtat::Approved)
             ->setFirstResult($offset)->setMaxResults($limit)->getQuery()->getResult();
     }
 
-    public function findLatestBy(User $user, int $limit = 20): array
-    {
-        $qb = $this->createQueryBuilder('n')->select('n,a,e,s')
-            ->leftJoin('n.auteurs','a')->leftJoin('n.codeweys','e')->leftJoin('n.specialites', 's')
-            ->where('n.deleted = 0 AND n.etat = :etat')->setParameter('etat', NoticEtat::Approved);
+  public function findLatestBy(User $user, int $limit = 20): array
+  {
+    $qb = $this->createQueryBuilder('n')
+      ->select('n,a,e,dg,s,dgw,dpw,dp')
+      ->leftJoin('n.auteurs','a')
+      ->leftJoin('n.codeweys','e')
+      ->leftJoin('n.disciplineGroups', 'dg')
+      ->leftJoin('dg.specialites', 's')
+      ->leftJoin('n.deweyGroups', 'dgw')
+      ->leftJoin('dgw.codeweys', 'dpw')
+      ->leftJoin('n.deweyPersos', 'dp')
+      ->where('n.deleted = 0 AND n.etat = :etat')
+      ->setParameter('etat', NoticEtat::Approved);
 
-        if ($sch = $user->getSchool()) $qb->andWhere(':school MEMBER OF n.porteurs')->setParameter('school', $sch->getId());
-        elseif ($unt = $user->getUntheme()) $qb->join('s.parent', 'u')->andWhere('u.parent in (:champs)')->setParameter('champs', $unt->getFields());
-
-        return $qb->orderBy('n.creeLe', 'DESC')->setMaxResults($limit)->getQuery()->getResult();
+    if ($sch = $user->getSchool()) {
+      $qb->andWhere(':school MEMBER OF n.porteurs')->setParameter('school', $sch->getId());
+    } elseif ($unt = $user->getUntheme()) {
+      $qb->join('dg.champDisc', 'cd')
+        ->andWhere('cd in (:champs)')
+        ->setParameter('champs', $unt->getFields());
     }
+    return $qb->orderBy('n.creeLe', 'DESC')->setMaxResults($limit)->getQuery()->getResult();
+  }
 
     public function add(Notice $n=null): ?Notice
     {
@@ -89,8 +101,8 @@ class NoticeRepository extends ServiceEntityRepository
             $qb->setParameter('school', $sch->getId());
             $andX->add(':school MEMBER OF n.porteurs');
         } elseif ($unt = $u->getUntheme()) {
-            $qb->join('n.specialites', 's')->join('s.parent', 'u')->setParameter('champs', $unt->getFields());
-            $andX->add('u.parent in (:champs)');
+          $qb->join('n.disciplineGroups', 'dg')->join('dg.champDisc', 'cd')->setParameter('champs', $unt->getFields());
+          $andX->add('cd in (:champs)');
         }
 
         return $qb->andWhere($qb->expr()->orX(

@@ -2,7 +2,17 @@
 
 namespace App\Entity\Dto;
 
-use App\Entity\{Auteur, Dewey, Discipline, Keyword, Niveau, Notice, TDocument, TPedagogie};
+use App\Entity\{Auteur,
+  Dewey,
+  DeweyGroup,
+  DeweyPerso,
+  Discipline,
+  DisciplineGroup,
+  Keyword,
+  Niveau,
+  Notice,
+  TDocument,
+  TPedagogie};
 use JMS\Serializer\Annotation as Jms;
 
 #[Jms\XmlRoot("lom:lom"),
@@ -28,14 +38,15 @@ class SuplomDto {
     static function create(Notice $n): SuplomDto
     {
         $lang = current($n->getRessLang())??'fre'; $creat = $n->getCreateur(); $valid = $n->getValidateur();
-        $discs = array_map(fn(Discipline $d) => new Taxon($d->getId(), [new Field($lang, $d->getNom())]), $n->getSpecialites()?->toArray());
-        $dewey = array_map(fn(Dewey $d) => new Taxon($d->getId(), [new Field($lang, $d->getNom())]), $n->getCodeweys()?->toArray());
-
+        $discs = array_map(fn(Discipline $d) => new Taxon($d->getId(), [new Field($lang, $d->getNom())]), $n->getAllSpecialites());
+        $dewey = array_map(fn(Dewey $d) => new Taxon($d->getCode(), [new Field($lang, $d->getNom())]), $n->getAllDeweyGroup());
+        $deweyPerso = array_map(fn(DeweyPerso $d) => new Taxon($d->getCode(), [new Field($lang, $d->getNom())]), $n->getAllDeweyPerso());
         return new self(
             new General(
                 new Catalog('URI', self::RESOURCE_URI .$n->getUuid()), [new Field($lang, $n->getTitre())], [new Field($lang, $n->getDescription())],
                 array_map(fn(Keyword $k) => new Motcle(new Field($lang, $k->getNom())), $n->getTags()->toArray()),
-                array_map(fn(TDocument $d) => new Source('LOMFRv1.0',$d->getCode()), $n->getDocTypes()->toArray()),
+                array_map(fn(TDocument $d) => new Sources('LOMFRv1.0',$d->getCode()), $n->getDocTypes()->toArray()),
+                array_map(fn(TDocument $d) => new Sources('LOMv1.0',$d->getCode()), $n->getDocTypes()->toArray()),
                 $n->getRessLang()
             ),
             new LifeCycle([new Field($lang, "Première version")], new Source('LOMv1.0',"final"),
@@ -55,8 +66,8 @@ class SuplomDto {
             new Right(new Source('LOMFRv1.0',$n->isRessPayant()?'Yes':'No'),new Source('LOMFRv1.0',$n->isProprIntel()?'Yes':'No'), [new Field($lang, $n->getDroit()??"")]),
             array_map(fn(Notice $r) => new Relation(new Source('LOMFRv1.0',"ispartof"), new Resource(new Catalog('URI',$r->getUuid()), array_map(fn(string $lang) => new Field($lang,$r->getTitre()),$r->getRessLang()))),$n->getRessources()->toArray()),
             [
-                new Classification(new Source('LOMv1.0',"discipline"), new TaxonPath([new Field($lang, 'Classification UVHC')], $discs)),
-                new Classification(new Source('LOMv1.0',"dewey"), new TaxonPath([new Field($lang, 'CDD 22e éd.')], $dewey)),
+                new Classification(new Source('LOMv1.0',"discipline"), new TaxonPath([new Field($lang, 'Classification UOH')], $discs)),
+                new Classification(new Source('LOMv1.0',"dewey"), new TaxonPath([new Field($lang, 'CDD 22e éd.')], array_merge($dewey,$deweyPerso))),
                 new Classification(new Source('LOMv1.0',"pedagogie"), null, [new Motcle(new Field($lang, $n->getObjectif()??""))]),
             ]
         );

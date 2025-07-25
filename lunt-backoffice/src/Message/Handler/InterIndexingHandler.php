@@ -67,15 +67,46 @@ readonly class InterIndexingHandler
 
     private function push(array $sources, Univerique $unt): string
     {
-        $itemSF = []; $itemDC = []; $itemSP = ""; $index = $unt->getName();
-        foreach ($sources as $notice) {
-            $itemSP .= preg_replace('/<\?xml.*?\?>/', '', $this->js->serialize(IndexingNotice::fromNotice($notice, $unt), 'xml')); //SolrPivotBuildingAnalyzer
-            $itemDC[sprintf("dc_%s.xml", $notice->getUuid())] = $this->js->serialize(OaidcDto::create($notice), 'xml'); //DublinCoreExportAnalyzer
-            $itemSF[sprintf("sf_%s.xml", $notice->getUuid())] = $this->js->serialize(SuplomDto::create($notice), 'xml'); //SuplomfrExportAnalyzer
-        }
+      $index = $unt->getName();
+      $itemSF = [];
+      $itemSP = "";
+      $itemOaiDC = [];
+      $itemOaiSF = [];
 
-        $this->fs->writeFilesTo($itemDC, "oai/$index/");
-        $this->fs->writeFilesTo($itemSF, "suplom/$index/");
-        return "<add>$itemSP</add>";
+      foreach ($sources as $notice) {
+        $checkOai = $notice->isExportOAI();
+        $indexingNotice = IndexingNotice::fromNotice($notice, $unt);
+        $xmlContent = $this->js->serialize($indexingNotice, 'xml');
+        $cleanXml = preg_replace('/<\?xml.*?\?>/', '', $xmlContent);
+        $itemSP .= $cleanXml;
+        // Utilisé pour les notices dont l’UUID ne respecte pas le format standard
+        if(str_contains($notice->getuuid(), "http://")){
+          $parts = explode('/uid/', $notice->getUuid());
+          $uuid = end($parts);
+          $dcKey = sprintf("dc_%s.xml", $uuid);
+          $sfKey = sprintf("sf_%s.xml", $uuid);
+        } else {
+          $dcKey = sprintf("dc_%s.xml", $notice->getUuid());
+          $sfKey = sprintf("sf_%s.xml", $notice->getUuid());
+        }
+        if ($checkOai) {
+          $oaidcOaiDto = OaidcDto::create($notice);
+          $itemOaiDC[$dcKey] = $this->js->serialize($oaidcOaiDto, 'xml');
+          $suplomOaiDto = SuplomDto::create($notice);
+          $itemOaiSF[$sfKey] = $this->js->serialize($suplomOaiDto, 'xml');
+        }
+        $suplomDto = SuplomDto::create($notice);
+        $itemSF[$sfKey] = $this->js->serialize($suplomDto, 'xml');
+      }
+      // Indexation oai et suplom JOAI
+      $suplomJoaiPath = "XML/$index/suplomfr/";
+      $this->fs->writeFilesTo($itemOaiSF, $suplomJoaiPath);
+      $oaiJoaiPath = "XML/$index/oai_dc/";
+      $this->fs->writeFilesTo($itemOaiDC, $oaiJoaiPath);
+      // Indexation suplom solr
+      $suplomPath = "suplom/$index/";
+      $this->fs->writeFilesTo($itemSF, $suplomPath);
+
+      return "<add>$itemSP</add>";
     }
 }

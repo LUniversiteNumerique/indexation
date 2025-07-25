@@ -19,15 +19,15 @@ class Notice
     private ?string $uuid = null;
 
     #[ORM\Column(length: 285, nullable: true)]
-    #[Assert\NotNull(message: 'La notice doit contenir au moins 1 titre.')]
+    #[Assert\NotNull(message: 'La notice doit contenir un titre.')]
     private ?string $titre = null;
 
   #[ORM\Column(length: 285, nullable: true)]
-  #[Assert\NotNull(message: 'La notice doit contenir au moins 1 Contenu Url.')]
+  #[Assert\NotNull(message: 'La notice doit contenir un Contenu Url.')]
   private ?string $ressUrl = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Assert\NotNull(message: 'La notice doit contenir au moins 1 desciption.')]
+    #[Assert\NotNull(message: 'La notice doit contenir une desciption.')]
     private ?string $description = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -48,25 +48,16 @@ class Notice
     #[ORM\Column(nullable: true)]
     private ?array $propUser = null;
 
-    #[ORM\Column(nullable: true),
-      Assert\Count(min: 1,
-        minMessage: 'La notice doit contenir au moins 1 Langue de l\'utilisateur ou plus.'
-      )
-    ]
+    #[ORM\Column(nullable: true)]
     private ?array $userLang = null;
 
-    #[ORM\Column(nullable: true),
-        Assert\Count(min: 1,
-          minMessage: 'La notice doit contenir au moins 1 langue de la ressource ou plus.'
-        )
-    ]
+    #[ORM\Column(nullable: true), Assert\Count(min: 1, minMessage: 'La notice doit contenir au moins une langue de la ressource.')]
     private ?array $ressLang = null;
 
     #[ORM\Column(nullable: true)]
     private ?float $ressSize = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\NotNull(message: 'La notice doit contenir au moins 1 année de création.')]
+    #[ORM\Column(length: 255, nullable: true),Assert\NotNull(message: 'La notice doit contenir une année de création.')]
     private ?int $ressDate = null;
     private ?string $ressZip = null;
 
@@ -87,7 +78,7 @@ class Notice
     private ?string $formEvalUrl = null;
 
     #[ORM\ManyToOne, ORM\JoinColumn(nullable: false)]
-    #[Assert\NotNull(message: 'La notice doit contenir au moins 1 Licence et conditions d\'utilisation.')]
+    #[Assert\NotNull(message: 'La notice doit contenir une Licence et conditions d\'utilisation.')]
     private ?Licence $droit = null;
 
     #[ORM\ManyToOne] private ?Dossier $repertoire = null;
@@ -98,46 +89,22 @@ class Notice
     #[ORM\ManyToMany(targetEntity: Discipline::class)]
     private Collection $specialites;
 
-    #[ORM\ManyToMany(targetEntity: Etablissement::class),
-        Assert\Count(min: 1,
-          minMessage: 'La notice doit contenir au moins 1 établissement porteur ou plus.'
-        )
-    ]
+    #[ORM\ManyToMany(targetEntity: Etablissement::class), Assert\Count(min: 1, minMessage: 'La notice doit contenir au moins un établissement porteur.')]
     private Collection $porteurs;
 
-    #[ORM\ManyToMany(targetEntity: Auteur::class, cascade: ['persist']),
-        Assert\Count(min: 1,
-          minMessage: 'La notice doit contenir au moins 1 auteur ou plus.'
-        )
-    ]
+    #[ORM\ManyToMany(targetEntity: Auteur::class, cascade: ['persist']), Assert\Count(min: 1, minMessage: 'La notice doit contenir au moins un auteur.')]
     private Collection $auteurs;
 
-    #[ORM\ManyToMany(targetEntity: TDocument::class),
-        Assert\Count(min: 1,
-          minMessage: 'La notice doit contenir au moins 1 type documentaire ou plus.'
-        )
-    ]
+    #[ORM\ManyToMany(targetEntity: TDocument::class), Assert\Count(min: 1, minMessage: 'La notice doit contenir au moins un type documentaire.')]
     private Collection $docTypes;
 
-    #[ORM\ManyToMany(targetEntity: TPedagogie::class),
-        Assert\Count(min: 1,
-          minMessage: 'La notice doit contenir au moins 1 type pédagogique ou plus.'
-        )
-    ]
+    #[ORM\ManyToMany(targetEntity: TPedagogie::class), Assert\Count(min: 1, minMessage: 'La notice doit contenir au moins un type pédagogique.')]
     private Collection $pedTypes;
 
-    #[ORM\ManyToMany(targetEntity: Niveau::class),
-        Assert\Count(min: 1,
-          minMessage: 'La notice doit contenir au moins 1 niveau du public cible ou plus.'
-        )
-    ]
+    #[ORM\ManyToMany(targetEntity: Niveau::class), Assert\Count(min: 1, minMessage: 'La notice doit contenir au moins un niveau du public cible.')]
     private Collection $niveaux;
 
-    #[ORM\ManyToMany(targetEntity: Keyword::class, cascade: ['persist']),
-        Assert\Count(min: 1,
-          minMessage: 'La notice doit contenir au moins 1 mots-clé ou plus.'
-        )
-    ]
+    #[ORM\ManyToMany(targetEntity: Keyword::class, cascade: ['persist']), Assert\Count(min: 1, minMessage: 'La notice doit contenir au moins un mots-clé.')]
     private Collection $tags;
 
     #[ORM\ManyToMany(targetEntity: self::class, cascade: ['all'])]
@@ -152,9 +119,7 @@ class Notice
     private Collection $deweyPersos;
 
     #[ORM\OneToMany(mappedBy: 'notice', targetEntity: DisciplineGroup::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[Assert\Count(min: 1,
-      minMessage: 'La notice doit contenir au moins 1 sous-discipline ou plus.'
-    )]
+    #[Assert\Count(min: 1, minMessage: 'La notice doit contenir au moins une sous-discipline.')]
     #[Assert\Valid]
     private Collection $disciplineGroups;
 
@@ -873,14 +838,19 @@ class Notice
      */
     public function belongsToUNT(Univerique $unt): bool
     {
-        if($this->getSpecialites()->isEmpty()) return false; else {
-            // Extract IDs of the fields (disciplines) associated with the Univerique
-            $untFieldIds = $unt->getFields()->map(fn($discipline) => $discipline->getId());
-            $specialites = $this->getSpecialites()->map(fn(Discipline $spec) => $spec->getParent()?->getParent()?->getId());
+      if($this->getDisciplineGroups()->isEmpty()) return false;
 
-            // Check if the grandparent discipline is part of the Univerique's fields
-            return !empty(array_intersect($specialites->toArray(), $untFieldIds->toArray()));
+      // Extract IDs of the fields (disciplines) associated with the Univerique
+      $untFieldIds = $unt->getFields()->map(fn($discipline) => $discipline->getId());
+
+      // Check if any disciplineGroup's champDisc is part of the Univerique's fields
+      foreach ($this->getDisciplineGroups() as $group) {
+        if ($group->getChampDisc() && $untFieldIds->contains($group->getChampDisc()->getId())) {
+          return true;
         }
+      }
+
+      return false;
     }
 
   /**
@@ -945,6 +915,30 @@ class Notice
         $codeDew = $this->getAllDewey();
         if (!$codeDew) return '<span class="badge bg-secondary">Aucune</span>';
         return implode('<br>', array_map(fn($s) => '<span class="badge badge-custom">'.$s->getNom().'</span>', $codeDew));
+    }
+    public function getAllDeweyGroup(): array
+    {
+      $codeweys = [];
+      // Ajoute les Dewey classiques via les groupes
+      foreach ($this->getDeweyGroups() as $group) {
+        foreach ($group->getCodeweys() as $code) {
+          if (!in_array($code, $codeweys, true)) {
+            $codeweys[] = $code;
+          }
+        }
+      }
+      return $codeweys;
+    }
+    public function getAllDeweyPerso(): array
+    {
+      $codeweys = [];
+      // Ajoute les DeweyPerso sélectionnés
+      foreach ($this->getDeweyPersos() as $perso) {
+        if (!in_array($perso, $codeweys, true)) {
+          $codeweys[] = $perso;
+        }
+      }
+      return $codeweys;
     }
 
     #[Assert\Callback]

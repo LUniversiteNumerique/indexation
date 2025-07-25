@@ -90,8 +90,8 @@ readonly class LoggerSubscriber implements EventSubscriberInterface
         }
       }
 
-      $this->untLogger->notice(sprintf("%s demande de rectifier la notice %s", $user, $entity), [
-        'actionType'=> 'Rectification',
+      $this->untLogger->notice(sprintf("%s demande de soumettre la notice %s", $user, $entity), [
+        'actionType'=> 'Soumission',
         'ressType' => Notice::class,
         'ressInstance' => $entity->getId(),
         'userInstance' => $user->getId(),

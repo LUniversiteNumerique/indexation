@@ -297,18 +297,24 @@ class NoticeCrudController extends AbstractCrudController
   public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
   {
     /** @var User $user */$user = $this->getUser();
-    $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)->select('entity,d,e,r,k,p,a,n,dd,pp,l,s')
+    $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)->select('entity,d,e,r,k,p,a,n,dd,pp,l,s,dg,sp,dgw,dpw,dp')
       ->leftJoin('entity.repertoire','d')->leftJoin('entity.codeweys','e')->leftJoin('entity.ressources','r')->leftJoin('entity.tags','k')
       ->leftJoin('entity.porteurs','p')->leftJoin('entity.auteurs','a')->leftJoin('entity.niveaux','n')
-      ->leftJoin('entity.docTypes','dd')->leftJoin('entity.pedTypes','pp')->leftJoin('entity.specialites','s')->join('entity.droit','l');
+      ->leftJoin('entity.docTypes','dd')->leftJoin('entity.pedTypes','pp')->leftJoin('entity.specialites','s')->join('entity.droit','l')
+      ->leftjoin('entity.disciplineGroups','dg')
+      ->leftJoin('dg.specialites', 'sp')
+      ->leftJoin('entity.deweyGroups', 'dgw')
+      ->leftJoin('dgw.codeweys', 'dpw')
+      ->leftJoin('entity.deweyPersos', 'dp');
 
     $andX = $qb->expr()->andX('entity.etat != :etat');
     if ($sch = $user->getSchool()) {
       $qb->setParameter('school', $sch->getId());
       $andX->add(':school MEMBER OF entity.porteurs');
     } elseif ($unt = $user->getUntheme()) {
-      $qb->join('s.parent','u')->setParameter('champs', $unt->getFields());
-      $andX->add('u.parent in (:champs)');
+      $qb->join('dg.champDisc','cd')
+        ->setParameter('champs', $unt->getFields());
+      $andX->add('cd in (:champs)');
     }
     $qb->andWhere($qb->expr()->orX(
       $qb->expr()->eq('entity.createur',':user'), $andX
@@ -689,7 +695,12 @@ class NoticeCrudController extends AbstractCrudController
     }
     $labels = [];
     foreach ($collection as $item) {
-      $labels[] = method_exists($item, 'getNom') ? $item->getNom() : (string)$item;
+      if (method_exists($item, 'getPrenom') && method_exists($item, 'getNom')) {
+        $labels[] = trim($item->getPrenom() . ' ' . $item->getNom());
+      }
+      else {
+        $labels[] = method_exists($item, 'getNom') ? $item->getNom() : (string)$item;
+      }
     }
     return $labels;
   }
