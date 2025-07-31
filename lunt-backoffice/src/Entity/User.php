@@ -28,7 +28,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?string $password;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(nullable: false)]
     private ?bool $enabled = false;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -37,9 +37,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $tokenExpiresAt = null;
 
-    #[ORM\ManyToOne(targetEntity: Groupe::class, inversedBy: 'users'),
+    #[ORM\ManyToOne(inversedBy: 'users'), Assert\NotNull,
         Assert\Valid, Assert\Type(Groupe::class)]
-    private ?Groupe $group;
+    private ?Groupe $group = null;
 
     #[ORM\ManyToOne, Assert\Valid,
         Assert\Type(Univerique::class)]
@@ -48,10 +48,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne, Assert\Valid,
         Assert\Type(Etablissement::class)]
     private ?Etablissement $school = null;
+
     private array $roles = [self::ROLE_DEFAULT];
 
-    public function __construct(string $email=null, string $password=null, array $roles=[])
+    public function __construct(string $name=null, string $email=null, string $password=null, array $roles=[])
     {
+        $this->name = $name;
         $this->email = $email;
         $this->password = $password;
         if(!empty($roles)) $this->roles = $roles;

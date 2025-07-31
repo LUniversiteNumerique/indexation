@@ -2,28 +2,34 @@
 
 namespace App\Entity;
 
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Repository\AuteurRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: AuteurRepository::class)]
+#[
+    ORM\Entity(repositoryClass: AuteurRepository::class),
+    UniqueEntity(['prenom', 'nom'],'La combinaison du prénom et du nom renseignés existe déjà.')
+]
 class Auteur
 {
     use Timestamps;
 
     #[ORM\Column(length: 255), Assert\NotBlank]
-    private ?string $nom = null;
+    private ?string $nom;
 
     #[ORM\Column(length: 255),
         Assert\NotBlank, Assert\Length(max: 225)]
-    private ?string $prenom = null;
+    private ?string $prenom;
 
-    #[ORM\Column(length: 255),
-        Assert\NotNull, Assert\Email]
-    private ?string $email = null;
+    #[ORM\Column(length: 255, unique: true, nullable: true), Assert\Email]
+    private ?string $email;
 
-    public function __construct()
+    public function __construct(?string $nom=null,?string $prenom=null,?string $email=null)
     {
+        $this->nom = $nom;
+        $this->prenom = $prenom;
+        $this->email = $email;
         $this->creeLe = new \DateTimeImmutable();
     }
 

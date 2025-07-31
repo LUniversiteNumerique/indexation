@@ -4,13 +4,16 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    default_sender_email: noreply@indexation
+    unt_sender_email: "%env(string:default:default_sender_email:UNT_SENDER_EMAIL)%"
 
 services:
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-
+        bind:
+            $sorlConfig: '%env(string:SOLR_DEFAULT_CONF)%'
     serializer:
         alias: 'jms_serializer.serializer'
 
@@ -26,3 +29,12 @@ services:
     App\Field\Configurator\EntityConfigurator:
         tags:
             - { name: 'ea.field_configurator', priority: 0 }
+
+    App\Form\DisciplineGroupType:
+      arguments:
+        $em: '@doctrine.orm.entity_manager'
+
+    App\Form\DeweyGroupType:
+      arguments:
+        $em: '@doctrine.orm.entity_manager'
+      tags: ['form.type']

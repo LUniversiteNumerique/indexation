@@ -1,0 +1,261 @@
+<table>
+    <item>
+		<property key="id">grande_lecon</property>
+		<property key="libelle_import">grd_lesson</property>
+		<property key="libelle_uoh">Grande Leçon (type UOH)</property>
+		<property key="libelle_suplomfr">lecture</property>
+		<property key="libelle_uoh_tri">a</property>
+	</item>
+	<item>
+		<property key="id">essentiel</property>
+		<property key="libelle_import">essentiel</property>
+		<property key="libelle_uoh">Essentiel (type UOH)</property>
+		<property key="libelle_suplomfr">lecture</property>
+		<property key="libelle_uoh_tri">b</property>
+	</item>
+	<item>
+		<property key="id">etude_doc</property>
+		<property key="libelle_import">etude_doc</property>
+		<property key="libelle_uoh">Etude et document (type UOH)</property>
+		<property key="libelle_suplomfr">lecture</property>
+		<property key="libelle_uoh_tri">c</property>
+	</item>
+	<item>
+		<property key="id">conference</property>
+		<property key="libelle_import">conference</property>
+		<property key="libelle_uoh">Conférence, table ronde et entretien (type UOH)</property>
+		<property key="libelle_suplomfr">lecture</property>
+		<property key="libelle_uoh_tri">d</property>
+	</item>
+	<item>
+		<property key="id">index</property>
+		<property key="libelle_import">index</property>
+		<property key="libelle_uoh">Index</property>
+		<property key="libelle_suplomfr">index</property>
+		<property key="libelle_uoh_tri">n</property>
+	</item>
+	<item>
+		<property key="id">slide</property>
+		<property key="libelle_import">slide</property>
+		<property key="libelle_uoh">Diaporama</property>
+		<property key="libelle_suplomfr">slide</property>
+		<property key="libelle_uoh_tri">m</property>
+	</item>
+	<item>
+		<property key="id">experiment</property>
+		<property key="libelle_import">experiment</property>
+		<property key="libelle_uoh">Expérience</property>
+		<property key="libelle_suplomfr">experiment</property>
+		<property key="libelle_uoh_tri">l</property>
+	</item>
+	<item>
+		<property key="id">self_assesment</property>
+		<property key="libelle_import">self assessment</property>
+		<property key="libelle_uoh">Autoévaluation</property>
+		<property key="libelle_suplomfr">self assessment</property>
+		<property key="libelle_uoh_tri">f</property>
+	</item>
+	<item>
+		<property key="id">exercise</property>
+		<property key="libelle_import">exercise</property>
+		<property key="libelle_uoh">Exercice</property>
+		<property key="libelle_suplomfr">exercise</property>
+		<property key="libelle_uoh_tri">e</property>
+	</item>
+	<item>
+		<property key="id">glossaire</property>
+		<property key="libelle_import">glossaire</property>
+		<property key="libelle_uoh">Glossaire</property>
+		<property key="libelle_suplomfr">glossaire</property>
+		<property key="libelle_uoh_tri">h</property>
+	</item>
+	<item>
+		<property key="id">guide</property>
+		<property key="libelle_import">guide</property>
+		<property key="libelle_uoh">Guide pédagogique</property>
+		<property key="libelle_suplomfr">guide</property>
+		<property key="libelle_uoh_tri">j</property>
+	</item>
+	<item>
+		<property key="id">methodologie</property>
+		<property key="libelle_import">méthodologie</property>
+		<property key="libelle_uoh">Méthodologie</property>
+		<property key="libelle_suplomfr">méthodologie</property>
+		<property key="libelle_uoh_tri">k</property>
+	</item>
+	<item>
+		<property key="id">etude_cas</property>
+		<property key="libelle_import">étude de cas</property>
+		<property key="libelle_uoh">Etude de cas</property>
+		<property key="libelle_suplomfr">étude de cas</property>
+		<property key="libelle_uoh_tri">i</property>
+	</item>
+	<item>
+		<property key="id">liste_references</property>
+		<property key="libelle_import">liste de références</property>
+		<property key="libelle_uoh">Webographie, bibliographie</property>
+		<property key="libelle_suplomfr">liste de références</property>
+		<property key="libelle_uoh_tri">g</property>
+	</item>
+	<item>
+		<property key="id">autres</property>
+		<property key="libelle_import">autres</property>
+		<property key="libelle_uoh">Autres</property>
+		<property key="libelle_suplomfr">autres</property>
+		<property key="libelle_uoh_tri">o</property>
+	</item>
+        <item>
+                <property key="id">jeu_serieux</property>
+                <property key="libelle_import">jeu sérieux</property>
+                <property key="libelle_uoh">Jeu sérieux</property>
+                <property key="libelle_suplomfr">autres</property>
+                <property key="libelle_uoh_tri">p</property>
+        </item>
+        <item>
+                <property key="id">simulation</property>
+                <property key="libelle_import">simulation</property>
+                <property key="libelle_uoh">Simulation</property>
+                <property key="libelle_suplomfr">simulation</property>
+                <property key="libelle_uoh_tri">q</property>
+        </item>
+        <item>
+                <property key="id">webdocumentaire</property>
+                <property key="libelle_import">webdocumentaire</property>
+                <property key="libelle_uoh">Webdocumentaire</property>
+                <property key="libelle_suplomfr">autres</property>
+                <property key="libelle_uoh_tri">r</property>
+        </item>
+        <item>
+		<property key="id">jeu_donnees</property>
+		<property key="libelle_import">jeu de données</property>
+		<property key="libelle_uoh">Jeu de données</property>
+		<property key="libelle_suplomfr">jeu de données</property>
+		<property key="libelle_uoh_tri">na</property>
+	</item>
+<item>
+		<property key="id">carte_interactive</property>
+		<property key="libelle_import">carte interactive</property>
+		<property key="libelle_uoh">Carte interactive</property>
+		<property key="libelle_suplomfr">autres</property>
+		<property key="libelle_uoh_tri">t</property>
+	</item>
+  <item>
+    <property key="id">animation</property>
+    <property key="libelle_import">animation</property>
+    <property key="libelle_uoh">Animation</property>
+    <property key="libelle_suplomfr">animation</property>
+    <property key="libelle_uoh_tri">animation</property>
+  </item>
+  <item>
+    <property key="id">autoévaluation</property>
+    <property key="libelle_import">autoévaluation</property>
+    <property key="libelle_uoh">Autoévaluation</property>
+    <property key="libelle_suplomfr">autoévaluation</property>
+    <property key="libelle_uoh_tri">autoévaluation</property>
+  </item>
+  <item>
+    <property key="id">cours/présentation</property>
+    <property key="libelle_import">cours/présentation</property>
+    <property key="libelle_uoh">Cours/présentation</property>
+    <property key="libelle_suplomfr">cours/présentation</property>
+    <property key="libelle_uoh_tri">cours/présentation</property>
+  </item>
+  <item>
+    <property key="id">démonstration</property>
+    <property key="libelle_import">démonstration</property>
+    <property key="libelle_uoh">Démonstration</property>
+    <property key="libelle_suplomfr">démonstration</property>
+    <property key="libelle_uoh_tri">démonstration</property>
+  </item>
+  <item>
+    <property key="id">étude de cas</property>
+    <property key="libelle_import">étude de cas</property>
+    <property key="libelle_uoh">Étude de cas</property>
+    <property key="libelle_suplomfr">étude de cas</property>
+    <property key="libelle_uoh_tri">étude de cas</property>
+  </item>
+  <item>
+    <property key="id">énoncé de problème</property>
+    <property key="libelle_import">énoncé de problème</property>
+    <property key="libelle_uoh">Énoncé de problème</property>
+    <property key="libelle_suplomfr">énoncé de problème</property>
+    <property key="libelle_uoh_tri">énoncé de problème</property>
+  </item>
+  <item>
+    <property key="id">évaluation</property>
+    <property key="libelle_import">évaluation</property>
+    <property key="libelle_uoh">évaluation</property>
+    <property key="libelle_suplomfr">évaluation</property>
+    <property key="libelle_uoh_tri">évaluation</property>
+  </item>
+  <item>
+    <property key="id">examen</property>
+    <property key="libelle_import">examen</property>
+    <property key="libelle_uoh">Examen</property>
+    <property key="libelle_suplomfr">examen</property>
+    <property key="libelle_uoh_tri">examen</property>
+  </item>
+  <item>
+    <property key="id">expérience</property>
+    <property key="libelle_import">expérience</property>
+    <property key="libelle_uoh">Expérience</property>
+    <property key="libelle_suplomfr">expérience</property>
+    <property key="libelle_uoh_tri">expérience</property>
+  </item>
+  <item>
+    <property key="id">jeu de données</property>
+    <property key="libelle_import">jeu de données</property>
+    <property key="libelle_uoh">Jeu de données</property>
+    <property key="libelle_suplomfr">jeu de données</property>
+    <property key="libelle_uoh_tri">jeu de données</property>
+  </item>
+  <item>
+    <property key="id">liste de références</property>
+    <property key="libelle_import">liste de références</property>
+    <property key="libelle_uoh">Liste de références</property>
+    <property key="libelle_suplomfr">liste de références</property>
+    <property key="libelle_uoh_tri">liste de références</property>
+  </item>
+  <item>
+    <property key="id">matériel de référence</property>
+    <property key="libelle_import">matériel de référence</property>
+    <property key="libelle_uoh">Matériel de référence</property>
+    <property key="libelle_suplomfr">matériel de référence</property>
+    <property key="libelle_uoh_tri">matériel de référence</property>
+  </item>
+  <item>
+    <property key="id">outil</property>
+    <property key="libelle_import">outil</property>
+    <property key="libelle_uoh">Outil</property>
+    <property key="libelle_suplomfr">outil</property>
+    <property key="libelle_uoh_tri">outil</property>
+  </item>
+  <item>
+    <property key="id">questionnaire</property>
+    <property key="libelle_import">questionnaire</property>
+    <property key="libelle_uoh">Questionnaire</property>
+    <property key="libelle_suplomfr">questionnaire</property>
+    <property key="libelle_uoh_tri">questionnaire</property>
+  </item>
+  <item>
+    <property key="id">scénario pédagogique</property>
+    <property key="libelle_import">scénario pédagogique</property>
+    <property key="libelle_uoh">Scénario pédagogique</property>
+    <property key="libelle_suplomfr">scénario pédagogique</property>
+    <property key="libelle_uoh_tri">scénario pédagogique</property>
+  </item>
+  <item>
+    <property key="id">tutoriel</property>
+    <property key="libelle_import">tutoriel</property>
+    <property key="libelle_uoh">Tutoriel</property>
+    <property key="libelle_suplomfr">tutoriel</property>
+    <property key="libelle_uoh_tri">tutoriel</property>
+  </item>
+  <item>
+    <property key="id">exercice</property>
+    <property key="libelle_import">exercice</property>
+    <property key="libelle_uoh">Exercice</property>
+    <property key="libelle_suplomfr">exercice</property>
+    <property key="libelle_uoh_tri">exercice</property>
+  </item>
+</table>

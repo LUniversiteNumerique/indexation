@@ -33,6 +33,6 @@ RUN if [ "$APP_ENV" = "dev" ]; then  ["composer","install","-v"];  \
 RUN chmod +x /root/nginx-start.sh && \
     mkdir -p /var/log/php-fpm && mkdir -p /var/log/ngninx && \
     php bin/console ca:c && php bin/console ca:w &&  \
-    php bin/console as:c && chmod a+rw public/uploads
+    php bin/console as:c && chmod -R a+rw public/uploads
 
 CMD ["/usr/bin/supervisord"]

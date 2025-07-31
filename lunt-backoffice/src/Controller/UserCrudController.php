@@ -3,24 +3,25 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Event\UserPassSettingEvent;
 use App\Field\EntityField;
-use App\Service\MailerService;
 use Doctrine\ORM\{EntityManagerInterface,QueryBuilder};
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Actions, Crud, Filters};
 use EasyCorp\Bundle\EasyAdminBundle\Collection\{FieldCollection,FilterCollection};
 use EasyCorp\Bundle\EasyAdminBundle\Dto\{EntityDto,SearchDto};
-use EasyCorp\Bundle\EasyAdminBundle\{Controller\AbstractCrudController, Context\AdminContext, Filter\EntityFilter, Router\AdminUrlGenerator};
+use EasyCorp\Bundle\EasyAdminBundle\{Controller\AbstractCrudController, Context\AdminContext, Filter\DateTimeFilter, Router\AdminUrlGenerator};
 use EasyCorp\Bundle\EasyAdminBundle\Field\{BooleanField, DateTimeField, EmailField, FormField, IdField, TextField};
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 
 class UserCrudController extends AbstractCrudController
 {
     public function __construct(
-        private readonly TokenGeneratorInterface $tokenGenerator,
+        private readonly TokenGeneratorInterface $tokGenerator,
         private readonly AdminUrlGenerator $urlGenerator,
-        private readonly MailerService $mailer) {}
+        private readonly EventDispatcherInterface $dispatcher
+    ) {}
 
     public static function getEntityFqcn(): string
     {
@@ -29,28 +30,38 @@ class UserCrudController extends AbstractCrudController
 
     public function configureFilters(Filters $filters): Filters
     {
-        return $filters->add('enabled')->add('group')
-            ->add(EntityFilter::new('school'))->add('untheme');
+        return $filters
+            ->add('name')
+            ->add('email')
+            ->add('enabled')
+            ->add('group')
+            ->add('school')
+            ->add('untheme')
+            ->add(DateTimeFilter::new('creeLe','Date Création'));
     }
 
     public function configureCrud(Crud $crud): Crud
     {
-        return $crud->setEntityLabelInSingular('Utilisateur')->setEntityLabelInPlural('Utilisateurs')
-            ->setSearchFields(['name', 'email'])->setDefaultSort(['name' => 'ASC'])->setEntityPermission('ROLE_READ_USER');
+        return $crud->setEntityLabelInSingular('utilisateur')->setEntityLabelInPlural('Utilisateurs')
+            ->setSearchFields(['name', 'email'])->setDefaultSort(['name' => 'ASC'])->setEntityPermission('ROLE_READ_USER')->setFormOptions([
+                'attr' => ['data-controller'=>"user-creating", 'data-user-creating-target'=>"form"]
+            ]);
     }
 
     public function configureActions(Actions $actions): Actions
     {
         return $actions
-            ->add(Crud::PAGE_NEW, Action::INDEX)
-            ->add(Crud::PAGE_EDIT, Action::DETAIL)
-            ->add(Crud::PAGE_INDEX, Action::DETAIL)
-            ->remove(Crud::PAGE_INDEX, Action::DELETE)
-            ->remove(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE)
+            ->setPermission(Action::INDEX, 'ROLE_READ_USER')
+            ->setPermission(Action::DETAIL, 'ROLE_READ_USER')
             ->setPermission(Action::NEW, 'ROLE_CREA_USER')
             ->setPermission(Action::EDIT, 'ROLE_EDIT_USER')
             ->setPermission(Action::DELETE, 'ROLE_DROP_USER')
-            ->update(Crud::PAGE_EDIT, Action::DETAIL, fn (Action $a) => $a->setIcon('fa fa-undo')->setLabel('Annuler les modifications'));
+            ->add(Crud::PAGE_NEW, Action::INDEX)
+            ->add(Crud::PAGE_EDIT, Action::DETAIL)
+            ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->update(Crud::PAGE_EDIT, Action::DETAIL, fn (Action $a) => $a->setIcon('fa fa-undo')->setLabel('Annuler les modifications'))
+            ->remove(Crud::PAGE_INDEX, Action::DELETE)
+            ->remove(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE);
     }
 
     public function configureFields(string $pageName): iterable
@@ -60,15 +71,15 @@ class UserCrudController extends AbstractCrudController
         yield IdField::new('id')->onlyOnDetail();
         yield TextField::new('name','Nom');
         yield EmailField::new('email')->setSortable(false);
-        yield BooleanField::new('enabled','Statut')->hideOnForm()->setSortable(false);
+        yield BooleanField::new('enabled','Statut')->setSortable(false);
         yield DateTimeField::new('creeLe', 'Date création')->onlyOnDetail();
         yield DateTimeField::new('editeLe', 'Date modification')->onlyOnDetail();
 
         yield FormField::addColumn(6);
         yield FormField::addFieldset();
-        yield EntityField::new('group','Groupe')->setRequired(true);
-        yield EntityField::new('school','Etablissement Contributeur')->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.nom'))->setColumns(6);
-        yield EntityField::new('untheme',"UNT Documentaliste")->setColumns(6);
+        yield EntityField::new('group','Groupe')->setFormTypeOption('attr', ['data-user-creating-target' => 'masterSelect',]);
+        yield EntityField::new('school','Etablissement Contributeur')->setRequired(true);
+        yield EntityField::new('untheme',"UNT Documentaliste")->setRequired(true);
     }
 
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
@@ -88,30 +99,54 @@ class UserCrudController extends AbstractCrudController
      */
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        $veriftoken = $this->tokenGenerator->generateToken(); //$pass = random_bytes(12); $entityInstance->setPassword($this->hasher->hashPassword($entityInstance,$pass));
-        $url = $this->generateUrl('app_reset_response', ['token' => $veriftoken], UrlGeneratorInterface::ABSOLUTE_URL);
+        $this->dispatcher->dispatch(new UserPassSettingEvent($entityInstance->setReseToken($this->tokGenerator->generateToken()),true));
 
-        $entityInstance->setTokenExpiresAt(new \DateTimeImmutable(User::VALIDATIME_TOKEN.' min'));
-        parent::persistEntity($entityManager, $entityInstance->setReseToken($veriftoken));
-        $this->mailer->sendEmail($entityInstance->getEmail(), 'Création de votre compte/espace UNT',
-            "Bonjour " . $entityInstance->getName() . '<br/>Votre espace UNT vient d\'être créé. Vous pouvez l\'activer à l\'adresse <a href="' .$url. '">et initialiser votre mot de passe</a>.',
-        );
+        parent::persistEntity($entityManager, $entityInstance->setTokenExpiresAt(new \DateTimeImmutable(User::VALIDATIME_TOKEN.' min')));
     }
 
-    protected function getRedirectResponseAfterSave(AdminContext $ctx, string $action): RedirectResponse
+    protected function getRedirectResponseAfterSave(AdminContext $context, string $action): RedirectResponse
     {
-        $submitButtonName = $ctx->getRequest()->request->all()['ea']['newForm']['btn'];
+        $submitButtonName = $context->getRequest()->request->all()['ea']['newForm']['btn'];
 
         $url = match ($submitButtonName) {
             Action::SAVE_AND_CONTINUE => $this->urlGenerator->setAction(Action::EDIT)
-                ->setEntityId($ctx->getEntity()->getPrimaryKeyValue())->generateUrl(),
-            Action::SAVE_AND_RETURN => $ctx->getReferrer() ?? $this->urlGenerator->setAction(Action::DETAIL)
-                    ->setEntityId($ctx->getEntity()->getPrimaryKeyValue())->generateUrl(),
+                ->setEntityId($context->getEntity()->getPrimaryKeyValue())->generateUrl(),
+            Action::SAVE_AND_RETURN => $context->getReferrer() ?? $this->urlGenerator->setAction(Action::DETAIL)
+                    ->setEntityId($context->getEntity()->getPrimaryKeyValue())->generateUrl(),
             Action::SAVE_AND_ADD_ANOTHER => $this->urlGenerator->setAction(Action::NEW)->generateUrl(),
-            default => $this->generateUrl($ctx->getDashboardRouteName()),
+            default => $this->generateUrl($context->getDashboardRouteName()),
         };
 
         return $this->redirect($url);
     }
 
+    public function index(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_READ_USER');
+        return parent::index($context);
+    }
+
+    public function new(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_CREA_USER');
+        return parent::new($context);
+    }
+
+    public function detail(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_READ_USER');
+        return parent::detail($context);
+    }
+
+    public function edit(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_EDIT_USER');
+        return parent::edit($context);
+    }
+
+    public function delete(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_DROP_USER');
+        return parent::delete($context);
+    }
 }

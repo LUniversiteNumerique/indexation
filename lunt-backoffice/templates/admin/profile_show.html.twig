@@ -5,6 +5,7 @@
 {% block page_actions %}
     <a class="btn btn-primary" href="{{ path('app_profile_edit') }}">Editer le profil</a>
     <a class="btn btn-outline-danger" href="{{ path('app_profile_change') }}">Changer le mot de passe</a>
+    <a class="btn btn-outline-secondary" href="{{ path('app_home') }}">Retourner</a>
 {% endblock %}
 
 {% block main %}
@@ -19,6 +20,9 @@
     <div class="mb-4">
         <span>Profil</span>
         <strong class="badge badge-outline">{{ app.user.group }}</strong>
+        {% if(app.user.school or app.user.untheme) %}
+            <strong class="badge badge-dark">{{ app.user.school }}{{ app.user.untheme }}</strong>
+        {% endif %}
     </div>
 
 {% endblock %}

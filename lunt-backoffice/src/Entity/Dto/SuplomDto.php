@@ -2,11 +2,21 @@
 
 namespace App\Entity\Dto;
 
-use App\Entity\{Auteur, Keyword, Niveau, Notice, TDocument, TPedagogie};
+use App\Entity\{Auteur,
+  Dewey,
+  DeweyGroup,
+  DeweyPerso,
+  Discipline,
+  DisciplineGroup,
+  Keyword,
+  Niveau,
+  Notice,
+  TDocument,
+  TPedagogie};
 use JMS\Serializer\Annotation as Jms;
 
-#[
-    Jms\XmlRoot("lom", namespace:"http://ltsc.ieee.org/xsd/LOM", prefix: 'lom'),
+#[Jms\XmlRoot("lom:lom"),
+    Jms\XmlNamespace(uri:"http://ltsc.ieee.org/xsd/LOM", prefix: 'lom'),
     Jms\XmlNamespace(uri:"http://www.w3.org/2001/XMLSchema-instance", prefix:"xsi"),
     Jms\XmlNamespace(uri:"http://www.lom-fr.fr/xsd/LOMFR", prefix:"lomfr")]
 class SuplomDto {
@@ -21,30 +31,22 @@ class SuplomDto {
         #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(Technical::class)] public ?Technical $technical = null,
         #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(Educational::class)] public ?Educational $educational = null,
         #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(Right::class)] public ?Right $rights = null,
-        #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(Relation::class)] public ?Relation $relation = null,
+        #[Jms\XmlList(entry: "relation", inline: true, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Relation::class.">")] public array  $relations = [],
         #[Jms\XmlList(entry: "classification", inline: true, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Classification::class.">"), Jms\XmlElement(cdata: false)] public array $classifications = [],
     ){ $this->schemaLocation = "http://ltsc.ieee.org/xsd/LOM http://lom-fr.fr/xsd/lomfrv1.0/std/lomfr.xsd"; }
 
     static function create(Notice $n): SuplomDto
     {
-        $lang = current($n->getRessLang())??'fre';
-        $discs = []; $disc = $n->getSpecialite();
-        while ($disc) {
-            $discs[] = new Taxon('http://data.bnf.fr/ark:/12148/'.$disc->getCode(), [new Field($lang, $disc->getNom())]);
-            $disc = $disc->getParent();
-        }
-        $dewey = []; $dewe = $n->getCodewey();
-        while ($dewe) {
-            $dewey[] = new Taxon('http://data.bnf.fr/ark:/12148/'.$dewe->getCode(), [new Field($lang, $dewe->getNom())]);
-            $dewe = $dewe->getParent();
-        }
-
-        $creat = $n->getCreateur(); $valid = $n->getValidateur();
+        $lang = current($n->getRessLang())??'fre'; $creat = $n->getCreateur(); $valid = $n->getValidateur();
+        $discs = array_map(fn(Discipline $d) => new Taxon($d->getId(), [new Field($lang, $d->getNom())]), $n->getAllSpecialites());
+        $dewey = array_map(fn(Dewey $d) => new Taxon($d->getCode(), [new Field($lang, $d->getNom())]), $n->getAllDeweyGroup());
+        $deweyPerso = array_map(fn(DeweyPerso $d) => new Taxon($d->getCode(), [new Field($lang, $d->getNom())]), $n->getAllDeweyPerso());
         return new self(
             new General(
                 new Catalog('URI', self::RESOURCE_URI .$n->getUuid()), [new Field($lang, $n->getTitre())], [new Field($lang, $n->getDescription())],
-                array_map(fn(Keyword $k) => new Field($lang, $k->getNom()), $n->getTags()->toArray()),
-                array_map(fn(TDocument $d) => new Source('LOMFRv1.0',$d->getNom()), $n->getDocTypes()->toArray()),
+                array_map(fn(Keyword $k) => new Motcle(new Field($lang, $k->getNom())), $n->getTags()->toArray()),
+                array_map(fn(TDocument $d) => new Sources('LOMFRv1.0',$d->getCode()), $n->getDocTypes()->toArray()),
+                array_map(fn(TDocument $d) => new Sources('LOMv1.0',$d->getCode()), $n->getDocTypes()->toArray()),
                 $n->getRessLang()
             ),
             new LifeCycle([new Field($lang, "Première version")], new Source('LOMv1.0',"final"),
@@ -54,17 +56,19 @@ class SuplomDto {
                 new Contribute(new Source('LOMv1.0',"creator"), [sprintf("BEGIN:VCARD VERSION:3.0 N:%s;; FN:%s UID:%s END:vcard", $creat->getEmail(), $creat->getName(), $creat->getId())], [$n->getEditeLe()?->format('Y-m-d H:i:s')]),
                 new Contribute(new Source('LOMv1.0',"validator"), [sprintf("BEGIN:VCARD VERSION:3.0 N:%s;; FN:%s UID:%s END:vcard", $valid->getEmail(), $valid->getName(), $valid->getId())], [$n->getPublieLe()?->format('Y-m-d H:i:s')]),
                 ], ['LOMv1.0', 'LOMFRv1.0', 'SupLOMFRv1.0'], (array)$n->getRessLang()),
-            new Technical($n->getRessUrl(), $n->getRessSize(),$n->getDureExec()),
+            new Technical($n->getRessUrl(), $n->getRessSize(),new Duration($n->getDureExec())),
             new Educational(
                 array_map(fn(TPedagogie $d) => new Source('LOMFRv1.0',$d->getNom()), $n->getPedTypes()->toArray()),
-                array_map(fn(Niveau $d) => new Source('LOMFRv1.0',$d->getNom()), $n->getNiveaux()->toArray()), [$n->getDureAppr()], array_map(fn(string $p) => new Field($lang, $p), (array)$n->getPropUser()),
-                (array)$n->getUserLang(),
+                array_map(fn(Niveau $d) => new Source('LOMFRv1.0',$d->getCode()), $n->getNiveaux()->toArray()),
+                array_map(fn(string $p) => new Motcle(new Field($lang, $p)), $n->getPropUser()),
+                (array)$n->getUserLang(), new Duration($n->getDureAppr()),
             ),
-            new Right(new Source('LOMFRv1.0',$n->isRessPayant()?'Yes':'No'),new Source('LOMFRv1.0',$n->isProprIntel()?'Yes':'No'), [new Field($lang, $n->getDroit())]),
-            new Relation(new Source('LOMFRv1.0',"est associée à"), array_map(fn(Notice $r) => new Resource(new Catalog('URI',$r->getUuid()), array_map(fn(string $lang) => new Field($lang,$r->getTitre()),$r->getRessLang())),$n->getRessources()->toArray())),
+            new Right(new Source('LOMFRv1.0',$n->isRessPayant()?'Yes':'No'),new Source('LOMFRv1.0',$n->isProprIntel()?'Yes':'No'), [new Field($lang, $n->getDroit()??"")]),
+            array_map(fn(Notice $r) => new Relation(new Source('LOMFRv1.0',"ispartof"), new Resource(new Catalog('URI',$r->getUuid()), array_map(fn(string $lang) => new Field($lang,$r->getTitre()),$r->getRessLang()))),$n->getRessources()->toArray()),
             [
-                new Classification(new Source('LOMv1.0',"specialite"), new TaxonPath([new Field($lang, 'Classification UVHC')], $discs)),
-                new Classification(new Source('LOMv1.0',"dewey"), new TaxonPath([new Field($lang, 'CDD 22e éd.')], $dewey)),
+                new Classification(new Source('LOMv1.0',"discipline"), new TaxonPath([new Field($lang, 'Classification UOH')], $discs)),
+                new Classification(new Source('LOMv1.0',"dewey"), new TaxonPath([new Field($lang, 'CDD 22e éd.')], array_merge($dewey,$deweyPerso))),
+                new Classification(new Source('LOMv1.0',"pedagogie"), null, [new Motcle(new Field($lang, $n->getObjectif()??""))]),
             ]
         );
     }
@@ -76,6 +80,20 @@ class Source {
         #[Jms\Type('string'), Jms\XmlElement(cdata:false, namespace:"http://ltsc.ieee.org/xsd/LOM"),] public ?string $source = null,
         #[Jms\Type('string'), Jms\XmlElement(cdata:false, namespace:"http://ltsc.ieee.org/xsd/LOM"),] public ?string $value = null,
     ){}
+}
+class Sources extends Source {
+  public function __construct(
+    #[Jms\Type('string')]
+    #[Jms\XmlElement(cdata:false, namespace:"http://www.lom-fr.fr/xsd/LOMFR")]
+    #[Jms\XmlElement(cdata:false, namespace:"http://ltsc.ieee.org/xsd/LOM")]
+    ?string $source = null,
+    #[Jms\Type('string')]
+    #[Jms\XmlElement(cdata:false, namespace:"http://www.lom-fr.fr/xsd/LOMFR")]
+    #[Jms\XmlElement(cdata:false, namespace:"http://ltsc.ieee.org/xsd/LOM")]
+    ?string $value = null,
+  ){
+    parent::__construct($source, $value);
+  }
 }
 
 class Catalog {
@@ -98,10 +116,10 @@ class General {
         #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(Catalog::class)] public ?Catalog $identifier = null,
         #[Jms\XmlList(entry: "string", namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Field::class.">"), Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM")] public array $title = [],
         #[Jms\XmlList(entry: "string", namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Field::class.">"), Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM")] public array $description = [],
-        #[Jms\XmlList(entry: "string", namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Field::class.">"), Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM")] public array $keyword = [],
-        #[Jms\XmlList(entry: "documentType", inline: true, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Source::class.">")] public array $documentTypes = [],
-        #[Jms\XmlList(entry: "language", inline: true, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<string>"),Jms\XmlElement(cdata: false)] public array $languages = [],
-        //#[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(Source::class), Jms\SerializedName('aggregationLevel')] public ?Source $aggregationLevel = null,
+        #[Jms\XmlList(entry: "keyword", inline: true, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Motcle::class.">")] public array $keywords = [],
+        #[Jms\XmlList(entry: "documentType", inline: true, namespace: "http://www.lom-fr.fr/xsd/LOMFR"), Jms\Type("array<".Sources::class.">")] public array $documentTypesLOMFR = [],
+        #[Jms\XmlList(entry: "documentType", inline: true, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Sources::class.">")] public array $documentTypesLOM = [],
+        #[Jms\XmlList(entry: "language", inline: true, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<string>"),Jms\XmlElement(cdata: false)] public array $languages = [],//#[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(Source::class), Jms\SerializedName('aggregationLevel')] public ?Source $aggregationLevel = null,
     ){}
 }
 
@@ -126,8 +144,7 @@ class Technical {
         //#[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("string")] public ?string $format = null,
         #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("string")] public ?string $location = null,
         #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("string")] public ?string $size = null,
-        #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("string")] public ?string $dureexec = null,
-        #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("string")] public ?string $install = null,
+        #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(Duration::class)] public ?Duration $duration = null,
     ){}
 }
 
@@ -135,11 +152,9 @@ class Educational {
     public function __construct(
         #[Jms\XmlList(entry: "learningResourceType", inline: true, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Source::class.">")] public array $learningResourceTypes = [],
         #[Jms\XmlList(entry: "context", inline: true, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Source::class.">")] public array $contexts = [],
-        #[Jms\XmlList(entry: "duration", namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<string>"), Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM")] public array $date = [],
-        #[Jms\XmlList(entry: "string", namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Field::class.">"), Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM")] public array $description = [],
+        #[Jms\XmlList(entry: "description", inline: true, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Motcle::class.">")] public array $description = [],
         #[Jms\XmlList(entry: "language", inline: true, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<string>"), Jms\XmlElement(cdata: false)] public array $languages = [],
-        //#[Jms\XmlList(entry: "activity", inline: true, namespace: "http://www.lom-fr.fr/xsd/LOMFR"), Jms\Type("array<".Source::class.">")] public array $activities = [],
-        //#[Jms\XmlList(entry: "intendedEndUserRole", inline: true, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Source::class.">")] public array $intendedEndUserRoles = [],
+        #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(Duration::class), Jms\SerializedName('typicalLearningTime')] public ?Duration $typicalLearningTime = null,
     ){}
 }
 
@@ -153,7 +168,7 @@ class Resource {
 class Relation {
     public function __construct(
         #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(Source::class)] public ?Source $kind = null,
-        #[Jms\XmlList(entry: "resource", namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Resource::class.">"), Jms\XmlElement(cdata: false)] public array $resources = [],
+        #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(Resource::class)] public ?Resource $resource = null,
     ){}
 }
 
@@ -170,7 +185,7 @@ class Classification {
     public function __construct(
         #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(Source::class)] public ?Source $purpose = null,
         #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type(TaxonPath::class), Jms\SerializedName('taxonPath')] public ?TaxonPath $taxonPath = null,
-        #[Jms\XmlList(entry: "string", namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Field::class.">"), Jms\XmlElement(cdata: false)] public array $description = [],
+        #[Jms\XmlList(entry: "description", inline: true, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Motcle::class.">")] public array $description = [],
     ){}
 }
 
@@ -186,4 +201,14 @@ class Taxon {
         #[Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("string")] public ?string $id = null,
         #[Jms\XmlList(entry: "string", namespace: "http://ltsc.ieee.org/xsd/LOM"), Jms\Type("array<".Field::class.">"), Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM")] public array $entry = [],
     ){}
+}
+
+class Motcle
+{
+    public function __construct(#[Jms\Type(Field::class), Jms\XmlElement(cdata: false, namespace: "http://ltsc.ieee.org/xsd/LOM")] public ?Field $string = null){}
+}
+
+class Duration
+{
+    public function __construct(#[Jms\Type('string'), Jms\XmlElement(cdata:false, namespace:"http://ltsc.ieee.org/xsd/LOM"),] public ?string $duration = null){}
 }

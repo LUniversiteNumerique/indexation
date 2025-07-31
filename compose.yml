@@ -1,49 +1,34 @@
 services:
   backoffice:
     image: sslv-nexus.coexya.eu/lunt-backoffice:${VERSION:-latest}
-    ports: ["80:80"]
+    env_file: ./.env
+    network_mode: "host"
     depends_on:
       - mariadb
-      - mailer
+      - solr
     volumes:
-      - ${JOAI_BASE_URI:-/opt/lunt-resources}:/var/www/site/data
-
-  myadmin:
-    image: phpmyadmin/phpmyadmin
-    environment:
-      PMA_HOST: mariadb
-      MYSQL_ROOT_PASSWORD: ${MARIADB_PASS}
-    ports: ["8080:80"]
-    depends_on:
-      - mariadb
+      - ${JOAI_BASE_URI:-/opt}:/opt
+      - ${JOAI_BASE_URI}/lunt-resources/uploads:/var/www/site/public/uploads
 
   mariadb:
-    image: mariadb:latest
+    image: mariadb:11.7.2
     environment:
       MYSQL_DATABASE: ${MARIADB_DB}
       MYSQL_ROOT_PASSWORD: ${MARIADB_PASS}
-    ports: ["3306:3306"]
+    network_mode: "host"
     volumes:
       - db_data:/var/lib/mysql
 
-  mailer:
-    image: mailhog/mailhog:latest
-    ports: ["8025:8025"]
-
   solr:
-    image: solr:latest
-    environment:
-      - SOLR_HOME=/var/solr/data
-      - SOLR_LOG_LEVEL=INFO
-    ports: ["8983:8983"]
+    image: solr:9.8-slim
+    network_mode: "host"
     volumes:
-      - solr_data:/var/solr
-      - /opt/lunt-solr:/var/solr/data
+      - ${JOAI_BASE_URI}/lunt-solr/data:/var/solr/data
+      - ${JOAI_BASE_URI}/lunt-solr/conf:${SOLR_DEFAULT_CONF}/conf
     command:
       - solr-precreate
       - unt1
+      - ${SOLR_DEFAULT_CONF}
 
 volumes:
   db_data:
-  solr_data:
-  wp_data:

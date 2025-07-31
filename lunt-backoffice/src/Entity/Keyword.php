@@ -4,32 +4,26 @@ namespace App\Entity;
 
 use App\Repository\KeywordRepository;
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation\{SerializedName, VirtualProperty};
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: KeywordRepository::class)]
+#[ORM\Entity(repositoryClass: KeywordRepository::class),
+    UniqueEntity('nom', 'ce nom est déjà utilisé.')]
 class Keyword
 {
     use Timestamps;
 
-    #[ORM\Column(length: 255),
-        Assert\NotBlank, SerializedName('text')]
+    #[ORM\Column(length: 255, unique: true), Assert\NotBlank]
     private ?string $nom;
 
-    #[ORM\Column(nullable: true), Assert\Type('bool')]
-    private ?bool $valide;
+    #[ORM\Column, Assert\Type('bool')]
+    private bool $valide;
 
-    public function __construct(string $name = null,bool $valid = false)
+    public function __construct(?string $name = null, bool $valid = false)
     {
         $this->nom = $name;
         $this->valide = $valid;
         $this->creeLe = new \DateTimeImmutable();
-    }
-
-    #[VirtualProperty]
-    public function getValue(): ?string
-    {
-        return $this->nom;
     }
 
     public function getNom(): ?string

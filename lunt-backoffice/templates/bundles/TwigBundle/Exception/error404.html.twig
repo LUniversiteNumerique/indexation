@@ -1,0 +1,32 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{% extends '@EasyAdmin/page/login_minimal.html.twig' %}
+
+{% block body_class 'page-login' %}
+
+{% block page_title %} UNT Contribution {% endblock %}
+
+{% block head_favicon %}<link rel="shortcut icon" href="/uploads/favicon.ico">{% endblock %}
+
+{% block wrapper_wrapper %}
+    <div class="login-wrapper">
+        <header class="main-header">
+            <div id="header-logo">
+                {% block header_logo %}
+                    <div class="logo logo-long"><img src="/uploads/logo-1000px.png" alt="logo"></div>
+                {% endblock header_logo %}
+                <a class="logo" title="{{ 'Page not found'|striptags }}" href="{{ path('app_home') }}">
+                    Contenu non trouvé
+                </a>
+            </div>
+        </header>
+
+        <section class="content">
+            <p>
+                La page demandée n'a pas pu être localisée.
+                <br>Vérifier l'URL ou <a href="{{ path('app_home') }}">retourner à la page d'accueil</a>.
+            </p>
+
+            <script src="{{ asset('login.js', constant('EasyCorp\\Bundle\\EasyAdminBundle\\Asset\\AssetPackage::PACKAGE_NAME')) }}"></script>
+        </section>
+    </div>
+{% endblock %}

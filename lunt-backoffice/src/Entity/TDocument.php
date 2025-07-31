@@ -11,8 +11,11 @@ class TDocument
 {
     use Timestamps;
 
+    #[ORM\Column(length: 225, unique: true), Assert\NotBlank]
+    private ?string $code;
+
     #[ORM\Column(length: 255), Assert\NotBlank]
-    private ?string $code, $nom;
+    private ?string $nom;
 
     public function __construct($code=null,$nom=null)
     {

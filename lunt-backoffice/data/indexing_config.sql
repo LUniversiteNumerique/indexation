@@ -1,0 +1,10 @@
+INSERT INTO `indexing_config` VALUES (3,3,1,0,NULL,10,1,'hour'),
+                                     (4,4,1,0,NULL,10,1,'day'),
+                                     (5,5,1,0,NULL,10,1,'day'),
+                                     (6,7,1,0,NULL,10,1,'day'),
+                                     (7,8,1,0,NULL,10,1,'day'),
+                                     (8,3,0,0,NULL,10,1,'hour'),
+                                     (9,4,0,0,NULL,10,1,'hour'),
+                                     (10,5,0,0,NULL,10,1,'hour'),
+                                     (11,6,0,0,NULL,10,1,'hour'),
+                                     (12,7,0,0,NULL,10,1,'hour'),(13,8,0,0,NULL,10,1,'hour'),(14,6,1,0,NULL,10,1,'day');

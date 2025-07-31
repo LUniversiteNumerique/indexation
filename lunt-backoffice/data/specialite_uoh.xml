@@ -1,0 +1,1294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table>
+	<item>
+		<property key="id">lettres_classiques_langue_litterature_francaises</property>
+		<property key="libelle_import">Lettres classiques, Langue et Littérature françaises et de France</property>
+		<property key="libelle">Lettres classiques, Langues et Littératures françaises et de France</property>
+		<item>
+			<property key="id">lettres_approches_transversales_methodologie</property>
+			<property key="libelle_import">Lettres-Approches transversales et méthodologie</property>
+			<property key="libelle">Lettres-Approches transversales et méthodologie</property>
+			<item>
+				<property key="id">lettres_approches_transversales_methodologie_approches_transversales</property>
+				<property key="libelle_import">Lettres-Approches transversales et méthodologie. Approches transversales</property>
+				<property key="libelle">Approches transversales</property>
+			</item>
+			<item>
+				<property key="id">lettres_approches_transversales_methodologie_methodologie</property>
+				<property key="libelle_import">Lettres-Approches transversales et méthodologie. Méthodologie</property>
+				<property key="libelle">Méthodologie</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">langue_française</property>
+			<property key="libelle_import">Langue française</property>
+			<property key="libelle">Langue française</property>
+			<item>
+				<property key="id">langue_française_langage</property>
+				<property key="libelle_import">Langue française. Langage</property>
+				<property key="libelle">Langage</property>
+			</item>
+			<item>
+				<property key="id">langue_française_linguistique</property>
+				<property key="libelle_import">Langue française. Linguistique</property>
+				<property key="libelle">Linguistique</property>
+			</item>
+			<item>
+				<property key="id">langue_française_langue_des_signes</property>
+				<property key="libelle_import">Langue française. Langue des signes</property>
+				<property key="libelle">Langue des signes</property>
+			</item>
+			<item>
+				<property key="id">langue_française_francais</property>
+				<property key="libelle_import">Langue française. Français</property>
+				<property key="libelle">Français</property>
+			</item>
+			<item>
+				<property key="id">langue_française_FLE</property>
+				<property key="libelle_import">Langue française. Français langue étrangère</property>
+				<property key="libelle">FLE - Français langue étrangère</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">litteratures_française_langue_française</property>
+			<property key="libelle_import">Littératures française et de langue française</property>
+			<property key="libelle">Littératures française et de langue française</property>
+			<item>
+				<property key="id">litteratures_française_langue_française_generalites</property>
+				<property key="libelle_import">Littératures française et de langue française. Généralités</property>
+				<property key="libelle">Généralités</property>
+			</item>
+			<item>
+				<property key="id">litteratures_française_langue_française_rhetorique</property>
+				<property key="libelle_import">Littératures française et de langue française. Rhétorique</property>
+				<property key="libelle">Rhétorique</property>
+			</item>
+			<item>
+				<property key="id">litteratures_française_langue_française_poesie</property>
+				<property key="libelle_import">Littératures française et de langue française. Poésie</property>
+				<property key="libelle">Poésie</property>
+			</item>
+			<item>
+				<property key="id">litteratures_française_langue_française_litterature_dramatique</property>
+				<property key="libelle_import">Littératures française et de langue française. Littérature dramatique</property>
+				<property key="libelle">Littérature dramatique</property>
+			</item>
+			<item>
+				<property key="id">litteratures_française_langue_française_fiction</property>
+				<property key="libelle_import">Littératures française et de langue française. Fiction</property>
+				<property key="libelle">Fiction</property>
+			</item>
+			<item>
+				<property key="id">litteratures_française_langue_française_essais</property>
+				<property key="libelle_import">Littératures française et de langue française. Essais</property>
+				<property key="libelle">Essais</property>
+			</item>
+			<item>
+				<property key="id">litteratures_française_langue_française_discours_et_correspondance</property>
+				<property key="libelle_import">Littératures française et de langue française. Discours et correspondance</property>
+				<property key="libelle">Discours et correspondance</property>
+			</item>
+			<item>
+				<property key="id">litteratures_française_langue_française_satire_humour_ecrits_divers</property>
+				<property key="libelle_import">Littératures française et de langue française. Satire, humour et écrits divers</property>
+				<property key="libelle">Satire, humour et écrits divers</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">lettres_classiques</property>
+			<property key="libelle_import">Lettres classiques</property>
+			<property key="libelle">Lettres classiques</property>
+			<item>
+				<property key="id">lettres_classiques_langue_latine</property>
+				<property key="libelle_import">Lettres classiques. Langue latine</property>
+				<property key="libelle">Langue latine</property>
+			</item>
+			<item>
+				<property key="id">lettres_classiques_litterature_latine</property>
+				<property key="libelle_import">Lettres classiques. Littérature latine</property>
+				<property key="libelle">Littérature latine</property>
+			</item>
+			<item>
+				<property key="id">lettres_classiques_grec_classique</property>
+				<property key="libelle_import">Lettres classiques. Grec classique</property>
+				<property key="libelle">Grec classique</property>
+			</item>
+			<item>
+				<property key="id">lettres_classiques_litterature_grecque_classique</property>
+				<property key="libelle_import">Lettres classiques. Littérature grecque classique</property>
+				<property key="libelle">Littérature grecque classique</property>
+			</item>
+			<item>
+				<property key="id">lettres_classiques_autres_langues_litterature_italiques</property>
+				<property key="libelle_import">Lettres classiques. Autres langues et littérature italiques</property>
+				<property key="libelle">Autres langues et littérature italiques</property>
+			</item>
+		</item>
+		<item>
+	<property key="id">langues_cultures_regions_france_bis</property>
+	<property key="libelle_import">Langues et cultures des régions de France</property>
+	<property key="libelle">Langues et cultures des régions de France</property>
+	<item>
+		<property key="id">langues_cultures_regions_france_occitan_provencal_catalan_bis</property>
+		<property key="libelle_import">Langues et cultures des régions de France. Occitan, Provençal et Catalan</property>
+		<property key="libelle">Occitan, Provençal et Catalan</property>
+	</item>
+	<item>
+		<property key="id">langues_cultures_regions_france_alsacien_bis</property>
+		<property key="libelle_import">Langues et cultures des régions de France. Alsacien</property>
+		<property key="libelle">Alsacien</property>
+	</item>
+	<item>
+		<property key="id">langues_cultures_regions_france_corse_bis</property>
+		<property key="libelle_import">Langues et cultures des régions de France. Corse</property>
+		<property key="libelle">Corse</property>
+	</item>
+	<item>
+		<property key="id">langues_cultures_regions_france_breton_bis</property>
+		<property key="libelle_import">Langues et cultures des régions de France. Breton (et gaélique)</property>
+		<property key="libelle">Breton (et gaélique)</property>
+	</item>
+	<item>
+		<property key="id">langues_cultures_regions_france_basque_bis</property>
+		<property key="libelle_import">Langues et cultures des régions de France. Basque</property>
+		<property key="libelle">Basque</property>
+	</item>
+	<item>
+		<property key="id">langues_cultures_regions_france_creoles_bis</property>
+		<property key="libelle_import">Langues et cultures des régions de France. Créoles</property>
+		<property key="libelle">Créoles</property>
+	</item>
+</item>
+	</item>
+	<item>
+		<property key="id">langues_litteratures_civilisations_etrangeres</property>
+		<property key="libelle_import">Langues, Littératures et Civilisations étrangères</property>
+		<property key="libelle">Langues, Littératures et Civilisations étrangères</property>
+		<item>
+			<property key="id">langues_etrangeres_approches_transversales_methodologie</property>
+			<property key="libelle_import">Langues étrangères-Approches transversales et méthodologie</property>
+			<property key="libelle">Langues étrangères-Approches transversales et méthodologie</property>
+			<item>
+				<property key="id">langues_etrangeres_approches_transversales_methodologie_approches_transversales</property>
+				<property key="libelle_import">Langues étrangères-Approches transversales et méthodologie. Approches transversales</property>
+				<property key="libelle">Approches transversales</property>
+			</item>
+			<item>
+				<property key="id">langues_etrangeres_approches_transversales_methodologie_methodologie</property>
+				<property key="libelle_import">Langues étrangères-Approches transversales et méthodologie. Méthodologie</property>
+				<property key="libelle">Méthodologie</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">bulgare</property>
+			<property key="libelle_import">Bulgare</property>
+			<property key="libelle">Bulgare</property>
+			<item>
+				<property key="id">bulgare_langue</property>
+				<property key="libelle_import">Bulgare. Langue</property>
+				<property key="libelle">Langue</property>
+			</item>
+			<item>
+				<property key="id">bulgare_litterature</property>
+				<property key="libelle_import">Bulgare. Littérature</property>
+				<property key="libelle">Littérature</property>
+			</item>
+			<item>
+				<property key="id">bulgare_civilisation</property>
+				<property key="libelle_import">Bulgare. Civilisation</property>
+				<property key="libelle">Civilisation</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">danois</property>
+			<property key="libelle_import">Danois</property>
+			<property key="libelle">Danois</property>
+			<item>
+				<property key="id">danois_langue</property>
+				<property key="libelle_import">Danois. Langue</property>
+				<property key="libelle">Langue</property>
+			</item>
+			<item>
+				<property key="id">danois_litterature</property>
+				<property key="libelle_import">Danois. Littérature</property>
+				<property key="libelle">Littérature</property>
+			</item>
+			<item>
+				<property key="id">danois_civilisation</property>
+				<property key="libelle_import">Danois. Civilisation</property>
+				<property key="libelle">Civilisation</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">finois</property>
+			<property key="libelle_import">Finois</property>
+			<property key="libelle">Finois</property>
+			<item>
+				<property key="id">finois_langue</property>
+				<property key="libelle_import">Finois. Langue</property>
+				<property key="libelle">Langue</property>
+			</item>
+			<item>
+				<property key="id">finois_litterature</property>
+				<property key="libelle_import">Finois. Littérature</property>
+				<property key="libelle">Littérature</property>
+			</item>
+			<item>
+				<property key="id">finois_civilisation</property>
+				<property key="libelle_import">Finois. Civilisation</property>
+				<property key="libelle">Civilisation</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">grec_moderne</property>
+			<property key="libelle_import">Grec moderne</property>
+			<property key="libelle">Grec moderne</property>
+			<item>
+				<property key="id">grec_moderne_langue</property>
+				<property key="libelle_import">Grec moderne. Langue</property>
+				<property key="libelle">Langue</property>
+			</item>
+			<item>
+				<property key="id">grec_moderne_litterature</property>
+				<property key="libelle_import">Grec moderne. Littérature</property>
+				<property key="libelle">Littérature</property>
+			</item>
+			<item>
+				<property key="id">grec_moderne_civilisation</property>
+				<property key="libelle_import">Grec moderne. Civilisation</property>
+				<property key="libelle">Civilisation</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">hebreu</property>
+			<property key="libelle_import">Hébreu</property>
+			<property key="libelle">Hébreu</property>
+			<item>
+				<property key="id">hebreu_langue</property>
+				<property key="libelle_import">Hébreu. Langue</property>
+				<property key="libelle">Langue</property>
+			</item>
+			<item>
+				<property key="id">hebreu_litterature</property>
+				<property key="libelle_import">Hébreu. Littérature</property>
+				<property key="libelle">Littérature</property>
+			</item>
+			<item>
+				<property key="id">hebreu_civilisation</property>
+				<property key="libelle_import">Hébreu. Civilisation</property>
+				<property key="libelle">Civilisation</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">hongrois</property>
+			<property key="libelle_import">Hongrois</property>
+			<property key="libelle">Hongrois</property>
+			<item>
+				<property key="id">hongrois_langue</property>
+				<property key="libelle_import">Hongrois. Langue</property>
+				<property key="libelle">Langue</property>
+			</item>
+			<item>
+				<property key="id">hongrois_litterature</property>
+				<property key="libelle_import">Hongrois. Littérature</property>
+				<property key="libelle">Littérature</property>
+			</item>
+			<item>
+				<property key="id">hongrois_civilisation</property>
+				<property key="libelle_import">Hongrois. Civilisation</property>
+				<property key="libelle">Civilisation</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">indien</property>
+			<property key="libelle_import">Indien</property>
+			<property key="libelle">Indien</property>
+			<item>
+				<property key="id">indien_langue</property>
+				<property key="libelle_import">Indien. Langue</property>
+				<property key="libelle">Langue</property>
+			</item>
+			<item>
+				<property key="id">indien_litterature</property>
+				<property key="libelle_import">Indien. Littérature</property>
+				<property key="libelle">Littérature</property>
+			</item>
+			<item>
+				<property key="id">indien_civilisation</property>
+				<property key="libelle_import">Indien. Civilisation</property>
+				<property key="libelle">Civilisation</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">islandais</property>
+			<property key="libelle_import">Islandais</property>
+			<property key="libelle">Islandais</property>
+			<item>
+				<property key="id">islandais_langue</property>
+				<property key="libelle_import">Islandais. Langue</property>
+				<property key="libelle">Langue</property>
+			</item>
+			<item>
+				<property key="id">islandais_litterature</property>
+				<property key="libelle_import">Islandais. Littérature</property>
+				<property key="libelle">Littérature</property>
+			</item>
+			<item>
+				<property key="id">islandais_civilisation</property>
+				<property key="libelle_import">Islandais. Civilisation</property>
+				<property key="libelle">Civilisation</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">japonais</property>
+			<property key="libelle_import">Japonais</property>
+			<property key="libelle">Japonais</property>
+			<item>
+				<property key="id">japonais_langue</property>
+				<property key="libelle_import">Japonais. Langue</property>
+				<property key="libelle">Langue</property>
+			</item>
+			<item>
+				<property key="id">japonais_litterature</property>
+				<property key="libelle_import">Japonais. Littérature</property>
+				<property key="libelle">Littérature</property>
+			</item>
+			<item>
+				<property key="id">japonais_civilisation</property>
+				<property key="libelle_import">Japonais. Civilisation</property>
+				<property key="libelle">Civilisation</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">langues_africaines</property>
+			<property key="libelle_import">Langues africaines</property>
+			<property key="libelle">Langues africaines</property>
+			<item>
+				<property key="id">langues_africaines_langue</property>
+				<property key="libelle_import">Langues africaines. Langue</property>
+				<property key="libelle">Langue</property>
+			</item>
+			<item>
+				<property key="id">langues_africaines_litterature</property>
+				<property key="libelle_import">Langues africaines. Littérature</property>
+				<property key="libelle">Littérature</property>
+			</item>
+			<item>
+				<property key="id">langues_africaines_civilisation</property>
+				<property key="libelle_import">Langues africaines. Civilisation</property>
+				<property key="libelle">Civilisation</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">langues_iraniennes</property>
+			<property key="libelle_import">Langues iraniennes</property>
+			<property key="libelle">Langues iraniennes</property>
+			<item>
+				<property key="id">langues_iraniennes_langue</property>
+				<property key="libelle_import">Langues iraniennes. Langue</property>
+				<property key="libelle">Langue</property>
+			</item>
+			<item>
+				<property key="id">langues_iraniennes_litterature</property>
+				<property key="libelle_import">Langues iraniennes. Littérature</property>
+				<property key="libelle">Littérature</property>
+			</item>
+			<item>
+				<property key="id">langues_iraniennes_civilisation</property>
+				<property key="libelle_import">Langues iraniennes. Civilisation</property>
+				<property key="libelle">Civilisation</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">neerlandais</property>
+			<property key="libelle_import">Néerlandais</property>
+			<property key="libelle">Néerlandais</property>
+			<item>
+				<property key="id">neerlandais_langue</property>
+				<property key="libelle_import">Néerlandais. Langue</property>
+				<property key="libelle">Langue</property>
+			</item>
+			<item>
+				<property key="id">neerlandais_litterature</property>
+				<property key="libelle_import">Néerlandais. Littérature</property>
+				<property key="libelle">Littérature</property>
+			</item>
+			<item>
+				<property key="id">neerlandais_civilisation</property>
+				<property key="libelle_import">Néerlandais. Civilisation</property>
+				<property key="libelle">Civilisation</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">norvegien</property>
+			<property key="libelle_import">Norvégien</property>
+			<property key="libelle">Norvégien</property>
+			<item>
+				<property key="id">norvegien_langue</property>
+				<property key="libelle_import">Norvégien. Langue</property>
+				<property key="libelle">Langue</property>
+			</item>
+			<item>
+				<property key="id">norvegien_litterature</property>
+				<property key="libelle_import">Norvégien. Littérature</property>
+				<property key="libelle">Littérature</property>
+			</item>
+			<item>
+				<property key="id">norvegien_civilisation</property>
+				<property key="libelle_import">Norvégien. Civilisation</property>
+				<property key="libelle">Civilisation</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">roumain_rheto_roman</property>
+			<property key="libelle_import">Roumain et rhéto-roman</property>
+			<property key="libelle">Roumain et rhéto-roman</property>
+			<item>
+				<property key="id">roumain_rheto_roman_langue</property>
+				<property key="libelle_import">Roumain et rhéto-roman. Langue</property>
+				<property key="libelle">Langue</property>
+			</item>
+			<item>
+				<property key="id">roumain_rheto_roman_litterature</property>
+				<property key="libelle_import">Roumain et rhéto-roman. Littérature</property>
+				<property key="libelle">Littérature</property>
+			</item>
+			<item>
+				<property key="id">roumain_rheto_roman_civilisation</property>
+				<property key="libelle_import">Roumain et rhéto-roman. Civilisation</property>
+				<property key="libelle">Civilisation</property>
+			</item>
+		</item>
+
+		<item>
+			<property key="id">suedois</property>
+			<property key="libelle_import">Suédois</property>
+			<property key="libelle">Suédois</property>
+			<item>
+				<property key="id">suedois_langue</property>
+				<property key="libelle_import">Suédois. Langue</property>
+				<property key="libelle">Langue</property>
+			</item>
+			<item>
+				<property key="id">suedois_litterature</property>
+				<property key="libelle_import">Suédois. Littérature</property>
+				<property key="libelle">Littérature</property>
+			</item>
+			<item>
+				<property key="id">suedois_civilisation</property>
+				<property key="libelle_import">Suédois. Civilisation</property>
+				<property key="libelle">Civilisation</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">tcheque</property>
+			<property key="libelle_import">Tchèque</property>
+			<property key="libelle">Tchèque</property>
+			<item>
+				<property key="id">tcheque_langue</property>
+				<property key="libelle_import">Tchèque. Langue</property>
+				<property key="libelle">Langue</property>
+			</item>
+			<item>
+				<property key="id">tcheque_litterature</property>
+				<property key="libelle_import">Tchèque. Littérature</property>
+				<property key="libelle">Littérature</property>
+			</item>
+			<item>
+				<property key="id">tcheque_civilisation</property>
+				<property key="libelle_import">Tchèque. Civilisation</property>
+				<property key="libelle">Civilisation</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">turc</property>
+			<property key="libelle_import">Turc</property>
+			<property key="libelle">Turc</property>
+			<item>
+				<property key="id">turc_langue</property>
+				<property key="libelle_import">Turc. Langue</property>
+				<property key="libelle">Langue</property>
+			</item>
+			<item>
+				<property key="id">turc_litterature</property>
+				<property key="libelle_import">Turc. Littérature</property>
+				<property key="libelle">Littérature</property>
+			</item>
+			<item>
+				<property key="id">turc_civilisation</property>
+				<property key="libelle_import">Turc. Civilisation</property>
+				<property key="libelle">Civilisation</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">allemand</property>
+			<property key="libelle_import">Allemand</property>
+			<property key="libelle">Allemand</property>
+			<item>
+				<property key="id">allemand_langue</property>
+				<property key="libelle_import">Allemand. Langue</property>
+				<property key="libelle">Langue</property>
+			</item>
+			<item>
+				<property key="id">allemand_litterature</property>
+				<property key="libelle_import">Allemand. Littérature</property>
+				<property key="libelle">Littérature</property>
+			</item>
+			<item>
+				<property key="id">allemand_civilisation</property>
+				<property key="libelle_import">Allemand. Civilisation</property>
+				<property key="libelle">Civilisation</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">anglais</property>
+			<property key="libelle_import">Anglais</property>
+			<property key="libelle">Anglais</property>
+			<item>
+				<property key="id">anglais_langue</property>
+				<property key="libelle_import">Anglais. Langue</property>
+				<property key="libelle">Langue</property>
+			</item>
+			<item>
+				<property key="id">anglais_litteratures</property>
+				<property key="libelle_import">Anglais. Littératures</property>
+				<property key="libelle">Littératures</property>
+			</item>
+			<item>
+				<property key="id">anglais_civilisations</property>
+				<property key="libelle_import">Anglais. Civilisations</property>
+				<property key="libelle">Civilisations</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">arabe</property>
+			<property key="libelle_import">Arabe</property>
+			<property key="libelle">Arabe</property>
+			<item>
+				<property key="id">arabe_langue</property>
+				<property key="libelle_import">Arabe. Langue</property>
+				<property key="libelle">Langue</property>
+			</item>
+			<item>
+				<property key="id">arabe_litterature</property>
+				<property key="libelle_import">Arabe. Littérature</property>
+				<property key="libelle">Littérature</property>
+			</item>
+			<item>
+				<property key="id">arabe_civilisation</property>
+				<property key="libelle_import">Arabe. Civilisation</property>
+				<property key="libelle">Civilisation</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">chinois</property>
+			<property key="libelle_import">Chinois</property>
+			<property key="libelle">Chinois</property>
+			<item>
+				<property key="id">chinois_langue</property>
+				<property key="libelle_import">Chinois. Langue</property>
+				<property key="libelle">Langue</property>
+			</item>
+			<item>
+				<property key="id">chinois_litterature</property>
+				<property key="libelle_import">Chinois. Littérature</property>
+				<property key="libelle">Littérature</property>
+			</item>
+			<item>
+				<property key="id">chinois_civilisation</property>
+				<property key="libelle_import">Chinois. Civilisation</property>
+				<property key="libelle">Civilisation</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">espagnol</property>
+			<property key="libelle_import">Espagnol</property>
+			<property key="libelle">Espagnol</property>
+			<item>
+				<property key="id">espagnol_langue</property>
+				<property key="libelle_import">Espagnol. Langue</property>
+				<property key="libelle">Langue</property>
+			</item>
+			<item>
+				<property key="id">espagnol_litterature</property>
+				<property key="libelle_import">Espagnol. Littérature</property>
+				<property key="libelle">Littérature</property>
+			</item>
+			<item>
+				<property key="id">espagnol_civilisation</property>
+				<property key="libelle_import">Espagnol. Civilisation</property>
+				<property key="libelle">Civilisation</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">italien</property>
+			<property key="libelle_import">Italien</property>
+			<property key="libelle">Italien</property>
+			<item>
+				<property key="id">italien_langue</property>
+				<property key="libelle_import">Italien. Langue</property>
+				<property key="libelle">Langue</property>
+			</item>
+			<item>
+				<property key="id">italien_litterature</property>
+				<property key="libelle_import">Italien. Littérature</property>
+				<property key="libelle">Littérature</property>
+			</item>
+			<item>
+				<property key="id">italien_civilisation</property>
+				<property key="libelle_import">Italien. Civilisation</property>
+				<property key="libelle">Civilisation</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">polonais</property>
+			<property key="libelle_import">Polonais</property>
+			<property key="libelle">Polonais</property>
+			<item>
+				<property key="id">polonais_langue</property>
+				<property key="libelle_import">Polonais. Langue</property>
+				<property key="libelle">Langue</property>
+			</item>
+			<item>
+				<property key="id">polonais_litterature</property>
+				<property key="libelle_import">Polonais. Littérature</property>
+				<property key="libelle">Littérature</property>
+			</item>
+			<item>
+				<property key="id">polonais_civilisation</property>
+				<property key="libelle_import">Polonais. Civilisation</property>
+				<property key="libelle">Civilisation</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">portugais</property>
+			<property key="libelle_import">Portugais</property>
+			<property key="libelle">Portugais</property>
+			<item>
+				<property key="id">portugais_langue</property>
+				<property key="libelle_import">Portugais. Langue</property>
+				<property key="libelle">Langue</property>
+			</item>
+			<item>
+				<property key="id">portugais_litterature</property>
+				<property key="libelle_import">Portugais. Littérature</property>
+				<property key="libelle">Littérature</property>
+			</item>
+			<item>
+				<property key="id">portugais_civilisation</property>
+				<property key="libelle_import">Portugais. Civilisation</property>
+				<property key="libelle">Civilisation</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">langues_anciennes</property>
+			<property key="libelle_import">Langues anciennes</property>
+			<property key="libelle">Langues anciennes</property>
+			<item>
+				<property key="id">langues_anciennes_akkadien</property>
+				<property key="libelle_import">Langues anciennes. Akkadien</property>
+				<property key="libelle">Akkadien</property>
+			</item>
+			<item>
+				<property key="id">langues_anciennes_sanskrit</property>
+				<property key="libelle_import">Langues anciennes. Sanskrit</property>
+				<property key="libelle">Sanskrit</property>
+			</item>
+			<item>
+				<property key="id">langues_anciennes_syriaque_oriental</property>
+				<property key="libelle_import">Langues anciennes. Syriaque oriental</property>
+				<property key="libelle">Syriaque oriental</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">langues_cultures_regions_france</property>
+			<property key="libelle_import">Langues et cultures des régions de France</property>
+			<property key="libelle">Langues et cultures des régions de France</property>
+			<item>
+				<property key="id">langues_cultures_regions_france_occitan_provencal_catalan</property>
+				<property key="libelle_import">Langues et cultures des régions de France. Occitan, Provençal et Catalan</property>
+				<property key="libelle">Occitan, Provençal et Catalan</property>
+			</item>
+			<item>
+				<property key="id">langues_cultures_regions_france_alsacien</property>
+				<property key="libelle_import">Langues et cultures des régions de France. Alsacien</property>
+				<property key="libelle">Alsacien</property>
+			</item>
+			<item>
+				<property key="id">langues_cultures_regions_france_corse</property>
+				<property key="libelle_import">Langues et cultures des régions de France. Corse</property>
+				<property key="libelle">Corse</property>
+			</item>
+			<item>
+				<property key="id">langues_cultures_regions_france_breton</property>
+				<property key="libelle_import">Langues et cultures des régions de France. Breton (et gaélique)</property>
+				<property key="libelle">Breton (et gaélique)</property>
+			</item>
+			<item>
+				<property key="id">langues_cultures_regions_france_basque</property>
+				<property key="libelle_import">Langues et cultures des régions de France. Basque</property>
+				<property key="libelle">Basque</property>
+			</item>
+			<item>
+				<property key="id">langues_cultures_regions_france_creoles</property>
+				<property key="libelle_import">Langues et cultures des régions de France. Créoles</property>
+				<property key="libelle">Créoles</property>
+			</item>
+		</item>
+	</item>
+	<item>
+		<property key="id">sciences_homme</property>
+		<property key="libelle_import">Sciences de l'homme</property>
+		<property key="libelle">Sciences de l'homme</property>
+		<item>
+			<property key="id">homme_approches_transversales_methodologie</property>
+			<property key="libelle_import">Homme-Approches transversales et méthodologie</property>
+			<property key="libelle">Homme-Approches transversales et méthodologie</property>
+			<item>
+				<property key="id">homme_approches_transversales_methodologie_approches_transversales</property>
+				<property key="libelle_import">Homme-Approches transversales et méthodologie. Approches transversales</property>
+				<property key="libelle">Approches transversales</property>
+			</item>
+			<item>
+				<property key="id">homme_approches_transversales_methodologie_methodologie</property>
+				<property key="libelle_import">Homme-Approches transversales et méthodologie. Méthodologie</property>
+				<property key="libelle">Méthodologie</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">philosophie</property>
+			<property key="libelle_import">Philosophie</property>
+			<property key="libelle">Philosophie</property>
+			<item>
+				<property key="id">philosophie_metaphysique</property>
+				<property key="libelle_import">Philosophie. Métaphysique</property>
+				<property key="libelle">Métaphysique</property>
+			</item>
+			<item>
+				<property key="id">philosophie_epistemologie_causalite_genre_humain</property>
+				<property key="libelle_import">Philosophie. Épistémologie, causalité, genre humain</property>
+				<property key="libelle">Épistémologie, causalité, genre humain</property>
+			</item>
+			<item>
+				<property key="id">philosophie_phenomenes_paranormaux</property>
+				<property key="libelle_import">Philosophie. Phénomènes paranormaux</property>
+				<property key="libelle">Phénomènes paranormaux</property>
+			</item>
+			<item>
+				<property key="id">philosophie_logique</property>
+				<property key="libelle_import">Philosophie. Logique</property>
+				<property key="libelle">Logique</property>
+			</item>
+			<item>
+				<property key="id">philosophie_morale</property>
+				<property key="libelle_import">Philosophie. Morale (éthique)</property>
+				<property key="libelle">Morale (éthique)</property>
+			</item>
+			<item>
+				<property key="id">philosophie_philosophie_occidentale_antiquite_MA</property>
+				<property key="libelle_import">Philosophie. Philosophies occidentales de l'Antiquité et du Moyen-Age</property>
+				<property key="libelle">Philosophies occidentales de l'Antiquité et du Moyen-Age</property>
+			</item>
+			<item>
+				<property key="id">philosophie_systemes_ecoles_philosophique_moderne</property>
+				<property key="libelle_import">Philosophie. Les divers systèmes et écoles philosophiques modernes</property>
+				<property key="libelle">Les divers systèmes et écoles philosophiques modernes</property>
+			</item>
+			<item>
+				<property key="id">philosophie_philosophies_orient</property>
+				<property key="libelle_import">Philosophie. Philosophies de l'Orient</property>
+				<property key="libelle">Philosophies de l'Orient</property>
+			</item>
+			<item>
+				<property key="id">philosophie_philosophie_politique</property>
+				<property key="libelle_import">Philosophie. Philosophie politique</property>
+				<property key="libelle">Philosophie politique</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">psychologie</property>
+			<property key="libelle_import">Psychologie</property>
+			<property key="libelle">Psychologie</property>
+			<item>
+				<property key="id">psychologie_theories_psychologiques</property>
+				<property key="libelle_import">Psychologie. Théories psychologiques</property>
+				<property key="libelle">Théories psychologiques</property>
+			</item>
+			<item>
+				<property key="id">psychologie_genre_humain</property>
+				<property key="libelle_import">Psychologie. Genre humain</property>
+				<property key="libelle">Genre humain</property>
+			</item>
+			<item>
+				<property key="id">psychologie_psychologie_cognitive</property>
+				<property key="libelle_import">Psychologie. Psychologie cognitive</property>
+				<property key="libelle">Psychologie cognitive</property>
+			</item>
+			<item>
+				<property key="id">psychologie_etats_processus_subconscient</property>
+				<property key="libelle_import">Psychologie. États et processus du subconscient</property>
+				<property key="libelle">États et processus du subconscient</property>
+			</item>
+			<item>
+				<property key="id">psychologie_psychologie_differentielle_genetique</property>
+				<property key="libelle_import">Psychologie. Psychologie différentielle et génétique (développement)</property>
+				<property key="libelle">Psychologie différentielle et génétique (développement)</property>
+			</item>
+			<item>
+				<property key="id">psychologie_psychologie_appliquee_comparee</property>
+				<property key="libelle_import">Psychologie. Psychologie appliquée et comparée</property>
+				<property key="libelle">Psychologie appliquée et comparée</property>
+			</item>
+			<item>
+				<property key="id">psychologie_psychologie_sociale</property>
+				<property key="libelle_import">Psychologie. Psychologie sociale</property>
+				<property key="libelle">Psychologie sociale</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">sciences_religions</property>
+			<property key="libelle_import">Sciences des religions</property>
+			<property key="libelle">Sciences des religions</property>
+			<item>
+				<property key="id">sciences_religions_histoire_theorie_religion_concepts_transversaux_analyses_comparees</property>
+				<property key="libelle_import">Sciences des religions. Histoire et théorie de la religion - concepts transversaux - analyses comparées</property>
+				<property key="libelle">Histoire et théorie de la religion - concepts transversaux - analyses comparées</property>
+			</item>
+			<item>
+				<property key="id">sciences_religions_christianisme_theologie_doctrinale</property>
+				<property key="libelle_import">Sciences des religions. Christianisme - Théologie doctrinale</property>
+				<property key="libelle">Christianisme - Théologie doctrinale</property>
+			</item>
+			<item>
+				<property key="id">sciences_religions_christianisme_vie_culte_pratique_religieuse</property>
+				<property key="libelle_import">Sciences des religions. Christianisme - Vie, culte et pratique religieuse</property>
+				<property key="libelle">Christianisme - Vie, culte et pratique religieuse</property>
+			</item>
+			<item>
+				<property key="id">sciences_religions_eglise_chretienne_societes</property>
+				<property key="libelle_import">Sciences des religions. Église chrétienne et sociétés (approches sociales et historiques)</property>
+				<property key="libelle">Église chrétienne et sociétés (approches sociales et historiques)</property>
+			</item>
+			<item>
+				<property key="id">sciences_religions_confessions_sectes_chretiennes</property>
+				<property key="libelle_import">Sciences des religions. Confessions et sectes chrétiennes</property>
+				<property key="libelle">Confessions et sectes chrétiennes</property>
+			</item>
+			<item>
+				<property key="id">sciences_religions_religions_origine_indienne</property>
+				<property key="libelle_import">Sciences des religions. Religions d'origine indienne</property>
+				<property key="libelle">Religions d'origine indienne</property>
+			</item>
+			<item>
+				<property key="id">sciences_religions_judaisme</property>
+				<property key="libelle_import">Sciences des religions. Judaïsme</property>
+				<property key="libelle">Judaïsme</property>
+			</item>
+			<item>
+				<property key="id">sciences_religions_islam_babisme_foi_bahaie</property>
+				<property key="libelle_import">Sciences des religions. Islam, babisme et foi bahaïe</property>
+				<property key="libelle">Islam, babisme et foi bahaïe</property>
+			</item>
+			<item>
+				<property key="id">sciences_religions_autres_religions</property>
+				<property key="libelle_import">Sciences des religions. Autres religions</property>
+				<property key="libelle">Autres religions</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">sciences_langage</property>
+			<property key="libelle_import">Sciences du langage</property>
+			<property key="libelle">Sciences du langage</property>
+			<item>
+				<property key="id">sciences_langage_linguistique_gen</property>
+				<property key="libelle_import">Sciences du langage. Linguistique générale</property>
+				<property key="libelle">Linguistique générale</property>
+			</item>
+			<item>
+				<property key="id">sciences_langage_linguistique_app</property>
+				<property key="libelle_import">Sciences du langage. Sociolinguistique</property>
+				<property key="libelle">Sociolinguistique</property>
+			</item>
+			<item>
+				<property key="id">sciences_langage_linguistique_hist</property>
+				<property key="libelle_import">Sciences du langage. Linguistique historique</property>
+				<property key="libelle">Linguistique historique</property>
+			</item>
+		</item>
+	</item>
+	<item>
+		<property key="id">arts</property>
+		<property key="libelle_import">Arts</property>
+		<property key="libelle">Arts</property>
+		<item>
+			<property key="id">arts_approches_transversales_methodologie</property>
+			<property key="libelle_import">Arts-Approches transversales et méthodologie</property>
+			<property key="libelle">Arts-Approches transversales et méthodologie</property>
+			<item>
+				<property key="id">arts_approches_transversales_methodologie_approches_transversales</property>
+				<property key="libelle_import">Arts-Approches transversales et méthodologie. Approches transversales</property>
+				<property key="libelle">Approches transversales</property>
+			</item>
+			<item>
+				<property key="id">arts_approches_transversales_methodologie_methodologie</property>
+				<property key="libelle_import">Arts-Approches transversales et méthodologie. Méthodologie</property>
+				<property key="libelle">Méthodologie</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">architecture_art_paysage</property>
+			<property key="libelle_import">Architecture, Art du paysage</property>
+			<property key="libelle">Architecture, Art du paysage</property>
+			<item>
+				<property key="id">architecture_art_paysage_art_paysage_amenagements_particuliers</property>
+				<property key="libelle_import">Architecture, Art du paysage. Art du paysage et aménagements particuliers</property>
+				<property key="libelle">Art du paysage et aménagements particuliers</property>
+			</item>
+			<item>
+				<property key="id">architecture_art_paysage_architecture</property>
+				<property key="libelle_import">Architecture, Art du paysage. Architecture</property>
+				<property key="libelle">Architecture</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">arts_visuels_plastiques</property>
+			<property key="libelle_import">Arts visuels et plastiques</property>
+			<property key="libelle">Arts visuels et plastiques</property>
+			<item>
+				<property key="id">arts_visuels_plastiques_sculpture_autres_arts_plastiques</property>
+				<property key="libelle_import">Arts visuels et plastiques. Sculpture et autres arts plastiques</property>
+				<property key="libelle">Sculpture et autres arts plastiques</property>
+			</item>
+			<item>
+				<property key="id">arts_visuels_plastiques_dessin_arts_decoratifs</property>
+				<property key="libelle_import">Arts visuels et plastiques. Dessin et arts décoratifs</property>
+				<property key="libelle">Dessin et arts décoratifs</property>
+			</item>
+			<item>
+				<property key="id">arts_visuels_plastiques_peinture_et_peintures</property>
+				<property key="libelle_import">Arts visuels et plastiques. La peinture et les peintures</property>
+				<property key="libelle">La peinture et les peintures</property>
+			</item>
+			<item>
+				<property key="id">arts_visuels_plastiques_arts_graphiques_gravures_estampes</property>
+				<property key="libelle_import">Arts visuels et plastiques. Arts graphiques, gravures et estampes</property>
+				<property key="libelle">Arts graphiques, gravures et estampes</property>
+			</item>
+			<item>
+				<property key="id">arts_visuels_plastiques_photographie_et_photographies</property>
+				<property key="libelle_import">Arts visuels et plastiques. Photographie, photographies, art par ordinateur (art numérique)</property>
+				<property key="libelle">Photographie, photographies, art par ordinateur (art numérique)</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">musique</property>
+			<property key="libelle_import">Musique</property>
+			<property key="libelle">Musique</property>
+			<item>
+				<property key="id">musique_theorie_et_histoire_musique</property>
+				<property key="libelle_import">Musique. Théorie et histoire de la musique</property>
+				<property key="libelle">Théorie et histoire de la musique</property>
+			</item>
+			<item>
+				<property key="id">musique_principes_generaux_formes_musicales_analyse_techniques_musicales</property>
+				<property key="libelle_import">Musique. Principes généraux, formes musicales, analyse et techniques musicales</property>
+				<property key="libelle">Principes généraux, formes musicales, analyse et techniques musicales</property>
+			</item>
+			<item>
+				<property key="id">musique_musiques_vocale</property>
+				<property key="libelle_import">Musique. Musiques vocales</property>
+				<property key="libelle">Musiques vocales</property>
+			</item>
+			<item>
+				<property key="id">musique_musiques_instrumentales</property>
+				<property key="libelle_import">Musique. Musiques instrumentales</property>
+				<property key="libelle">Musiques instrumentales</property>
+			</item>
+			<item>
+				<property key="id">musique_instruments</property>
+				<property key="libelle_import">Musique. Les instruments</property>
+				<property key="libelle">Les instruments</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">arts_spectacle</property>
+			<property key="libelle_import">Arts du spectacle</property>
+			<property key="libelle">Arts du spectacle</property>
+			<item>
+				<property key="id">arts_spectacle_cinema</property>
+				<property key="libelle_import">Arts du spectacle. Cinéma</property>
+				<property key="libelle">Cinéma</property>
+			</item>
+			<item>
+				<property key="id">arts_spectacle_theatre</property>
+				<property key="libelle_import">Arts du spectacle. Théâtre</property>
+				<property key="libelle">Théâtre</property>
+			</item>
+			<item>
+				<property key="id">arts_spectacle_danse</property>
+				<property key="libelle_import">Arts du spectacle. Danse</property>
+				<property key="libelle">Danse</property>
+			</item>
+			<item>
+				<property key="id">arts_spectacle_cirque_et_autres_spectacles</property>
+				<property key="libelle_import">Arts du spectacle. Cirque et autres spectacles (marionnettes et ombres chinoises, corridas...)</property>
+				<property key="libelle">Cirque et autres spectacles (marionnettes et ombres chinoises, corridas...)</property>
+			</item>
+		</item>
+	</item>
+	<item>
+		<property key="id">sciences_societe</property>
+		<property key="libelle_import">Sciences de la société</property>
+		<property key="libelle">Sciences de la société</property>
+		<item>
+			<property key="id">societe_approches_transversales_methodologie</property>
+			<property key="libelle_import">Société-Approches transversales et méthodologie</property>
+			<property key="libelle">Société-Approches transversales et méthodologie</property>
+			<item>
+				<property key="id">societe_approches_transversales_methodologie_approches_transversales</property>
+				<property key="libelle_import">Société-Approches transversales et méthodologie. Approches transversales</property>
+				<property key="libelle">Approches transversales</property>
+			</item>
+			<item>
+				<property key="id">societe_approches_transversales_methodologie_methodologie</property>
+				<property key="libelle_import">Société-Approches transversales et méthodologie. Méthodologie</property>
+				<property key="libelle">Méthodologie</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">histoire_histoire_art_archeologie</property>
+			<property key="libelle_import">Histoire, Histoire de l'Art, Archéologie</property>
+			<property key="libelle">Histoire, Histoire de l'Art, Archéologie</property>
+			<item>
+				<property key="id">histoire_histoire_art_archeologie_histoire_generale</property>
+				<property key="libelle_import">Histoire, Histoire de l'Art, Archéologie. Histoire générale</property>
+				<property key="libelle">Histoire générale</property>
+			</item>
+			<item>
+				<property key="id">histoire_histoire_art_archeologie_histoire_du_monde_ancien</property>
+				<property key="libelle_import">Histoire, Histoire de l'Art, Archéologie. Histoire du monde ancien, jusqu'à 499 après J.C.</property>
+				<property key="libelle">Histoire du monde ancien, jusqu'à 499 après J.C.</property>
+			</item>
+			<item>
+				<property key="id">histoire_histoire_art_archeologie_histoire_europe</property>
+				<property key="libelle_import">Histoire, Histoire de l'Art, Archéologie. Histoire de l'Europe</property>
+				<property key="libelle">Histoire de l'Europe</property>
+			</item>
+			<item>
+				<property key="id">histoire_histoire_art_archeologie_histoire_asie_orient_extreme_orient</property>
+				<property key="libelle_import">Histoire, Histoire de l'Art, Archéologie. Histoire de l'Asie, Orient, Extrême-Orient</property>
+				<property key="libelle">Histoire de l'Asie, Orient, Extrême-Orient</property>
+			</item>
+			<item>
+				<property key="id">histoire_histoire_art_archeologie_histoire_afrique</property>
+				<property key="libelle_import">Histoire, Histoire de l'Art, Archéologie. Histoire de l'Afrique</property>
+				<property key="libelle">Histoire de l'Afrique</property>
+			</item>
+			<item>
+				<property key="id">histoire_histoire_art_archeologie_histoire_amerique_du_nord</property>
+				<property key="libelle_import">Histoire, Histoire de l'Art, Archéologie. Histoire de l'Amérique du Nord</property>
+				<property key="libelle">Histoire de l'Amérique du Nord</property>
+			</item>
+			<item>
+				<property key="id">histoire_histoire_art_archeologie_histoire_amerique_du_sud</property>
+				<property key="libelle_import">Histoire, Histoire de l'Art, Archéologie. Histoire de l'Amérique du Sud</property>
+				<property key="libelle">Histoire de l'Amérique du Sud</property>
+			</item>
+			<item>
+				<property key="id">histoire_histoire_art_archeologie_histoire_autres_aires</property>
+				<property key="libelle_import">Histoire, Histoire de l'Art, Archéologie. Histoire d'autres aires</property>
+				<property key="libelle">Histoire d'autres aires</property>
+			</item>
+			<item>
+				<property key="id">histoire_histoire_art_archeologie_histoire_art</property>
+				<property key="libelle_import">Histoire, Histoire de l'Art, Archéologie. Histoire de l'art</property>
+				<property key="libelle">Histoire de l'art</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">geographie_amenagement</property>
+			<property key="libelle_import">Géographie, Aménagement</property>
+			<property key="libelle">Géographie, Aménagement</property>
+			<item>
+				<property key="id">geographie_amenagement_epistemologie_histoire_pedagogie</property>
+				<property key="libelle_import">Géographie, Aménagement. Epistémologie, histoire, pédagogie de la Géographie</property>
+				<property key="libelle">Epistémologie, histoire, pédagogie de la Géographie</property>
+			</item>
+			<item>
+				<property key="id">geographie_amenagement_geographie_physique</property>
+				<property key="libelle_import">Géographie, Aménagement. Géographie physique</property>
+				<property key="libelle">Géographie physique</property>
+			</item>
+			<item>
+				<property key="id">geographie_amenagement_geographie_humaine</property>
+				<property key="libelle_import">Géographie, Aménagement. Géographie humaine</property>
+				<property key="libelle">Géographie humaine</property>
+			</item>
+			<item>
+				<property key="id">geographie_amenagement_geographie_rurale</property>
+				<property key="libelle_import">Géographie, Aménagement. Géographie rurale</property>
+				<property key="libelle">Géographie rurale</property>
+			</item>
+			<item>
+				<property key="id">geographie_amenagement_geographie_urbaine</property>
+				<property key="libelle_import">Géographie, Aménagement. Géographie urbaine</property>
+				<property key="libelle">Géographie urbaine</property>
+			</item>
+			<item>
+				<property key="id">geographie_amenagement_geographie_economique_regionale</property>
+				<property key="libelle_import">Géographie, Aménagement. Géographie économique et régionale</property>
+				<property key="libelle">Géographie économique et régionale</property>
+			</item>
+			<item>
+				<property key="id">geographie_amenagement_environnement_risques</property>
+				<property key="libelle_import">Géographie, Aménagement. Environnement et risques</property>
+				<property key="libelle">Environnement et risques</property>
+			</item>
+			<item>
+				<property key="id">geographie_amenagement_amenagement</property>
+				<property key="libelle_import">Géographie, Aménagement. Aménagement</property>
+				<property key="libelle">Aménagement</property>
+			</item>
+			<item>
+				<property key="id">geographie_amenagement_geomatique_representation_geographique</property>
+				<property key="libelle_import">Géographie, Aménagement. Géomatique et représentations géographiques</property>
+				<property key="libelle">Géomatique et représentations géographiques</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">sociologie_demographie_anthropologie</property>
+			<property key="libelle_import">Sociologie, Démographie, Anthropologie</property>
+			<property key="libelle">Sociologie, Démographie, Anthropologie</property>
+			<item>
+				<property key="id">sociologie_demographie_anthropologie_theories_sociologiques_ethnologiques_anthropologiques_methodologie</property>
+				<property key="libelle_import">Sociologie, Démographie, Anthropologie. Théories sociologiques, ethnologiques, anthropologiques et méthodologie</property>
+				<property key="libelle">Théories sociologiques, ethnologiques, anthropologiques et méthodologie</property>
+			</item>
+			<item>
+				<property key="id">sociologie_demographie_anthropologie_sociologie_des_processus_sociaux</property>
+				<property key="libelle_import">Sociologie, Démographie, Anthropologie. Sociologie des processus sociaux</property>
+				<property key="libelle">Sociologie des processus sociaux</property>
+			</item>
+			<item>
+				<property key="id">sociologie_demographie_anthropologie_sociologie_des_groupes_sociaux</property>
+				<property key="libelle_import">Sociologie, Démographie, Anthropologie. Sociologie des groupes sociaux</property>
+				<property key="libelle">Sociologie des groupes sociaux</property>
+			</item>
+			<item>
+				<property key="id">sociologie_demographie_anthropologie_sociologie_des_cultures</property>
+				<property key="libelle_import">Sociologie, Démographie, Anthropologie. Sociologie des cultures</property>
+				<property key="libelle">Sociologie des cultures</property>
+			</item>
+			<item>
+				<property key="id">sociologie_demographie_anthropologie_demographie_et_facteurs_comportement_social</property>
+				<property key="libelle_import">Sociologie, Démographie, Anthropologie. Démographie et facteurs influençant le comportement social</property>
+				<property key="libelle">Démographie et facteurs influençant le comportement social</property>
+			</item>
+			<item>
+				<property key="id">sociologie_demographie_anthropologie_services_et_problemes_sociaux</property>
+				<property key="libelle_import">Sociologie, Démographie, Anthropologie. Services et problèmes sociaux</property>
+				<property key="libelle">Services et problèmes sociaux</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">sciences_education</property>
+			<property key="libelle_import">Sciences de l'éducation</property>
+			<property key="libelle">Sciences de l'éducation</property>
+			<item>
+				<property key="id">sciences_education_tice</property>
+				<property key="libelle_import">Sciences de l'éducation. TICe</property>
+				<property key="libelle">TICe</property>
+			</item>
+			<item>
+				<property key="id">sciences_education_philosophie_et_theorie_education</property>
+				<property key="libelle_import">Sciences de l'éducation. Philosophie et théorie de l'éducation</property>
+				<property key="libelle">Philosophie et théorie de l'éducation</property>
+			</item>
+			<item>
+				<property key="id">sciences_education_pedagogie_et_didactique</property>
+				<property key="libelle_import">Sciences de l'éducation. Pédagogie et Didactique</property>
+				<property key="libelle">Pédagogie et Didactique</property>
+			</item>
+			<item>
+				<property key="id">sciences_education_politique_educative</property>
+				<property key="libelle_import">Sciences de l'éducation. Politique éducative</property>
+				<property key="libelle">Politique éducative</property>
+			</item>
+			<item>
+				<property key="id">sciences_education_ecole_elementaire</property>
+				<property key="libelle_import">Sciences de l'éducation. École élémentaire</property>
+				<property key="libelle">École élémentaire</property>
+			</item>
+			<item>
+				<property key="id">sciences_education_enseignement_secondaire</property>
+				<property key="libelle_import">Sciences de l'éducation. Enseignement secondaire</property>
+				<property key="libelle">Enseignement secondaire</property>
+			</item>
+			<item>
+				<property key="id">sciences_education_enseignement_superieur</property>
+				<property key="libelle_import">Sciences de l'éducation. Enseignement supérieur</property>
+				<property key="libelle">Enseignement supérieur</property>
+			</item>
+			<item>
+				<property key="id">sciences_education_enseignement_pour_adultes</property>
+				<property key="libelle_import">Sciences de l'éducation. Enseignement pour adultes (Éducation permanente et continue)</property>
+				<property key="libelle">Enseignement pour adultes (Éducation permanente et continue)</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">sciences_information_communication</property>
+			<property key="libelle_import">Sciences de l'information et de la communication</property>
+			<property key="libelle">Sciences de l'information et de la communication</property>
+			<item>
+				<property key="id">sciences_information_communication_theorie_communication</property>
+				<property key="libelle_import">Sciences de l'information et de la communication. Théorie de la communication</property>
+				<property key="libelle">Théorie de la communication</property>
+			</item>
+			<item>
+				<property key="id">sciences_information_communication_telecommunications</property>
+				<property key="libelle_import">Sciences de l'information et de la communication. Télécommunications</property>
+				<property key="libelle">Télécommunications</property>
+			</item>
+			<item>
+				<property key="id">sciences_information_communication_bibliotheconomie_sciences_information</property>
+				<property key="libelle_import">Sciences de l'information et de la communication. Bibliothéconomie - Sciences de l'information</property>
+				<property key="libelle">Bibliothéconomie - Sciences de l'information</property>
+			</item>
+			<item>
+				<property key="id">sciences_information_communication_le_livre</property>
+				<property key="libelle_import">Sciences de l'information et de la communication. Le livre</property>
+				<property key="libelle">Le livre</property>
+			</item>
+			<item>
+				<property key="id">sciences_information_communication_medias_documentaires_et_educatifs_journalisme_edition</property>
+				<property key="libelle_import">Sciences de l'information et de la communication. Médias documentaires et éducatifs - Journalisme - Édition</property>
+				<property key="libelle">Médias documentaires et éducatifs - Journalisme - Édition</property>
+			</item>
+		</item>
+		<item>
+			<property key="id">statistiques_informatique_mathematiques_appliquees_sciences_humaines_sociales</property>
+			<property key="libelle_import">Statistiques, Informatique et Mathématiques appliquées aux sciences humaines et sociales</property>
+			<property key="libelle">Statistiques, Informatique et Mathématiques appliquées aux sciences humaines et sociales</property>
+			<item>
+				<property key="id">statistiques_informatique_mathematiques_appliquees_sciences_humaines_sociales_statistiques</property>
+				<property key="libelle_import">Statistiques, Informatique et Mathématiques appliquées aux sciences humaines et sociales. Statistiques appliquées aux sciences sociales</property>
+				<property key="libelle">Statistiques appliquées aux sciences sociales</property>
+			</item>
+			<item>
+				<property key="id">statistiques_informatique_mathematiques_appliquees_sciences_humaines_sociales_mathematiques</property>
+				<property key="libelle_import">Statistiques, Informatique et Mathématiques appliquées aux sciences humaines et sociales. Mathématiques appliquées aux sciences sociales</property>
+				<property key="libelle">Mathématiques appliquées aux sciences sociales</property>
+			</item>
+			<item>
+				<property key="id">statistiques_informatique_mathematiques_appliquees_sciences_humaines_sociales_informatique_traitement_et_programmation_des_donnees</property>
+				<property key="libelle_import">Statistiques, Informatique et Mathématiques appliquées aux sciences humaines et sociales. Informatique - Traitement et programmation des données</property>
+				<property key="libelle">Informatique - Traitement et programmation des données</property>
+			</item>
+			<item>
+				<property key="id">statistiques_informatique_mathematiques_appliquees_sciences_humaines_sociales_methodes_informatiques_particulieres</property>
+				<property key="libelle_import">Statistiques, Informatique et Mathématiques appliquées aux sciences humaines et sociales. Méthodes informatiques particulières</property>
+				<property key="libelle">Méthodes informatiques particulières</property>
+			</item>
+		</item>
+	</item>
+</table>

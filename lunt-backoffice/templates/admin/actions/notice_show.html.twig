@@ -6,9 +6,7 @@
     {% endfor %}
 
     {% if curritem is defined %}
-        <a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('detail').setEntityId(curritem.id) }}" class="btn btn-secondary"><i class="fa fa-arrow-up" aria-hidden="true"></i> Retourner</a>
-    {% else %}
-        <a href="{{ ea_url().setController('App\\Controller\\NoticeCrudController').setAction('index') }}" class="btn btn-secondary"><i class="fa fa-arrow-up" aria-hidden="true"></i> Retourner</a>
+        <a href="{{ ea_url().setController('App\\Controller\\DossierCrudController').setAction('detail').setEntityId(curritem.id) }}" class="btn btn-outline-secondary">Retourner</a>
     {% endif %}
 
 {% endblock %}
@@ -18,10 +16,12 @@
         {{ include('breadcrumb.html.twig', {bcrumb: getCurrentParents(curritem)}, with_context = false) }}
     {% endif %}
 
+    {% set notId = entity.primaryKeyValue %}
+
     <div id="modal-confirm" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-            <form method="post" id="confirm-form" class="modal-content" action="{{ ea_url().setController('App\\Controller\\NoticeCrudController').setAction('labelNotice').setEntityId(entity.primaryKeyValue) }}">
-                <div class="modal-header"><h4>Catégoriser Notice</h4></div>
+            <form method="post" id="confirm-form" class="modal-content" action="{{ ea_url().setController('App\\Controller\\NoticeCrudController').setAction('labelNotice').setEntityId(notId) }}">
+                <div class="modal-header"><h4>Catégoriser la notice {{ notId }}</h4></div>
                 <div class="modal-body">
                     <input type="text" id="label" name="label" class="form-control" placeholder="Entrer la catégorie" required autofocus>
                     <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
@@ -32,6 +32,27 @@
                     </button>
 
                     <button type="submit" class="btn btn-primary" id="modal-confirm-button">
+                        <i class="fa fa-send" aria-hidden="true"></i> Sauvegarder
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-reject" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <form method="post" id="reject-form" class="modal-content" action="{{ ea_url().setController('App\\Controller\\NoticeCrudController').setAction('rejectNotice').setEntityId(notId) }}">
+                <div class="modal-header"><h4>Rejeter cette notice</h4></div>
+                <div class="modal-body">
+                    <textarea type="text" name="motifs" rows="10" class="form-control" placeholder="Entrer les motifs du rejet" required autofocus></textarea>
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-bs-dismiss="modal" class="btn btn-secondary">
+                        <span class="btn-label">{{ 'action.cancel'|trans([], 'EasyAdminBundle') }}</span>
+                    </button>
+
+                    <button type="submit" class="btn btn-primary" id="modal-reject-button">
                         <i class="fa fa-send" aria-hidden="true"></i> Sauvegarder
                     </button>
                 </div>

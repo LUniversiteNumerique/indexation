@@ -1,0 +1,35 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{% extends '@EasyAdmin/page/login_minimal.html.twig' %}
+
+{% block body_class 'page-login' %}
+
+{% block page_title %} UNT Contribution {% endblock %}
+
+{% block head_favicon %}<link rel="shortcut icon" href="/uploads/favicon.ico">{% endblock %}
+
+{% block wrapper_wrapper %}
+    <div class="login-wrapper">
+        <header class="main-header">
+            <div id="header-logo">
+                {% block header_logo %}
+                    <div class="logo logo-long"><img src="/uploads/logo-1000px.png" alt="logo"></div>
+                {% endblock header_logo %}
+                <a class="logo" title="Internal Server Error" href="{{ path('app_home') }}">
+                    Une erreur s'est produite
+                </a>
+            </div>
+        </header>
+
+        <section class="content">
+            <div class="w-100 alert alert-danger rounded mb-3">
+                <i class="fas fa-times-circle mr-1"></i>
+                {{ status_text }}
+            </div>
+
+            <p>Veuillez contacter l'administrateur du site.</p>
+            <a href="{{ path('app_home') }}" class="btn btn-outline-primary">Revenir à la page d'accueil</a>
+
+            <script src="{{ asset('login.js', constant('EasyCorp\\Bundle\\EasyAdminBundle\\Asset\\AssetPackage::PACKAGE_NAME')) }}"></script>
+        </section>
+    </div>
+{% endblock %}

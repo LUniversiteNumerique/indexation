@@ -11,18 +11,34 @@ class Niveau
 {
     use Timestamps;
 
+    #[ORM\Column(length: 225, unique: true), Assert\NotBlank]
+    private ?string $code;
+
     #[ORM\Column(length: 255), Assert\NotBlank]
     private ?string $nom;
 
-    public function __construct($nom=null)
+    public function __construct($code=null,$nom=null)
     {
         $this->creeLe = new \DateTimeImmutable();
+        $this->code = $code;
         $this->nom = $nom;
     }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    public function setCode(string $code): static
+    {
+        $this->code = $code;
+
+        return $this;
     }
 
     public function getNom(): ?string

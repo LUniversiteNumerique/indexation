@@ -2,7 +2,8 @@
 
 namespace App\Repository;
 
-use App\Entity\{Notice, NoticEtat, Univerique};
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use App\Entity\{IndexingConfig, Notice, NoticEtat, Univerique, User};
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -30,33 +31,44 @@ class NoticeRepository extends ServiceEntityRepository
             ->getQuery()->execute();
     }
 
-    public function findFrom(int $core, bool $diff, int $limit, int $offset): array
+    public function findFrom(IndexingConfig $cfg, int $limit=20, int $offset=0): array
     {
-        $state = "n.etat = :etat"; if ($diff) $state .= " AND n.publieLe is null";
+        $qr = $this->createQueryBuilder('n')->join('n.disciplineGroups','dg')
+            ->leftJoin('n.codeweys','e')->leftJoin('n.ressources','r')->leftJoin('n.tags','k')
+            ->leftJoin('n.porteurs','p')->leftJoin('n.auteurs','a')->leftJoin('n.niveaux','t')
+            ->leftJoin('n.docTypes','dd')->leftJoin('n.pedTypes','pp')->join('n.droit','l')
+            ->join('dg.champDisc', 'cd')->where('n.etat = :etat')->distinct();
+        if(!$cfg->isFullMode()) $qr->andWhere('n.publieLe is null AND n.editeLe > :date')->setParameter('date', $cfg->getScheduleAt());
+        $qr->orWhere('n.etat != :etat AND n.publieLe is not null');
 
-        return $this->createQueryBuilder('n')
-            ->join('n.validateur', 'u')
-            ->where("u.untheme = :core")
-            ->andWhere("(n.etat != :etat AND n.publieLe is not null) OR $state")
-            ->setParameters(["core" => $core, "etat" => NoticEtat::Approved])
-            ->setFirstResult($offset)->setMaxResults($limit)
-            ->getQuery()->getResult();
+        return $qr->andWhere("cd IN (:fields)")
+            ->setParameter("fields", $cfg->getIndexCore()?->getFields())->setParameter("etat", NoticEtat::Approved)
+            ->setFirstResult($offset)->setMaxResults($limit)->getQuery()->getResult();
     }
 
-    public function findByIds(array $uuids): array
-    {
-        $qr = $this->getJoin()
-            ->where('n.id IN (:uuids)')->setParameter('uuids', $uuids);
-        return $qr->getQuery()->getResult();
-    }
+  public function findLatestBy(User $user, int $limit = 20): array
+  {
+    $qb = $this->createQueryBuilder('n')
+      ->select('n,a,e,dg,s,dgw,dpw,dp')
+      ->leftJoin('n.auteurs','a')
+      ->leftJoin('n.codeweys','e')
+      ->leftJoin('n.disciplineGroups', 'dg')
+      ->leftJoin('dg.specialites', 's')
+      ->leftJoin('n.deweyGroups', 'dgw')
+      ->leftJoin('dgw.codeweys', 'dpw')
+      ->leftJoin('n.deweyPersos', 'dp')
+      ->where('n.deleted = 0 AND n.etat = :etat')
+      ->setParameter('etat', NoticEtat::Approved);
 
-    public function findAllorBy(int $etab = null): array
-    {
-        $qr = $this->getJoin();
-        if($etab) $qr->andWhere("n.repertoire = :etab")->setParameter("etab", $etab);
-
-        return $qr->getQuery()->getResult();
+    if ($sch = $user->getSchool()) {
+      $qb->andWhere(':school MEMBER OF n.porteurs')->setParameter('school', $sch->getId());
+    } elseif ($unt = $user->getUntheme()) {
+      $qb->join('dg.champDisc', 'cd')
+        ->andWhere('cd in (:champs)')
+        ->setParameter('champs', $unt->getFields());
     }
+    return $qb->orderBy('n.creeLe', 'DESC')->setMaxResults($limit)->getQuery()->getResult();
+  }
 
     public function add(Notice $n=null): ?Notice
     {
@@ -72,22 +84,31 @@ class NoticeRepository extends ServiceEntityRepository
         return $n;
     }
 
-    public function countByEtat(?Univerique $unt, ?string $date = null)
+    public function countByEtat(User $user, ?string $date = null)
     {
-        $qb = $this->createQueryBuilder('n')->select('n.etat, COUNT(n.id) as nombre')->where('n.deleted = 0');
-        if ($unt) $qb->join('n.specialite','d')->join('d.parent','c')
-            ->andWhere('c.parent in (:champs)')->setParameter('champs',$unt->getFields());
+        $qb = $this->forUser($user);
         if($date) $qb->andWhere('n.creeLe > :date')->setParameter('date', new \DateTIME("-1 $date"));
-        return $qb->groupBy('n.etat')->getQuery()->getResult();
+
+        return $qb->groupBy('n.etat')->select('n.etat, COUNT(DISTINCT n.id) as nombre')->getQuery()->getResult();
     }
 
-    private function getJoin(): \Doctrine\ORM\QueryBuilder
+    private function forUser(User $u): \Doctrine\ORM\QueryBuilder
     {
-        return $this->createQueryBuilder('n')->select('n,a,d,p,u,t,l,s,q')
-            ->where('n.deleted = 0')->leftJoin('n.ressources', 'r')
-            ->join('n.droit', 'l')->join('n.porteurs', 'q')
-            ->join('n.specialite', 's')->join('n.auteurs', 'a')
-            ->join('n.docTypes', 'd')->join('n.pedTypes', 'p')
-            ->join('n.niveaux', 'u')->join('n.tags', 't');
+        $qb = $this->createQueryBuilder('n')->where('n.deleted = 0');
+        $andX = $qb->expr()->andX('n.etat != :etat');
+
+        if ($sch = $u->getSchool()) {
+            $qb->setParameter('school', $sch->getId());
+            $andX->add(':school MEMBER OF n.porteurs');
+        } elseif ($unt = $u->getUntheme()) {
+          $qb->join('n.disciplineGroups', 'dg')->join('dg.champDisc', 'cd')->setParameter('champs', $unt->getFields());
+          $andX->add('cd in (:champs)');
+        }
+
+        return $qb->andWhere($qb->expr()->orX(
+            $qb->expr()->eq('n.createur',':user'), $andX
+        ))
+            ->setParameter('user', $u->getId())
+            ->setParameter('etat', NoticEtat::Working);
     }
 }

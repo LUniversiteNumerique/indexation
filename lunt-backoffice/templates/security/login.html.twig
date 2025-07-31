@@ -1,0 +1,74 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{% extends '@EasyAdmin/page/login_minimal.html.twig' %}
+
+{% block body_class 'page-login' %}
+
+{% block page_title %} UNT Contribution {% endblock %}
+
+{% block head_favicon %}<link rel="shortcut icon" href="/uploads/favicon.ico">{% endblock %}
+
+{% block wrapper_wrapper %}
+    <div class="login-wrapper">
+        <header class="main-header">
+            <div id="header-logo">
+                {% block header_logo %}
+                    <div class="logo logo-long"><img src="/uploads/logo-1000px.png" alt="logo"></div>
+                {% endblock header_logo %}
+            </div>
+        </header>
+
+        <section class="content">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="w-100 alert alert-{{ label }} alert-dismissible fade show mb-3" role="alert">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        {{ message|trans|raw }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            {% if error|default(false) %}
+                <div class="w-100 alert alert-danger rounded mb-3">
+                    <i class="fas fa-times-circle mr-1"></i>
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
+
+            <form method="post">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" />
+                <input type="hidden" name="_target_path" value="{{ path('app_home') }}" />
+
+                <div class="form-group">
+                    <label class="form-control-label required" for="username">{{ 'login_page.username'|trans({}, 'EasyAdminBundle') }}</label>
+                    <div class="form-widget">
+                        <input type="text" id="username" name="_username" class="form-control" value="{{ last_username|default('') }}" autocomplete="username" required autofocus>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label required" for="password">{{ 'login_page.password'|trans({}, 'EasyAdminBundle') }}</label>
+                    <div class="form-widget">
+                        <input type="password" id="password" name="_password" class="form-control" autocomplete="current-password" required>
+                    </div>
+
+                    <div class="form-text"><a href="{{ path('app_reset_request') }}">{{ 'login_page.forgot_password'|trans({}, 'EasyAdminBundle') }}</a></div>
+                </div>
+
+                {% if remember_me_enabled|default(false) %}
+                    <div class="form-group">
+                        <input class="form-check-input" type="checkbox" id="remember_me" name="_remember_me">
+                        <label class="form-check-label" for="remember_me">
+                            {{ 'login_page.remember_me'|trans({}, 'EasyAdminBundle') }}
+                        </label>
+                    </div>
+                {% endif %}
+
+                <button type="submit" class="btn btn-primary btn-lg btn-block">
+                    <i class="fas fa-sign-in"></i> {{ 'login_page.sign_in'|trans({}, 'EasyAdminBundle') }}
+                </button>
+            </form>
+
+            <script src="{{ asset('login.js', constant('EasyCorp\\Bundle\\EasyAdminBundle\\Asset\\AssetPackage::PACKAGE_NAME')) }}"></script>
+        </section>
+    </div>
+{% endblock %}

@@ -40,7 +40,7 @@ readonly class SolrApiService
 
     private function handleApi(string $url, array $options = [], string $method = 'POST'): ?ResponseInterface
     {
-        try { return $this->solrClient->request($method, $url, $options); }catch (ExceptionInterface $e) {
+        try { return $this->solrClient->request($method, "solr/$url", $options); }catch (ExceptionInterface $e) {
             dump($e);
             return null;
         }

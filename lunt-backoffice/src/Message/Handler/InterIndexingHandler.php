@@ -2,7 +2,7 @@
 
 namespace App\Message\Handler;
 
-use App\Entity\{IndexingConfig, Notice, NoticEtat};
+use App\Entity\{IndexingConfig, Notice, NoticEtat, Univerique};
 use Doctrine\ORM\{EntityManagerInterface,EntityRepository};
 use App\Entity\Dto\{OaidcDto, SuplomDto, IndexingNotice};
 use App\Service\{FileService, SolrApiService};
@@ -31,33 +31,29 @@ readonly class InterIndexingHandler
         /** @var IndexingConfig $task */
         $task = $this->configRep->find($message->taskId);
         if (!$task) throw new \RuntimeException("Aucun planificateur d'identifant ".$message->taskId);
-        //$this->fs = new FileService($task->getBaseUri());
         $core = $task->getIndexCore()?->getName(); $offset = 0;
-        $this->lg->warning(sprintf("Début d'indexation %s de %s", $task->isFullMode()?'complète':'différentielle', $core));
+        $this->lg->warning(sprintf("Début d'indexation interne %s de %s", $task->isFullMode()?'complète':'différentielle', $core));
 
-        do {
-            /** @var Notice[] $data */
-            $data = $this->noticeRep->findFrom($task->getIndexCore()?->getId(), !$task->isFullMode(), $task->getBatchSize(), $offset);
-            $news = []; $olds = [];
+        /** @var Notice[] $data */
+        while (!empty($data = $this->noticeRep->findFrom($task, $task->getBatchSize(), $offset))) {
+            $news = []; $olds = []; dump(count($data));
 
             foreach ($data as $d) {
-                if($d->getEtat() === NoticEtat::Approved) { //&& !$d->isDeleted()
+                if($d->getEtat() === NoticEtat::Approved) { //=> $d->isDeleted()!=1
                     if(empty($d->getPublieLe())) $news[] = $d->setPublieLe(new \DateTime()); // A publier
-                    elseif($task->isFullMode()) { $olds[] = $d->getUuid(); $news[] = $d; }// A republier
-                } elseif($d->getPublieLe())  $olds[] = $d->setPublieLe(null)->getUuid();// A dépublier //if (($d->getEditeLe() <= $task->getScheduleAt()) || $d->isDeleted()) elseif ($task->isFullMode()) $news[] = $d; //Reindex
+                    elseif($task->isFullMode() || $d->getEditeLe() > $task->getScheduleAt()) { $olds[] = $d->getUuid(); $news[] = $d; }// A republier
+                } elseif($d->getPublieLe())  $olds[] = $d->setPublieLe(null)->getUuid();// A dépublier
             }
 
-            if (!empty($data)) {
-                $this->sm->editDocuments($this->pop($olds, $core) . $this->push($news, $core), "$core/update?commit=true");
-                $task->setScheduleAt(new \DateTime());
-                $this->em->flush(); $this->em->clear();
-                $this->lg->info(sprintf("Notices concernées %d:  %d (indexées) + %d (dépubliées)", count($data), count($news), count($olds)));
-            }
+            $this->sm->editDocuments($this->pop($olds, $core) . $this->push($news, $task->getIndexCore()), "$core/update?commit=true");
+            $task->setScheduleAt(new \DateTime());
+            $this->em->flush(); $this->em->clear();
 
+            $this->lg->info(sprintf("Notices concernées %d:  %d (indexées) + %d (désindexées)", count($data), count($news), count($olds)));
             $offset += $task->getBatchSize();
-        } while (count($data) > 0);
+        }
 
-        $this->lg->warning(sprintf("Fin d'indexation %s de %s", $task->isFullMode()?'complète':'différentielle', $core));
+        $this->lg->warning(sprintf("Fin d'indexation interne %s de %s", $task->isFullMode()?'complète':'différentielle', $core));
     }
 
     private function pop(array $sources, string $index): string
@@ -69,17 +65,48 @@ readonly class InterIndexingHandler
         return "<delete>$itemSP</delete>";
     }
 
-    private function push(array $sources, string $index): string
+    private function push(array $sources, Univerique $unt): string
     {
-        $itemSF = []; $itemDC = []; $itemSP = "";
-        foreach ($sources as $notice) {
-            $item = $this->js->serialize(IndexingNotice::fromNotice($notice), 'xml'); $itemSP .= preg_replace('/<\?xml.*?\?>/', '', $item); //SolrPivotBuildingAnalyzer
-            $itemDC[sprintf("dc_%s.xml", $notice->getUuid())] = $this->js->serialize(OaidcDto::create($notice), 'xml'); //DublinCoreExportAnalyzer
-            $itemSF[sprintf("sf_%s.xml", $notice->getUuid())] = $this->js->serialize(SuplomDto::create($notice), 'xml'); //SuplomfrExportAnalyzer
-        }
+      $index = $unt->getName();
+      $itemSF = [];
+      $itemSP = "";
+      $itemOaiDC = [];
+      $itemOaiSF = [];
 
-        $this->fs->writeFilesTo($itemDC, "oai/$index/");
-        $this->fs->writeFilesTo($itemSF, "suplom/$index/");
-        return "<add>$itemSP</add>";
+      foreach ($sources as $notice) {
+        $checkOai = $notice->isExportOAI();
+        $indexingNotice = IndexingNotice::fromNotice($notice, $unt);
+        $xmlContent = $this->js->serialize($indexingNotice, 'xml');
+        $cleanXml = preg_replace('/<\?xml.*?\?>/', '', $xmlContent);
+        $itemSP .= $cleanXml;
+        // Utilisé pour les notices dont l’UUID ne respecte pas le format standard
+        if(str_contains($notice->getuuid(), "http://")){
+          $parts = explode('/uid/', $notice->getUuid());
+          $uuid = end($parts);
+          $dcKey = sprintf("dc_%s.xml", $uuid);
+          $sfKey = sprintf("sf_%s.xml", $uuid);
+        } else {
+          $dcKey = sprintf("dc_%s.xml", $notice->getUuid());
+          $sfKey = sprintf("sf_%s.xml", $notice->getUuid());
+        }
+        if ($checkOai) {
+          $oaidcOaiDto = OaidcDto::create($notice);
+          $itemOaiDC[$dcKey] = $this->js->serialize($oaidcOaiDto, 'xml');
+          $suplomOaiDto = SuplomDto::create($notice);
+          $itemOaiSF[$sfKey] = $this->js->serialize($suplomOaiDto, 'xml');
+        }
+        $suplomDto = SuplomDto::create($notice);
+        $itemSF[$sfKey] = $this->js->serialize($suplomDto, 'xml');
+      }
+      // Indexation oai et suplom JOAI
+      $suplomJoaiPath = "XML/$index/suplomfr/";
+      $this->fs->writeFilesTo($itemOaiSF, $suplomJoaiPath);
+      $oaiJoaiPath = "XML/$index/oai_dc/";
+      $this->fs->writeFilesTo($itemOaiDC, $oaiJoaiPath);
+      // Indexation suplom solr
+      $suplomPath = "suplom/$index/";
+      $this->fs->writeFilesTo($itemSF, $suplomPath);
+
+      return "<add>$itemSP</add>";
     }
 }

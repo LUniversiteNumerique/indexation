@@ -4,23 +4,31 @@ namespace App\Entity;
 
 use App\Repository\UniveriqueRepository;
 use Doctrine\Common\Collections\{ArrayCollection,Collection};
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: UniveriqueRepository::class)]
+#[ORM\Entity(repositoryClass: UniveriqueRepository::class),
+    UniqueEntity('name'), UniqueEntity('label')]
 class Univerique
 {
     use Timestamps;
 
-    #[ORM\Column(length: 255),
+    #[ORM\Column(length: 255, unique:true),
         Assert\NotBlank, Assert\Type('string')]
     private ?string $label = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique:true),
+        Assert\Regex('/^[a-zA-Z0-9-_]+$/', "Le nom du répertoire ne peut contenir que des caractères alphanumériques, un tiret ou un tiret bas.")]
     private ?string $name = null;
+
+    #[ORM\Column(length: 255, nullable: true),
+        Assert\Url, Assert\NotBlank]
+    private ?string $siteWeb = null;
 
     #[ORM\ManyToMany(targetEntity: Discipline::class)]
     private Collection $fields;
+    
     public function __construct()
     {
         $this->creeLe = new \DateTimeImmutable();
@@ -52,6 +60,18 @@ class Univerique
     public function setName(string $name): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getSiteWeb(): ?string
+    {
+        return $this->siteWeb;
+    }
+
+    public function setSiteWeb(string $url): static
+    {
+        $this->siteWeb = $url;
 
         return $this;
     }

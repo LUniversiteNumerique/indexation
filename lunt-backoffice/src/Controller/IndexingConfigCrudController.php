@@ -2,10 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\DateUnit;
 use App\Entity\IndexingConfig;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\{Action,Actions,Crud};
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\{AssociationField, BooleanField, DateTimeField, IntegerField, TextField};
+use EasyCorp\Bundle\EasyAdminBundle\Field\{AssociationField, BooleanField, ChoiceField, DateTimeField, IntegerField, TextField};
 
 class IndexingConfigCrudController extends AbstractCrudController
 {
@@ -14,22 +16,68 @@ class IndexingConfigCrudController extends AbstractCrudController
         return IndexingConfig::class;
     }
 
+    public function configureActions(Actions $actions): Actions
+    {
+        return parent::configureActions($actions)
+            ->disable(Action::BATCH_DELETE)
+            ->add(Crud::PAGE_NEW, Action::INDEX)
+            ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $a) => $a->setLabel('Créer une <b>indexation</b>'))
+            ->update(Crud::PAGE_NEW, Action::SAVE_AND_ADD_ANOTHER, fn (Action $a) => $a->setLabel('Créer et ajouter une <b>nouvelle</b>'))
+            ->setPermission(Action::NEW, 'ROLE_CREA_CORE')
+            ->setPermission(Action::EDIT, 'ROLE_EDIT_CORE')
+            ->setPermission(Action::DELETE, 'ROLE_DROP_CORE')
+            ->setPermission(Action::DETAIL, 'ROLE_READ_CORE')
+            ->setPermission(Action::INDEX, 'ROLE_READ_CORE');
+    }
+
     public function configureFields(string $pageName): iterable
     {
-        return [
-            AssociationField::new('indexCore', 'UNT'),
-            TextField::new('frequency','Fréquence')->setSortable(false)->setHelp("Exemples: '10 min' ou '2 hours' ou '1 day'"),
-            IntegerField::new('batchSize','Taille du lot')->setHelp('Batch Size'),
-            //IntegerField::new('baseUri','Chemin du dossier')->setHelp("Si vous définissez, assurez-vous qu'il existe et accessible en écriture sinon laissez par la valeur defaut"),
-            BooleanField::new('indexType',"Type d'indexation")->setSortable(false),
-            BooleanField::new('fullMode','Réindexation complète ?')->setSortable(false),
-            DateTimeField::new('scheduleAt','Dernière Execution')->hideOnForm(),
-        ];
+        yield AssociationField::new('indexCore', 'UNT');
+        if (Crud::PAGE_NEW  === $pageName || $pageName === Crud::PAGE_EDIT) {
+            yield IntegerField::new('frequency.valeur', "Fréquence d'exécution");
+            yield ChoiceField::new('frequency.unite', 'Unité de la Fréquence')->setChoices(DateUnit::cases());
+        } else yield TextField::new('frequency','Fréquence')->setSortable(false);
+        yield IntegerField::new('batchSize','Taille du lot')->setHelp('Batch Size');
+        yield BooleanField::new('indexType',"Indexation externe ?")->renderAsSwitch(false)->setSortable(false)->hideWhenUpdating();
+        yield BooleanField::new('fullMode','Réindexation complète ?')->setSortable(false);
+        yield DateTimeField::new('scheduleAt','Dernière Execution')->hideOnForm();
     }
 
     public function configureCrud(Crud $crud): Crud
     {
-        return $crud->setEntityLabelInSingular('Indexation')->setEntityLabelInPlural("Indexations")
-            ->setSearchFields(null)->setEntityPermission('ROLE_READ_CORE');
+        return $crud->setEntityLabelInSingular('indexation')->setEntityLabelInPlural("Indexations")
+            ->setSearchFields(null)->setEntityPermission('ROLE_READ_CORE')
+            ->setPageTitle(Action::NEW, fn () => 'Créer une <b>indexation</b>')
+            ->setPageTitle(Action::EDIT, fn (IndexingConfig $n) => 'Modifier une <b>indexation</b>');
+    }
+
+    public function index(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_READ_CORE');
+        return parent::index($context);
+    }
+
+    public function new(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_CREA_CORE');
+        return parent::new($context);
+    }
+
+    public function detail(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_READ_CORE');
+        return parent::detail($context);
+    }
+
+    public function edit(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_EDIT_CORE');
+        return parent::edit($context);
+    }
+
+    public function delete(AdminContext $context)
+    {
+        $this->denyAccessUnlessGranted('ROLE_DROP_CORE');
+        return parent::delete($context);
     }
 }

@@ -1,0 +1,1 @@
+INSERT INTO `univerique` VALUES (3,'UOH','UOH','uoh.fr','2024-02-15 10:31:43',NULL),(4,'UNIT','UNIT','unit.eu','2024-06-05 13:52:44',NULL),(5,'UVED','UVED','uved.fr','2024-06-05 13:52:44',NULL),(6,'UNESS','UNESS','uness.fr','2024-06-05 13:52:44',NULL),(7,'IEL','IEL','	iutenligne.net','2024-06-05 13:52:44',NULL),(8,'AUNEGe','AUNEGe','aunege.fr','2024-06-05 13:52:44',NULL);

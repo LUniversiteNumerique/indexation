@@ -17,22 +17,26 @@ class IndexingConfig
     #[ORM\Column]
     private ?bool $fullMode, $indexType;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?\DateTime $scheduleAt;
 
     #[ORM\Column, Assert\NotNull]
-    private ?int $batchSize = 10;
+    private ?int $batchSize;
 
-    #[ORM\Column(length: 255), Assert\NotBlank]
-    private ?string $frequency; //$baseUri
+    #[ORM\Embedded(Frequence::class, "every_"),
+        Assert\NotNull]
+    private ?Frequence $frequency;
 
     #[ORM\ManyToOne, Assert\NotNull,
         Assert\Type(Univerique::class)]
     private ?Univerique $indexCore = null;
 
-    public function __construct()
+    public function __construct(bool $fullMode = true, ?\DateTime $scheduleAt=null)
     {
-        $this->scheduleAt = new \DateTime();
+        $this->fullMode = $fullMode;
+        $this->scheduleAt = $scheduleAt;
+        $this->batchSize = 10;
+        $this->frequency = new Frequence();
     }
 
     public function getId(): ?int
@@ -69,7 +73,7 @@ class IndexingConfig
         return $this->scheduleAt;
     }
 
-    public function setScheduleAt(\DateTime $scheduleAt): static
+    public function setScheduleAt(?\DateTime $scheduleAt): static
     {
         $this->scheduleAt = $scheduleAt;
 
@@ -88,12 +92,12 @@ class IndexingConfig
         return $this;
     }
 
-    public function getFrequency(): ?string
+    public function getFrequency(): ?Frequence
     {
         return $this->frequency;
     }
 
-    public function setFrequency(?string $frequency): static
+    public function setFrequency(?Frequence $frequency): static
     {
         $this->frequency = $frequency;
 

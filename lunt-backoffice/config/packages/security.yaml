@@ -8,7 +8,7 @@ security:
         strategy: unanimous
     firewalls:
         dev:
-            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            pattern: ^/(_(profiler|wdt)|css|images|js|uploads/files/)/
             security: false
         main:
             lazy: true
