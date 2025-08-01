@@ -1,7 +1,7 @@
 services:
   backoffice:
-    build: ./lunt-backoffice
-    env_file: ./lunt-backoffice/.env.dev.local
+    image: sslv-nexus.coexya.eu/lunt-backoffice:${VERSION:-latest}
+    env_file: ./.env
     network_mode: "host"
     depends_on:
       - mariadb
@@ -32,7 +32,8 @@ services:
       - ${SOLR_DEFAULT_CONF}
 
   joai:
-    build: ./lunt-joai
+    image: sslv-nexus.coexya.eu/lunt-joai:${VERSION:-latest}
+    env_file: ./.env
     network_mode: "host"
     volumes:
       - ./lunt-joai/conf:/joai/config

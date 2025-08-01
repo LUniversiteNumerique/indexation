@@ -92,6 +92,33 @@ pipeline {
       }
     }
 
+    stage('Docker build image joai') {
+      when {
+        environment name: 'gitlabActionType', value: 'TAG_PUSH'
+        beforeAgent true
+      }
+      steps {
+        script {
+          // Construction de l'image docker
+          sh 'docker build -t lunt-joai:latest -t lunt-joai:$tagName lunt-joai'
+
+          // Tag de l'image docker pour le nexus
+          sh 'docker tag lunt-joai:latest sslv-nexus.coexya.eu/lunt-joai:latest'
+          sh 'docker tag lunt-joai:$tagName sslv-nexus.coexya.eu/lunt-joai:$tagName'
+
+          // Upload de l'image docker sur le nexus
+          sh 'docker push sslv-nexus.coexya.eu/lunt-joai:latest'
+          sh 'docker push sslv-nexus.coexya.eu/lunt-joai:$tagName'
+
+          // Suppression des images docker locales
+          sh 'docker rmi -f lunt-joai:latest'
+          sh 'docker rmi -f sslv-nexus.coexya.eu/lunt-joai:latest'
+          sh 'docker rmi -f lunt-joai:$tagName'
+          sh 'docker rmi -f sslv-nexus.coexya.eu/lunt-joai:$tagName'
+        }
+      }
+    }
+
     stage('Update development platform') {
       agent {
         docker {
