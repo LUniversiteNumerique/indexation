@@ -1,0 +1,9 @@
+build
+dist
+war-distribution
+build.properties
+joai-project.iml
+lunt2-joai.iml
+.idea/
+
+
