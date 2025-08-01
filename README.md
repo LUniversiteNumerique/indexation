@@ -9,7 +9,6 @@ Les composants de cette application sont les suivants :
 - Entrepôt des notices MariaDB
 - Entrepôt OAI jOAI et Stockage des ressources Filesystem
 - Moteur de recherche Solr
-- Site internet WordPress
 
 ## Démarrer le projet
 
@@ -23,10 +22,14 @@ docker-compose up -d --build
 # Si besoin pour réinitialiser sa base de données
 docker-compose exec backoffice php bin/console d:d:d --force
 docker-compose exec backoffice php bin/console d:d:c
-docker-compose exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat data/univerique.sql)"'
 docker-compose exec backoffice php bin/console d:s:u -f
+docker-compose exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat /var/www/site/data/univerique.sql)"'
 docker-compose exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat /var/www/site/data/groupe.sql)"'
 docker-compose exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat /var/www/site/data/user.sql)"'
+docker-compose exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat /var/www/site/data/niveau.sql)"'
+docker-compose exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat /var/www/site/data/licence.sql)"'
+docker-compose exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat /var/www/site/data/groupe.sql)"'
+docker-compose exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat /var/www/site/data/dossier.sql)"'
 ```
 
 ## Initialisation données de test

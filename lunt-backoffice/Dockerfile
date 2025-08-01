@@ -32,7 +32,15 @@ RUN if [ "$APP_ENV" = "dev" ]; then  ["composer","install","-v"];  \
 
 RUN chmod +x /root/nginx-start.sh && \
     mkdir -p /var/log/php-fpm && mkdir -p /var/log/ngninx && \
-    php bin/console ca:c && php bin/console ca:w &&  \
-    php bin/console as:c && chmod -R a+rw public/uploads
+    php bin/console cache:clear && php bin/console cache:warmup &&  \
+    php bin/console assets:install && chmod -R a+rw public/uploads \
+    && php bin/console as:co
+
+# Forcer nginx et php-fpm à tourner en tant que root
+RUN sed -i 's/^user\s\+www-data;/user root;/' /etc/nginx/nginx.conf \
+    && sed -i 's/^user = www-data/user = root/' /usr/local/etc/php-fpm.d/www.conf \
+    && sed -i 's/^group = www-data/group = root/' /usr/local/etc/php-fpm.d/www.conf \
+    && sed -i 's/^listen.owner = www-data/listen.owner = root/' /usr/local/etc/php-fpm.d/www.conf \
+    && sed -i 's/^listen.group = www-data/listen.group = root/' /usr/local/etc/php-fpm.d/www.conf
 
 CMD ["/usr/bin/supervisord"]
