@@ -1,0 +1,10 @@
+<Context path="/joai" docBase="joai" debug="0" reloadable="true">
+  <Parameter
+    name="repositoryData"
+    value="/joai/config/repository"
+    override="false" />
+  <Parameter
+    name="harvesterData"
+    value="/joai/data/harvester_settings_and_data"
+    override="false" />
+</Context>

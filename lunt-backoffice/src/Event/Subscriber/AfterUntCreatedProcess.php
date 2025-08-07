@@ -12,7 +12,6 @@ use Symfony\Contracts\HttpClient\{HttpClientInterface,Exception\ExceptionInterfa
 #[AsEventListener]
 readonly class AfterUntCreatedProcess
 {
-    const SUB_DIR = ["oai", "suplom", "suplom_externe"];
 
     public function __construct(
         private HttpClientInterface $solrClient,
@@ -25,11 +24,9 @@ readonly class AfterUntCreatedProcess
         $unt = $event->getUnt();
 
         // Création des répertoires associés à l'UNT
-        foreach (self::SUB_DIR as $subPath) {
-            $untDir = FileService::RESOURCES_DIR. $subPath .DIRECTORY_SEPARATOR. $unt->getName();
-            if (!mkdir($untDir, 0755, true) && !is_dir($untDir))
-                throw new \RuntimeException("Failed to create destination directory: $untDir");
-        }
+        $untDir = FileService::RESOURCES_DIR. "XML" .DIRECTORY_SEPARATOR. $unt->getName();
+        if (!mkdir($untDir, 0755, true) && !is_dir($untDir))
+            throw new \RuntimeException("Failed to create destination directory: $untDir");
 
         // Création du core Solr de l'UNT à partir du config untconfig
         try {

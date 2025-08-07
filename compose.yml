@@ -7,8 +7,8 @@ services:
       - mariadb
       - solr
     volumes:
-      - ${JOAI_BASE_URI:-/opt}:/opt
-      - ${JOAI_BASE_URI}/lunt-resources/uploads:/var/www/site/public/uploads
+      - ${UNT_BASE_URI}/lunt-resources/XML:/opt/lunt-resources/XML
+      - ${UNT_BASE_URI}/lunt-resources/uploads:/var/www/site/public/uploads
 
   mariadb:
     image: mariadb:11.7.2
@@ -23,12 +23,22 @@ services:
     image: solr:9.8-slim
     network_mode: "host"
     volumes:
-      - ${JOAI_BASE_URI}/lunt-solr/data:/var/solr/data
-      - ${JOAI_BASE_URI}/lunt-solr/conf:${SOLR_DEFAULT_CONF}/conf
+      - ${UNT_BASE_URI}/lunt-solr/data:/var/solr/data
+      - ${UNT_BASE_URI}/lunt-solr/conf:${SOLR_DEFAULT_CONF}/conf
     command:
       - solr-precreate
       - unt1
       - ${SOLR_DEFAULT_CONF}
 
+  joai:
+    image: sslv-nexus.coexya.eu/lunt-joai:${VERSION:-latest}
+    env_file: ./.env
+    network_mode: "host"
+    volumes:
+      - ${UNT_BASE_URI}/lunt-joai/conf/tomcat-users.xml:/usr/local/tomcat/conf/tomcat-users.xml
+      - joai_repository:/joai/config/repository
+      - ${UNT_BASE_URI}/lunt-resources/XML:/XML
+
 volumes:
+  joai_repository:
   db_data:
