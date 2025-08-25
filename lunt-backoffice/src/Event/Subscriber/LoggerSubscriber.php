@@ -83,6 +83,10 @@ readonly class LoggerSubscriber implements EventSubscriberInterface
             continue;
           }
 
+          if (!$user->isEnabled()){
+            continue;
+          }
+
           $userEmail = $user->getEmail();
           if ($userEmail && !in_array($userEmail, $emailsToNotify)) {
             $emailsToNotify[] = $userEmail;
