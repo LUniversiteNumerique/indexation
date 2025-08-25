@@ -14,6 +14,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\{EventSubscriberInterface,Attribute\AsEventListener};
 use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
 use Doctrine\ORM\{EntityManagerInterface};
+use Symfony\Component\HttpFoundation\UrlHelper;
 
 readonly class LoggerSubscriber implements EventSubscriberInterface
 {
@@ -22,7 +23,8 @@ readonly class LoggerSubscriber implements EventSubscriberInterface
         private MailerService   $mailer,
         private LoggerInterface $untLogger,
         private AdminUrlGenerator $generator,
-        private EntityManagerInterface $em
+        private EntityManagerInterface $em,
+        private UrlHelper $urlHelper
     ) {}
 
     public static function getSubscribedEvents(): array
@@ -107,10 +109,12 @@ readonly class LoggerSubscriber implements EventSubscriberInterface
         ->setAction(Action::DETAIL)->setEntityId($entity->getId())
         ->generateUrl();
 
+      $absoluteUrl = $this->urlHelper->getAbsoluteUrl($url);
+
       foreach ($emailsToNotify as $email) {
         $this->mailer->sendTwig($email,
           sprintf("[UNT] Demande de Soumission de la notice %d", $entity->getId()),
-          'emails/submit.html.twig', ['user' => $user, 'url' => $url, 'notice' => $entity->getTitre()]
+          'emails/submit.html.twig', ['user' => $user, 'url' => $absoluteUrl, 'notice' => $entity->getTitre()]
         );
       }
     }
@@ -134,9 +138,11 @@ readonly class LoggerSubscriber implements EventSubscriberInterface
             ->setAction(Action::DETAIL)->setEntityId($entity->getId())
             ->generateUrl();
 
+        $absoluteUrl = $this->urlHelper->getAbsoluteUrl($url);
+
         $this->mailer->sendTwig($to?->getEmail(), //$to?->getUntheme()?->getEmail()
             sprintf("[UNT] Demande de Rectification de la notice %d", $entity->getId()),
-            'emails/adjust.html.twig', ['user' => $user, 'url' => $url, 'notice' => $entity->getTitre(),]
+            'emails/adjust.html.twig', ['user' => $user, 'url' => $absoluteUrl, 'notice' => $entity->getTitre(),]
         );
     }
 
@@ -159,9 +165,11 @@ readonly class LoggerSubscriber implements EventSubscriberInterface
             ->setAction(Action::DETAIL)->setEntityId($entity->getId())
             ->generateUrl();
 
+        $absoluteUrl = $this->urlHelper->getAbsoluteUrl($url);
+
         $this->mailer->sendTwig($from->getEmail(), //$from->getSchool()?->getEmail()
             sprintf("[UNT] La notice N° %d est validée", $entity->getId()),
-            'emails/approve.html.twig', ['user' => $user, 'url' => $url, 'notice' => $entity->getTitre()]
+            'emails/approve.html.twig', ['user' => $user, 'url' => $absoluteUrl, 'notice' => $entity->getTitre()]
         );
     }
 
@@ -185,9 +193,11 @@ readonly class LoggerSubscriber implements EventSubscriberInterface
             ->setAction(Action::DETAIL)->setEntityId($entity->getId())
             ->generateUrl();
 
+        $absoluteUrl = $this->urlHelper->getAbsoluteUrl($url);
+
         $this->mailer->sendTwig($from->getEmail(), //$from->getSchool()?->getEmail()
             sprintf("[UNT] La notice N° %d est rejetée", $entity->getId()),
-            'emails/reject.html.twig', ['user' => $user, 'url' => $url, 'motifs' => $motif, 'notice' => $entity->getTitre(),]
+            'emails/reject.html.twig', ['user' => $user, 'url' => $absoluteUrl, 'motifs' => $motif, 'notice' => $entity->getTitre(),]
         );
     }
 
