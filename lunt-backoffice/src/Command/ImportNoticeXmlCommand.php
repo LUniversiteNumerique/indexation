@@ -69,9 +69,16 @@ class ImportNoticeXmlCommand extends Command
       $this->em->getRepository(TPedagogie::class)->findAll(),
       fn(array $k, TPedagogie $v) => $k + [strtolower($v->getSuplom()) => $v], []);
   }
+  protected function configure(): void
+  {
+    $this
+      ->setDescription('Importe les notices suplom (optionnellement avec un préfixe)')
+      ->addArgument('prefix', \Symfony\Component\Console\Input\InputArgument::REQUIRED, 'Préfixe des fichiers XML à importer (ex: uoh, unit)', null);
+  }
 
   protected function execute(InputInterface $input, OutputInterface $output): int
   {
+    $UNT = $input->getArgument('prefix');
     $io = new SymfonyStyle($input, $output);
     $io->title('Suplom Importing');
     $notfoundValidateur = [];
@@ -89,12 +96,16 @@ class ImportNoticeXmlCommand extends Command
     $notfoundPorteur = [];
     $noticeWithZIP = [];
 
-    $contribMailUOH = "carole.schorle-stefan@unistra.fr";
-    $contribMailUNIT = "info@unit.eu";
-    $contribMailAUNGEe = "info@aungee.eu";
-    $docuMailUOH = "juliette.touzene@unistra.fr";
-    $docuMailUNIT = "contact@unit.eu";
-    $docuMailAUNGEe = "contact@aungee.eu";
+    if (strtolower($UNT) == "uoh"){
+      $contribMail = "carole.schorle-stefan@unistra.fr";
+      $docuMail = "juliette.touzene@unistra.fr";
+    } else if (strtolower($UNT) == "unit"){
+      $contribMail = "info@unit.eu";
+      $docuMail = "contact@unit.eu";
+    } else if (strtolower($UNT) == "aunge"){
+      $contribMail = "info@aungee.eu";
+      $docuMail = "contact@aungee.eu";
+    }
 
     //Ré utilisation de la fonction readFilesFrom en dur car non fonctionnel avec un appel simple de celle-ci avec le meme répertoire
     $finder = new Finder();
@@ -235,14 +246,14 @@ class ImportNoticeXmlCommand extends Command
           'nameFile' => $file->getFilename()
         ];
         $existingUserName = $this->userRep->findOneBy(['name' => 'créateur inconnu']);
-        $existingUserEmail = $this->userRep->findOneBy(['email' => $docuMailUOH]);
-        if ($existingUserName === null || $existingUserEmail === null) {
-          $entity = new User('créateur inconnu', $docuMailUOH);
+        $existingUserEmail = $this->userRep->findOneBy(['email' => $docuMail]);
+        if ($existingUserName === null && $existingUserEmail === null) {
+          $entity = new User('créateur inconnu', $docuMail);
           $this->em->persist($entity);
           $this->em->flush();
           $notice->setValidateur($entity);
         } else {
-          $notice->setValidateur($existingUserName);
+          $notice->setValidateur($existingUserEmail);
         }
       }
 
@@ -267,14 +278,14 @@ class ImportNoticeXmlCommand extends Command
           'nameFile' => $file->getFilename()
         ];
         $existingUserName = $this->userRep->findOneBy(['name' => 'créateur inconnu']);
-        $existingUserEmail = $this->userRep->findOneBy(['email' => $contribMailUOH]);
-        if ($existingUserName === null || $existingUserEmail === null) {
-          $entity = new User('créateur inconnu', $contribMailUOH);
+        $existingUserEmail = $this->userRep->findOneBy(['email' => $contribMail]);
+        if ($existingUserName === null && $existingUserEmail === null) {
+          $entity = new User('créateur inconnu', $contribMail);
           $this->em->persist($entity);
           $this->em->flush();
           $notice->setCreateur($entity);
         } else {
-          $notice->setCreateur($existingUserName);
+          $notice->setCreateur($existingUserEmail);
         }
       }
 
