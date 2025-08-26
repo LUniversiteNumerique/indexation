@@ -350,7 +350,7 @@ class ImportNoticeXmlCommand extends Command
       if (isset($item->technical?->size)) {
         $notice->setRessSize(round(floatval($item->technical->size) / 1048576, 2));
       }
-      $notice->setExportOAI(false)->setEtat(NoticEtat::Forward)
+      $notice->setExportOAI(false)->setEtat(NoticEtat::Approved)
         ->setUuid($uid) //->setVignette("$uid.jpg")
         ->setTitre($item->general->title[0]?->value)
         ->setDescription($item->general->description[0]?->value)
