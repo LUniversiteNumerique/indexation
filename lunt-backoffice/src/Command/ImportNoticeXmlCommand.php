@@ -89,10 +89,10 @@ class ImportNoticeXmlCommand extends Command
     $notfoundPorteur = [];
     $noticeWithZIP = [];
 
-    $contribMailUOH = "info@uoh.eu";
+    $contribMailUOH = "carole.schorle-stefan@unistra.fr";
     $contribMailUNIT = "info@unit.eu";
     $contribMailAUNGEe = "info@aungee.eu";
-    $docuMailUOH = "contact@uoh.eu";
+    $docuMailUOH = "juliette.touzene@unistra.fr";
     $docuMailUNIT = "contact@unit.eu";
     $docuMailAUNGEe = "contact@aungee.eu";
 
