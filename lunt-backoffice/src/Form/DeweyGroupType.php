@@ -40,9 +40,15 @@ class DeweyGroupType extends AbstractType
         'label' => 'Discipline fondamentale',
         'help' => t('Le premier niveau de classification dewey', domain: 'EasyAdminBundle'),
         'query_builder' => function (EntityRepository $er) {
-          return $er->createQueryBuilder('d')
+          $qb = $er->createQueryBuilder('d');
+          return $qb
             ->where('d.parent IS NULL')
-            ->orderBy('d.nom', 'ASC');
+            ->leftJoin('d.children', 's')
+            ->leftJoin('s.children', 'c')
+            ->addSelect('s,c')
+            ->orderBy('d.nom', 'ASC')
+            ->addOrderBy('s.nom', 'ASC')
+            ->addOrderBy('c.nom', 'ASC');
         },
       ])
       ->add('division', EntityType::class, [
