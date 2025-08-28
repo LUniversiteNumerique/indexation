@@ -11,6 +11,8 @@ use App\Repository\{DossierRepository, NoticeRepository};
 use Doctrine\ORM\{QueryBuilder,EntityManagerInterface};
 use EasyCorp\Bundle\EasyAdminBundle\Form\Type\{FileUploadType, Model\FileUploadState};
 use EasyCorp\Bundle\EasyAdminBundle\Filter\{ChoiceFilter, DateTimeFilter, EntityFilter, TextFilter};
+use App\Filter\DisciplineSpecialityFilter;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use EasyCorp\Bundle\EasyAdminBundle\{Context\AdminContext, Event\AfterEntityPersistedEvent, Factory\FormFactory, Provider\AdminContextProvider, Router\AdminUrlGenerator};
 use EasyCorp\Bundle\EasyAdminBundle\Collection\{ActionCollection, FieldCollection, FilterCollection};
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Actions, Asset, Assets, Crud, Filters, KeyValueStore};
@@ -110,7 +112,6 @@ class NoticeCrudController extends AbstractCrudController
   {
     return $filters->add(ChoiceFilter::new('etat')->setChoices(NoticEtat::getLabels())->renderExpanded())
       ->add(TextFilter::new('titre'))
-      ->add(EntityFilter::new('specialites', 'Spécialité'))
       ->add(EntityFilter::new('auteurs'))
       ->add(DateTimeFilter::new('creeLe', 'Créée le'))
       ->add(DateTimeFilter::new('editeLe', 'Date de modification'));
