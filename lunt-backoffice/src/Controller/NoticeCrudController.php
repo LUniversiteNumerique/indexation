@@ -309,20 +309,42 @@ class NoticeCrudController extends AbstractCrudController
       ->leftJoin('entity.deweyPersos', 'dp');
 
     $andX = $qb->expr()->andX('entity.etat != :etat');
-    if ($sch = $user->getSchool()) {
-      $qb->setParameter('school', $sch->getId());
-      $andX->add(':school MEMBER OF entity.porteurs');
-    } elseif ($unt = $user->getUntheme()) {
-      $qb->join('dg.champDisc','cd')
-        ->setParameter('champs', $unt->getFields());
-      $andX->add('cd in (:champs)');
-    }
-    $qb->andWhere($qb->expr()->orX(
-      $qb->expr()->eq('entity.createur',':user'), $andX
-    ))
-      ->setParameter('etat', NoticEtat::Working)
-      ->setParameter('user', $user->getId());
+    $school = $user->getSchool();
+    $unt = $user->getUntheme();
+    $role = $user->getGroup()->getLabel();
+    // marque si on a une restriction (school ou untheme)
+    $hasRestriction = false;
 
+    if ($role === "Administrateur") {
+      // Administrateur => toutes les notices
+    } elseif ($role === "Contributeur") {
+      if ($school) {
+        $qb->setParameter('school', $school);
+        $andX->add(':school MEMBER OF entity.porteurs');
+        $hasRestriction = true;
+      } else {
+        // pas de school => seulement ses propres notices
+        $qb->andWhere('entity.createur = :user')->setParameter('user', $user->getId());
+      }
+    } elseif ($role === "Documentaliste") {
+      if ($unt) {
+        $qb->join('dg.champDisc', 'cd')
+          ->setParameter('champs', $unt->getFields());
+        $andX->add('cd in (:champs)');
+        $hasRestriction = true;
+      } else {
+        // pas d'UNT => seulement ses propres notices
+        $qb->andWhere('entity.createur = :user')->setParameter('user', $user->getId());
+      }
+    }
+    if ($hasRestriction) {
+      $qb->andWhere($qb->expr()->orX(
+        $qb->expr()->eq('entity.createur', ':user'),
+        $andX
+      ))
+        ->setParameter('user', $user->getId())
+        ->setParameter('etat', NoticEtat::Working);
+    }
     return $qb->andWhere('entity.deleted = 0');
   }
 
