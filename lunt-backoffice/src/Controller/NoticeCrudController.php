@@ -11,6 +11,8 @@ use App\Repository\{DossierRepository, NoticeRepository};
 use Doctrine\ORM\{QueryBuilder,EntityManagerInterface};
 use EasyCorp\Bundle\EasyAdminBundle\Form\Type\{FileUploadType, Model\FileUploadState};
 use EasyCorp\Bundle\EasyAdminBundle\Filter\{ChoiceFilter, DateTimeFilter, EntityFilter, TextFilter};
+use App\Filter\DisciplineSpecialityFilter;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use EasyCorp\Bundle\EasyAdminBundle\{Context\AdminContext, Event\AfterEntityPersistedEvent, Factory\FormFactory, Provider\AdminContextProvider, Router\AdminUrlGenerator};
 use EasyCorp\Bundle\EasyAdminBundle\Collection\{ActionCollection, FieldCollection, FilterCollection};
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Actions, Asset, Assets, Crud, Filters, KeyValueStore};
@@ -110,7 +112,6 @@ class NoticeCrudController extends AbstractCrudController
   {
     return $filters->add(ChoiceFilter::new('etat')->setChoices(NoticEtat::getLabels())->renderExpanded())
       ->add(TextFilter::new('titre'))
-      ->add(EntityFilter::new('specialites', 'Spécialité'))
       ->add(EntityFilter::new('auteurs'))
       ->add(DateTimeFilter::new('creeLe', 'Créée le'))
       ->add(DateTimeFilter::new('editeLe', 'Date de modification'));
@@ -225,7 +226,7 @@ class NoticeCrudController extends AbstractCrudController
       yield Field\TextField::new('champExt1',"Champ d'extension 1")->hideOnIndex(); yield Field\TextField::new('champExt2',"Champ d'extension 2")->hideOnIndex();
       yield Field\TextField::new('champExt3',"Champ d'extension 3")->hideOnIndex(); yield Field\TextField::new('champExt4',"Champ d'extension 4")->hideOnIndex();
       yield Field\TextField::new('champExt5',"Champ d'extension 5")->hideOnIndex();
-      yield Field\BooleanField::new('exportOAI', t('notice.exportoai', domain: 'EasyAdminBundle'))->setHelp(t('notice.exportoai_help', domain: 'EasyAdminBundle'))->renderAsSwitch(false)->hideOnIndex();
+      yield Field\BooleanField::new('exportOAI', t('notice.exportoai', domain: 'EasyAdminBundle'))->setFormTypeOptions(['data' => true])->setHelp(t('notice.exportoai_help', domain: 'EasyAdminBundle'))->renderAsSwitch(false)->hideOnIndex();
 
       yield Field\FormField::addColumn(6);
 
@@ -308,20 +309,42 @@ class NoticeCrudController extends AbstractCrudController
       ->leftJoin('entity.deweyPersos', 'dp');
 
     $andX = $qb->expr()->andX('entity.etat != :etat');
-    if ($sch = $user->getSchool()) {
-      $qb->setParameter('school', $sch->getId());
-      $andX->add(':school MEMBER OF entity.porteurs');
-    } elseif ($unt = $user->getUntheme()) {
-      $qb->join('dg.champDisc','cd')
-        ->setParameter('champs', $unt->getFields());
-      $andX->add('cd in (:champs)');
-    }
-    $qb->andWhere($qb->expr()->orX(
-      $qb->expr()->eq('entity.createur',':user'), $andX
-    ))
-      ->setParameter('etat', NoticEtat::Working)
-      ->setParameter('user', $user->getId());
+    $school = $user->getSchool();
+    $unt = $user->getUntheme();
+    $role = $user->getGroup()->getLabel();
+    // marque si on a une restriction (school ou untheme)
+    $hasRestriction = false;
 
+    if ($role === "Administrateur") {
+      // Administrateur => toutes les notices
+    } elseif ($role === "Contributeur") {
+      if ($school) {
+        $qb->setParameter('school', $school);
+        $andX->add(':school MEMBER OF entity.porteurs');
+        $hasRestriction = true;
+      } else {
+        // pas de school => seulement ses propres notices
+        $qb->andWhere('entity.createur = :user')->setParameter('user', $user->getId());
+      }
+    } elseif ($role === "Documentaliste") {
+      if ($unt) {
+        $qb->join('dg.champDisc', 'cd')
+          ->setParameter('champs', $unt->getFields());
+        $andX->add('cd in (:champs)');
+        $hasRestriction = true;
+      } else {
+        // pas d'UNT => seulement ses propres notices
+        $qb->andWhere('entity.createur = :user')->setParameter('user', $user->getId());
+      }
+    }
+    if ($hasRestriction) {
+      $qb->andWhere($qb->expr()->orX(
+        $qb->expr()->eq('entity.createur', ':user'),
+        $andX
+      ))
+        ->setParameter('user', $user->getId())
+        ->setParameter('etat', NoticEtat::Working);
+    }
     return $qb->andWhere('entity.deleted = 0');
   }
 

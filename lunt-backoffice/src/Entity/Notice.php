@@ -69,7 +69,7 @@ class Notice
     private ?NoticEtat $etat;
 
     #[ORM\Column(nullable: true)]
-    private ?bool $exportOAI = null;
+    private ?bool $exportOAI = true;
 
     #[ORM\ManyToOne]
     private ?User $createur,$validateur;

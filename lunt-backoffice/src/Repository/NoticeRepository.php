@@ -60,14 +60,47 @@ class NoticeRepository extends ServiceEntityRepository
       ->where('n.deleted = 0 AND n.etat = :etat')
       ->setParameter('etat', NoticEtat::Approved);
 
-    if ($sch = $user->getSchool()) {
-      $qb->andWhere(':school MEMBER OF n.porteurs')->setParameter('school', $sch->getId());
-    } elseif ($unt = $user->getUntheme()) {
-      $qb->join('dg.champDisc', 'cd')
-        ->andWhere('cd in (:champs)')
-        ->setParameter('champs', $unt->getFields());
+    $school = $user->getSchool();
+    $unt = $user->getUntheme();
+    $role = $user->getGroup()->getLabel();
+
+    if ($role === 'Administrateur') {
+      // Administrateur => toutes les notices
     }
-    return $qb->orderBy('n.creeLe', 'DESC')->setMaxResults($limit)->getQuery()->getResult();
+    elseif ($role === 'Contributeur') {
+      if ($school) {
+        $qb->andWhere($qb->expr()->orX(
+          $qb->expr()->eq('n.createur', ':user'),
+          ':school MEMBER OF n.porteurs'
+        ))
+          ->setParameter('user', $user->getId())
+          ->setParameter('school', $school);
+      } else {
+        // pas de school => seulement ses propres notices
+        $qb->andWhere('n.createur = :user')
+          ->setParameter('user', $user->getId());
+      }
+    }
+    elseif ($role === 'Documentaliste') {
+      if ($unt) {
+        $qb->join('dg.champDisc', 'cd')
+          ->andWhere($qb->expr()->orX(
+            $qb->expr()->eq('n.createur', ':user'),
+            'cd IN (:champs)'
+          ))
+          ->setParameter('user', $user->getId())
+          ->setParameter('champs', $unt->getFields());
+      } else {
+        // pas d'UNT => seulement ses propres notices
+        $qb->andWhere('n.createur = :user')
+          ->setParameter('user', $user->getId());
+      }
+    }
+
+    return $qb->orderBy('n.creeLe', 'DESC')
+      ->setMaxResults($limit)
+      ->getQuery()
+      ->getResult();
   }
 
     public function add(Notice $n=null): ?Notice
@@ -97,18 +130,45 @@ class NoticeRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('n')->where('n.deleted = 0');
         $andX = $qb->expr()->andX('n.etat != :etat');
 
-        if ($sch = $u->getSchool()) {
-            $qb->setParameter('school', $sch->getId());
-            $andX->add(':school MEMBER OF n.porteurs');
-        } elseif ($unt = $u->getUntheme()) {
-          $qb->join('n.disciplineGroups', 'dg')->join('dg.champDisc', 'cd')->setParameter('champs', $unt->getFields());
-          $andX->add('cd in (:champs)');
-        }
+      $sch = $u->getSchool();
+      $unt = $u->getUntheme();
+      $role = $u->getGroup()->getLabel();
+      $hasRestriction = false;
 
-        return $qb->andWhere($qb->expr()->orX(
-            $qb->expr()->eq('n.createur',':user'), $andX
+      if ($role === 'Administrateur') {
+        // Administrateur => toutes les notices
+      }
+      elseif ($role === 'Contributeur') {
+        if ($sch) {
+          $qb->setParameter('school', $sch);
+          $andX->add(':school MEMBER OF n.porteurs');
+          $hasRestriction = true;
+        } else {
+          // pas de school => seulement ses propres notices
+          $qb->andWhere('n.createur = :user')
+            ->setParameter('user', $u->getId());
+        }
+      }
+      elseif ($role === 'Documentaliste') {
+        if ($unt) {
+          $qb->join('n.disciplineGroups', 'dg')->join('dg.champDisc', 'cd')
+            ->setParameter('champs', $unt->getFields());
+          $andX->add('cd IN (:champs)');
+          $hasRestriction = true;
+        } else {
+          // pas d'UNT => seulement ses propres notices
+          $qb->andWhere('n.createur = :user')
+            ->setParameter('user', $u->getId());
+        }
+      }
+      if ($hasRestriction) {
+        $qb->andWhere($qb->expr()->orX(
+          $qb->expr()->eq('n.createur', ':user'),
+          $andX
         ))
-            ->setParameter('user', $u->getId())
-            ->setParameter('etat', NoticEtat::Working);
+          ->setParameter('user', $u->getId())
+          ->setParameter('etat', NoticEtat::Working);
+      }
+      return $qb;
     }
 }

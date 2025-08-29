@@ -45,19 +45,84 @@ readonly class ImportXmlHandler
      */
     private function getDewe(string $content): array
     {
-        /** @var DeweyData $data */
-        $data = $this->js->deserialize($content, DeweyData::class, 'xml');
-        $objs = array();
+      /** @var DeweyData $data */
+      $data = $this->js->deserialize($content, DeweyData::class, 'xml');
+      $objs = [];
+      $meta = [];
 
-        foreach ($data->concepts as $value) {
-            $node = $this->setDewe($value);
-            $parentUri = $this->getParentUri($value->uri);
-            if (isset($objs[$parentUri]))
-                $objs[$parentUri]->getChildren()->add($node->setParent($objs[$parentUri]));
-            $objs[$value->uri] = $node;
-            $this->em->persist($node);
+      foreach ($data->concepts as $value) {
+        $uri = rtrim($value->uri, '/') . '/';
+        $node = $this->setDewe($value);
+        $objs[$uri] = $node;
+        // Recupere le code dans l'URI
+        // Sinon dans la balise Notation
+        $codeRaw = null;
+        if (isset($value->uri) && preg_match('#class\/([^\/]+)#', $value->uri, $m)) {
+          $codeRaw = $m[1];
+        } elseif (isset($value->notation) && $value->notation !== null) {
+          $codeRaw = (string) $value->notation;
+        } elseif (isset($value->Notation) && $value->Notation !== null) {
+          $codeRaw = (string) $value->Notation;
+        } elseif (isset($value->uri)) {
+          $codeRaw = trim($value->uri, '/');
         }
-        return $objs;
+        // Garde la partie entiere du nombre
+        $codeLeft = $codeRaw !== null ? explode('.', $codeRaw)[0] : '';
+        // reprend le level dans le XML
+        $level = isset($value->level) ? (int) $value->level : (strlen($codeLeft) > 2 ? 3 : (strlen($codeLeft) > 1 ? 2 : 1));
+        $meta[$uri] = ['code' => $codeLeft, 'level' => $level];
+        $this->em->persist($node);
+      }
+
+      // lier les parents en utilisant la troncature numérique et les informations de niveau
+      // traite les niveaux dans l'ordre pour assurer que les parents soit disponible
+      $metaList = [];
+      foreach ($meta as $uri => $info) {
+        $metaList[] = ['uri' => $uri, 'info' => $info];
+      }
+      usort($metaList, fn($a, $b) => ($a['info']['level'] <=> $b['info']['level']));
+
+      foreach ($metaList as $entry) {
+        $uri = $entry['uri'];
+        $info = $entry['info'];
+        $level = $info['level'];
+        if ($level <= 1) continue;
+        $code = (string) $info['code'];
+        if ($code === '') continue;
+        // Test de supprimer les derniers chiffres pour trouver un parent.
+        //Gere les cas comme 385->38->3 et 030->03->3
+        $found = false;
+        $candidate = $code;
+        while (strlen($candidate) > 0 && !$found) {
+          //Supprime le dernier caractere
+          $candidate = substr($candidate, 0, -1);
+          if ($candidate === '') break;
+          // Construction de URI a tester avec et sans 0
+          $candidates = [];
+          $candidates[] = 'http://dewey.info/class/' . $candidate . '/';
+          // Si le code enfant a 3 chiffres et que le candidat en a 2, essayer également la version avec un zéro ajouté
+          $childLen = strlen($code);
+          $candLen = strlen($candidate);
+          if ($childLen >= 3 && $candLen < 3) {
+            if ($candLen === 1) $candidates[] = 'http://dewey.info/class/0' . $candidate . '/';
+            if ($candLen <= 2) $candidates[] = 'http://dewey.info/class/' . str_pad($candidate, 3, '0', STR_PAD_LEFT) . '/';
+          }
+          if ($childLen === 2 && strlen($candidate) === 1) {
+            $candidates[] = 'http://dewey.info/class/0' . $candidate . '/';
+          }
+          foreach ($candidates as $parentUri) {
+            if (isset($objs[$parentUri])) {
+              $parentNode = $objs[$parentUri];
+              $objs[$uri]->setParent($parentNode);
+              $parentNode->getChildren()->add($objs[$uri]);
+              $found = true;
+              break;
+            }
+          }
+        }
+      }
+
+      return $objs;
     }
 
     private function getParentUri($uri): string
