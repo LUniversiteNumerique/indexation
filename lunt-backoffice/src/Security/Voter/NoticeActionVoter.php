@@ -44,7 +44,7 @@ class NoticeActionVoter extends Voter
         if ($this->hasEtat($subject)) return $this->isOwner($subject,$user) || $this->canUser($subject, $user);
         else return $this->canVali($subject, $user) || $this->canUser($subject, $user);
     }
-    
+
     private function canEdit(Notice $subject, User $user): bool
     {
         if ($this->hasEtat($subject)) return $this->isOwner($subject,$user);
@@ -63,7 +63,7 @@ class NoticeActionVoter extends Voter
     private function canUser(Notice $subject, User $user): bool
     {
         //Si je suis CONTRIBUTEUR je peux voir que si c'est à mon établissement.
-        return $this->security->isGranted('ROLE_READ_NOTI') && $user->getSchool() instanceof Etablissement && $subject->getPorteurs()->contains($user->getSchool());
+        return $this->security->isGranted('ROLE_READ_NOTI');
     }
 
     private function isOwner(Notice $subject, User $user): bool {
