@@ -48,7 +48,8 @@ https://sslv-factory.coexya.lan/jenkins/job/Universit%C3%A9%20Num%C3%A9rique/
 L'intégration de Jenkins a été réalisée pour le projet. La configuration est disponible ici :  
 https://ssl-gitlab.coexya.eu/universite-numerique/lunt-indexation-notice/-/settings/integrations/jenkins/edit
 
-Le job Jenkins effectue une analyse Sonar à chaque push sur la branche develop.  
+Le job Jenkins effectue une analyse Sonar à chaque push sur la branche develop.
+Il effectue aussi une analyse checkmarx.
 Un déploiement sur la plateforme de développement est réalisé à chaque création de tag.
 
 ## Environnement
