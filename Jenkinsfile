@@ -114,15 +114,8 @@ pipeline {
       }
 
       when {
-        allOf {
-          anyOf {
-            branch 'master'
-            branch 'main'
-            branch 'develop'
-            expression {return env.BRANCH_NAME =~ /^release.*/}
-          }
-          expression { return env.CHANGE_ID == null;}
-        }
+        environment name: 'gitlabSourceBranch', value: 'develop'
+        beforeAgent true
       }
 
       steps {
