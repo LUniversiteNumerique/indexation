@@ -26,11 +26,18 @@ Dans le dossier du projet, copier `.env.example` et nommer la copie `.env`.
 
 Le copier également dans `lunt-backoffice` sous le nom `.env.dev.local`.
 
-Pour lancer le projet, faire ensuite : `make dev`.
-
 Copier les dossier `suplom_exposed` et `suplom_not_exposed` situés dans `K:\SSL\Clients\Université Numérique\INDEXATION NOTICES\Product\Suivi\Fournitures client\Notices UOH\Après retravail établissement` et les placer dans `lunt-backoffice/data`.
 
-Lancer le script `copy_tables.sh` avec la commande `./copy_tables.sh`.
+Lancer le script `init_env.sh` à la racine du projet.
+
+Ouvrir le backoffice dans un navigateur : http://localhost
+
+Il existe 3 utilisateurs avec des droits différents pour se connecter :
+- administrateur@un.fr
+- contributeur@unistra.fr
+- documentaliste@uoh.fr
+
+Les mots de passe sont disponibles dans le KeePass du projet (Production/Contribution).
 
 ## Commandes utiles
 - Lancer le projet : `make dev`
