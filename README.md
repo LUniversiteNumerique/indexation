@@ -1,6 +1,5 @@
 # Les Universités Numériques et Thématiques
 ## Système d'indexation des notices
-
 L'application d'indexation des notices des Universités Numériques et Thématiques est construite autour
 d'une architecture découplée.  
 
@@ -10,48 +9,31 @@ Les composants de cette application sont les suivants :
 - Entrepôt OAI jOAI et Stockage des ressources Filesystem
 - Moteur de recherche Solr
 
-## Démarrer le projet
-
-```bash
-docker-compose up -d --build
-```
-
-## Initialisation schéma base de données backoffice
-
-```bash
-# Si besoin pour réinitialiser sa base de données
-docker-compose exec backoffice php bin/console d:d:d --force
-docker-compose exec backoffice php bin/console d:d:c
-docker-compose exec backoffice php bin/console d:s:u -f
-docker-compose exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat /var/www/site/data/univerique.sql)"'
-docker-compose exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat /var/www/site/data/groupe.sql)"'
-docker-compose exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat /var/www/site/data/user.sql)"'
-docker-compose exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat /var/www/site/data/niveau.sql)"'
-docker-compose exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat /var/www/site/data/licence.sql)"'
-docker-compose exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat /var/www/site/data/groupe.sql)"'
-docker-compose exec backoffice sh -c 'php bin/console d:q:sql -n "$(cat /var/www/site/data/dossier.sql)"'
-```
-
-## Initialisation données de test
-
-Des scripts SQL permettent de peupler la base de données avec des données de tests [lunt-mariadb\src\test\local](lunt-mariadb\src\test\local).
-
-## Documentations
-
-L'ensemble des documents du projet est entrepôsé dans le répertoire <K:\SSL\Clients\Université Numérique\INDEXATION NOTICES>
+## Documentation
+L'ensemble des documents du projet est entrepôsé dans le répertoire du projet : K:/SSL/Clients/Université Numérique/INDEXATION NOTICES/
 
 ## Intégration continue et déploiement
+Des opérations d'intégration continue et de déploiement automatique sont configurées dans le [dossier Jenkins](https://sslv-factory.coexya.lan/jenkins/job/Universit%C3%A9%20Num%C3%A9rique/).
 
-Des opérations d'intégration continue et de déploiement automatique sont configurées dans le dossier Jenkins :  
-https://sslv-factory.coexya.lan/jenkins/job/Universit%C3%A9%20Num%C3%A9rique/
-
-L'intégration de Jenkins a été réalisée pour le projet. La configuration est disponible ici :  
-https://ssl-gitlab.coexya.eu/universite-numerique/lunt-indexation-notice/-/settings/integrations/jenkins/edit
+L'intégration de Jenkins a été réalisée pour le projet. La configuration est disponible [ici](https://ssl-gitlab.coexya.eu/universite-numerique/lunt-indexation-notice/-/settings/integrations/jenkins/edit).
 
 Le job Jenkins effectue une analyse Sonar à chaque push sur la branche develop.
 Il effectue aussi une analyse checkmarx.
 Un déploiement sur la plateforme de développement est réalisé à chaque création de tag.
 
-## Environnement
+## Installation dev
+Dans le dossier du projet, copier `.env.example` et nommer la copie `.env`.
 
-Accès Backoffice développement : http://sslv-lunt-develop.lyon-dev2.local/
+Le copier également dans `lunt-backoffice` sous le nom `.env.dev.local`.
+
+Pour lancer le projet, faire ensuite : `make dev`.
+
+Copier les dossier `suplom_exposed` et `suplom_not_exposed` situés dans `K:\SSL\Clients\Université Numérique\INDEXATION NOTICES\Product\Suivi\Fournitures client\Notices UOH\Après retravail établissement` et les placer dans `lunt-backoffice/data`.
+
+Lancer le script `copy_tables.sh` avec la commande `./copy_tables.sh`.
+
+## Commandes utiles
+- Lancer le projet : `make dev`
+- Arrêter le projet : `make ddev`
+- Build le projet : `make build`
+- Se connecter au conteneur backoffice : `make bsh`
