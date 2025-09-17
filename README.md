@@ -22,13 +22,13 @@ Il effectue aussi une analyse checkmarx.
 Un déploiement sur la plateforme de développement est réalisé à chaque création de tag.
 
 ## Installation dev
-Dans le dossier du projet, copier `.env.example` et nommer la copie `.env`.
+Dans le dossier du projet, copier `.env.example` et nommer la copie `.env` (mettre à jour le mot de passe MariaDB, à trouver dans le KeePass projet : Production).
 
-Le copier également dans `lunt-backoffice` sous le nom `.env.dev.local`.
+Le copier également dans `lunt-backoffice` sous le nom `.env.dev.local` (idem pour le mot de passe MariaDB).
 
 Copier les dossier `suplom_exposed` et `suplom_not_exposed` situés dans `K:\SSL\Clients\Université Numérique\INDEXATION NOTICES\Product\Suivi\Fournitures client\Notices UOH\Après retravail établissement` et les placer dans `lunt-backoffice/data`.
 
-Lancer le script `init_env.sh` à la racine du projet.
+Lancer le script `init_env.sh` à la racine du projet (le mot de passe MariaDB sera demandé).
 
 Ouvrir le backoffice dans un navigateur : http://localhost
 
@@ -37,7 +37,7 @@ Il existe 3 utilisateurs avec des droits différents pour se connecter :
 - contributeur@unistra.fr
 - documentaliste@uoh.fr
 
-Les mots de passe sont disponibles dans le KeePass du projet (Production/Contribution).
+Leurs mots de passe sont disponibles dans le KeePass du projet (Production/Contribution).
 
 ## Commandes utiles
 - Lancer le projet : `make dev`
