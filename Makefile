@@ -2,16 +2,23 @@
 path=`pwd`
 
 SRC_DIR := src
-APP=docker compose --env-file lunt-backoffice/.env.dev.local
+APP=docker compose -f compose.yml -f compose.dev.yml --env-file lunt-backoffice/.env.dev.local
 
-dev:
+build:
+	$(APP) build --no-cache
+
+dev-start:
 	$(APP) up -d
 
-ddev:
+dev-stop:
 	$(APP) down
 
-dstop:
-	docker stop $(docker ps -aq)
-
-bsh:
+bo-bash:
 	$(APP) exec -it backoffice bash
+
+db-connect:
+	$(APP) exec -it mariadb mysql -u root -p -D unt_db
+
+asset-compile:
+	$(APP) exec -it backoffice php bin/console asset-map:compile
+

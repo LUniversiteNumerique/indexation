@@ -73,12 +73,16 @@ class ImportNoticeXmlCommand extends Command
   {
     $this
       ->setDescription('Importe les notices suplom (optionnellement avec un préfixe)')
-      ->addArgument('prefix', \Symfony\Component\Console\Input\InputArgument::REQUIRED, 'Préfixe des fichiers XML à importer (ex: uoh, unit)', null);
+      ->addArgument('prefix', \Symfony\Component\Console\Input\InputArgument::REQUIRED, 'Préfixe des fichiers XML à importer (ex: uoh, unit)', null)
+      ->addArgument('folder', \Symfony\Component\Console\Input\InputArgument::OPTIONAL, 'Dossier des fichiers XML à importer (déf: suplom)', 'suplom')
+      ->addArgument('exposed', \Symfony\Component\Console\Input\InputArgument::OPTIONAL, 'Indique si les fichiers doivent être exposés sur le portail (déf: true)', true);
   }
 
   protected function execute(InputInterface $input, OutputInterface $output): int
   {
     $UNT = $input->getArgument('prefix');
+    $folder = $input->getArgument('folder');
+    $exposed = $input->getArgument('exposed');
     $io = new SymfonyStyle($input, $output);
     $io->title('Suplom Importing');
     $notfoundValidateur = [];
@@ -109,7 +113,7 @@ class ImportNoticeXmlCommand extends Command
 
     //Ré utilisation de la fonction readFilesFrom en dur car non fonctionnel avec un appel simple de celle-ci avec le meme répertoire
     $finder = new Finder();
-    $path = "data/suplom/";
+    $path = "data/$folder/";
     $names = ['*.xml'];
     $since = null;
     $deep = 0;
@@ -361,7 +365,7 @@ class ImportNoticeXmlCommand extends Command
       if (isset($item->technical?->size)) {
         $notice->setRessSize(round(floatval($item->technical->size) / 1048576, 2));
       }
-      $notice->setExportOAI(true)->setEtat(NoticEtat::Approved)
+      $notice->setExportOAI($exposed)->setEtat(NoticEtat::Approved)
         ->setUuid($uid) //->setVignette("$uid.jpg")
         ->setTitre($item->general->title[0]?->value)
         ->setDescription($item->general->description[0]?->value)
