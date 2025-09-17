@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # Variables de connexion MySQL
 MYSQL_USER="root"
