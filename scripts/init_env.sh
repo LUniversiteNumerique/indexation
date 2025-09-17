@@ -14,7 +14,7 @@ db_container="lunt-indexation-notice-mariadb-1"
 app_container="lunt-indexation-notice-backoffice-1"
 
 # Répertoire local où se trouvent les fichiers SQL
-local_dir="lunt-backoffice/data"
+local_dir="../lunt-backoffice/data"
 
 make dev-start
 
