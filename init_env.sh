@@ -3,8 +3,11 @@ set -euo pipefail
 
 # Variables de connexion MySQL
 MYSQL_USER="root"
-MYSQL_PASSWORD="unt_ssl"
 MYSQL_DATABASE="unt_db"
+
+# Prompt pour le mot de passe
+read -s -p "Mot de passe BDD pour l'utilisateur $MYSQL_USER : " MYSQL_PASSWORD
+echo
 
 # Conteneurs
 db_container="lunt-indexation-notice-mariadb-1"
