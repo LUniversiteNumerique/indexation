@@ -7,6 +7,7 @@ services:
       - mariadb
       - solr
     volumes:
+      - ./.env:/var/www/site/.env
       - ${UNT_BASE_URI}/lunt-resources/XML:/opt/lunt-resources/XML
       - ${UNT_BASE_URI}/lunt-resources/uploads:/var/www/site/public/uploads
 
