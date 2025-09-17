@@ -40,7 +40,9 @@ Il existe 3 utilisateurs avec des droits différents pour se connecter :
 Leurs mots de passe sont disponibles dans le KeePass du projet (Production/Contribution).
 
 ## Commandes utiles
-- Lancer le projet : `make dev`
-- Arrêter le projet : `make ddev`
+- Lancer le projet : `make dev-start`
+- Arrêter le projet : `make dev-stop`
 - Build le projet : `make build`
-- Se connecter au conteneur backoffice : `make bsh`
+- Se connecter au conteneur backoffice : `make bo-bash`
+- Se connecter à la base de données : `make db-connect`
+- Générer les assets et compiler les js : `make asset-compile` 

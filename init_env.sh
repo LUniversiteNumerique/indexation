@@ -16,7 +16,7 @@ app_container="lunt-indexation-notice-backoffice-1"
 # Répertoire local où se trouvent les fichiers SQL
 local_dir="lunt-backoffice/data"
 
-make dev
+make dev-start
 
 echo "=== Mise à jour du schéma avec Symfony ==="
 docker exec -it "$app_container" php bin/console d:s:u --force
