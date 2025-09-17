@@ -2,11 +2,6 @@ services:
   backoffice:
     build:
         context: ./lunt-backoffice
-    env_file: ./.env
-    network_mode: "host"
-    depends_on:
-      - mariadb
-      - solr
     volumes:
       # La ligne du dessous pour ne pas avoir à recompiler à chaque modification
       - ./lunt-backoffice:/var/www/site
@@ -17,17 +12,7 @@ services:
   joai:
     build:
       context: ./lunt-joai
-    env_file: ./.env
-    network_mode: "host"
-    volumes:
-      - ${UNT_BASE_URI}/lunt-joai/conf/tomcat-users.xml:/usr/local/tomcat/conf/tomcat-users.xml
-      - joai_repository:/joai/config/repository
-      - ${UNT_BASE_URI}/lunt-resources/XML:/XML
 
   mailer:
     image: mailhog/mailhog:latest
     network_mode: "host"
-
-volumes:
-  joai_repository:
-  db_data:
