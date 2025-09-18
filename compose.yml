@@ -1,13 +1,13 @@
 services:
   backoffice:
     image: sslv-nexus.coexya.eu/lunt-backoffice:${VERSION:-latest}
-    env_file: ./.env
+    env_file: ${UNT_BASE_URI}/.env
     network_mode: "host"
     depends_on:
       - mariadb
       - solr
     volumes:
-      - ./.env:/var/www/site/.env
+      - ${UNT_BASE_URI}/.env:/var/www/site/.env
       - ${UNT_BASE_URI}/lunt-resources/XML:/opt/lunt-resources/XML
       - ${UNT_BASE_URI}/lunt-resources/uploads:/var/www/site/public/uploads
 
@@ -33,7 +33,6 @@ services:
 
   joai:
     image: sslv-nexus.coexya.eu/lunt-joai:${VERSION:-latest}
-    env_file: ./.env
     network_mode: "host"
     volumes:
       - ${UNT_BASE_URI}/lunt-joai/conf/tomcat-users.xml:/usr/local/tomcat/conf/tomcat-users.xml
