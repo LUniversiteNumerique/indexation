@@ -297,55 +297,10 @@ class NoticeCrudController extends AbstractCrudController
 
   public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
   {
-    /** @var User $user */$user = $this->getUser();
-    $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)->select('entity,d,e,r,k,p,a,n,dd,pp,l,s,dg,sp,dgw,dpw,dp')
-      ->leftJoin('entity.repertoire','d')->leftJoin('entity.codeweys','e')->leftJoin('entity.ressources','r')->leftJoin('entity.tags','k')
-      ->leftJoin('entity.porteurs','p')->leftJoin('entity.auteurs','a')->leftJoin('entity.niveaux','n')
-      ->leftJoin('entity.docTypes','dd')->leftJoin('entity.pedTypes','pp')->leftJoin('entity.specialites','s')->join('entity.droit','l')
-      ->leftjoin('entity.disciplineGroups','dg')
-      ->leftJoin('dg.specialites', 'sp')
-      ->leftJoin('entity.deweyGroups', 'dgw')
-      ->leftJoin('dgw.codeweys', 'dpw')
-      ->leftJoin('entity.deweyPersos', 'dp');
-
-    $andX = $qb->expr()->andX('entity.etat != :etat');
-    $school = $user->getSchool();
-    $unt = $user->getUntheme();
-    $role = $user->getGroup()->getLabel();
-    // marque si on a une restriction (school ou untheme)
-    $hasRestriction = false;
-
-    if ($role === "Administrateur") {
-      // Administrateur => toutes les notices
-    } elseif ($role === "Contributeur") {
-      if ($school) {
-        $qb->setParameter('school', $school);
-        $andX->add(':school MEMBER OF entity.porteurs');
-        $hasRestriction = true;
-      } else {
-        // pas de school => seulement ses propres notices
-        $qb->andWhere('entity.createur = :user')->setParameter('user', $user->getId());
-      }
-    } elseif ($role === "Documentaliste") {
-      if ($unt) {
-        $qb->join('dg.champDisc', 'cd')
-          ->setParameter('champs', $unt->getFields());
-        $andX->add('cd in (:champs)');
-        $hasRestriction = true;
-      } else {
-        // pas d'UNT => seulement ses propres notices
-        $qb->andWhere('entity.createur = :user')->setParameter('user', $user->getId());
-      }
-    }
-    if ($hasRestriction) {
-      $qb->andWhere($qb->expr()->orX(
-        $qb->expr()->eq('entity.createur', ':user'),
-        $andX
-      ))
-        ->setParameter('user', $user->getId())
-        ->setParameter('etat', NoticEtat::Working);
-    }
-    return $qb->andWhere('entity.deleted = 0');
+    /** @var User $user */
+    $user = $this->getUser();
+    $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
+    return $this->repository->enrichIndexQueryBuilder($qb, $user);
   }
 
   public function createNewFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface

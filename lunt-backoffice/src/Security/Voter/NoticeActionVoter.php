@@ -39,38 +39,131 @@ class NoticeActionVoter extends Voter
         return false;
     }
 
+    /**
+     * Vérifie si l'utilisateur peut voir la notice.
+     *
+     * Règles d'accès :
+     * - Accès autorisé si l'utilisateur est le créateur de la notice.
+     * - Accès autorisé selon les règles du rôle (voir canUser) :
+     *   - Contributeur : créateur ou porteur de l'école si notice "Soumise"/"Validée".
+     *   - Documentaliste : créateur ou UNT correspondant si notice "Soumise"/"Validée".
+     *   - Administrateur : créateur ou notice "Soumise"/"Validée".
+     *   - Autres : accès refusé.
+     *
+     * @param Notice $subject La notice concernée
+     * @param User $user L'utilisateur à vérifier
+     * @return bool true si l'accès à la vue est autorisé, false sinon
+     */
     private function canView(Notice $subject, User $user): bool
     {
-        if ($this->hasEtat($subject)) return $this->isOwner($subject,$user) || $this->canUser($subject, $user);
-        else return $this->canVali($subject, $user) || $this->canUser($subject, $user);
+        return $this->isOwner($subject, $user) || $this->canUser($subject, $user);
     }
 
+    /**
+     * Vérifie si l'utilisateur peut éditer ou supprimer la notice.
+     *
+     * Règles d'accès :
+     * - Seul le créateur peut modifier/supprimer une notice "En travail".
+     * - Seuls les documentalistes ou administrateurs peuvent éditer une notice "Soumise".
+     *
+     * @param Notice $subject La notice concernée
+     * @param User $user L'utilisateur à vérifier
+     * @return bool true si l'accès à l'édition/suppression est autorisé, false sinon
+     */
     private function canEdit(Notice $subject, User $user): bool
     {
-        if ($this->hasEtat($subject)) return $this->isOwner($subject,$user);
-        else return $this->hasEtat($subject,NoticEtat::Forward) && $this->canVali($subject, $user);
+        // Seul le créateur peut modifier/supprimer une notice "En travail"
+        if ($subject->getEtat() === NoticEtat::Working) {
+            return $this->isOwner($subject, $user);
+        }
+        // Seuls les documentalistes/admins peuvent éditer une notice "Soumise"
+        if ($subject->getEtat() === NoticEtat::Forward) {
+            return $this->canVali($subject, $user);
+        }
+        return false;
     }
 
+    /**
+     * Vérifie si l'utilisateur peut valider la notice.
+     *
+     * Règles d'accès :
+     * - L'utilisateur doit avoir le rôle "ROLE_VALI_NOTI".
+     * - Si l'utilisateur n'a pas d'UNT, accès total.
+     * - Sinon, accès si la notice appartient à l'UNT de l'utilisateur.
+     *
+     * @param Notice $subject La notice concernée
+     * @param User $user L'utilisateur à vérifier
+     * @return bool true si l'accès à la validation est autorisé, false sinon
+     */
     private function canVali(Notice $subject, User $user): bool
     {
-        //Si Admin je peux voir toutes les notices
-        //Si je suis DOCUMENTALISTE je peux voir si c'est dans mon UNT, cad si la specialite de la notice est dans les champs disciplinaires de mon UNT
-
-        return $this->security->isGranted('ROLE_VALI_NOTI') &&
-            (!$user->getUntheme() || $subject->belongsToUNT($user->getUntheme()));
+        if (!$this->security->isGranted('ROLE_VALI_NOTI')) return false;
+        $unt = $user->getUntheme();
+        // Si pas d'UNT, accès total ; sinon, accès si la notice appartient à l'UNT
+        return !$unt || $subject->belongsToUNT($unt);
     }
 
+    /**
+     * Règle d'accès générique selon le rôle de l'utilisateur.
+     *
+     * Règles d'accès :
+     * - Contributeur :
+     *   - Accès si créateur de la notice.
+     *   - Accès si son école est porteuse ET notice "Soumise" ou "Validée".
+     * - Documentaliste :
+     *   - Accès si créateur de la notice.
+     *   - Accès si son UNT correspond à la notice ET notice "Soumise" ou "Validée".
+     * - Administrateur :
+     *   - Accès si notice "Soumise" ou "Validée".
+     *   - Accès si créateur de la notice.
+     * - Autres : accès refusé.
+     *
+     * @param Notice $subject La notice concernée
+     * @param User $user L'utilisateur à vérifier
+     * @return bool true si l'accès est autorisé, false sinon
+     */
     private function canUser(Notice $subject, User $user): bool
     {
-        //Si je suis CONTRIBUTEUR je peux voir que si c'est à mon établissement.
-        return $this->security->isGranted('ROLE_READ_NOTI');
+        $role = $user->getGroup()->getLabel();
+
+        // Contributeur
+        if ($role === 'Contributeur') {
+            if ($this->isOwner($subject, $user)) return true;
+            $school = $user->getSchool();
+            if ($school && in_array($school, $subject->getPorteurs()->toArray(), true)) {
+                return in_array($subject->getEtat(), [NoticEtat::Forward, NoticEtat::Approved], true);
+            }
+            return false;
+        }
+
+        // Documentaliste
+        if ($role === 'Documentaliste') {
+            if ($this->isOwner($subject, $user)) return true;
+            $unt = $user->getUntheme();
+            if ($unt && $subject->belongsToUNT($unt)) {
+                return in_array($subject->getEtat(), [NoticEtat::Forward, NoticEtat::Approved], true);
+            }
+            return false;
+        }
+
+        // Administrateur
+        if ($role === 'Administrateur') {
+            return in_array($subject->getEtat(), [NoticEtat::Forward, NoticEtat::Approved], true)
+                || $this->isOwner($subject, $user);
+        }
+
+        // Par défaut, accès refusé
+        return false;
     }
 
+    /**
+     * Vérifie si l'utilisateur est le créateur de la notice.
+     *
+     * @param Notice $subject La notice concernée
+     * @param User $user L'utilisateur à vérifier
+     * @return bool true si l'utilisateur est le créateur, false sinon
+     */
     private function isOwner(Notice $subject, User $user): bool {
         return $subject->getCreateur() === $user;
-    }
-
-    private function hasEtat($subject, $etat = NoticEtat::Working): bool {
-        return $subject->getEtat() === $etat;
     }
 }
