@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Repository\{NoticeRepository, UserRepository};
 use App\Form\{ChangePassType,UserType};
-use App\Entity\{Auteur, Dossier, Etablissement, Groupe, IndexingConfig, Keyword, Notice, TPedagogie, Univerique, User};
+use App\Entity\{Auteur, Dossier, Etablissement, Groupe, IndexingConfig, Keyword, Licence, Niveau, Notice, TDocument, TPedagogie, Univerique, User};
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Crud, Dashboard, MenuItem, UserMenu};
 use EasyCorp\Bundle\EasyAdminBundle\{Context\AdminContext,Controller\AbstractDashboardController};
 use Symfony\Bundle\SecurityBundle\Security;
@@ -57,6 +57,9 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Etablissements', 'fa fa-building', Etablissement::class)->setPermission('ROLE_READ_ETAB');
         yield MenuItem::linkToCrud('Mots clés', 'fa fa-tags', Keyword::class)->setPermission('ROLE_READ_KEYW');
         yield MenuItem::linkToCrud("UNT", 'fa fa-university', Univerique::class)->setPermission('ROLE_READ_UNIV');
+        yield MenuItem::linkToCrud('Licences', 'fa fa-copyright', Licence::class)->setPermission('ROLE_READ_LICE');
+        yield MenuItem::linkToCrud('Types documentaires', 'fa fa-file', TDocument::class)->setPermission('ROLE_READ_TDOC');
+        yield MenuItem::linkToCrud('Publics cibles', 'fa fa-users-viewfinder', Niveau::class)->setPermission('ROLE_READ_NIVE');
     }
 
     #[Route('/', name: 'app_home'),]
