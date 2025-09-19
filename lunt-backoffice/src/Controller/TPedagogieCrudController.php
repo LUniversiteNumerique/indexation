@@ -19,7 +19,7 @@ class TPedagogieCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud->setSearchFields(['code', 'nom'])->setDefaultSort(['nom' => 'ASC'])
-            ->setEntityLabelInPlural("Types Pédagogiques")->setEntityLabelInSingular("Type pédagogique")
+            ->setEntityLabelInPlural("Types pédagogiques")->setEntityLabelInSingular("type pédagogique")
             ->setEntityPermission('ROLE_READ_TPED');
     }
 

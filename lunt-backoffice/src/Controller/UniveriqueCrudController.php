@@ -25,8 +25,8 @@ class UniveriqueCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return parent::configureCrud($crud)->setEntityLabelInSingular('UNT')->setEntityLabelInPlural("UNT")
-            ->setPageTitle(Action::NEW, fn () => 'Créer une <b>UNT</b>')
-            ->setPageTitle(Action::EDIT, fn (Univerique $n) => 'Modifier une <b>UNT</b>');
+            ->setPageTitle(Action::NEW, fn () => 'Créer une UNT')
+            ->setPageTitle(Action::EDIT, fn () => 'Modifier une UNT');
     }
 
     public function configureActions(Actions $actions): Actions

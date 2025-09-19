@@ -56,8 +56,8 @@ class NoticeCrudController extends AbstractCrudController
       ->setEntityLabelInPlural('Notices')->setEntityLabelInSingular('notice')->setFormOptions([
         'attr' => ['data-controller'=>"notice-setting", 'data-notice-setting-target'=>"form"]
       ])
-      ->setPageTitle(Action::NEW, fn () => 'Créer une <b>notice</b>')
-      ->setPageTitle(Action::EDIT, fn (Notice $n) => 'Modifier une <b>notice</b>')
+      ->setPageTitle(Action::NEW, fn () => 'Créer une notice')
+      ->setPageTitle(Action::EDIT, fn () => 'Modifier une notice')
       ->setPageTitle(Crud::PAGE_DETAIL, static fn (Notice $n) => $n->getTitre());
     if($this->isGranted('ROLE_VALI_NOTI')) $crud->renderSidebarMinimized()->overrideTemplates([
       'crud/detail'=>'admin/actions/notice_show.html.twig',
