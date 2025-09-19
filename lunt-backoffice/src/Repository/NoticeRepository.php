@@ -22,6 +22,12 @@ class NoticeRepository extends ServiceEntityRepository
         parent::__construct($registry, Notice::class);
     }
 
+    /**
+     * Supprime définitivement les notices supprimées et non publiées créées avant une date donnée.
+     *
+     * @param \DateTime $before Date limite : seules les notices créées avant cette date seront supprimées.
+     * @return int Nombre de notices supprimées.
+     */
     public function clean(\DateTime $before): int
     {
         return $this->createQueryBuilder('n')
@@ -31,6 +37,14 @@ class NoticeRepository extends ServiceEntityRepository
             ->getQuery()->execute();
     }
 
+    /**
+     * Retourne une liste de notices selon la configuration d'indexation et la pagination.
+     *
+     * @param IndexingConfig $cfg Configuration d'indexation (mode, champs, date).
+     * @param int $limit Nombre maximum de résultats à retourner.
+     * @param int $offset Décalage pour la pagination.
+     * @return Notice[] Liste des notices trouvées.
+     */
     public function findFrom(IndexingConfig $cfg, int $limit=20, int $offset=0): array
     {
         $qr = $this->createQueryBuilder('n')->join('n.disciplineGroups','dg')
@@ -76,6 +90,12 @@ class NoticeRepository extends ServiceEntityRepository
       ->getResult();
   }
 
+    /**
+     * Ajoute une notice en base de données et retourne l'objet ajouté.
+     *
+     * @param Notice|null $n La notice à ajouter.
+     * @return Notice|null La notice ajoutée, ou null si aucun objet n'est passé.
+     */
     public function add(Notice $n=null): ?Notice
     {
         if($n) $this->_em->persist($n);
@@ -83,6 +103,12 @@ class NoticeRepository extends ServiceEntityRepository
         return $n;
     }
 
+    /**
+     * Supprime une notice de la base de données et retourne l'objet supprimé.
+     *
+     * @param Notice|null $n La notice à supprimer.
+     * @return Notice La notice supprimée, ou null si aucun objet n'est passé.
+     */
     public function del(?Notice $n): Notice
     {
         $this->_em->remove($n);

@@ -16,16 +16,25 @@ class NoticeActionVoter extends Voter
 
     public function __construct(private readonly Security $security){}
 
+    /**
+     * Détermine si le voter prend en charge l'attribut et le sujet donnés.
+     *
+     * @param string $attribute L'action à vérifier (ex : VIEW, EDIT, DROP, VALI, DEFA)
+     * @param mixed $subject L'objet concerné (doit être une instance de Notice)
+     * @return bool true si le voter gère cette combinaison, false sinon
+     */
     protected function supports(string $attribute, mixed $subject): bool
     {
         return in_array($attribute, [self::VIEW, self::EDIT, self::DROP, self::VALI, self::DEFA]) && $subject instanceof Notice;
     }
 
     /**
-     * @param string $attribute
-     * @param Notice $subject
-     * @param TokenInterface $token
-     * @return bool
+     * Applique la logique de vote selon l'attribut, le sujet et l'utilisateur.
+     *
+     * @param string $attribute L'action à vérifier (ex : VIEW, EDIT, DROP, VALI, DEFA)
+     * @param mixed $subject L'objet concerné (doit être une instance de Notice)
+     * @param TokenInterface $token Le token d'authentification de l'utilisateur
+     * @return bool true si l'accès est autorisé, false sinon
      */
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
