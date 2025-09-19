@@ -2,17 +2,15 @@
 
 namespace App\Controller;
 
+use App\Entity\{Notice, NoticEtat, User};
 use App\Event\{AfterNoticeAdjustingEvent, AfterNoticeApprovingEvent, AfterNoticeRejectingEvent, AfterNoticeStateSetEvent, AfterNoticeSubmissionEvent};
-use App\Security\Voter\NoticeActionVoter;
-use App\Entity\{Dewey, Discipline, Notice, NoticEtat, Univerique, User};
 use App\Field\{DurationField, EntityField, FileField};
+use App\Form\DeweyGroupType;
+use App\Form\DisciplineGroupType;
 use App\Form\Type\{AuteurAutoField, NoticeAutoField, TagAutoField, TreeChoiceType};
 use App\Repository\{DossierRepository, NoticeRepository};
-use Doctrine\ORM\{QueryBuilder,EntityManagerInterface};
-use EasyCorp\Bundle\EasyAdminBundle\Form\Type\{FileUploadType, Model\FileUploadState};
-use EasyCorp\Bundle\EasyAdminBundle\Filter\{ChoiceFilter, DateTimeFilter, EntityFilter, TextFilter};
-use App\Filter\DisciplineSpecialityFilter;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use App\Security\Voter\NoticeActionVoter;
+use Doctrine\ORM\{EntityManagerInterface, QueryBuilder};
 use EasyCorp\Bundle\EasyAdminBundle\{Context\AdminContext, Event\AfterEntityPersistedEvent, Factory\FormFactory, Provider\AdminContextProvider, Router\AdminUrlGenerator};
 use EasyCorp\Bundle\EasyAdminBundle\Collection\{ActionCollection, FieldCollection, FilterCollection};
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Actions, Asset, Assets, Crud, Filters, KeyValueStore};
@@ -20,16 +18,15 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\{ActionDto, EntityDto, SearchDto};
 use EasyCorp\Bundle\EasyAdminBundle\Field as Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
-use App\Form\DisciplineGroupType;
-use App\Form\DeweyGroupType;
-use Psr\EventDispatcher\EventDispatcherInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\{FormBuilderInterface, FormEvent, FormEvents, FormInterface};
-use Symfony\Component\HttpFoundation\{RedirectResponse, Request, Response};
-use Symfony\Component\{Intl\Languages, Routing\Generator\UrlGeneratorInterface, Uid\Uuid};
-use Symfony\Component\Validator\Constraints\{File, Image};
-use function Symfony\Component\{String\u,Translation\t};
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\{ChoiceFilter, DateTimeFilter, EntityFilter, TextFilter};
+use EasyCorp\Bundle\EasyAdminBundle\Form\Type\{FileUploadType, Model\FileUploadState};
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\{Intl\Languages, Routing\Generator\UrlGeneratorInterface, Uid\Uuid};
+use Symfony\Component\Form\{FormBuilderInterface, FormInterface};
+use Symfony\Component\HttpFoundation\{RedirectResponse, Request, Response};
+use Symfony\Component\Validator\Constraints\{File, Image};
+use function Symfony\Component\{String\u, Translation\t};
 
 class NoticeCrudController extends AbstractCrudController
 {
@@ -76,7 +73,6 @@ class NoticeCrudController extends AbstractCrudController
     $allowed = Action::new('autoriser',null,'fa fa-fast-backward')->linkToCrudAction('allowedNotice')->addCssClass('btn btn-outline-info')->setHtmlAttributes(['data-toggle' => 'tooltip', 'title' => 'Autoriser la notice pour modification']);
     $adjust = Action::new('rectifier',null,'fa fa-share-square')->linkToCrudAction('adjustNotice')->addCssClass('btn btn-outline-info')->setHtmlAttributes(['data-toggle' => 'tooltip', 'title' => 'Demander la modification de cette notice']);
     $category = Action::new('catégoriser',null,'fa fa-tag')->linkToCrudAction('labelNotice')->addCssClass('btn btn-outline-warning confirm-action')->setHtmlAttributes(['data-bs-toggle' => 'modal', 'data-bs-target' => '#modal-confirm',]);
-    $saward = Action::new(self::SAVE_AND_FORWARD, 'Créer et soumettre la notice', 'fa fa-send')->linkToCrudAction(Action::NEW)->setHtmlAttributes(['type' => 'submit', 'name' => 'ea[newForm][btn]', 'value' => self::SAVE_AND_FORWARD]);
 
     $fwdoc = fn(Notice $n,string $s = NoticeActionVoter::VALI) => $this->isGranted($s,$n);
 
@@ -90,7 +86,7 @@ class NoticeCrudController extends AbstractCrudController
       ->add(Crud::PAGE_DETAIL, $allowed->displayIf(static fn (Notice $n) => $fwdoc($n) && $n->isEditDemande()))
       ->add(Crud::PAGE_DETAIL, $adjust->displayIf(static fn (Notice $n) => $n->getEtat()===NoticEtat::Approved && $fwdoc($n,NoticeActionVoter::DEFA) && !$n->isEditDemande()))
       ->add(Crud::PAGE_INDEX, Action::DETAIL)
-      ->add(Crud::PAGE_NEW, Action::INDEX)//->add(Crud::PAGE_NEW, $saward->displayAsButton())
+      ->add(Crud::PAGE_NEW, Action::INDEX)
       ->update(Crud::PAGE_INDEX, Action::DETAIL, fn (Action $a) => $a->setCssClass('btn btn-outline-secondary'))
       ->update(Crud::PAGE_DETAIL, Action::EDIT, static fn(Action $a) => $a->setIcon('fa fa-pencil')->displayIf(static fn (Notice $n) => $fwdoc($n, NoticeActionVoter::EDIT)))
       ->update(Crud::PAGE_DETAIL, Action::DELETE, static fn(Action $a) => $a->addCssClass('btn btn-outline-danger')->displayIf(static fn (Notice $n) => $fwdoc($n,NoticeActionVoter::DROP)))
@@ -222,7 +218,7 @@ class NoticeCrudController extends AbstractCrudController
         ->setFormTypeOptions(['default_protocol' => 'https', 'attr' => ['class' => 'isUrl', 'placeholder' => 'https://...']])->setHelp(t('notice.formevalurl_help', domain: 'EasyAdminBundle'))->hideOnIndex();
       yield Field\ChoiceField::new('userLang',t('notice.userlang', domain: 'EasyAdminBundle'))->setHelp(t('notice.userlang_help', domain: 'EasyAdminBundle'))->hideOnIndex()
         ->setChoices($langList)->allowMultipleChoices()->renderAsBadges()->setFormTypeOption('autocomplete',true);
-      yield Field\TextEditorField::new('objectif',t('notice.objectif', domain: 'EasyAdminBundle'))->setHelp(t('notice.objectif_help', domain: 'EasyAdminBundle'))->hideOnIndex()->formatValue(function ($value, $entity) { return $value;});
+      yield Field\TextEditorField::new('objectif',t('notice.objectif', domain: 'EasyAdminBundle'))->setHelp(t('notice.objectif_help', domain: 'EasyAdminBundle'))->hideOnIndex()->formatValue(function ($value) { return $value;});
       yield Field\TextField::new('champExt1',"Champ d'extension 1")->hideOnIndex(); yield Field\TextField::new('champExt2',"Champ d'extension 2")->hideOnIndex();
       yield Field\TextField::new('champExt3',"Champ d'extension 3")->hideOnIndex(); yield Field\TextField::new('champExt4',"Champ d'extension 4")->hideOnIndex();
       yield Field\TextField::new('champExt5',"Champ d'extension 5")->hideOnIndex();
@@ -605,56 +601,6 @@ class NoticeCrudController extends AbstractCrudController
     $this->addFlash('success', "La notice est bien déplacée avec succès !");
 
     return $this->redirect($url->generateUrl());
-  }
-
-  private function addDisc(FormInterface $form, ?array $children): void
-  {
-    $builder = $form->getConfig()->getFormFactory()->createNamedBuilder('discipline', EntityType::class, null, [
-      'class' => Discipline::class, 'mapped' => false, 'auto_initialize' => false, 'required' => true,
-      'label' => t('notice.discipline', domain: 'EasyAdminBundle'), 'choices' => $children ?? [], 'help' => t('notice.discipline_help', domain: 'EasyAdminBundle'),
-      'placeholder' => $children ? 'Sélectionnez la discipline' : 'Sélectionnez le champ disciplinaire',
-    ]);
-
-    $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
-      $form = $event->getForm();
-      /** @var Discipline $spec */
-      $spec = $form->getData();
-      $this->addSpec($form->getParent(), $spec?->getChildren()->toArray());
-    });
-
-    $form->add($builder->getForm());
-  }
-  private function addDivi(FormInterface $form, ?array $children): void
-  {
-    $builder = $form->getConfig()->getFormFactory()->createNamedBuilder('division', EntityType::class, null, [
-      'class' => Dewey::class, 'mapped' => false, 'auto_initialize' => false, 'required' => true,
-      'label' => t('notice.division', domain: 'EasyAdminBundle'), 'choices' => $children ?? [], 'help' => t('notice.division_help', domain: 'EasyAdminBundle'),
-      'placeholder' => $children ? 'Sélectionnez la division' : 'Sélectionnez la discipline fondamentale',
-    ]);
-
-    $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
-      $form = $event->getForm();
-      /** @var Dewey $dewe */
-      $dewe = $form->getData();
-      $this->addCode($form->getParent(), $dewe?->getChildren()->toArray());
-    });
-
-    $form->add($builder->getForm());
-  }
-
-  private function addSpec(FormInterface $form, ?array $children): void {
-    $form->add('specialites', EntityType::class, [
-      'label' => t('notice.specialite', domain: 'EasyAdminBundle'), 'class' => Discipline::class, 'multiple' => true,
-      'choices' => $children ?? [], 'help' => t('notice.specialite_help', domain: 'EasyAdminBundle'),
-      'placeholder' => $children ? 'Sélectionnez la spécialité' : 'Sélectionnez la discipline', 'autocomplete' => true
-    ]);
-  }
-  private function addCode(FormInterface $form, ?array $children): void {
-    $form->add('codeweys', EntityType::class, [
-      'label' => t('notice.codewey', domain: 'EasyAdminBundle'), 'class' => Dewey::class, 'required' => true,
-      'choices' => $children ?? [], 'help' => t('notice.codewey_help', domain: 'EasyAdminBundle'), 'multiple' => true,
-      'placeholder' => $children ? 'Sélectionnez le code dewey' : 'Sélectionnez la division', 'autocomplete' => true
-    ]);
   }
 
   private function redirecTo(Request $req): AdminUrlGenerator
