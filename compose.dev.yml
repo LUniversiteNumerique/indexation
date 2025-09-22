@@ -1,33 +1,16 @@
 services:
   backoffice:
     build:
-        context: ./lunt-backoffice
-    env_file: ./.env
-    network_mode: "host"
-    depends_on:
-      - mariadb
-      - solr
+        context: ${UNT_BASE_URI}/lunt-backoffice
     volumes:
-      # La ligne du dessous pour ne pas avoir à recompiler à chaque modification
-      - ./lunt-backoffice:/var/www/site
-      - ./lunt-resources:/opt/lunt-resources
-      - ${UNT_BASE_URI}/lunt-resources/XML:/opt/lunt-resources/XML
-      - ${UNT_BASE_URI}/lunt-resources/uploads:/var/www/site/public/uploads
+      # La ligne du dessous pour ne pas avoir à recompiler à chaque modification (mais peut ralentir les perfs)
+      - ${UNT_BASE_URI}/lunt-backoffice:/var/www/site
+      - ${UNT_BASE_URI}/lunt-resources:/opt/lunt-resources
 
   joai:
     build:
-      context: ./lunt-joai
-    env_file: ./.env
-    network_mode: "host"
-    volumes:
-      - ${UNT_BASE_URI}/lunt-joai/conf/tomcat-users.xml:/usr/local/tomcat/conf/tomcat-users.xml
-      - joai_repository:/joai/config/repository
-      - ${UNT_BASE_URI}/lunt-resources/XML:/XML
+      context: ${UNT_BASE_URI}/lunt-joai
 
   mailer:
     image: mailhog/mailhog:latest
     network_mode: "host"
-
-volumes:
-  joai_repository:
-  db_data:

@@ -2,7 +2,7 @@
 path=`pwd`
 
 SRC_DIR := src
-APP=docker compose -f compose.yml -f compose.dev.yml --env-file lunt-backoffice/.env.dev.local
+APP=docker compose -f compose.yml -f compose.dev.yml
 
 build:
 	$(APP) build --no-cache
