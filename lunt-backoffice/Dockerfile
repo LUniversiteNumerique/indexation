@@ -27,7 +27,7 @@ COPY ./custom-php.ini /usr/local/etc/php/conf.d/
 WORKDIR /var/www/site
 COPY . /var/www/site
 
-RUN composer install --no-dev --optimize-autoloader --no-scripts
+RUN composer install --no-dev --optimize-autoloader
 
 RUN chmod +x /root/nginx-start.sh && \
     mkdir -p /var/log/php-fpm && mkdir -p /var/log/ngninx && \
