@@ -1015,7 +1015,6 @@ class NoticeCrudController extends AbstractCrudController
    */
   private function renderEntityCollectionBadges(?Collection $collection): array
   {
-    dump($collection, count($collection));
     if (empty($collection) || (is_iterable($collection) && count($collection) === 0)) {
       return ['Aucune'];
     }
