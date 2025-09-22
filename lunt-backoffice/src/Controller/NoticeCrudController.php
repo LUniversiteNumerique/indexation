@@ -87,8 +87,8 @@ class NoticeCrudController extends AbstractCrudController
         ],
       ])
       // Titres des pages
-      ->setPageTitle(Action::NEW, fn () => 'Créer une <b>notice</b>')
-      ->setPageTitle(Action::EDIT, fn (Notice $n) => 'Modifier une <b>notice</b>')
+      ->setPageTitle(Action::NEW, fn () => 'Créer une notice')
+      ->setPageTitle(Action::EDIT, fn () => 'Modifier une notice')
       ->setPageTitle(Crud::PAGE_DETAIL, static fn (Notice $n) => $n->getTitre());
 
     // Personnalisation de l'affichage si l'utilisateur est validateur
