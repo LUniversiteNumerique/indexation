@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Repository\{NoticeRepository, UserRepository};
 use App\Form\{ChangePassType,UserType};
-use App\Entity\{Auteur, Dossier, Etablissement, Groupe, IndexingConfig, Keyword, Notice, TPedagogie, Univerique, User};
+use App\Entity\{Auteur, Dossier, Etablissement, Groupe, IndexingConfig, Keyword, Licence, Niveau, Notice, TDocument, TPedagogie, Univerique, User};
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Crud, Dashboard, MenuItem, UserMenu};
 use EasyCorp\Bundle\EasyAdminBundle\{Context\AdminContext,Controller\AbstractDashboardController};
 use Symfony\Bundle\SecurityBundle\Security;
@@ -45,8 +45,8 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard(t('page_title.dashboard', domain: 'EasyAdminBundle'), 'fa fa-dashboard');
-        yield MenuItem::linkToCrud('Liste Notices', 'fa fa-table-list', Notice::class)->setPermission('ROLE_READ_NOTI');
-        yield MenuItem::linkToCrud('Répertoire Notices', 'fa fa-folder-tree', Dossier::class)->setAction(Action::DETAIL)->setEntityId(1)->setPermission('ROLE_VALI_NOTI');
+        yield MenuItem::linkToCrud('Liste notices', 'fa fa-table-list', Notice::class)->setPermission('ROLE_READ_NOTI');
+        yield MenuItem::linkToCrud('Répertoire notices', 'fa fa-folder-tree', Dossier::class)->setAction(Action::DETAIL)->setEntityId(1)->setPermission('ROLE_VALI_NOTI');
 
         yield MenuItem::linkToCrud('Auteurs', 'fa fa-users', Auteur::class)->setPermission('ROLE_READ_ACTE');
         yield MenuItem::section('Configurations')->setPermission('ROLE_VALI_NOTI');
@@ -54,9 +54,12 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud("Utilisateurs", 'fa fa-users-gear', User::class)->setPermission('ROLE_READ_USER');
         yield MenuItem::linkToCrud("Rôles et permissions", 'fa fa-user-tag', Groupe::class)->setPermission('ROLE_READ_GROU');
         yield MenuItem::linkToCrud('Types pédagogiques', 'fa fa-gavel', TPedagogie::class)->setPermission('ROLE_READ_TPED');
-        yield MenuItem::linkToCrud('Etablissements', 'fa fa-building', Etablissement::class)->setPermission('ROLE_READ_ETAB');
+        yield MenuItem::linkToCrud('Établissements', 'fa fa-building', Etablissement::class)->setPermission('ROLE_READ_ETAB');
         yield MenuItem::linkToCrud('Mots clés', 'fa fa-tags', Keyword::class)->setPermission('ROLE_READ_KEYW');
         yield MenuItem::linkToCrud("UNT", 'fa fa-university', Univerique::class)->setPermission('ROLE_READ_UNIV');
+        yield MenuItem::linkToCrud('Licences', 'fa fa-copyright', Licence::class)->setPermission('ROLE_READ_LICE');
+        yield MenuItem::linkToCrud('Types documentaires', 'fa fa-file', TDocument::class)->setPermission('ROLE_READ_TDOC');
+        yield MenuItem::linkToCrud('Publics cibles', 'fa fa-users-viewfinder', Niveau::class)->setPermission('ROLE_READ_NIVE');
     }
 
     #[Route('/', name: 'app_home'),]

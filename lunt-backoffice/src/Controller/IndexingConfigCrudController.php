@@ -47,8 +47,8 @@ class IndexingConfigCrudController extends AbstractCrudController
     {
         return $crud->setEntityLabelInSingular('indexation')->setEntityLabelInPlural("Indexations")
             ->setSearchFields(null)->setEntityPermission('ROLE_READ_CORE')
-            ->setPageTitle(Action::NEW, fn () => 'Créer une <b>indexation</b>')
-            ->setPageTitle(Action::EDIT, fn (IndexingConfig $n) => 'Modifier une <b>indexation</b>');
+            ->setPageTitle(Action::NEW, fn () => 'Créer une indexation')
+            ->setPageTitle(Action::EDIT, fn () => 'Modifier une indexation');
     }
 
     public function index(AdminContext $context)
