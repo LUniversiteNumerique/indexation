@@ -1,13 +1,12 @@
 services:
   backoffice:
     image: sslv-nexus.coexya.eu/lunt-backoffice:${VERSION:-latest}
-    env_file: ${UNT_BASE_URI}/.env
+    env_file: ./.env
     network_mode: "host"
     depends_on:
       - mariadb
       - solr
     volumes:
-      - ${UNT_BASE_URI}/.env:/var/www/site/.env
       - ${UNT_BASE_URI}/lunt-resources/XML:/opt/lunt-resources/XML
       - ${UNT_BASE_URI}/lunt-resources/uploads:/var/www/site/public/uploads
 
