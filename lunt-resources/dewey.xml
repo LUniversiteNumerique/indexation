@@ -1132,9 +1132,9 @@
 		<ns1:Notation>363.7</ns1:Notation>
 		<ns1:Label>Déchets, pollutions, polluants, bruit</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/370/">
+	<ns1:Concept level="2" uri="http://dewey.info/class/37/">
 		<ns1:Notation>370</ns1:Notation>
-		<ns1:Label>Philosophie et théorie de l’éducation</ns1:Label>
+		<ns1:Label>Éducation, enseignement</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/370.7/">
 		<ns1:Notation>370.7</ns1:Notation>
@@ -1292,9 +1292,9 @@
 		<ns1:Notation>449</ns1:Notation>
 		<ns1:Label>Occitan, Provençal et Catalan</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/470/">
+	<ns1:Concept level="2" uri="http://dewey.info/class/47/">
 		<ns1:Notation>470</ns1:Notation>
-		<ns1:Label>Langue latine</ns1:Label>
+		<ns1:Label>Latin et langues italiques</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/479/">
 		<ns1:Notation>479</ns1:Notation>
