@@ -10,6 +10,7 @@ use App\Form\DisciplineGroupType;
 use App\Form\Type\{AuteurAutoField, NoticeAutoField, TagAutoField, TreeChoiceType};
 use App\Repository\{DossierRepository, NoticeRepository};
 use App\Security\Voter\NoticeActionVoter;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\{EntityManagerInterface, QueryBuilder};
 use EasyCorp\Bundle\EasyAdminBundle\{Context\AdminContext, Event\AfterEntityPersistedEvent, Factory\FormFactory, Provider\AdminContextProvider, Router\AdminUrlGenerator};
@@ -17,9 +18,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\{ActionCollection, FieldCollectio
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Actions, Asset, Assets, Crud, Filters, KeyValueStore};
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\{ActionDto, EntityDto, SearchDto};
-use EasyCorp\Bundle\EasyAdminBundle\Field as Field;
-use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\{ArrayField, AssociationField, BooleanField, ChoiceField, CollectionField, DateTimeField, FormField, IdField, ImageField, NumberField, TextareaField, TextEditorField, TextField, UrlField};
 use EasyCorp\Bundle\EasyAdminBundle\Filter\{ChoiceFilter, DateTimeFilter, EntityFilter, TextFilter};
 use EasyCorp\Bundle\EasyAdminBundle\Form\Type\{FileUploadType, Model\FileUploadState};
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -27,6 +26,7 @@ use Symfony\Component\{Intl\Languages, Routing\Generator\UrlGeneratorInterface, 
 use Symfony\Component\Form\{FormBuilderInterface, FormInterface};
 use Symfony\Component\HttpFoundation\{RedirectResponse, Request, Response};
 use Symfony\Component\Validator\Constraints\{File, Image};
+use ZipArchive;
 use function Symfony\Component\{String\u, Translation\t};
 
 /**
@@ -202,15 +202,15 @@ class NoticeCrudController extends AbstractCrudController
 
     // Section Soumission (si validateur)
     if ($isValidator) {
-      yield Field\FormField::addTab('Soumission')->setHelp("Infos renseignées par la contribution des établissements");
+      yield FormField::addTab('Soumission')->setHelp("Infos renseignées par la contribution des établissements");
     }
-    yield Field\FormField::addColumn(6);
+    yield FormField::addColumn(6);
 
     // Section Description générale
-    yield Field\FormField::addFieldset('Description générale')->setIcon('fa fa-pencil');
-    yield Field\IdField::new('id')->onlyOnDetail();
-    yield Field\TextField::new('titre')->setHelp(t('notice.titre_help', domain: 'EasyAdminBundle'));
-    yield Field\TextEditorField::new('description')->setHelp(t('notice.description_help', domain: 'EasyAdminBundle'))
+    yield FormField::addFieldset('Description générale')->setIcon('fa fa-pencil');
+    yield IdField::new('id')->onlyOnDetail();
+    yield TextField::new('titre')->setHelp(t('notice.titre_help', domain: 'EasyAdminBundle'));
+    yield TextEditorField::new('description')->setHelp(t('notice.description_help', domain: 'EasyAdminBundle'))
       ->setTemplatePath('admin/fields/text_editor.html.twig')->hideOnIndex();
     yield EntityField::new('porteurs', t('notice.porteurs', domain: 'EasyAdminBundle'))
       ->setHelp(t('notice.porteurs_help', domain: 'EasyAdminBundle'))
@@ -222,7 +222,7 @@ class NoticeCrudController extends AbstractCrudController
       ->setHelp(t('notice.auteurs_help', domain: 'EasyAdminBundle'))
       ->setSortable(false)
       ->formatValue(fn($value, $entity) => $this->renderEntityCollectionBadges($value));
-    yield TextField::new('allSpecialitesString', 'Spécialités')->onlyOnIndex()->renderAsHtml();
+    yield TextField::new('allSpecialitesString', 'Spécialités')->onlyOnIndex()->renderAsHtml()->setTemplatePath('admin/fields/text.html.twig');
     yield EntityField::new('tags', t('notice.tags', domain: 'EasyAdminBundle'))
       ->hideOnIndex()
       ->setHelp(t('notice.tags_help', domain: 'EasyAdminBundle'))
@@ -232,18 +232,18 @@ class NoticeCrudController extends AbstractCrudController
         'data-controller' => 'tag-autocreate',
       ])
       ->formatValue(fn($value, $entity) => $this->renderEntityCollectionBadges($value));
-    yield Field\ChoiceField::new('ressDate', t('notice.date', domain: 'EasyAdminBundle'))
+    yield ChoiceField::new('ressDate', t('notice.date', domain: 'EasyAdminBundle'))
       ->setChoices(array_combine($years = range((int) date('Y'), (int) date('Y') - 100), $years))
       ->hideOnIndex();
 
     // Section Liens de la ressource
-    yield Field\FormField::addFieldset('Liens de la ressource')->setIcon('fa fa-paperclip');
+    yield FormField::addFieldset('Liens de la ressource')->setIcon('fa fa-paperclip');
     if (in_array($pageName, [Crud::PAGE_NEW, Crud::PAGE_EDIT], true)) {
       // Champs spécifiques à la création/édition
-      yield Field\BooleanField::new('zipFile', 'Fichier Zip')
+      yield BooleanField::new('zipFile', 'Fichier Zip')
         ->setFormTypeOptions(['mapped' => false, 'attr' => ['data-notice-setting-target' => 'ressToggle']])
         ->onlyOnForms();
-      yield Field\TextField::new('ressUrl', t('notice.ressurl', domain: 'EasyAdminBundle'))
+      yield TextField::new('ressUrl', t('notice.ressurl', domain: 'EasyAdminBundle'))
         ->setHelp(t('notice.ressurl_help', domain: 'EasyAdminBundle'))
         ->setFormTypeOptions(['attr' => ['placeholder' => 'https://...']])
         ->setSortable(false);
@@ -257,34 +257,34 @@ class NoticeCrudController extends AbstractCrudController
         ->setFileConstraints([new File(maxSize: '64M', mimeTypes: ["application/zip", "application/x-zip-compressed", "multipart/x-zip"])]);
     } else {
       // Champs spécifiques à la vue détail
-      yield Field\UrlField::new('ressUrl', t('notice.ressurl', domain: 'EasyAdminBundle'))
+      yield UrlField::new('ressUrl', t('notice.ressurl', domain: 'EasyAdminBundle'))
         ->setHelp(t('notice.ressurl_help', domain: 'EasyAdminBundle'));
     }
     yield EntityField::new('ressources', t('notice.notices', domain: 'EasyAdminBundle'))->hideOnIndex()
       ->setHelp(t('notice.notices_help', domain: 'EasyAdminBundle'))
       ->setFormType(NoticeAutoField::class);
-    yield Field\ChoiceField::new('etat')->setChoices(NoticEtat::getLabels())
+    yield ChoiceField::new('etat')->setChoices(NoticEtat::getLabels())
       ->renderAsBadges(NoticEtat::getColors())->hideOnForm();
-    yield Field\AssociationField::new('validateur', t('notice.validateur', domain: 'EasyAdminBundle'))->onlyOnDetail();
+    yield AssociationField::new('validateur', t('notice.validateur', domain: 'EasyAdminBundle'))->onlyOnDetail();
 
     // Section Droits attachés à la ressource
-    yield Field\FormField::addFieldset('Droits attachés à la ressource')->setIcon('fa fa-gavel');
-    yield Field\AssociationField::new('droit', t('notice.droit', domain: 'EasyAdminBundle'))
+    yield FormField::addFieldset('Droits attachés à la ressource')->setIcon('fa fa-gavel');
+    yield AssociationField::new('droit', t('notice.droit', domain: 'EasyAdminBundle'))
       ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.valeur', 'ASC'))
       ->setHelp(t('notice.droit_help', domain: 'EasyAdminBundle'))
       ->setSortable(false)->hideOnIndex();
-    yield Field\BooleanField::new('ressPayant', t('notice.resspayant', domain: 'EasyAdminBundle'))
+    yield BooleanField::new('ressPayant', t('notice.resspayant', domain: 'EasyAdminBundle'))
       ->setHelp(t('notice.resspayant_help', domain: 'EasyAdminBundle'))
       ->renderAsSwitch(false)->hideOnIndex()->setColumns(6);
-    yield Field\BooleanField::new('proprIntel', t('notice.proprintel', domain: 'EasyAdminBundle'))
+    yield BooleanField::new('proprIntel', t('notice.proprintel', domain: 'EasyAdminBundle'))
       ->setHelp(t('notice.proprintel_help', domain: 'EasyAdminBundle'))
       ->renderAsSwitch(false)->hideOnIndex()->setColumns(6);
 
-    yield Field\FormField::addColumn(6);
+    yield FormField::addColumn(6);
 
     // Section Indications pédagogiques
-    yield Field\FormField::addFieldset('Indications pédagogiques')->setIcon('fa fa-th-list');
-    yield Field\ChoiceField::new('ressLang', t('notice.resslang', domain: 'EasyAdminBundle'))
+    yield FormField::addFieldset('Indications pédagogiques')->setIcon('fa fa-th-list');
+    yield ChoiceField::new('ressLang', t('notice.resslang', domain: 'EasyAdminBundle'))
       ->setChoices($langList)->allowMultipleChoices()
       ->setHelp(t('notice.resslang_help', domain: 'EasyAdminBundle'))
       ->renderAsBadges()->setColumns(6)->hideOnIndex();
@@ -295,7 +295,7 @@ class NoticeCrudController extends AbstractCrudController
       ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.nom', 'ASC'))
       ->setSortable(false)->hideOnIndex()
       ->formatValue(fn($value, $entity) => $this->renderEntityCollectionBadges($value));
-    yield Field\ArrayField::new('propUser', t('notice.propuser', domain: 'EasyAdminBundle'))
+    yield ArrayField::new('propUser', t('notice.propuser', domain: 'EasyAdminBundle'))
       ->setHelp(t('notice.propuser_help', domain: 'EasyAdminBundle'))->hideOnIndex();
     yield EntityField::new('docTypes', t('notice.doctypes', domain: 'EasyAdminBundle'))->setHelp(t('notice.doctypes_help', domain: 'EasyAdminBundle'))
       ->setFormTypeOption('multiple', true)
@@ -311,8 +311,8 @@ class NoticeCrudController extends AbstractCrudController
       ->formatValue(fn($value, $entity) => $this->renderEntityCollectionBadges($value));
 
     // Section Classification thématique
-    yield Field\FormField::addFieldset('Classification thématique')->setIcon('fa fa-book');
-    yield TextField::new('allSpecialitesString', 'Spécialités')->onlyOnDetail()->renderAsHtml();
+    yield FormField::addFieldset('Classification thématique')->setIcon('fa fa-book');
+    yield TextField::new('allSpecialitesString', 'Spécialités')->onlyOnDetail()->renderAsHtml()->setTemplatePath('admin/fields/text.html.twig');
     yield CollectionField::new('disciplineGroups')
       ->setEntryType(DisciplineGroupType::class)
       ->setFormTypeOption('by_reference', false)
@@ -320,54 +320,54 @@ class NoticeCrudController extends AbstractCrudController
       ->allowAdd()->allowDelete()->onlyOnForms()->setLabel(false);
 
     // Section Dates
-    yield Field\DateTimeField::new('creeLe', t('notice.creele', domain: 'EasyAdminBundle'))->onlyOnDetail();
-    yield Field\DateTimeField::new('editeLe', t('notice.editele', domain: 'EasyAdminBundle'))->hideOnForm();
+    yield DateTimeField::new('creeLe', t('notice.creele', domain: 'EasyAdminBundle'))->onlyOnDetail();
+    yield DateTimeField::new('editeLe', t('notice.editele', domain: 'EasyAdminBundle'))->hideOnForm();
 
     // Section Validation (si validateur)
     if ($isValidator) {
-      yield Field\FormField::addTab('Validation')->setHelp("Infos techniques complémentaires de validation");
-      yield Field\FormField::addColumn(6);
+      yield FormField::addTab('Validation')->setHelp("Infos techniques complémentaires de validation");
+      yield FormField::addColumn(6);
 
       // Champs spécifiques à la validation
-      yield Field\FormField::addFieldset('Liens de la ressource')->setIcon('fa fa-folder-open');
+      yield FormField::addFieldset('Liens de la ressource')->setIcon('fa fa-folder-open');
       yield EntityField::new('repertoire', t('notice.repertoire', domain: 'EasyAdminBundle'))
         ->setHelp(t('notice.repertoire_help', domain: 'EasyAdminBundle'))->setFormType(TreeChoiceType::class)
         ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->join('entity.children', 's')->leftJoin('s.children', 'd')->addSelect('s,d'))
         ->hideOnIndex();
-      yield Field\ImageField::new('vignette')
+      yield ImageField::new('vignette')
         ->setUploadDir('public/uploads/images')
         ->setHelp(t('notice.vignette_help', domain: 'EasyAdminBundle'))
         ->setBasePath('/uploads/images')
         ->setUploadedFileNamePattern('[timestamp]-[contenthash].[extension]')
         ->setFileConstraints([new Image(['maxWidth' => 620, 'maxHeight' => 390])])
         ->setSortable(false);
-      yield TextField::new('AllDeweyString', 'Codes Dewey')->onlyOnIndex()->renderAsHtml();
-      yield Field\NumberField::new('ressSize', t('notice.resssize', domain: 'EasyAdminBundle'))
+      yield TextField::new('AllDeweyString', 'Codes Dewey')->onlyOnIndex()->renderAsHtml()->setTemplatePath('admin/fields/text.html.twig');
+      yield NumberField::new('ressSize', t('notice.resssize', domain: 'EasyAdminBundle'))
         ->setHelp(t('notice.resssize_help', domain: 'EasyAdminBundle'))->setColumns(6)->hideOnIndex();
       yield DurationField::new('dureExec', "Durée d'exécution")
         ->setHelp(t('notice.dureexec_help', domain: 'EasyAdminBundle'))->setColumns(6)->hideOnIndex();
-      yield Field\UrlField::new('formEvalUrl', t('notice.formevalurl', domain: 'EasyAdminBundle'))
+      yield UrlField::new('formEvalUrl', t('notice.formevalurl', domain: 'EasyAdminBundle'))
         ->setFormTypeOptions(['default_protocol' => 'https', 'attr' => ['class' => 'isUrl', 'placeholder' => 'https://...']])
         ->setHelp(t('notice.formevalurl_help', domain: 'EasyAdminBundle'))->hideOnIndex();
-      yield Field\ChoiceField::new('userLang', t('notice.userlang', domain: 'EasyAdminBundle'))
+      yield ChoiceField::new('userLang', t('notice.userlang', domain: 'EasyAdminBundle'))
         ->setHelp(t('notice.userlang_help', domain: 'EasyAdminBundle'))->hideOnIndex()
         ->setChoices($langList)->allowMultipleChoices()->renderAsBadges()->setFormTypeOption('autocomplete', true);
-      yield Field\TextEditorField::new('objectif', t('notice.objectif', domain: 'EasyAdminBundle'))
+      yield TextEditorField::new('objectif', t('notice.objectif', domain: 'EasyAdminBundle'))
         ->setHelp(t('notice.objectif_help', domain: 'EasyAdminBundle'))->hideOnIndex();
-      yield Field\TextField::new('champExt1', "Champ d'extension 1")->hideOnIndex();
-      yield Field\TextField::new('champExt2', "Champ d'extension 2")->hideOnIndex();
-      yield Field\TextField::new('champExt3', "Champ d'extension 3")->hideOnIndex();
-      yield Field\TextField::new('champExt4', "Champ d'extension 4")->hideOnIndex();
-      yield Field\TextField::new('champExt5', "Champ d'extension 5")->hideOnIndex();
-      yield Field\BooleanField::new('exportOAI', t('notice.exportoai', domain: 'EasyAdminBundle'))
+      yield TextField::new('champExt1', "Champ d'extension 1")->hideOnIndex();
+      yield TextField::new('champExt2', "Champ d'extension 2")->hideOnIndex();
+      yield TextField::new('champExt3', "Champ d'extension 3")->hideOnIndex();
+      yield TextField::new('champExt4', "Champ d'extension 4")->hideOnIndex();
+      yield TextField::new('champExt5', "Champ d'extension 5")->hideOnIndex();
+      yield BooleanField::new('exportOAI', t('notice.exportoai', domain: 'EasyAdminBundle'))
         ->setFormTypeOptions(['data' => true])
         ->setHelp(t('notice.exportoai_help', domain: 'EasyAdminBundle'))->renderAsSwitch(false)->hideOnIndex();
 
-      yield Field\FormField::addColumn(6);
+      yield FormField::addColumn(6);
 
-      yield Field\FormField::addFieldset('Classification thématique')->setIcon('fa fa-book');
-      yield TextField::new('AllDeweyString', 'Codes Dewey')->onlyOnDetail()->renderAsHtml();
-      yield Field\TextField::new('label', t('notice.label', domain: 'EasyAdminBundle'))
+      yield FormField::addFieldset('Classification thématique')->setIcon('fa fa-book');
+      yield TextField::new('AllDeweyString', 'Codes Dewey')->onlyOnDetail()->renderAsHtml()->setTemplatePath('admin/fields/text.html.twig');
+      yield TextField::new('label', t('notice.label', domain: 'EasyAdminBundle'))
         ->setHelp(t('notice.label_help', domain: 'EasyAdminBundle'))->onlyOnDetail();
       yield CollectionField::new('deweyGroups')
         ->setEntryType(DeweyGroupType::class)
@@ -377,7 +377,7 @@ class NoticeCrudController extends AbstractCrudController
         ->setFormTypeOption('multiple', true)
         ->setFormTypeOption('autocomplete', true)
         ->onlyOnForms();
-      yield Field\TextareaField::new('dummy_dewey_perso', '')
+      yield TextareaField::new('dummy_dewey_perso', '')
         ->setHelp('
           <div id="dewey-perso-add-form" class="mb-3">
             <div class="row g-2 align-items-center">
@@ -404,8 +404,8 @@ class NoticeCrudController extends AbstractCrudController
         ->setFormTypeOption('mapped', false)
         ->setFormTypeOption('required', false)
         ->setFormTypeOption('attr', ['style' => 'display:none']);
-      yield Field\BooleanField::new('editDemande', 'Rectifiée ?')->renderAsSwitch(false)->setSortable(false)->onlyOnIndex();
-      yield Field\DateTimeField::new('publieLe', t('notice.publiele', domain: 'EasyAdminBundle'))->onlyOnDetail();
+      yield BooleanField::new('editDemande', 'Rectifiée ?')->renderAsSwitch(false)->setSortable(false)->onlyOnIndex();
+      yield DateTimeField::new('publieLe', t('notice.publiele', domain: 'EasyAdminBundle'))->onlyOnDetail();
     }
   }
 
@@ -587,7 +587,7 @@ class NoticeCrudController extends AbstractCrudController
         $targetDir = $uploadDir . pathinfo($fileName, PATHINFO_FILENAME);
 
         if ($file->guessExtension() === 'zip') {
-          $zip = new \ZipArchive();
+          $zip = new ZipArchive();
           if ($zip->open($file->getRealPath())) {
             $zip->extractTo($targetDir);
             $zip->close();
@@ -770,7 +770,7 @@ class NoticeCrudController extends AbstractCrudController
     $duplicatedNotice = (clone $notice)
       ->setCreateur($this->getUser())
       ->setValidateur(null)
-      ->setCreeLe(new \DateTimeImmutable())
+      ->setCreeLe(new DateTimeImmutable())
       ->setEditeLe(null)
       ->setUuid(Uuid::v4())
       ->setEtat(NoticEtat::Working)

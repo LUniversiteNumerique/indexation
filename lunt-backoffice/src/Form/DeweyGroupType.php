@@ -28,8 +28,6 @@ class DeweyGroupType extends AbstractType
 
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
-    $user = $options['user'];
-
     // Ajout des trois champs vides (division et codeweys seront remplis dynamiquement)
     $builder
       ->add('dewey', EntityType::class, [
