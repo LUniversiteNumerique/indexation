@@ -22,3 +22,5 @@ db-connect:
 asset-compile:
 	$(APP) exec -it backoffice php bin/console asset-map:compile
 
+messenger-start:
+	$(APP) exec -it backoffice php bin/console messenger:consume -vv
