@@ -18,51 +18,54 @@ class IndexingNotice
         $dewePerso = $notice->getDeweyPersos();
 
         return new self([
-            new Field('uuid', $notice->getUuid()),
-            new Field('titre', $notice->getTitre()),
-            new Field('entrepot_nom',$core->getLabel()),
-            new Field('entrepot_logo', $user->getSchool()?->getLogo()),
-            new Field('entrepot_url',$core->getSiteWeb()),
-            new Field('vignette', $notice->getVignette()),
-            new Field('ressource_lien', $notice->getRessUrl()),
-            new Field('description', $notice->getDescription()),
-            new Field('dure_apprentissage', $notice->getDureAppr()),
-            new Field('estampillage', $notice->getLabel()??''),
-            new Field('objectifs_pedagogiques', $notice->getObjectif()),
-            new Field('evaluation_form_url', $notice->getFormEvalUrl()),
-            new Field('description_text', strip_tags($notice->getDescription())),
-            new Field('date_creation', $notice->getRessDate()),
-            new Field('mots_cles', implode(";", $notice->getTags()->toArray())),
-            new Field('niveaux', implode(",", $notice->getNiveaux()->toArray())),
-            new Field('types_pedagogiques', implode(",", $notice->getPedTypes()->toArray())),
-            new Field('types_documentaires', implode(",", $notice->getDocTypes()->toArray())),
-            new Field('proposition_utilisation', implode(";",(array)$notice->getPropUser())),
-            new Field('dewey', json_encode(array_map(function(DeweyGroup $group) {
+            new Field($notice->getUuid(), null, 'uuid'),
+            new Field($notice->getTitre(), null, 'titre'),
+            new Field($core->getLabel(), null, 'entrepot_nom'),
+            new Field($user->getSchool()?->getLogo(), null, 'entrepot_logo'),
+            new Field($core->getSiteWeb(), null, 'entrepot_url'),
+            new Field($notice->getVignette(), null, 'vignette'),
+            new Field($notice->getRessUrl(), null, 'ressource_lien'),
+            new Field($notice->getDescription(), null, 'description'),
+            new Field($notice->getDureAppr(), null, 'dure_apprentissage'),
+            new Field($notice->getLabel() ?? '', null, 'estampillage'),
+            new Field($notice->getObjectif(), null, 'objectifs_pedagogiques'),
+            new Field($notice->getFormEvalUrl(), null, 'evaluation_form_url'),
+            new Field(strip_tags($notice->getDescription()), null, 'description_text'),
+            new Field($notice->getRessDate(), null, 'date_creation'),
+            new Field(implode(";", $notice->getTags()->toArray()), null, 'mots_cles'),
+            new Field(implode(",", $notice->getNiveaux()->toArray()), null, 'niveaux'),
+            new Field(implode(",", $notice->getPedTypes()->toArray()), null, 'types_pedagogiques'),
+            new Field(implode(",", $notice->getDocTypes()->toArray()), null, 'types_documentaires'),
+            new Field(implode(";",(array)$notice->getPropUser()), null, 'proposition_utilisation'),
+            new Field(json_encode(array_map(function(DeweyGroup $group) {
               return ["id" => $group->getDewey()?->getCode(), "libelle" => $group->getDewey()?->getNom()];
-            }, $deweyGroups->toArray()))),
-            new Field('deweyPerso', json_encode(array_map(fn(DeweyPerso $d) => ["id"=>$d->getCode(), "libelle"=>$d->getNom()], $dewePerso->toArray()))),
-            new Field('specialites', json_encode(array_merge(...array_map(function(DisciplineGroup $group) {
+            }, $deweyGroups->toArray())), null, 'dewey'),
+            new Field(json_encode(array_map(fn(DeweyPerso $d) => ["id"=>$d->getCode(), "libelle"=>$d->getNom()], $dewePerso->toArray())), null, 'deweyPerso'),
+            new Field(json_encode(array_merge(...array_map(function(DisciplineGroup $group) {
               return array_map(fn(Discipline $spec) => [
                 "id" => $spec->getCode(),
                 "libelle" => $spec->getNom()
               ], $group->getSpecialites()->toArray());
-            }, $disciplineGroups->toArray())))),
-            new Field('correspondant', json_encode(["nom"=>$user?->getName(), "email"=>$user->getEmail(), "etablissement"=>$user->getSchool()])),
-            new Field('contributions', json_encode(array_map(fn(Auteur $a) => ["prenom"=>$a->getPrenom(), "nom"=>$a->getNom(), "email"=>$a->getEmail()??''],$notice->getAuteurs()->toArray()))),
-            new Field('associations_associate', json_encode(array_map(fn(Notice $n) => ["id"=>$n->getId(),"uuid"=>$n->getUuid(),"titre"=>$n->getTitre()], $notice->getRessources()->filter(fn(Notice $n) => !$n->isDeleted() && $n->getEtat()===NoticEtat::Approved)->toArray()))),
-            new Field('etablissement_porteur', $user->getSchool()? json_encode(["id"=>$user->getSchool()->getId(), "libelle"=>$user->getSchool()->getNom()]):""),
-            new Field('etablissements_co_editeurs', json_encode(array_map("strval",$notice->getPorteurs()->toArray()))),
-            new Field('date_modification', ($notice->getEditeLe()??$notice->getCreeLe())->format('Y-m-d H:i:s')),
-            new Field('date_publication', ($notice->getPublieLe() ?? new \DateTime())->format('Y-m-d H:i:s')),
-            new Field('langues_utilisateur', implode(",",(array)$notice->getUserLang())),
-            new Field('langues_ressource', implode(",",(array)$notice->getRessLang())),
-            new Field('propriete_intellectuelle', $notice->isProprIntel()?:0),
-            new Field('ressource_payante', $notice->isRessPayant()?:0),
-            new Field('exposition_oai', $notice->isExportOai()?:0),
-            new Field('droit', $notice->getDroit()?->getValeur()),
-            new Field('champ_extension1', $notice->getChampExt1()), new Field('champ_extension2', $notice->getChampExt2()),
-            new Field('champ_extension3', $notice->getChampExt3()), new Field('champ_extension4', $notice->getChampExt4()),
-            new Field('champ_extension5', $notice->getChampExt5()), new Field('external_resource', 0)
+            }, $disciplineGroups->toArray()))), null, 'specialites'),
+            new Field(json_encode(["nom"=>$user?->getName(), "email"=>$user->getEmail(), "etablissement"=>$user->getSchool()]), null, 'correspondant'),
+            new Field(json_encode(array_map(fn(Auteur $a) => ["prenom"=>$a->getPrenom(), "nom"=>$a->getNom(), "email"=>$a->getEmail()??''],$notice->getAuteurs()->toArray())), null, 'contributions'),
+            new Field(json_encode(array_map(fn(Notice $n) => ["id"=>$n->getId(),"uuid"=>$n->getUuid(),"titre"=>$n->getTitre()], $notice->getRessources()->filter(fn(Notice $n) => !$n->isDeleted() && $n->getEtat()===NoticEtat::Approved)->toArray())), null, 'associations_associate'),
+            new Field($user->getSchool()? json_encode(["id"=>$user->getSchool()->getId(), "libelle"=>$user->getSchool()->getNom()]):"", null, 'etablissement_porteur'),
+            new Field(json_encode(array_map("strval",$notice->getPorteurs()->toArray())), null, 'etablissements_co_editeurs'),
+            new Field(($notice->getEditeLe()??$notice->getCreeLe())->format('Y-m-d H:i:s'), null, 'date_modification'),
+            new Field(($notice->getPublieLe() ?? new \DateTime())->format('Y-m-d H:i:s'), null, 'date_publication'),
+            new Field(implode(",",(array)$notice->getUserLang()), null, 'langues_utilisateur'),
+            new Field(implode(",",(array)$notice->getRessLang()), null, 'langues_ressource'),
+            new Field($notice->isProprIntel()?:0, null, 'propriete_intellectuelle'),
+            new Field($notice->isRessPayant() ?: 0, null, 'ressource_payante'),
+            new Field($notice->isExportOai() ?: 0, null, 'exposition_oai'),
+            new Field($notice->getDroit()?->getValeur(), null, 'droit'),
+            new Field($notice->getChampExt1(), null, 'champ_extension1'),
+            new Field($notice->getChampExt2(), null, 'champ_extension2'),
+            new Field($notice->getChampExt3(), null, 'champ_extension3'),
+            new Field($notice->getChampExt4(), null, 'champ_extension4'),
+            new Field($notice->getChampExt5(), null, 'champ_extension5'),
+            new Field(0, null, 'external_resource')
         ]);
     }
     static function fromSuplom(SuplomDto $suplom, ?Univerique $core): IndexingNotice
@@ -84,35 +87,33 @@ class IndexingNotice
         }
 
         $inotice = new self([
-            new Field('uuid', substr($suplom->general?->identifier?->entry, -36)),
-            new Field('titre', $suplom->general->title[0]?->value),
-            new Field('entrepot_nom',$core?->getLabel()),
-            new Field('entrepot_logo', $core?->getName()),
-            new Field('entrepot_url', $core?->getSiteWeb()),
-            new Field('vignette', null),
-            new Field('description', $suplom->general->description[0]?->value),
-            new Field('ressource_lien', $suplom->technical?->location),
-            new Field('dure_execution', $suplom->technical?->duration?->duration),
-            new Field('description_text', strip_tags($suplom->general->description[0]?->value)),
-            new Field('langues_ressource', implode(', ',$suplom->general->languages)),
-            new Field('langues_utilisateur', implode(', ',$suplom->educational->languages)),
-            new Field('dure_apprentissage', $suplom->educational->typicalLearningTime?->duration), //new Field('objectifs_pedagogiques', $notice->getObjectif()),
-            new Field('mots_cles', array_reduce($suplom->general?->keywords, fn(string $acc, Motcle $s) => $acc.trim($s->string?->value).", ", "")),
-            new Field('niveaux', array_reduce($suplom->educational?->contexts, fn(string $acc, Source $s) => $acc.$s->value.", ", '')),
-            new Field('types_documentaires', array_reduce($suplom->general?->documentTypes, fn(string $acc, Source $s) => $acc.$s->value.", ", "")),
-            new Field('types_pedagogiques', array_reduce($suplom->educational?->learningResourceTypes, fn(string $acc, Source $s) => $acc.$s->value.", ", "")),
-            new Field('proposition_utilisation', array_reduce($suplom->educational?->description, fn(string $acc, Field $f) => $acc.$f->value.", ", '')),
-            //new Field('associations_associate', array_map(fn(Resource $r) => sprintf('%s|%s', $r->identifier->entry, $r->description[0]?->value), $suplom->relation?->resources)),
-            new Field('propriete_intellectuelle', strtolower($suplom->rights?->copyrightAndOtherRestrictions?->value??'')!=="no"),
-            new Field('ressource_payante', strtolower($suplom->rights?->cost?->value??'')!=="no"),
-            new Field('droit', $suplom->rights?->description[0]?->value),
+            new Field(substr($suplom->general?->identifier?->entry, -36), null, 'uuid'),
+            new Field($suplom->general->title[0]?->value, null, 'titre'),
+            new Field($core?->getLabel(), null, 'entrepot_nom'),
+            new Field($core?->getName(), null, 'entrepot_logo'),
+            new Field($core?->getSiteWeb(), null, 'entrepot_url'),
+            new Field(null, null, 'vignette'),
+            new Field($suplom->general->description[0]?->value, null, 'description'),
+            new Field($suplom->technical?->location, null, 'ressource_lien'),
+            new Field($suplom->technical?->duration?->duration, null, 'dure_execution'),
+            new Field(strip_tags($suplom->general->description[0]?->value), null, 'description_text'),
+            new Field(implode(', ', $suplom->general->languages), null, 'langues_ressource'),
+            new Field(implode(', ', $suplom->educational->languages), null, 'langues_utilisateur'),
+            new Field($suplom->educational->typicalLearningTime?->duration, null, 'dure_apprentissage'),
+            new Field(array_reduce($suplom->general?->keywords, fn(string $acc, Motcle $s) => $acc . trim($s->string?->value) . ", ", ""), null, 'mots_cles'),
+            new Field(array_reduce($suplom->educational?->contexts, fn(string $acc, Source $s) => $acc . $s->value . ", ", ""), null, 'niveaux'),
+            new Field(array_reduce($suplom->general?->documentTypes, fn(string $acc, Source $s) => $acc . $s->value . ", ", ""), null, 'types_documentaires'),
+            new Field(array_reduce($suplom->educational?->learningResourceTypes, fn(string $acc, Source $s) => $acc . $s->value . ", ", ""), null, 'types_pedagogiques'),
+            new Field(array_reduce($suplom->educational?->description, fn(string $acc, Field $f) => $acc . $f->value . ", ", ""), null, 'proposition_utilisation'),
+            new Field(strtolower($suplom->rights?->copyrightAndOtherRestrictions?->value ?? '') !== "no", null, 'propriete_intellectuelle'),
+            new Field(strtolower($suplom->rights?->cost?->value ?? '') !== "no", null, 'ressource_payante'),
+            new Field($suplom->rights?->description[0]?->value, null, 'droit'),
 
-            new Field('exposition_oai', 0),
-            new Field('external_resource', 1),
-            //new Field('estampillage', $notice->getLabel()??''),
-            //new Field('evaluation_form_url', $notice->getFormEvalUrl()),
+
+            new Field(0, null, 'exposition_oai'),
+            new Field(1, null, 'external_resource'),
         ]);
-        if(isset($item->technical?->size)) $inotice->fields[] = new Field('ressource_taille', $suplom->technical?->size);
+        if(isset($item->technical?->size)) $inotice->fields[] = new Field($suplom->technical?->size, null, 'ressource_taille');
 
             foreach ($suplom->lifeCycle?->contributes as $c) {
             $entities = self::getContribute($c->entities);
@@ -120,12 +121,11 @@ class IndexingNotice
                 $ator_teurs["creator"] = $entities;
             else $ator_teurs[$c->role->value] = $entities;
         }
-        //new Field('date_creation', $notice->getRessDate()), new Field('date_publication', $valid?->date[0]),
         array_push($inotice->fields,
-            new Field('correspondant', $ator_teurs["creator"]),
-            new Field('validateur', $ator_teurs["validator"]),
-            new Field('contributions', array_reduce(array_unique($ator_teurs["author"]),fn(string $tmp, string $etab): string => $tmp.sprintf("%s, ",$etab),"")),
-            new Field('etablissement_porteurs', array_reduce(array_unique($ator_teurs["publisher"]),fn(string $tmp, string $etab): string => $tmp.sprintf("%s, ",$etab),""))
+            new Field($ator_teurs["creator"], null, 'correspondant'),
+            new Field($ator_teurs["validator"], null, 'validateur'),
+            new Field(array_reduce(array_unique($ator_teurs["author"]),fn(string $tmp, string $etab): string => $tmp.sprintf("%s, ",$etab),""), null, 'contributions'),
+            new Field(array_reduce(array_unique($ator_teurs["publisher"]),fn(string $tmp, string $etab): string => $tmp.sprintf("%s, ",$etab),""), null, 'etablissement_porteurs')
         );
 
         /** @var Classification $class */
@@ -133,8 +133,8 @@ class IndexingNotice
             $key = array_reduce($class->taxonPath->source, fn(string $a, Field $s) => "$a $s->value", "");
             $value = array_map(fn(Taxon $taxon) => $taxon->entry[0]?->value, $class->taxonPath->taxons);
 
-            if(str_contains($key, 'lassification')) $inotice->fields[] = new Field('specialites', $value);
-            if(str_contains($key, 'CDD 22')) $inotice->fields[] = new Field('dewey', $value);
+            if(str_contains($key, 'lassification')) $inotice->fields[] = new Field($value, null, 'specialites');
+            if(str_contains($key, 'CDD 22')) $inotice->fields[] = new Field($value, null, 'dewey');
         }
         return $inotice;
     }

@@ -29,35 +29,35 @@ class SuplomDto
 
     public static function create(Notice $notice): self
     {
-        $lang = current($notice->getRessLang()) ?? 'fre';
+        $lang = 'fre';
         $creator = $notice->getCreateur();
         $validator = $notice->getValidateur();
 
         $disciplines = array_map(
-            fn(Discipline $discipline) => new Taxon($discipline->getId(), [new Field($lang, $discipline->getNom())]),
+            fn(Discipline $discipline) => new Taxon($discipline->getId(), [new Field($discipline->getNom(), $lang, null)]),
             $notice->getAllSpecialites()
         );
         $deweys = array_map(
-            fn(Dewey $dewey) => new Taxon($dewey->getCode(), [new Field($lang, $dewey->getNom())]),
+            fn(Dewey $dewey) => new Taxon($dewey->getCode(), [new Field($dewey->getNom(), $lang, null)]),
             $notice->getAllDeweyGroup()
         );
         $deweyPersos = array_map(
-            fn(DeweyPerso $deweyPerso) => new Taxon($deweyPerso->getCode(), [new Field($lang, $deweyPerso->getNom())]),
+            fn(DeweyPerso $deweyPerso) => new Taxon($deweyPerso->getCode(), [new Field($deweyPerso->getNom(), $lang, null)]),
             $notice->getAllDeweyPerso()
         );
 
         $general = new General(
             new Catalog('URI', self::RESOURCE_URI . $notice->getUuid()),
-            [new Field($lang, $notice->getTitre())],
-            [new Field($lang, $notice->getDescription())],
-            array_map(fn(Keyword $keyword) => new Motcle(new Field($lang, $keyword->getNom())), $notice->getTags()->toArray()),
+            [new Field($notice->getTitre(), $lang, null)],
+            [new Field($notice->getDescription(), $lang, null)],
+            array_map(fn(Keyword $keyword) => new Motcle(new Field($keyword->getNom(), $lang, null)), $notice->getTags()->toArray()),
             array_map(fn(TDocument $typeDoc) => new Sources('LOMFRv1.0', $typeDoc->getCode()), $notice->getDocTypes()->toArray()),
             [],
             $notice->getRessLang()
         );
 
         $lifeCycle = new LifeCycle(
-            [new Field($lang, "Première version")],
+            [new Field("Première version", $lang, null)],
             new Source('LOMv1.0', "final"),
             array_map(
                 fn(Auteur $author) => new Contribute(
@@ -102,25 +102,25 @@ class SuplomDto
         );
 
         $educational = new Educational(
-            array_map(fn(TPedagogie $typePed) => new Source('LOMFRv1.0', $typePed->getSuplom()), $notice->getPedTypes()->toArray()),
-            array_map(fn(Niveau $level) => new Source('LOMFRv1.0', $level->getCode()), $notice->getNiveaux()->toArray()),
-            array_map(fn(string $keyword) => new Motcle(new Field($lang, $keyword)), $notice->getPropUser()),
+            array_map(fn(TPedagogie $typePed) => new Source('LOMv1.0', $typePed->getSuplom()), $notice->getPedTypes()->toArray()),
+            array_map(fn(Niveau $level) => new Source('LOMv1.0', $level->getCode()), $notice->getNiveaux()->toArray()),
+            array_map(fn(string $keyword) => new Motcle(new Field($keyword, $lang, null)), $notice->getPropUser()),
             (array)$notice->getUserLang(),
             new Duration($notice->getDureAppr())
         );
 
         $rights = new Right(
-            new Source('LOMFRv1.0', $notice->isRessPayant() ? 'Yes' : 'No'),
-            new Source('LOMFRv1.0', $notice->isProprIntel() ? 'Yes' : 'No'),
-            [new Field($lang, $notice->getDroit() ?? "")]
+            new Source('LOMv1.0', $notice->isRessPayant() ? 'Yes' : 'No'),
+            new Source('LOMv1.0', $notice->isProprIntel() ? 'Yes' : 'No'),
+            [new Field($notice->getDroit() ?? "", $lang, null)]
         );
 
         $relations = array_map(
             fn(Notice $relation) => new Relation(
-                new Source('LOMFRv1.0', "ispartof"),
+                new Source('LOMv1.0', "ispartof"),
                 new Resource(
                     new Catalog('URI', $relation->getUuid()),
-                    array_map(fn(string $lang) => new Field($lang, $relation->getTitre()), $relation->getRessLang())
+                    array_map(fn(string $lang) => new Field($relation->getTitre(), $lang, null), $relation->getRessLang())
                 )
             ),
             $notice->getRessources()->toArray()
@@ -129,16 +129,16 @@ class SuplomDto
         $classifications = [
             new Classification(
                 new Source('LOMv1.0', "discipline"),
-                new TaxonPath([new Field($lang, 'Classification UOH')], $disciplines)
+                new TaxonPath([new Field('Classification UOH', $lang, null)], $disciplines)
             ),
             new Classification(
                 new Source('LOMv1.0', "dewey"),
-                new TaxonPath([new Field($lang, 'CDD 22e éd.')], array_merge($deweys, $deweyPersos))
+                new TaxonPath([new Field('CDD 22e éd.', $lang, null)], array_merge($deweys, $deweyPersos))
             ),
             new Classification(
                 new Source('LOMv1.0', "pedagogie"),
                 null,
-                [new Motcle(new Field($lang, $notice->getObjectif() ?? ""))]
+                [new Motcle(new Field($notice->getObjectif() ?? "", $lang, null))]
             ),
         ];
 
