@@ -2,32 +2,14 @@
 
 namespace App\Command;
 
-use App\Entity\Dto\{Classification, Contribute, Field, Motcle, Relation, SuplomDto, Taxon};
-use App\Entity\{Auteur,
-  Dewey,
-  DeweyPerso,
-  Discipline,
-  Etablissement,
-  Keyword,
-  Licence,
-  Niveau,
-  Notice,
-  NoticEtat,
-  TDocument,
-  TPedagogie,
-  User};
+use App\Entity\Dto\{Classification, Contribute, Field, Motcle, SuplomDto};
+use App\Entity\{Auteur, Dewey, DeweyPerso, Discipline, Etablissement, Keyword, Licence, Niveau, Notice, NoticEtat, TDocument, TPedagogie, User};
 use App\Service\FileService;
-use Symfony\Component\Console\{Attribute\AsCommand,
-  Command\Command,
-  Input\InputInterface,
-  Output\OutputInterface,
-  Style\SymfonyStyle};
+use Symfony\Component\Console\{Attribute\AsCommand, Command\Command, Input\InputInterface, Output\OutputInterface, Style\SymfonyStyle};
 use Doctrine\ORM\{EntityManagerInterface, EntityRepository};
 use JMS\Serializer\SerializerInterface;
-use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Uid\Uuid;
 
 #[AsCommand(
   name: 'import:notice-data',
@@ -91,6 +73,8 @@ class ImportNoticeXmlCommand extends Command
     $notfoundCreateur = [];
     $notfoundSpecialites = [];
     $codeDeweyNameDiff = [];
+    $codeDeweyPersoNameDiff = [];
+    $deweyWithoutCode = [];
     $specialitesWithoutParent = [];
     $relationsToLink = [];
     $noticeWithoutLicence = [];
@@ -456,11 +440,11 @@ class ImportNoticeXmlCommand extends Command
               $disc = null;
               $champDisc = null;
               $exist = null;
-              // Spécialités suplom UOH "discipline. specialité" sinon spécialité autres UNT
+              // Spécialités suplom au format "discipline. specialité" sinon spécialité autres UNT
               if (str_contains($spec, '.')) {
-                $parts = explode('.', $spec);
-                $discNom = trim(reset($parts));
-                $spec = trim(end($parts));
+                $splitPos = strpos($spec, '.');
+                $discNom = trim(substr($spec, 0, $splitPos));
+                $spec = trim(substr($spec, $splitPos + 1));
                 $disc = $this->discRep->findOneBy(['nom' => $discNom]);
                 if ($disc) {
                   $champDisc = $disc->getParent();
@@ -507,21 +491,27 @@ class ImportNoticeXmlCommand extends Command
           if (str_contains($key, 'CDD 22')) {
             $deweyGroupsByParent = [];
             foreach ($class->taxonPath->taxons as $taxon) {
-              $spec = $taxon->entry[0]?->value;
+              $spec = trim($taxon->entry[0]?->value ?? '');
               $id = $taxon->id ?? null;
+              if (!$id) {
+                $deweyWithoutCode[] = [
+                  'nom' => $spec,
+                  'file' => $file->getFilename()
+                ];
+                continue;
+              }
               // code dewey original
               $code = "http://dewey.info/class/" . $id . "/";
               $exist = $this->deweRep->findOneBy(['code' => $code]);
               if ($exist) {
-                $existName = $this->deweRep->findOneBy(['nom' => $spec]);
-                if (!$existName) {
+                // Vérifier si le nom est différent
+                if ($exist->getNom() !== $spec) {
                   $codeDeweyNameDiff[] = [
                     'nom' => $spec,
                     'code' => $code,
                     'file' => $file->getFilename(),
                     'nom_en_base' => $exist->getNom(),
                   ];
-                  continue;
                 }
                 $disc = $exist->getParent();
                 $champDisc = $disc?->getParent();
@@ -539,13 +529,11 @@ class ImportNoticeXmlCommand extends Command
                 }
               } else {
                 // code dewey personnaliser
-                $code = "http://dewey.info/class/" . $id . "/";
                 $existPerso = $this->dewePersoRep->findOneBy(['code' => $code]);
-                $existDeweRep = $this->deweRep->findOneBy(['code' => $code]);
                 if ($existPerso) {
-                  $existName = $this->dewePersoRep->findOneBy(['nom' => $id. " - " .$spec]);
-                  if (!$existName) {
-                    $codeDeweyNameDiff[] = [
+                  // Vérifier si le nom est différent
+                  if ($existPerso->getNom() !== $spec) {
+                    $codeDeweyPersoNameDiff[] = [
                       'nom' => $spec,
                       'code' => $code,
                       'file' => $file->getFilename(),
@@ -553,8 +541,7 @@ class ImportNoticeXmlCommand extends Command
                     ];
                   }
                   $notice->addDeweyPerso($existPerso);
-                }
-                if (!$existPerso && !$existDeweRep) {
+                } else {
                   $deweyPerso = new DeweyPerso();
                   $deweyPerso->setCode($code);
                   $deweyPerso->setNom($spec);
@@ -638,9 +625,28 @@ class ImportNoticeXmlCommand extends Command
         $output->writeln('- ' . $nameFile . ' | ' . $nom);
       }
     }
+    if (count($deweyWithoutCode) > 0) {
+      $output->writeln("\nListe des Dewey sans code :");
+      foreach ($deweyWithoutCode as $item) {
+        $nom = trim($item['nom'] ?? '');
+        $file = $item['file'] ?? '[fichier inconnu]';
+        $nomSuplom = $nom !== '' ? $nom : '[nom manquant]';
+        $output->writeln('- ' . $file . ' | ' . $nomSuplom);
+      }
+    }
     if (count($codeDeweyNameDiff) > 0) {
       $output->writeln("\nListe des Dewey avec un code existant mais un nom différent (uniques) :");
       foreach ($codeDeweyNameDiff as $item) {
+        $nom = trim($item['nom'] ?? '');
+        $file = $item['file'] ?? '[fichier inconnu]';
+        $nomSuplom = $nom !== '' ? $nom : '[nom manquant]';
+        $nomEnBase = $item['nom_en_base'] ?? '-';
+        $output->writeln('- ' . $file . ' | ' . ($item['code'] ?? '-') . ' | ' . $nomSuplom . ' | ' . $nomEnBase);
+      }
+    }
+    if (count($codeDeweyPersoNameDiff) > 0) {
+      $output->writeln("\nListe des Dewey persos avec un code existant mais un nom différent (uniques) :");
+      foreach ($codeDeweyPersoNameDiff as $item) {
         $nom = trim($item['nom'] ?? '');
         $file = $item['file'] ?? '[fichier inconnu]';
         $nomSuplom = $nom !== '' ? $nom : '[nom manquant]';
@@ -717,6 +723,10 @@ class ImportNoticeXmlCommand extends Command
   }
 }
 function normalizeDuration($duration) {
+    $duration = trim($duration ?? '');
+    if ($duration === '') {
+        return null;
+    }
     // PT seul -> PT0H00M00S
     if ($duration === 'PT') {
         return 'PT0H00M00S';
@@ -760,6 +770,7 @@ function parseVCard($vcardString)
   // Découpe la vCard
   $lines = preg_split('/\r\n|\r|\n/', $vcardString);
   foreach ($lines as $line) {
+    $line = trim($line);
     if (strpos($line, 'FN:') === 0) {
       $fields['FN'] = substr($line, 3);
     } elseif (strpos($line, 'EMAIL') === 0) {
