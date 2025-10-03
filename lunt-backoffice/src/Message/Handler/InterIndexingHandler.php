@@ -3,7 +3,7 @@
 namespace App\Message\Handler;
 
 use App\Entity\{IndexingConfig, Notice, NoticEtat, Univerique};
-use Doctrine\ORM\{EntityManagerInterface,EntityRepository};
+use Doctrine\ORM\{EntityManagerInterface, EntityRepository};
 use App\Entity\Dto\{OaidcDto, SuplomDto, IndexingNotice};
 use App\Service\{FileService, SolrApiService};
 use App\Message\IntexingConfigMessage;
@@ -14,99 +14,176 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler]
 readonly class InterIndexingHandler
 {
-    private EntityRepository $configRep, $noticeRep;
+    private EntityRepository $configRep;
+    private EntityRepository $noticeRep;
+
     public function __construct(
-        private EntityManagerInterface $em,
-        private SerializerInterface    $js,
-        private LoggerInterface        $lg,
-        private SolrApiService         $sm,
-        private FileService            $fs,
+        private EntityManagerInterface $entityManager,
+        private SerializerInterface    $serializer,
+        private LoggerInterface        $logger,
+        private SolrApiService         $solrService,
+        private FileService            $fileService,
     ) {
-        $this->noticeRep = $this->em->getRepository(Notice::class);
-        $this->configRep = $this->em->getRepository(IndexingConfig::class);
+        $this->noticeRep = $this->entityManager->getRepository(Notice::class);
+        $this->configRep = $this->entityManager->getRepository(IndexingConfig::class);
     }
 
     public function __invoke(IntexingConfigMessage $message): void
     {
-        /** @var IndexingConfig $task */
+        /** @var IndexingConfig|null $task */
         $task = $this->configRep->find($message->taskId);
-        if (!$task) throw new \RuntimeException("Aucun planificateur d'identifant ".$message->taskId);
-        $core = $task->getIndexCore()?->getName(); $offset = 0;
-        $this->lg->warning(sprintf("Début d'indexation interne %s de %s", $task->isFullMode()?'complète':'différentielle', $core));
+        if (!$task) {
+            throw new \RuntimeException("Aucun planificateur d'identifiant " . $message->taskId);
+        }
 
-        /** @var Notice[] $data */
-        while (!empty($data = $this->noticeRep->findFrom($task, $task->getBatchSize(), $offset))) {
-            $news = []; $olds = []; dump(count($data));
+        $core = $task->getIndexCore()?->getName();
+        $offset = 0;
+        $this->logger->warning(sprintf(
+            "Début d'indexation interne %s de %s",
+            $task->isFullMode() ? 'complète' : 'différentielle',
+            $core
+        ));
 
-            foreach ($data as $d) {
-                if($d->getEtat() === NoticEtat::Approved) { //=> $d->isDeleted()!=1
-                    if(empty($d->getPublieLe())) $news[] = $d->setPublieLe(new \DateTime()); // A publier
-                    elseif($task->isFullMode() || $d->getEditeLe() > $task->getScheduleAt()) { $olds[] = $d->getUuid(); $news[] = $d; }// A republier
-                } elseif($d->getPublieLe())  $olds[] = $d->setPublieLe(null)->getUuid();// A dépublier
-            }
+        while (!empty($notices = $this->noticeRep->findFrom($task, $task->getBatchSize(), $offset))) {
+            [$toIndex, $toUnindex] = $this->filterNotices($notices, $task);
 
-            $this->sm->editDocuments($this->pop($olds, $core) . $this->push($news, $task->getIndexCore()), "$core/update?commit=true");
+            $this->solrService->editDocuments(
+                $this->buildUnindexXml($toUnindex, $core) . $this->buildIndexXml($toIndex, $task->getIndexCore()),
+                "$core/update?commit=true"
+            );
+
             $task->setScheduleAt(new \DateTime());
-            $this->em->flush(); $this->em->clear();
+            $this->entityManager->flush();
+            $this->entityManager->clear();
 
-            $this->lg->info(sprintf("Notices concernées %d:  %d (indexées) + %d (désindexées)", count($data), count($news), count($olds)));
+            $this->logger->info(sprintf(
+                "Notices concernées %d:  %d (indexées) + %d (désindexées)",
+                count($notices), count($toIndex), count($toUnindex)
+            ));
             $offset += $task->getBatchSize();
         }
 
-        $this->lg->warning(sprintf("Fin d'indexation interne %s de %s", $task->isFullMode()?'complète':'différentielle', $core));
+        $this->logger->warning(sprintf(
+            "Fin d'indexation interne %s de %s",
+            $task->isFullMode() ? 'complète' : 'différentielle',
+            $core
+        ));
     }
 
-    private function pop(array $sources, string $index): string
+    /**
+     * Filtre les notices à indexer et à désindexer.
+     *
+     * @param Notice[] $notices
+     * @param IndexingConfig $task
+     * @return array{0: Notice[], 1: array}
+     */
+    private function filterNotices(array $notices, IndexingConfig $task): array
     {
-        $itemSP = array_reduce($sources,fn(string $acc, string $uuid): string => $acc."<query>uuid:$uuid</query>","");
+        $toIndex = [];
+        $toUnindex = [];
 
-        $this->fs->removeFilesFrom("oai/$index", $sources);
-        $this->fs->removeFilesFrom("suplom/$index", $sources);
-        return "<delete>$itemSP</delete>";
+        foreach ($notices as $notice) {
+            if ($notice->getEtat() === NoticEtat::Approved) {
+                if (empty($notice->getPublieLe())) {
+                    // A publier
+                    $toIndex[] = $notice->setPublieLe(new \DateTime());
+                } elseif ($task->isFullMode() || $notice->getEditeLe() > $task->getScheduleAt()) {
+                    // A republier
+                    $toUnindex[] = $notice->getUuid();
+                    $toIndex[] = $notice;
+                }
+            } elseif ($notice->getPublieLe()) {
+                // A dépublier
+                $toUnindex[] = $notice->setPublieLe(null)->getUuid();
+            }
+        }
+
+        return [$toIndex, $toUnindex];
     }
 
-    private function push(array $sources, Univerique $unt): string
+    /**
+     * Génère le XML pour désindexer des notices.
+     *
+     * @param array $uuids
+     * @param string $index
+     * @return string
+     */
+    private function buildUnindexXml(array $uuids, string $index): string
     {
-      $index = $unt->getName();
-      $itemSF = [];
-      $itemSP = "";
-      $itemOaiDC = [];
-      $itemOaiSF = [];
+        $deleteQueries = array_reduce(
+            $uuids,
+            fn(string $acc, string $uuid): string => $acc . "<query>uuid:$uuid</query>",
+            ""
+        );
 
-      foreach ($sources as $notice) {
-        $checkOai = $notice->isExportOAI();
-        $indexingNotice = IndexingNotice::fromNotice($notice, $unt);
-        $xmlContent = $this->js->serialize($indexingNotice, 'xml');
-        $cleanXml = preg_replace('/<\?xml.*?\?>/', '', $xmlContent);
-        $itemSP .= $cleanXml;
-        // Utilisé pour les notices dont l’UUID ne respecte pas le format standard
-        if(str_contains($notice->getuuid(), "http://")){
-          $parts = explode('/uid/', $notice->getUuid());
-          $uuid = end($parts);
-          $dcKey = sprintf("dc_%s.xml", $uuid);
-          $sfKey = sprintf("sf_%s.xml", $uuid);
-        } else {
-          $dcKey = sprintf("dc_%s.xml", $notice->getUuid());
-          $sfKey = sprintf("sf_%s.xml", $notice->getUuid());
-        }
-        if ($checkOai) {
-          $oaidcOaiDto = OaidcDto::create($notice);
-          $itemOaiDC[$dcKey] = $this->js->serialize($oaidcOaiDto, 'xml');
-          $suplomOaiDto = SuplomDto::create($notice);
-          $itemOaiSF[$sfKey] = $this->js->serialize($suplomOaiDto, 'xml');
-        }
-        $suplomDto = SuplomDto::create($notice);
-        $itemSF[$sfKey] = $this->js->serialize($suplomDto, 'xml');
-      }
-      // Indexation oai et suplom JOAI
-      $suplomJoaiPath = "XML/$index/suplomfr/";
-      $this->fs->writeFilesTo($itemOaiSF, $suplomJoaiPath);
-      $oaiJoaiPath = "XML/$index/oai_dc/";
-      $this->fs->writeFilesTo($itemOaiDC, $oaiJoaiPath);
-      // Indexation suplom solr
-      $suplomPath = "suplom/$index/";
-      $this->fs->writeFilesTo($itemSF, $suplomPath);
+        // Retrait oai et suplom JOAI
+        $this->fileService->removeFilesFrom("XML/$index/suplomfr/", $uuids);
+        $this->fileService->removeFilesFrom("XML/$index/oai_dc/", $uuids);
 
-      return "<add>$itemSP</add>";
+        // Retrait suplom solr
+        $this->fileService->removeFilesFrom("suplom/$index", $uuids);
+
+        return $deleteQueries ? "<delete>$deleteQueries</delete>" : '';
+    }
+
+    /**
+     * Génère le XML pour indexer des notices et gère l'écriture des fichiers associés.
+     *
+     * @param Notice[] $notices
+     * @param Univerique $indexCore
+     * @return string
+     */
+    private function buildIndexXml(array $notices, Univerique $indexCore): string
+    {
+        $index = $indexCore->getName();
+        $itemSF = [];
+        $itemSP = "";
+        $itemOaiDC = [];
+        $itemOaiSF = [];
+
+        foreach ($notices as $notice) {
+            $isOai = $notice->isExportOAI();
+            $indexingNotice = IndexingNotice::fromNotice($notice, $indexCore);
+            $xmlContent = $this->serializer->serialize($indexingNotice, 'xml');
+            $cleanXml = preg_replace('/<\?xml.*?\?>/', '', $xmlContent);
+            $itemSP .= $cleanXml;
+
+            $uuid = $this->extractUuid($notice->getUuid());
+            $dcKey = "dc_{$uuid}.xml";
+            $sfKey = "sf_{$uuid}.xml";
+
+            if ($isOai) {
+                $oaidcOaiDto = OaidcDto::create($notice);
+                $itemOaiDC[$dcKey] = $this->serializer->serialize($oaidcOaiDto, 'xml');
+                $suplomOaiDto = SuplomDto::create($notice);
+                $itemOaiSF[$sfKey] = $this->serializer->serialize($suplomOaiDto, 'xml');
+            }
+            $suplomDto = SuplomDto::create($notice);
+            $itemSF[$sfKey] = $this->serializer->serialize($suplomDto, 'xml');
+        }
+
+        // Indexation oai et suplom JOAI
+        $this->fileService->writeFilesTo($itemOaiSF, "XML/$index/suplomfr/");
+        $this->fileService->writeFilesTo($itemOaiDC, "XML/$index/oai_dc/");
+
+        // Indexation suplom solr
+        $this->fileService->writeFilesTo($itemSF, "suplom/$index/");
+
+        return $itemSP ? "<add>$itemSP</add>" : '';
+    }
+
+    /**
+     * Extrait l'UUID d'une notice, même si elle contient une URL.
+     *
+     * @param string $uuid
+     * @return string
+     */
+    private function extractUuid(string $uuid): string
+    {
+        if (str_contains($uuid, "http://")) {
+            $parts = explode('/uid/', $uuid);
+            return end($parts);
+        }
+        return $uuid;
     }
 }
