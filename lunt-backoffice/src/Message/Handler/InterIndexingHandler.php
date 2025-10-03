@@ -116,7 +116,11 @@ readonly class InterIndexingHandler
             ""
         );
 
-        $this->fileService->removeFilesFrom("oai/$index", $uuids);
+        // Retrait oai et suplom JOAI
+        $this->fileService->removeFilesFrom("XML/$index/suplomfr/", $uuids);
+        $this->fileService->removeFilesFrom("XML/$index/oai_dc/", $uuids);
+
+        // Retrait suplom solr
         $this->fileService->removeFilesFrom("suplom/$index", $uuids);
 
         return $deleteQueries ? "<delete>$deleteQueries</delete>" : '';
