@@ -39,6 +39,15 @@ class Dewey
         return new self($dto->uri, $dto->label);
     }
 
+    public function getNumericCode(): ?string
+    {
+        // Remove the prefix
+        $numericCode = str_replace('http://dewey.info/class/', '', $this->code);
+
+        // Remove the final slash if present
+        return rtrim($numericCode, "/");
+    }
+
     public function getCode(): ?string
     {
         return $this->code;
@@ -102,6 +111,12 @@ class Dewey
 
     public function __toString(): string
     {
-        return $this->nom;
+        if ($this->getChildren()->count() > 0 ) {
+            // Discipline ou division
+            return $this->nom;
+        } else {
+            // Spécialité
+            return $this->getNumericCode() . ' - ' . $this->nom;
+        }
     }
 }
