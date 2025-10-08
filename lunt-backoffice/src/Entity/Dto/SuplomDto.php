@@ -61,7 +61,7 @@ class SuplomDto
             new Source('LOMv1.0', "final"),
             array_map(
                 fn(Auteur $author) => new Contribute(
-                    new Source('LOMv1.0', "Author"),
+                    new Source('LOMv1.0', "author"),
                     [sprintf(
                         "BEGIN:VCARD\r\nVERSION:3.0\r\nN:%s;%s;;;\r\nFN:%s\r\nEND:VCARD",
                         $author->getNom(),
@@ -91,7 +91,7 @@ class SuplomDto
         $validatorORG = $validator->getUntheme() ? "\r\nORG:" . $validator->getUntheme()->getName() : "";
 
         $metadata = new Metadata(
-            new Catalog('URI', "oai:uoh.fr:uoh_" . $notice->getUuid()),
+            new Catalog('URI', $notice->getUuid()),
             [
                 new Contribute(
                     new Source('LOMv1.0', "creator"),
@@ -154,7 +154,7 @@ class SuplomDto
         $classifications = [
             new Classification(
                 new Source('LOMv1.0', "discipline"),
-                new TaxonPath([new Field('Classification UOH', $lang, null)], $disciplines)
+                new TaxonPath([new Field('Classification', $lang, null)], $disciplines)
             ),
             new Classification(
                 new Source('LOMv1.0', "dewey"),
