@@ -62,12 +62,33 @@ class SuplomDto
             array_map(
                 fn(Auteur $author) => new Contribute(
                     new Source('LOMv1.0', "Author"),
-                    [sprintf("BEGIN:VCARD VERSION:3.0 N:%s;%s;; FN:%s END:VCARD", $author->getPrenom(), $author->getNom(), $author->getName())],
+                    [sprintf(
+                        "BEGIN:VCARD\r\nVERSION:3.0\r\nN:%s;%s;;;\r\nFN:%s\r\nEND:VCARD",
+                        $author->getNom(),
+                        $author->getPrenom(),
+                        $author->getName()
+                    )],
                     [$notice->getCreeLe()?->format('Y-m-d H:i:s')]
                 ),
                 $notice->getAuteurs()->toArray()
             )
         );
+
+        $creatorFullName = $creator->getName();
+        $creatorParts = explode(' ', $creatorFullName, 2);
+        // Si "prénom nom", $parts[1] est le nom, sinon c'est $parts[0]
+        $creatorFamilyName = $creatorParts[1] ?? $creatorParts[0];
+        // Si "prénom nom", $parts[0] est le prénom, sinon vide
+        $creatorGivenName = $creatorParts[1] ? $creatorParts[0] : '';
+        $creatorORG = $creator->getSchool() ? "\r\nORG:" . $creator->getSchool()->getNom() : "";
+
+        $validatorFullName = $validator->getName();
+        $validatorParts = explode(' ', $validatorFullName, 2);
+        // Si "prénom nom", $parts[1] est le nom, sinon c'est $parts[0]
+        $validatorFamilyName = $validatorParts[1] ?? $validatorParts[0];
+        // Si "prénom nom", $parts[0] est le prénom, sinon vide
+        $validatorGivenName = $validatorParts[1] ? $validatorParts[0] : '';
+        $validatorORG = $validator->getUntheme() ? "\r\nORG:" . $validator->getUntheme()->getName() : "";
 
         $metadata = new Metadata(
             new Catalog('URI', "oai:uoh.fr:uoh_" . $notice->getUuid()),
@@ -75,18 +96,22 @@ class SuplomDto
                 new Contribute(
                     new Source('LOMv1.0', "creator"),
                     [sprintf(
-                        "BEGIN:VCARD VERSION:3.0 FN:%s%s END:VCARD",
-                        $creator->getName(),
-                        $creator->getSchool() ? " ORG:" . $creator->getSchool()->getNom() : ""
+                        "BEGIN:VCARD\r\nVERSION:3.0\r\nN:%s;%s;;;\r\nFN:%s%s\r\nEND:VCARD",
+                        $creatorFamilyName,
+                        $creatorGivenName,
+                        $creatorFullName,
+                        $creatorORG
                     )],
                     [$notice->getEditeLe()?->format('Y-m-d H:i:s')]
                 ),
                 new Contribute(
                     new Source('LOMv1.0', "validator"),
                     [sprintf(
-                        "BEGIN:VCARD VERSION:3.0 FN:%s%s END:VCARD",
-                        $validator->getName(),
-                        $validator->getUntheme() ? " ORG:" . $validator->getUntheme()->getName() : ""
+                        "BEGIN:VCARD\r\nVERSION:3.0\r\nN:%s;%s;;;\r\nFN:%s%s\r\nEND:VCARD",
+                        $validatorFamilyName,
+                        $validatorGivenName,
+                        $validatorFullName,
+                        $validatorORG
                     )],
                     [$notice->getPublieLe()?->format('Y-m-d H:i:s')]
                 ),
