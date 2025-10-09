@@ -707,7 +707,10 @@ class NoticeCrudController extends AbstractCrudController
 
       // Ajout de l'attribut folderId à chaque action
       $actions = array_map(
-        fn(ActionDto $action) => $action->setHtmlAttribute('folderId', $folderId),
+          function(ActionDto $action) use($folderId) {
+              $action->setLinkUrl($action->getLinkUrl() . '&folderId=' . $folderId);
+              return $action;
+          },
         $context->getEntity()->getActions()->all()
       );
       $context->getEntity()->setActions(ActionCollection::new($actions));
