@@ -14,7 +14,7 @@ db_container="lunt-indexation-notice-mariadb-1"
 app_container="lunt-indexation-notice-backoffice-1"
 
 # Répertoire local où se trouvent les fichiers SQL
-local_dir="$(dirname "$(realpath "${BASH_SOURCE[0]}")")/../lunt-backoffice/data"
+local_dir="$(dirname "$(realpath "${BASH_SOURCE[0]}")")/../lunt-resources/referentiels"
 
 make dev-start
 
@@ -37,7 +37,7 @@ for table in "${tables[@]}"; do
     fi
 done
 
-docker exec -it "$app_container" php bin/console app:import-xml-data
+docker exec -it "$app_container" php bin/console import:dewey-data
 
 docker exec -it "$app_container" php bin/console import:specialites-data uoh
 
@@ -48,7 +48,7 @@ docker exec -it "$app_container" php bin/console import:notice-data uoh suplom_e
 # Import notices à ne pas exposer sur le portail
 docker exec -it "$app_container" php bin/console import:notice-data uoh suplom_not_exposed false
 
-echo "=== Import terminé ==="
+echo "=== Imports terminés ==="
 
 echo "=== Installation des dépendances composer ==="
 docker exec -it "$app_container" composer install

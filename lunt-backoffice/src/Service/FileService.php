@@ -2,12 +2,15 @@
 
 namespace App\Service;
 
+use DateTime;
 use Symfony\Component\{Filesystem\Filesystem, Finder\Finder};
 use Symfony\Component\Filesystem\Exception\{IOException,IOExceptionInterface};
 
 class FileService
 {
-    const RESOURCES_DIR = DIRECTORY_SEPARATOR. 'opt'. DIRECTORY_SEPARATOR. 'lunt-resources'. DIRECTORY_SEPARATOR;
+    const RESOURCES_DIR = DIRECTORY_SEPARATOR . 'opt' . DIRECTORY_SEPARATOR . 'lunt-resources' . DIRECTORY_SEPARATOR;
+    const REFERENTIELS_DIR = self::RESOURCES_DIR . 'referentiels' . DIRECTORY_SEPARATOR;
+    const XML_DIR = self::RESOURCES_DIR . 'XML' . DIRECTORY_SEPARATOR;
     private Filesystem $filesystem;
     public function __construct(private ?string $directory = null)
     {
@@ -52,7 +55,7 @@ class FileService
         return array_map(fn ($fileName) => $this->writeFile($relativePath.$fileName, $filesContent[$fileName]), array_keys($filesContent));
     }
 
-    public function readFilesFrom(\DateTime $since = null, string $relativePath = '', $names = ['*.xml'], $deep = 0): ?Finder
+    public function readFilesFrom(DateTime $since = null, string $relativePath = '', $names = ['*.xml'], $deep = 0): ?Finder
     {
         $finder = new Finder();
         $path = $this->directory. $relativePath;

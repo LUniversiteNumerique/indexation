@@ -97,7 +97,7 @@ class ImportNoticeXmlCommand extends Command
 
     //Ré utilisation de la fonction readFilesFrom en dur car non fonctionnel avec un appel simple de celle-ci avec le meme répertoire
     $finder = new Finder();
-    $path = "data/$folder/";
+    $path = FileService::REFERENTIELS_DIR . $folder;
     $names = ['*.xml'];
     $since = null;
     $deep = 0;
