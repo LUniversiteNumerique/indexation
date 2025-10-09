@@ -178,24 +178,7 @@ class NoticeRepository extends ServiceEntityRepository
      */
     public function enrichIndexQueryBuilder(QueryBuilder $qb, User $user): QueryBuilder
     {
-        $qb->select('entity,d,e,r,k,p,a,n,dd,pp,l,s,dg,sp,dgw,dpw,dp')
-            ->leftJoin('entity.repertoire', 'd')
-            ->leftJoin('entity.codeweys', 'e')
-            ->leftJoin('entity.ressources', 'r')
-            ->leftJoin('entity.tags', 'k')
-            ->leftJoin('entity.porteurs', 'p')
-            ->leftJoin('entity.auteurs', 'a')
-            ->leftJoin('entity.niveaux', 'n')
-            ->leftJoin('entity.docTypes', 'dd')
-            ->leftJoin('entity.pedTypes', 'pp')
-            ->leftJoin('entity.specialites', 's')
-            ->join('entity.droit', 'l')
-            ->leftJoin('entity.disciplineGroups', 'dg')
-            ->leftJoin('dg.specialites', 'sp')
-            ->leftJoin('entity.deweyGroups', 'dgw')
-            ->leftJoin('dgw.codeweys', 'dpw')
-            ->leftJoin('entity.deweyPersos', 'dp')
-            ->andWhere('entity.deleted = 0');
+        $qb->andWhere('entity.deleted = 0');
 
         // Applique les restrictions selon le rôle utilisateur
         $this->applyUserRestrictions($qb, $user, 'entity');
