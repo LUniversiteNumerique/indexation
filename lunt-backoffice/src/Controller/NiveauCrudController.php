@@ -4,9 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Niveau;
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action,Actions,Crud,Filters};
+use App\Repository\NiveauRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\{DateTimeField,IdField,TextField};
+use EasyCorp\Bundle\EasyAdminBundle\Field\{DateTimeField, IdField, IntegerField, TextField};
 use EasyCorp\Bundle\EasyAdminBundle\Filter\{DateTimeFilter,TextFilter};
 use Symfony\Component\HttpFoundation\Response;
 
@@ -18,6 +19,9 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class NiveauCrudController extends AbstractCrudController
 {
+    public function __construct(
+        private readonly NiveauRepository $repository
+    ) {}
     /**
      * Retourne le FQCN (nom de classe complet) de l'entité Niveau.
      *
@@ -37,7 +41,7 @@ class NiveauCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud->setSearchFields(['code', 'nom'])
-            ->setDefaultSort(['nom' => 'ASC'])
+            ->setDefaultSort(['ordre' => 'ASC'])
             ->setEntityLabelInPlural("Publics cibles")
             ->setEntityLabelInSingular("public cible")
             ->setEntityPermission('ROLE_READ_NIVE');
@@ -82,9 +86,30 @@ class NiveauCrudController extends AbstractCrudController
             IdField::new('id')->onlyOnDetail(),
             TextField::new('code'),
             TextField::new('nom'),
+            IntegerField::new('ordre', 'Ordre d\'affichage'),
             DateTimeField::new('creeLe')->onlyOnDetail(),
             DateTimeField::new('editeLe')->onlyOnDetail()
         ];
+    }
+
+    /**
+     * Crée une nouvelle instance de Niveau avec l'ordre prérempli.
+     *
+     * @param string $entityFqcn Le FQCN de l'entité.
+     * @return Niveau
+     */
+    public function createEntity(string $entityFqcn)
+    {
+        $maxOrdre = $this->repository
+            ->createQueryBuilder('n')
+            ->select('MAX(n.ordre)')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        $niveau = new Niveau();
+        $niveau->setOrdre(((int) $maxOrdre) + 1);
+
+        return $niveau;
     }
 
     /**

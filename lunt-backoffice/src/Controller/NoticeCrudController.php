@@ -308,6 +308,7 @@ class NoticeCrudController extends AbstractCrudController
       ->setFormTypeOption('expanded', true)
       ->setHelp(t('notice.niveaux_help', domain: 'EasyAdminBundle'))
       ->setColumns(6)->hideOnIndex()
+      ->setQueryBuilder(fn(QueryBuilder $qb) => $qb->orderBy('entity.ordre', 'ASC'))
       ->formatValue(fn($value, $entity) => $this->renderEntityCollectionBadges($value));
 
     // Section Classification thématique
