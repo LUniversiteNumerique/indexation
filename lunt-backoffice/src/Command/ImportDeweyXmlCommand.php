@@ -139,7 +139,7 @@ class ImportDeweyXmlCommand extends Command
             }
             $dewey->setNom($label);
 
-            $codeRaw = $this->extractCodeRaw($uri, $notation);
+            $codeRaw = $dewey->getNumericCode();
             // Regex pour vérifier que le format du code correspond à la notation suivante :
             // 123.456 7890 (voir la page Wikipedia https://fr.wikipedia.org/wiki/Classification_Dewey)
             if (!preg_match('/^(?:\d{1,3}|\d{3}\.\d{1,3}|\d{3}\.\d{3} \d+)$/', $codeRaw)) {
@@ -156,23 +156,6 @@ class ImportDeweyXmlCommand extends Command
             $io->progressAdvance();
         }
         return [$deweyObjects, $meta, $invalidEntries];
-    }
-
-    /**
-     * Extrait le code brut à partir de l'URI ou de la notation.
-     *
-     * @param string $uri URI du concept Dewey
-     * @param string $notation Notation du concept Dewey
-     * @return string Code Dewey extrait
-     */
-    private function extractCodeRaw(string $uri, string $notation): string
-    {
-        if (preg_match('#class/([^/]+)#', $uri, $m)) {
-            return $m[1];
-        } elseif ($notation !== '') {
-            return $notation;
-        }
-        return trim($uri, '/');
     }
 
     /**
