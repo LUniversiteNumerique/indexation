@@ -734,7 +734,7 @@ class NoticeCrudController extends AbstractCrudController
     /** @var Notice $notice */
     $notice = $context->getEntity()->getInstance();
     $this->denyAccessUnlessGranted(
-      NoticeActionVoter::VIEW,
+      NoticeActionVoter::EDIT,
       $notice,
       "Vous n'êtes pas autorisé à exécuter cette action sur cette notice."
     );
