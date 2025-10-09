@@ -174,9 +174,17 @@ class ImportNoticeXmlCommand extends Command
       }
       if (isset($roleNotice['author'])) {
         foreach ($roleNotice['author'] as $author) {
-          if (!empty($author['date']) && ctype_digit($author['date'])) {
+          // Cas où seule l'année est renseignée (YYYY)
+          if (!empty($author['date']) && preg_match("/^\d{4}$/", $author['date'])) {
             $notice->setRessDate($author['date']);
             break;
+          // Cas où la date est au format YYYY-MM-DD
+          } elseif (!empty($author['date']) && preg_match("/^\d{4}-\d{2}-\d{2}$/", $author['date'])) {
+            $date = \DateTime::createFromFormat('Y-m-d', $author['date']);
+            if ($date !== false) {
+              $notice->setRessDate($date->format('Y'));
+              break;
+            }
           }
         }
       }
@@ -212,7 +220,7 @@ class ImportNoticeXmlCommand extends Command
         ];
       }
       if ($notice->getRessDate() === null) {
-        $notice->setRessDate(time());
+        $notice->setRessDate(date('Y'));
       }
       //Validateur
       $validateur = null;
