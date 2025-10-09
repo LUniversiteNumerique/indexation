@@ -8,6 +8,8 @@ services:
       - solr
     volumes:
       - ${UNT_BASE_URI}/lunt-resources/XML:/opt/lunt-resources/XML
+      - ${UNT_BASE_URI}/lunt-resources/suplom:/opt/lunt-resources/suplom
+      - ${UNT_BASE_URI}/lunt-resources/suplom_externe:/opt/lunt-resources/suplom_externe
       - ${UNT_BASE_URI}/lunt-resources/uploads:/var/www/site/public/uploads
 
   mariadb:
