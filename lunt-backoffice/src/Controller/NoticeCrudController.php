@@ -198,7 +198,7 @@ class NoticeCrudController extends AbstractCrudController
     /** @var User $user */
     $user = $this->getUser();
     $isValidator = $this->isGranted('ROLE_VALI_NOTI');
-    $langList = array_merge(['français' => 'fra'], array_flip(Languages::getAlpha3Names('fr')));
+    $langList = array_merge(array_flip(Languages::getAlpha3Names('fr')), ['français' => 'fre']);
 
     // Section Soumission (si validateur)
     if ($isValidator) {
