@@ -164,7 +164,7 @@ return [
         'resspayant' => 'Ressource payante',
         'resspayant_help' => 'Cette notice donne-t-elle accès à une resource payante ?',
         'proprintel' => 'Propriété intellectuelle',
-        'proprintel_help' => 'Cette notice donne-t-elle accès à une ressource ayant une propriété intellectuelle particulière ?',
+        'proprintel_help' => 'Veuillez décocher la case si la ressource ne fait pas l\'objet de droits d\'auteur, copyrights…',
         'resslang' => 'Langue(s) de la ressource',
         'resslang_help' => 'Langues de la ressource',
         'dureappr' => 'Durée d\'apprentissage',

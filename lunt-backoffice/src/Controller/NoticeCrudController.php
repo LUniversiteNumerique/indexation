@@ -278,6 +278,7 @@ class NoticeCrudController extends AbstractCrudController
       ->renderAsSwitch(false)->hideOnIndex()->setColumns(6);
     yield BooleanField::new('proprIntel', t('notice.proprintel', domain: 'EasyAdminBundle'))
       ->setHelp(t('notice.proprintel_help', domain: 'EasyAdminBundle'))
+      ->setFormTypeOptions(['data' => true])
       ->renderAsSwitch(false)->hideOnIndex()->setColumns(6);
 
     yield FormField::addColumn(6);
