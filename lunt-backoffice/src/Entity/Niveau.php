@@ -12,7 +12,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Classe représentant un niveau.
  */
 #[ORM\Entity(repositoryClass: NiveauRepository::class)]
-#[ORM\Table(name: "niveau", uniqueConstraints: [new ORM\UniqueConstraint(columns: ["ordre"])])]
 #[UniqueEntity('ordre', message: 'Cet ordre est déjà utilisé.')]
 class Niveau
 {
@@ -51,7 +50,7 @@ class Niveau
      *
      * @var int|null
      */
-    #[ORM\Column(type: 'integer', unique: true)]
+    #[ORM\Column(type: 'integer')]
     private ?int $ordre = null;
 
     /**
