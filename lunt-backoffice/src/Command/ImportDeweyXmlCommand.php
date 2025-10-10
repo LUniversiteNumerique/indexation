@@ -130,7 +130,6 @@ class ImportDeweyXmlCommand extends Command
         foreach ($concepts as $concept) {
             $uri = rtrim((string)$concept->uri, '/') . '/';
             $label = ($concept->label ?? '');
-            $notation = ($concept->notation ?? '');
 
             $dewey = $this->em->getRepository(Dewey::class)->findOneBy(['code' => $uri]);
             if (!$dewey) {

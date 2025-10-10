@@ -437,13 +437,13 @@ class ImportNoticeXmlCommand extends Command
       }
       /** @var Classification $class */
       foreach ($item->classifications as $class) {
-        if (isset($class->taxonPath)) {
-          $key = array_reduce($class->taxonPath->source, fn(string $a, Field $s) => "$a $s->value", "");
+        foreach ($class->taxonPathes as $taxonPath) {
+          $key = array_reduce($taxonPath->source, fn(string $a, Field $s) => "$a $s->value", "");
 
           // Gestion des spécialités
           if (str_contains($key, 'lassification')) {
             $disciplineGroupsByParent = [];
-            foreach ($class->taxonPath->taxons as $taxon) {
+            foreach ($taxonPath->taxons as $taxon) {
               $spec = trim($taxon->entry[0]?->value ?? '');
               $disc = null;
               $champDisc = null;
@@ -498,7 +498,7 @@ class ImportNoticeXmlCommand extends Command
           // Gestion des Deweys
           if (str_contains($key, 'CDD 22')) {
             $deweyGroupsByParent = [];
-            foreach ($class->taxonPath->taxons as $taxon) {
+            foreach ($taxonPath->taxons as $taxon) {
               $spec = trim($taxon->entry[0]?->value ?? '');
               $id = $taxon->id ?? null;
               if (!$id) {
@@ -560,9 +560,10 @@ class ImportNoticeXmlCommand extends Command
               }
             }
           }
-        } elseif (str_contains($class->purpose?->value, 'educational')) $notice->setObjectif($class->description[0]?->string->value);
-
-
+        }
+        if (!isset($class->taxonPathes) && str_contains($class->purpose?->value, 'educational')) {
+            $notice->setObjectif($class->description[0]?->string->value);
+        }
       }
       $this->em->persist($notice);
     }

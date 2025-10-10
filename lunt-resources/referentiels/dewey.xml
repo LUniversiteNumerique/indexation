@@ -76,16 +76,16 @@
 		<ns1:Notation>004.6</ns1:Notation>
 		<ns1:Label>Informatique : Interfaces et communications (réseaux)</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/004.6013/">
-		<ns1:Notation>004.6013</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/004.601 3/">
+		<ns1:Notation>004.601 3</ns1:Notation>
 		<ns1:Label>Informatique : Evaluation des performances des réseaux</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/004.60288/">
-		<ns1:Notation>004.60288</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/004.602 88/">
+		<ns1:Notation>004.602 88</ns1:Notation>
 		<ns1:Label>Entretien et réparation des réseaux</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/004.6068/">
-		<ns1:Notation>004.6068</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/004.606 8/">
+		<ns1:Notation>004.606 8</ns1:Notation>
 		<ns1:Label>Informatique : Administration et gestion des interfaces et communications (réseaux)</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/004.66/">
@@ -100,8 +100,8 @@
 		<ns1:Notation>004.678</ns1:Notation>
 		<ns1:Label>Réseau internet/protocole</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/004.6780218/">
-		<ns1:Notation>004.6780218</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/004.678 0218/">
+		<ns1:Notation>004.678 0218</ns1:Notation>
 		<ns1:Label>Informatique - Réseaux : internet / normes</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/004.68/">
@@ -216,16 +216,16 @@
 		<ns1:Notation>006.42</ns1:Notation>
 		<ns1:Label>Reconnaissance de forme par ordinateur : Reconnaissance optique de forme</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/006.42012/">
-		<ns1:Notation>006.42012</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/006.420 12/">
+		<ns1:Notation>006.420 12</ns1:Notation>
 		<ns1:Label>Classification par reconnaissance optique de forme</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/006.45/">
 		<ns1:Notation>006.45</ns1:Notation>
 		<ns1:Label>Reconnaissance de forme par ordinateur : Reconnaissance acoustique de forme</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/006.45012/">
-		<ns1:Notation>006.45012</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/006.450 12/">
+		<ns1:Notation>006.450 12</ns1:Notation>
 		<ns1:Label>Classification par reconnaissance acoustique de forme</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/006.5/">
@@ -356,7 +356,7 @@
 		<ns1:Notation>039</ns1:Notation>
 		<ns1:Label>Encyclopédies en d’autres langues</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="2" uri="http://dewey.info/class/04/">
+	<ns1:Concept level="2" uri="http://dewey.info/class/33/">
 		<ns1:Notation>040</ns1:Notation>
 		<ns1:Label>Essais, collections</ns1:Label>
 	</ns1:Concept>
@@ -896,12 +896,12 @@
 		<ns1:Notation>333.792</ns1:Notation>
 		<ns1:Label>Energie - Formes primaires d'énergie : Energie solaire, électricité produite, distribution, aspects financiers.</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/333.7923/">
-		<ns1:Notation>333.7923</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/333.792 3/">
+		<ns1:Notation>333.792 3</ns1:Notation>
 		<ns1:Label>Energie - Formes primaires d'énergie : Energie solaire, électricité produite, distribution, aspects financiers.</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/333.7924/">
-		<ns1:Notation>333.7924</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/333.792 4/">
+		<ns1:Notation>333.792 4</ns1:Notation>
 		<ns1:Label>Energie - Formes primaires d'énergie : Energie nucléaire, électricité produite, distribution, aspects financiers</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/333.793/">
@@ -932,8 +932,8 @@
 		<ns1:Notation>333.92</ns1:Notation>
 		<ns1:Label>Autres ressources naturelles : Air, énergie éolienne, production et distribution d'électricité éolienne</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/333.9539/">
-		<ns1:Notation>333.9539</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/333.953 9/">
+		<ns1:Notation>333.953 9</ns1:Notation>
 		<ns1:Label>Plantes considérées comme source d'énergie, bois</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/334/">
@@ -1008,8 +1008,8 @@
 		<ns1:Notation>343.092</ns1:Notation>
 		<ns1:Label>Droit des services publics : Droit approvisionnement en eau et énergie (eau, énergie nucléaire, pétrole, gaz, charbon, énergie solaire, électricité)</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/384.0994/">
-		<ns1:Notation>343.0994</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/384.099 4/">
+		<ns1:Notation>343.099 4</ns1:Notation>
 		<ns1:Label>Droit des télécommunications</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/344/">
@@ -1464,8 +1464,8 @@
 		<ns1:Notation>515</ns1:Notation>
 		<ns1:Label>Analyse</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/515.2433/">
-		<ns1:Notation>515.2433</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/515.243 3/">
+		<ns1:Notation>515.243 3</ns1:Notation>
 		<ns1:Label>Analyse de Fourier</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/516/">
@@ -1536,8 +1536,8 @@
 		<ns1:Notation>526</ns1:Notation>
 		<ns1:Label>Géographie mathématique - Géodésie - Cartographie - Levés topographiques</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/526.0285/">
-		<ns1:Notation>526.0285</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/526.028 5/">
+		<ns1:Notation>526.028 5</ns1:Notation>
 		<ns1:Label>Systèmes d'informations géographiques</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/527/">
@@ -1576,12 +1576,12 @@
 		<ns1:Notation>530.416</ns1:Notation>
 		<ns1:Label>Comportement réactif et phénomènes énergétiques</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/530.4175/">
-		<ns1:Notation>530.4175</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/530.417 5/">
+		<ns1:Notation>530.417 5</ns1:Notation>
 		<ns1:Label>Physique de l'état solide : couches minces</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/530.4275/">
-		<ns1:Notation>530.4275</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/530.427 5/">
+		<ns1:Notation>530.427 5</ns1:Notation>
 		<ns1:Label>Physique de l'état liquide : couches minces</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/530.429/">
@@ -1600,8 +1600,8 @@
 		<ns1:Notation>531</ns1:Notation>
 		<ns1:Label>Mécanique classique ou newtonienne ou des milieux continus ou du solide : ouvrages généraux</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/531.1133/">
-		<ns1:Notation>531.1133</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/531.113 3/">
+		<ns1:Notation>531.113 3</ns1:Notation>
 		<ns1:Label>Ondes de surface et ressauts</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/531.32/">
@@ -1660,8 +1660,8 @@
 		<ns1:Notation>535.2</ns1:Notation>
 		<ns1:Label>Optique physique, non linéaire, </ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/535.220287/">
-		<ns1:Notation>535.220287</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/535.220 287/">
+		<ns1:Notation>535.220 287</ns1:Notation>
 		<ns1:Label>Photométrie, intensité de la lumière, tests et mesure</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/535.32/">
@@ -1728,8 +1728,8 @@
 		<ns1:Notation>537.5</ns1:Notation>
 		<ns1:Label>Electronique : décharges, ionisation des gaz, électronique des ondes radio et micro-ondes, électronique des rayons X et gamma</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/537.5344/">
-		<ns1:Notation>537.5344</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/537.534 4/">
+		<ns1:Notation>537.534 4</ns1:Notation>
 		<ns1:Label>Electronique des micro-ondes</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/537.54/">
@@ -1996,8 +1996,8 @@
 		<ns1:Notation>579</ns1:Notation>
 		<ns1:Label>microbiologie</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/579.1788/">
-		<ns1:Notation>579.1788</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/579.178 8/">
+		<ns1:Notation>579.178 8</ns1:Notation>
 		<ns1:Label>Ecologie des micro-organismes</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/58/">
@@ -2176,12 +2176,12 @@
 		<ns1:Notation>616.075</ns1:Notation>
 		<ns1:Label>Médecine - Diagnostic par méthodes physiques - Imagerie médicale - Diagnostic Radiologique (rayons X, rayons ionisants)</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/616.07545/">
-		<ns1:Notation>616.07545</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/616.075 45/">
+		<ns1:Notation>616.075 45</ns1:Notation>
 		<ns1:Label>Médecine - Diagnostic optique, endoscopie</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/616.07575/">
-		<ns1:Notation>616.07575</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/616.075 75/">
+		<ns1:Notation>616.075 75</ns1:Notation>
 		<ns1:Label>Imagerie isotopique, scintigraphie</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/617/">
@@ -2204,24 +2204,24 @@
 		<ns1:Notation>620.001</ns1:Notation>
 		<ns1:Label>Ingénierie : conception de systèmes d'ingénierie</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/620.00113/">
-		<ns1:Notation>620.00113</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/620.001 13/">
+		<ns1:Notation>620.001 13</ns1:Notation>
 		<ns1:Label>Ingénierie : Modélisation et simulation par ordinateur</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/620.00151535/">
-		<ns1:Notation>620.00151535</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/620.001 51535/">
+		<ns1:Notation>620.001 51535</ns1:Notation>
 		<ns1:Label>Eléments finis appliqués aux Sciences de l'ingénieur et au calcul des structures</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/620.004/">
 		<ns1:Notation>620.004</ns1:Notation>
 		<ns1:Label>Conception, essai, mesure, qualité, entretien, réparation</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/620.0040285/">
-		<ns1:Notation>620.0040285</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/620.004 0285/">
+		<ns1:Notation>620.004 0285</ns1:Notation>
 		<ns1:Label>Conception assistée par ordinateur (CAO)</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/620.0044/">
-		<ns1:Notation>620.0044</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/620.004 4/">
+		<ns1:Notation>620.004 4</ns1:Notation>
 		<ns1:Label>Méthodes de conception, CAO, FAO, simulation</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/620.007/">
@@ -2232,16 +2232,16 @@
 		<ns1:Notation>620.009</ns1:Notation>
 		<ns1:Label>Ingénierie et activités connexes : étude historique, géographique relative à des personnes</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/620.100113/">
-		<ns1:Notation>620.100113</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/620.100 113/">
+		<ns1:Notation>620.100 113</ns1:Notation>
 		<ns1:Label>Mécanique de l'ingénieur et Matériaux : modélisation et simulation par ordinateur</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/620.100151/">
-		<ns1:Notation>620.100151</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/620.100 151/">
+		<ns1:Notation>620.100 151</ns1:Notation>
 		<ns1:Label>Mécanique de l'ingénieur et Matériaux : modélisation mathématique</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/620.100285/">
-		<ns1:Notation>620.100285</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/620.100 285/">
+		<ns1:Notation>620.100 285</ns1:Notation>
 		<ns1:Label>Mécanique de l'ingénieur et Matériaux : traitement informatique des données</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/620.103/">
@@ -2260,8 +2260,8 @@
 		<ns1:Notation>620.106</ns1:Notation>
 		<ns1:Label>Mécanique de l'ingénieur : Mécanique appliquée des fluides</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/620.1064/">
-		<ns1:Notation>620.1064</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/620.106 4/">
+		<ns1:Notation>620.106 4</ns1:Notation>
 		<ns1:Label>Mécanique de l'ingénieur : Mécanique appliquée des fluides : dynamique (cavitation, variations pression, coups bélier, écoulement)</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/620.107/">
@@ -2272,52 +2272,52 @@
 		<ns1:Notation>620.11</ns1:Notation>
 		<ns1:Label>Matériaux (de mécanique)</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/620.110287/">
-		<ns1:Notation>620.110287</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/620.110 287/">
+		<ns1:Notation>620.110 287</ns1:Notation>
 		<ns1:Label>Mécanique de l'ingénieur et Matériaux : tests et mesures</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/620.1122/">
-		<ns1:Notation>620.1122</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/620.112 2/">
+		<ns1:Notation>620.112 2</ns1:Notation>
 		<ns1:Label>Matériaux : Propriétés de surface</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/620.1123/">
-		<ns1:Notation>620.1123</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/620.112 3/">
+		<ns1:Notation>620.112 3</ns1:Notation>
 		<ns1:Label>Mécanique des matériaux : résistance à la déformation mécanique</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/620.1124/">
-		<ns1:Notation>620.1124</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/620.112 4/">
+		<ns1:Notation>620.112 4</ns1:Notation>
 		<ns1:Label>Résistance aux tensions mécaniques particulières, essais mécaniques</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/620.1126/">
-		<ns1:Notation>620.1126</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/620.112 6/">
+		<ns1:Notation>620.112 6</ns1:Notation>
 		<ns1:Label>Résistance à la rupture, mécanique de la rupture</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/620.1127/">
-		<ns1:Notation>620.1127</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/620.112 7/">
+		<ns1:Notation>620.112 7</ns1:Notation>
 		<ns1:Label>Essais non destructifs, caractérisation de surface</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/620.11292/">
-		<ns1:Notation>620.11292</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/620.112 92/">
+		<ns1:Notation>620.112 92</ns1:Notation>
 		<ns1:Label>Matériaux : Propriétés de surface</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/620.11295/">
-		<ns1:Notation>620.11295</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/620.112 95/">
+		<ns1:Notation>620.112 95</ns1:Notation>
 		<ns1:Label>Propriétés optiques des matériaux, luminescence, photoélasticité, réfringence</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/620.11297/">
-		<ns1:Notation>620.11297</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/620.112 97/">
+		<ns1:Notation>620.112 97</ns1:Notation>
 		<ns1:Label>Propriétés électriques, électroniques et magnétiques des matériaux</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/620.112973/">
-		<ns1:Notation>620.112973</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/620.112 973/">
+		<ns1:Notation>620.112 973</ns1:Notation>
 		<ns1:Label>Propriétés de supraconductivité</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/620.11299/">
-		<ns1:Notation>620.11299</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/620.112 99/">
+		<ns1:Notation>620.112 99</ns1:Notation>
 		<ns1:Label>Matériaux - Autres propriétés : Propriétés microphysiques (cristallographiques, moléculaires, microstructure), nanomatériaux</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/620.117042/">
-		<ns1:Notation>620.117042</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/620.117 042/">
+		<ns1:Notation>620.117 042</ns1:Notation>
 		<ns1:Label>Propriétés des matériaux organiques , essais non destructifs</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/620.118/">
@@ -2416,36 +2416,36 @@
 		<ns1:Notation>621.31</ns1:Notation>
 		<ns1:Label>Production, transformation, accumulation, transport d'énergie électrique, génératrice, convertisseurs, transformateurs, condensateurs, distribution</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.31042/">
-		<ns1:Notation>621.31042</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.310 42/">
+		<ns1:Notation>621.310 42</ns1:Notation>
 		<ns1:Label>Machines électriques</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/621.312/">
 		<ns1:Notation>621.312</ns1:Notation>
 		<ns1:Label>Production, transformation, accumulation d'énergie électrique</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.312134/">
-		<ns1:Notation>621.312134</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.312 134/">
+		<ns1:Notation>621.312 134</ns1:Notation>
 		<ns1:Label>Electricité : Production hydroélectrique et marémotrice</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.312136/">
-		<ns1:Notation>621.312136</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.312 136/">
+		<ns1:Notation>621.312 136</ns1:Notation>
 		<ns1:Label>Electricité : Production éolienne</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.31242/">
-		<ns1:Notation>621.31242</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.312 42/">
+		<ns1:Notation>621.312 42</ns1:Notation>
 		<ns1:Label>Electricité - Production par Conversion directe : Energie électrochimique (piles primaires, secondaires et à combustible)</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.31244/">
-		<ns1:Notation>621.31244</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.312 44/">
+		<ns1:Notation>621.312 44</ns1:Notation>
 		<ns1:Label>Electricité : Production à partir du rayonnement solaire, conversion photovoltaïque, piles et cellules solaires</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/621.313/">
 		<ns1:Notation>621.313</ns1:Notation>
 		<ns1:Label>Electricité : Machines de production et transformation, génératrice et convertisseurs, machines à courant continu, alternatif, synchrones, asynchrones</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.3137/">
-		<ns1:Notation>621.3137</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.313 7/">
+		<ns1:Notation>621.313 7</ns1:Notation>
 		<ns1:Label>Electricité - Machines de production et transformation : Redresseurs</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/621.316/">
@@ -2500,180 +2500,180 @@
 		<ns1:Notation>621.367</ns1:Notation>
 		<ns1:Label>Optique appliquée : Technologie de la photographie (spectrographie, à l'IR et l'UV, radiographie, holographie, télédétection)</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.3675/">
-		<ns1:Notation>621.3675</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.367 5/">
+		<ns1:Notation>621.367 5</ns1:Notation>
 		<ns1:Label>Holographie</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.3678/">
-		<ns1:Notation>621.3678</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.367 8/">
+		<ns1:Notation>621.367 8</ns1:Notation>
 		<ns1:Label>Technologie de la télédétection, Lidar</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/621.369/">
 		<ns1:Notation>621.369</ns1:Notation>
 		<ns1:Label>Optique appliquée : (autres domaines)</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.3692/">
-		<ns1:Notation>621.3692</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.369 2/">
+		<ns1:Notation>621.369 2</ns1:Notation>
 		<ns1:Label>Optique des fibres </ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.3693/">
-		<ns1:Notation>621.3693</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.369 3/">
+		<ns1:Notation>621.369 3</ns1:Notation>
 		<ns1:Label>Optique intégrée</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.3694/">
-		<ns1:Notation>621.3694</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.369 4/">
+		<ns1:Notation>621.369 4</ns1:Notation>
 		<ns1:Label>Optique non linéaire</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/621.381/">
 		<ns1:Notation>621.381</ns1:Notation>
 		<ns1:Label>Electronique, micro-électronique</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.3810287/">
-		<ns1:Notation>621.3810287</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.381 0287/">
+		<ns1:Notation>621.381 0287</ns1:Notation>
 		<ns1:Label>Microélectronique, tests et mesures</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.381044/">
-		<ns1:Notation>621.381044</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.381 044/">
+		<ns1:Notation>621.381 044</ns1:Notation>
 		<ns1:Label>Puissance et énergie dans les systèmes électroniques</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.381045/">
-		<ns1:Notation>621.381045</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.381 045/">
+		<ns1:Notation>621.381 045</ns1:Notation>
 		<ns1:Label>Optoélectronique</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.3810450287/">
-		<ns1:Notation>621.3810450287</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.381 0450287/">
+		<ns1:Notation>621.381 0450287</ns1:Notation>
 		<ns1:Label>Optoélectronique, tests et mesures</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.3813/">
-		<ns1:Notation>621.3813</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.381 3/">
+		<ns1:Notation>621.381 3</ns1:Notation>
 		<ns1:Label>Electronique des micro-ondes : Propagation, Circuits, Composants et dispositifs, guides d'ondes, cavités résonantes, klystrons, magnétrons, masers</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.38130287/">
-		<ns1:Notation>621.38130287</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.381 30287/">
+		<ns1:Notation>621.381 30287</ns1:Notation>
 		<ns1:Label>Electronique des micro-ondes, tests et mesures</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.3815/">
-		<ns1:Notation>621.3815</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.381 5/">
+		<ns1:Notation>621.381 5</ns1:Notation>
 		<ns1:Label>Electronique analogique</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.38150287/">
-		<ns1:Notation>621.38150287</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.381 50287/">
+		<ns1:Notation>621.381 50287</ns1:Notation>
 		<ns1:Label>Electronique des composants et circuits intégrés, tests et mesures</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.38151/">
-		<ns1:Notation>621.38151</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.381 51/">
+		<ns1:Notation>621.381 51</ns1:Notation>
 		<ns1:Label>Tubes électroniques, tubes à vide, tubes à gaz</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.38152/">
-		<ns1:Notation>621.38152</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.381 52/">
+		<ns1:Notation>621.381 52</ns1:Notation>
 		<ns1:Label>Semi-conducteurs - Composants : diodes, transistors et thyristors, T. à jonction, T. à effet champ</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.381522/">
-		<ns1:Notation>621.381522</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.381 522/">
+		<ns1:Notation>621.381 522</ns1:Notation>
 		<ns1:Label>Composants semi-conducteurs : diodes, diodes à jonction, électroluminescentes, à effet tunnel</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.381528/">
-		<ns1:Notation>621.381528</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.381 528/">
+		<ns1:Notation>621.381 528</ns1:Notation>
 		<ns1:Label>Electronique - Composants : Transistors et thyristors</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.38153/">
-		<ns1:Notation>621.38153</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.381 53/">
+		<ns1:Notation>621.381 53</ns1:Notation>
 		<ns1:Label>Circuits intégrés : circuits imprimés, circuits pour des fonctions</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.381530287/">
-		<ns1:Notation>621.381530287</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.381 530287/">
+		<ns1:Notation>621.381 530287</ns1:Notation>
 		<ns1:Label>Electronique des circuits imprimés, tests et mesures</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.381532/">
-		<ns1:Notation>621.381532</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.381 532/">
+		<ns1:Notation>621.381 532</ns1:Notation>
 		<ns1:Label>Electronique - Circuits pour des fonctions : Convertisseurs, redresseurs, onduleurs, filtres, filtres anti-parasites</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.38154/">
-		<ns1:Notation>621.38154</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.381 54/">
+		<ns1:Notation>621.381 54</ns1:Notation>
 		<ns1:Label>Dispositifs photoélectriques et photoélectroniques, cellules photoélectriques, tubes cathodiques, écrans vidéos et à cristaux liquides</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.381542/">
-		<ns1:Notation>621.381542</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.381 542/">
+		<ns1:Notation>621.381 542</ns1:Notation>
 		<ns1:Label>Dispositifs photoélectriques et photoélectroniques, tubes à rayons cathodiques, cellules photoélectriques, cellules photoconductrices, photoémissives, photovoltaïques, photomultiplicateurs, phototubes</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.3815422/">
-		<ns1:Notation>621.3815422</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.381 5422/">
+		<ns1:Notation>621.381 5422</ns1:Notation>
 		<ns1:Label>Écrans vidéo y compris à cristaux liquides</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.381548/">
-		<ns1:Notation>621.381548</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.381 548/">
+		<ns1:Notation>621.381 548</ns1:Notation>
 		<ns1:Label>Composants servant aux tests et aux mesures</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.38159/">
-		<ns1:Notation>621.38159</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.381 59/">
+		<ns1:Notation>621.381 59</ns1:Notation>
 		<ns1:Label>Convertisseurs analogique-numérique</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/621.382/">
 		<ns1:Notation>621.382</ns1:Notation>
 		<ns1:Label>Technologies des Télécommunications (transmission analogiques, numériques, électroniques)</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.3821/">
-		<ns1:Notation>621.3821</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.382 1/">
+		<ns1:Notation>621.382 1</ns1:Notation>
 		<ns1:Label>Télécommunications : Réseaux de télécommunications, protocole, architecture, modes transmission, commutation</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.38212/">
-		<ns1:Notation>621.38212</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.382 12/">
+		<ns1:Notation>621.382 12</ns1:Notation>
 		<ns1:Label>Télécommunications - Réseaux : Protocoles</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.38215/">
-		<ns1:Notation>621.38215</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.382 15/">
+		<ns1:Notation>621.382 15</ns1:Notation>
 		<ns1:Label>Technologie des communications - Architecture des réseaux de communication</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.3822/">
-		<ns1:Notation>621.3822</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.382 2/">
+		<ns1:Notation>621.382 2</ns1:Notation>
 		<ns1:Label>Télécommunications : Traitement du signal, théorie de l'information</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.3822015195/">
-		<ns1:Notation>621.3822015195</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.382 2015195/">
+		<ns1:Notation>621.382 2015195</ns1:Notation>
 		<ns1:Label>Traitement statistique du signal</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.38223/">
-		<ns1:Notation>621.38223</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.382 23/">
+		<ns1:Notation>621.382 23</ns1:Notation>
 		<ns1:Label>Télécommunications - Traitement du signal : Analyse et théorie du signal</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.38224/">
-		<ns1:Notation>621.38224</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.382 24/">
+		<ns1:Notation>621.382 24</ns1:Notation>
 		<ns1:Label>Télécommunications - Traitement du signal : Interférence, bruit et parasites électroniques</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.38238/">
-		<ns1:Notation>621.38238</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.382 38/">
+		<ns1:Notation>621.382 38</ns1:Notation>
 		<ns1:Label>Télécommunications : Communications spatiales</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.3824/">
-		<ns1:Notation>621.3824</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.382 4/">
+		<ns1:Notation>621.382 4</ns1:Notation>
 		<ns1:Label>Télécommunications : Antennes et propagation</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.3825/">
-		<ns1:Notation>621.3825</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.382 5/">
+		<ns1:Notation>621.382 5</ns1:Notation>
 		<ns1:Label>Communications par relais au sol, par satellite</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.3827/">
-		<ns1:Notation>621.3827</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.382 7/">
+		<ns1:Notation>621.382 7</ns1:Notation>
 		<ns1:Label>Télécommunications : Communications optiques, par fibres optiques (son, données images, …)</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.38275/">
-		<ns1:Notation>621.38275</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.382 75/">
+		<ns1:Notation>621.382 75</ns1:Notation>
 		<ns1:Label>Communication par fibre optique à guide de lumière</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.3828/">
-		<ns1:Notation>621.3828</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.382 8/">
+		<ns1:Notation>621.382 8</ns1:Notation>
 		<ns1:Label>Télécommunications : Communications acoustiques, optoacoustique, électroacoustique, reproduction du son, microphones, hauts parleurs</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/621.384/">
 		<ns1:Notation>621.384</ns1:Notation>
 		<ns1:Label>Télécommunications : Radio et radar</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.38415/">
-		<ns1:Notation>621.38415</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.384 15/">
+		<ns1:Notation>621.384 15</ns1:Notation>
 		<ns1:Label>Radio et radar : Radiotélégraphie, Radiotéléphonie, Systèmes par types d'ondes</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.38456/">
-		<ns1:Notation>621.38456</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.384 56/">
+		<ns1:Notation>621.384 56</ns1:Notation>
 		<ns1:Label>Télécommunications : Radiotéléphonie par systèmes de téléphonie cellulaire, syst. téléphonique portatif</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/621.385/">
@@ -2688,48 +2688,48 @@
 		<ns1:Notation>621.387</ns1:Notation>
 		<ns1:Label>Transmission téléphonique et équipements de réseaux, commutateurs</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.38717/">
-		<ns1:Notation>621.38717</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.387 17/">
+		<ns1:Notation>621.387 17</ns1:Notation>
 		<ns1:Label>Informatique applicative, diffuse</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.38802/">
-		<ns1:Notation>621.38802</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.388 02/">
+		<ns1:Notation>621.388 02</ns1:Notation>
 		<ns1:Label>Télévision noir et blanc</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.38804/">
-		<ns1:Notation>621.38804</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.388 04/">
+		<ns1:Notation>621.388 04</ns1:Notation>
 		<ns1:Label>Télévision couleur</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.38806/">
-		<ns1:Notation>621.38806</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.388 06/">
+		<ns1:Notation>621.388 06</ns1:Notation>
 		<ns1:Label>Télévision à haute définition HDTV</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.38807/">
-		<ns1:Notation>621.38807</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.388 07/">
+		<ns1:Notation>621.388 07</ns1:Notation>
 		<ns1:Label>Télévision numérique</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.3881/">
-		<ns1:Notation>621.3881</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.388 1/">
+		<ns1:Notation>621.388 1</ns1:Notation>
 		<ns1:Label>Télévision : Propagation et transmission des ondes, interférence</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.38833/">
-		<ns1:Notation>621.38833</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.388 33/">
+		<ns1:Notation>621.388 33</ns1:Notation>
 		<ns1:Label>Magnétoscopes et enregistrements magnétoscopiques</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.38834/">
-		<ns1:Notation>621.38834</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.388 34/">
+		<ns1:Notation>621.388 34</ns1:Notation>
 		<ns1:Label>Télévision - Composants : caméras</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.38835/">
-		<ns1:Notation>621.38835</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.388 35/">
+		<ns1:Notation>621.388 35</ns1:Notation>
 		<ns1:Label>Télévision - composants : antennes</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/621.389/">
 		<ns1:Notation>621.389</ns1:Notation>
 		<ns1:Label>Systèmes de sécurité, enregistrement du son, radiomessagerie, sirènes, électronique de sécurité</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.38928/">
-		<ns1:Notation>621.38928</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.389 28/">
+		<ns1:Notation>621.389 28</ns1:Notation>
 		<ns1:Label>Systèmes de sécurité : Electronique de sécutité, surveillance, écoute, alarme</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/621.39/">
@@ -2752,16 +2752,16 @@
 		<ns1:Notation>621.397</ns1:Notation>
 		<ns1:Label>Génie informatique  : Mémoire</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.39767/">
-		<ns1:Notation>621.39767</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.397 67/">
+		<ns1:Notation>621.397 67</ns1:Notation>
 		<ns1:Label>Mémoire optique, Stockage optique</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/621.398/">
 		<ns1:Notation>621.398</ns1:Notation>
 		<ns1:Label>Génie informatique - Equipement d'interfaçage de communication, périphériques</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/621.3993/">
-		<ns1:Notation>621.3993</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/621.399 3/">
+		<ns1:Notation>621.399 3</ns1:Notation>
 		<ns1:Label>Vision par ordinateur (dans le sens équipement)</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/621.402/">
@@ -2836,12 +2836,12 @@
 		<ns1:Notation>623.73</ns1:Notation>
 		<ns1:Label>Génie militaire : techniques de communications</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/623.8503/">
-		<ns1:Notation>623.8503</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/623.850 3/">
+		<ns1:Notation>623.850 3</ns1:Notation>
 		<ns1:Label>Systèmes techniques des navires : systèmes électriques</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/623.8504/">
-		<ns1:Notation>623.8504</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/623.850 4/">
+		<ns1:Notation>623.850 4</ns1:Notation>
 		<ns1:Label>Systèmes techniques des navires : systèmes électroniques</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/623.852/">
@@ -2852,8 +2852,8 @@
 		<ns1:Notation>624</ns1:Notation>
 		<ns1:Label>Génie civil</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/624.0299/">
-		<ns1:Notation>624.0299</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/624.029 9/">
+		<ns1:Notation>624.029 9</ns1:Notation>
 		<ns1:Label>Génie civil : organisation, estimation de la main d'œuvre, du temps, du choix des matériaux</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/624.101/">
@@ -2876,12 +2876,12 @@
 		<ns1:Notation>624.17</ns1:Notation>
 		<ns1:Label>Technique de la construction - Analyse et conception des structures : Théorie des structures, analyse des structures, règles de calcul</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/624.1762/">
-		<ns1:Notation>624.1762</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/624.176 2/">
+		<ns1:Notation>624.176 2</ns1:Notation>
 		<ns1:Label>Génie parasismique</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/624.17713/">
-		<ns1:Notation>624.17713</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/624.177 13/">
+		<ns1:Notation>624.177 13</ns1:Notation>
 		<ns1:Label>Technique de la construction - Structures : Optimisation des structures</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/624.18/">
@@ -2936,8 +2936,8 @@
 		<ns1:Notation>628.1</ns1:Notation>
 		<ns1:Label>Techniques sanitaires et urbaines : approvisionnement en eau</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/628.1673/">
-		<ns1:Notation>628.1673</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/628.167 3/">
+		<ns1:Notation>628.167 3</ns1:Notation>
 		<ns1:Label>Dessalement eau de mer par électrolyse</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/628.168/">
@@ -2968,28 +2968,28 @@
 		<ns1:Notation>629.1</ns1:Notation>
 		<ns1:Label>Génie aéronautique, aérospatiale</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/629.1354/">
-		<ns1:Notation>629.1354</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/629.135 4/">
+		<ns1:Notation>629.135 4</ns1:Notation>
 		<ns1:Label>Installations électriques des avions</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/629.1355/">
-		<ns1:Notation>629.1355</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/629.135 5/">
+		<ns1:Notation>629.135 5</ns1:Notation>
 		<ns1:Label>Avions : Installations électroniques</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/629.2/">
 		<ns1:Notation>629.2</ns1:Notation>
 		<ns1:Label>Véhicules motorisés terrestres, cycles </ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/629.2295/">
-		<ns1:Notation>629.2295</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/629.229 5/">
+		<ns1:Notation>629.229 5</ns1:Notation>
 		<ns1:Label>Véhicules motorisés terrestres, cycles : Catégories de véhicules : Véhicules solaires</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/629.25/">
 		<ns1:Notation>629.25</ns1:Notation>
 		<ns1:Label>Véhicules motorisés terrestres, cycles : Moteurs </ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/629.2508/">
-		<ns1:Notation>629.2508</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/629.250 8/">
+		<ns1:Notation>629.250 8</ns1:Notation>
 		<ns1:Label>Véhicules motorisés terrestres, cycles - Moteurs : Moteurs solaires</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/629.253/">
@@ -3180,12 +3180,12 @@
 		<ns1:Notation>658.403 8</ns1:Notation>
 		<ns1:Label>Gestion de l'information (intelligence économique, veille)</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/658.4038011/">
+	<ns1:Concept level="3" uri="http://dewey.info/class/658.403 8011/">
 		<ns1:Notation>658.403 8011</ns1:Notation>
 		<ns1:Label>Gestion de l'information : systèmes d'information</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/658.40380110218/">
-		<ns1:Notation>658.40380110218</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/658.403 80110218/">
+		<ns1:Notation>658.403 80110218</ns1:Notation>
 		<ns1:Label>Normes et qualité des systèmes d'information</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/658.5/">
@@ -3220,36 +3220,36 @@
 		<ns1:Notation>660</ns1:Notation>
 		<ns1:Label>Génie chimique</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/660.2804/">
-		<ns1:Notation>660.2804</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/660.280 4/">
+		<ns1:Notation>660.280 4</ns1:Notation>
 		<ns1:Label>Génie chimique : mesures de sécurité</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/660.2812/">
-		<ns1:Notation>660.2812</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/660.281 2/">
+		<ns1:Notation>660.281 2</ns1:Notation>
 		<ns1:Label>Conception de procédés</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/660.2815/">
-		<ns1:Notation>660.2815</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/660.281 5/">
+		<ns1:Notation>660.281 5</ns1:Notation>
 		<ns1:Label>Commande informatisée des procédés</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/660.283/">
 		<ns1:Notation>660.283</ns1:Notation>
 		<ns1:Label>Génie chimique : équipements fonctionnels, réacteurs</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/660.2832/">
-		<ns1:Notation>660.2832</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/660.283 2/">
+		<ns1:Notation>660.283 2</ns1:Notation>
 		<ns1:Label>réacteurs idéaux</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/660.2842/">
-		<ns1:Notation>660.2842</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/660.284 2/">
+		<ns1:Notation>660.284 2</ns1:Notation>
 		<ns1:Label>Criblage, transfert de masse, chromatographie gazeuse, adsorption, filtration, distillation fractionnée, évaporation, transfert de chaleur, fluidisation, fusion, cristallisation</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/660.28425/">
-		<ns1:Notation>660.28425</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/660.284 25/">
+		<ns1:Notation>660.284 25</ns1:Notation>
 		<ns1:Label>Distillation</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/660.2844/">
-		<ns1:Notation>660.2844</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/660.284 4/">
+		<ns1:Notation>660.284 4</ns1:Notation>
 		<ns1:Label>Synthèse et réactions : aromatisation, halogénation, oxydation, réduction, estérification, amination, diazotation, nitration, nitrosation, sulfonation, fermentation, hydrolyse, saponification</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/660.29/">
@@ -3348,8 +3348,8 @@
 		<ns1:Notation>669</ns1:Notation>
 		<ns1:Label>Métallurgie</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/669.0284/">
-		<ns1:Notation>669.0284</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/669.028 4/">
+		<ns1:Notation>669.028 4</ns1:Notation>
 		<ns1:Label>Métallurgie : Electrométallurgie, électroraffinage, extraction électrolytique, électrothermie</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="2" uri="http://dewey.info/class/67/">
@@ -3632,8 +3632,8 @@
 		<ns1:Notation>770</ns1:Notation>
 		<ns1:Label>Photographie, photographies, art par ordinateur (art numérique)</ns1:Label>
 	</ns1:Concept>
-	<ns1:Concept level="3" uri="http://dewey.info/class/774.0153/">
-		<ns1:Notation>774.0153</ns1:Notation>
+	<ns1:Concept level="3" uri="http://dewey.info/class/774.015 3/">
+		<ns1:Notation>774.015 3</ns1:Notation>
 		<ns1:Label>Holographie, principes physiques</ns1:Label>
 	</ns1:Concept>
 	<ns1:Concept level="3" uri="http://dewey.info/class/778.5/">
