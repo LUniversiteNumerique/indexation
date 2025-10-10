@@ -79,7 +79,7 @@ class SuplomDto
         // Si "prénom nom", $parts[1] est le nom, sinon c'est $parts[0]
         $creatorFamilyName = $creatorParts[1] ?? $creatorParts[0];
         // Si "prénom nom", $parts[0] est le prénom, sinon vide
-        $creatorGivenName = $creatorParts[1] ? $creatorParts[0] : '';
+        $creatorGivenName = isset($creatorParts[1]) ? $creatorParts[0] : '';
         $creatorORG = $creator->getSchool() ? "\r\nORG:" . $creator->getSchool()->getNom() : "";
 
         $validatorFullName = $validator->getName();
@@ -87,7 +87,7 @@ class SuplomDto
         // Si "prénom nom", $parts[1] est le nom, sinon c'est $parts[0]
         $validatorFamilyName = $validatorParts[1] ?? $validatorParts[0];
         // Si "prénom nom", $parts[0] est le prénom, sinon vide
-        $validatorGivenName = $validatorParts[1] ? $validatorParts[0] : '';
+        $validatorGivenName = isset($validatorParts[1]) ? $validatorParts[0] : '';
         $validatorORG = $validator->getUntheme() ? "\r\nORG:" . $validator->getUntheme()->getName() : "";
 
         $metadata = new Metadata(
