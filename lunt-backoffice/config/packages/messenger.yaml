@@ -21,4 +21,3 @@ framework:
             Symfony\Component\Notifier\Message\SmsMessage: async
             App\Message\ExtexingConfigMessage: async
             App\Message\IntexingConfigMessage: sync
-            App\Message\ImportXmlMessage: sync
