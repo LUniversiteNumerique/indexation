@@ -120,9 +120,6 @@ readonly class InterIndexingHandler
         $this->fileService->removeFilesFrom("XML/$index/suplomfr/", $uuids);
         $this->fileService->removeFilesFrom("XML/$index/oai_dc/", $uuids);
 
-        // Retrait suplom solr
-        $this->fileService->removeFilesFrom("suplom/$index", $uuids);
-
         return $deleteQueries ? "<delete>$deleteQueries</delete>" : '';
     }
 
@@ -165,9 +162,6 @@ readonly class InterIndexingHandler
         // Indexation oai et suplom JOAI
         $this->fileService->writeFilesTo($itemOaiSF, "XML/$index/suplomfr/");
         $this->fileService->writeFilesTo($itemOaiDC, "XML/$index/oai_dc/");
-
-        // Indexation suplom solr
-        $this->fileService->writeFilesTo($itemSF, "suplom/$index/");
 
         return $itemSP ? "<add>$itemSP</add>" : '';
     }
