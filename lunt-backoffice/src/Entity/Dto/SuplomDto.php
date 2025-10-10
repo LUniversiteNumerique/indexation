@@ -154,15 +154,15 @@ class SuplomDto
         $classifications = [
             new Classification(
                 new Source('LOMv1.0', "discipline"),
-                new TaxonPath([new Field('Classification', $lang, null)], $disciplines)
+                [new TaxonPath([new Field('Classification', $lang, null)], $disciplines)]
             ),
             new Classification(
                 new Source('LOMv1.0', "dewey"),
-                new TaxonPath([new Field('CDD 22e éd.', $lang, null)], array_merge($deweys, $deweyPersos))
+                [new TaxonPath([new Field('CDD 22e éd.', $lang, null)], array_merge($deweys, $deweyPersos))]
             ),
             new Classification(
                 new Source('LOMv1.0', "pedagogie"),
-                null,
+                [],
                 [new Motcle(new Field($notice->getObjectif() ?? "", $lang, null))]
             ),
         ];
