@@ -23,6 +23,7 @@ ENV TZ Europe/Paris
 
 WORKDIR /usr/local/tomcat/webapps
 COPY --from=builder /war/ ./joai/
+COPY --from=builder /tmp/joai-project/server.xml /usr/local/tomcat/conf/server.xml
 RUN \
   wget -O ../lib/woodstox-core-5.0.3.jar 'https://search.maven.org/remotecontent?filepath=com/fasterxml/woodstox/woodstox-core/5.0.3/woodstox-core-5.0.3.jar' && \
   wget -O ../lib/stax2-api-4.0.0.jar 'https://search.maven.org/remotecontent?filepath=org/codehaus/woodstox/stax2-api/4.0.0/stax2-api-4.0.0.jar' && \
