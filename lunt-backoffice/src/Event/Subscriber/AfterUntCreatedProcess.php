@@ -39,9 +39,20 @@ readonly class AfterUntCreatedProcess
 
         // Création des répertoires associés à l'UNT
         $untDirXml = FileService::RESOURCES_DIR . "XML" . DIRECTORY_SEPARATOR . $unt->getName();
-        $untDirSuplom = FileService::RESOURCES_DIR . "suplom_externe" . DIRECTORY_SEPARATOR . $unt->getName();
+        $untDirList = [
+            'suplom_externe',
+            'suplom',
+            'oai_dc'
+        ];
 
-        foreach ([$untDirXml, $untDirSuplom] as $dir) {
+        // Création du dossier principal
+        if (!mkdir($untDirXml, 0755, true) && !is_dir($untDirXml)) {
+            throw new \RuntimeException("Failed to create destination directory: $untDirXml");
+        }
+
+        // Création des sous-dossiers
+        foreach ($untDirList as $subDir) {
+            $dir = $untDirXml . DIRECTORY_SEPARATOR . $subDir;
             if (!mkdir($dir, 0755, true) && !is_dir($dir)) {
                 throw new \RuntimeException("Failed to create destination directory: $dir");
             }
