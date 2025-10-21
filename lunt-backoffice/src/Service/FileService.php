@@ -55,7 +55,7 @@ class FileService
         return array_map(fn ($fileName) => $this->writeFile($relativePath.$fileName, $filesContent[$fileName]), array_keys($filesContent));
     }
 
-    public function readFilesFrom(DateTime $since = null, string $relativePath = '', $names = ['*.xml'], $deep = 0): ?Finder
+    public function readFilesFrom(DateTime $since = null, string $relativePath = '', $depth = 0, $names = ['*.xml']): ?Finder
     {
         $finder = new Finder();
         $path = $this->directory. $relativePath;
@@ -63,7 +63,7 @@ class FileService
             // Vérifier si le répertoire existe
             if (!$this->filesystem->exists($path))
                 throw new IOException("Le répertoire n'existe pas : $path");
-            $finder->files()->in($path)->name($names)->depth($deep);
+            $finder->files()->in($path)->name($names)->depth($depth);
 
             if ($since) $finder->date('>= ' . $since->format('Y-m-d H:i:s')); //foreach ($finder as $file) $filesContent[$file->getFilename()] = file_get_contents($file->getRealPath());
 

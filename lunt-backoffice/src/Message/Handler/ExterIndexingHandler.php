@@ -33,7 +33,7 @@ readonly class ExterIndexingHandler
         $coreIndex = $task->getIndexCore()?->getName();
         $this->logger->warning(sprintf("Début d'externe indexation %s de %s", $task->isFullMode()?'complète':'différentielle', $coreIndex));
 
-        $sources = $this->fileService->readFilesFrom($task->isFullMode() ?null: $task->getScheduleAt(), "suplom_externe/$coreIndex");
+        $sources = $this->fileService->readFilesFrom($task->isFullMode() ?null: $task->getScheduleAt(), "$coreIndex/suplom_externe", '< 2');
         if ($sources->count()) { $news = []; $olds = []; $dq = null;
 
             foreach ($sources as $file) {
