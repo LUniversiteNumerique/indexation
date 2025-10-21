@@ -95,7 +95,7 @@ class ImportDeweyXmlCommand extends Command
         if (count($invalidEntries)) {
             $io->warning([
                 'Import completed but some entries were not imported due to an invalid code.',
-                'See https://fr.wikipedia.org/wiki/Classification_Dewey for more information about Dewey code format.',
+                'Be sure no space is present inside the code, and that there is a dot before the fourth number if present.',
                 'Please, correct the following entries and re-run the import:'
             ]);
             foreach ($invalidEntries as $code => $label) {
@@ -140,8 +140,8 @@ class ImportDeweyXmlCommand extends Command
 
             $codeRaw = $dewey->getNumericCode();
             // Regex pour vérifier que le format du code correspond à la notation suivante :
-            // 123.456 7890 (voir la page Wikipedia https://fr.wikipedia.org/wiki/Classification_Dewey)
-            if (!preg_match('/^(?:\d{1,3}|\d{3}\.\d{1,3}|\d{3}\.\d{3} \d+)$/', $codeRaw)) {
+            // 123.45678 (notation dewey sans espaces)
+            if (!preg_match('/^(?:\d{1,3}|\d{3}\.\d+)$/', $codeRaw)) {
                 $invalidEntries[$codeRaw] = $label;
                 continue;
             }

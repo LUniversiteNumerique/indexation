@@ -75,6 +75,7 @@ class ImportNoticeXmlCommand extends Command
     $codeDeweyNameDiff = [];
     $codeDeweyPersoNameDiff = [];
     $deweyWithoutCode = [];
+    $deweyWithMalformedCode = [];
     $specialitesWithoutParent = [];
     $relationsToLink = [];
     $noticeWithoutLicence = [];
@@ -500,10 +501,20 @@ class ImportNoticeXmlCommand extends Command
             $deweyGroupsByParent = [];
             foreach ($taxonPath->taxons as $taxon) {
               $spec = trim($taxon->entry[0]?->value ?? '');
-              $id = $taxon->id ?? null;
+              $id = str_replace(' ', '', $taxon->id) ?? null;
               if (!$id) {
                 $deweyWithoutCode[] = [
                   'nom' => $spec,
+                  'file' => $file->getFilename()
+                ];
+                continue;
+              }
+              // Regex pour vérifier que le format du code correspond à la notation suivante :
+              // 123.45678 (notation dewey sans espaces)
+              if (!preg_match('/^(?:\d{1,3}|\d{3}\.\d+)$/', $id)) {
+                $deweyWithMalformedCode[] = [
+                  'nom' => $spec,
+                  'code' => $id,
                   'file' => $file->getFilename()
                 ];
                 continue;
@@ -641,6 +652,15 @@ class ImportNoticeXmlCommand extends Command
         $file = $item['file'] ?? '[fichier inconnu]';
         $nomSuplom = $nom !== '' ? $nom : '[nom manquant]';
         $output->writeln('- ' . $file . ' | ' . $nomSuplom);
+      }
+    }
+    if (count($deweyWithMalformedCode) > 0) {
+      $output->writeln("\nListe des Dewey avec un code invalide :");
+      foreach ($deweyWithMalformedCode as $item) {
+        $nom = trim($item['nom'] ?? '');
+        $file = $item['file'] ?? '[fichier inconnu]';
+        $nomSuplom = $nom !== '' ? $nom : '[nom manquant]';
+          $output->writeln('- ' . $file . ' | ' . ($item['code'] ?? '-') . ' | ' . $nomSuplom);
       }
     }
     if (count($codeDeweyNameDiff) > 0) {

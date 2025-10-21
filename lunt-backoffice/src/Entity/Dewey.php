@@ -48,6 +48,21 @@ class Dewey
         return rtrim($numericCode, "/");
     }
 
+    private function getNumericCodeWithSpace(): ?string
+    {
+        $numericCode = $this->getNumericCode();
+        // Ajout d'un espace tous les 3 chiffres après le point
+        if (str_contains($numericCode, '.')) {
+            // Sépare les parties avant et après le point
+            $parts = explode('.', $numericCode);
+            // Ajout des espaces dans la partie après le point
+            $parts[1] = wordwrap($parts[1], 3, ' ', true);
+            // Recombine les parties
+            $numericCode = implode('.', $parts);
+        }
+        return $numericCode;
+    }
+
     public function getCode(): ?string
     {
         return $this->code;
@@ -116,7 +131,7 @@ class Dewey
             return $this->nom;
         } else {
             // Spécialité
-            return $this->getNumericCode() . ' - ' . $this->nom;
+            return $this->getNumericCodeWithSpace() . ' - ' . $this->nom;
         }
     }
 }

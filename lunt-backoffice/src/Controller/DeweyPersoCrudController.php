@@ -16,9 +16,12 @@ class DeweyPersoCrudController extends AbstractController
   public function addDeweyPerso(Request $request, EntityManagerInterface $em): JsonResponse
   {
     $data = json_decode($request->getContent(), true);
-    $code = isset($data['code']) ? trim($data['code']) : null;
+    $code = isset($data['code']) ? str_replace(' ', '', trim($data['code'])) : null;
     $nom = isset($data['nom']) ? trim($data['nom']) : null;
 
+    if (!preg_match('/^(?:\d{1,3}|\d{3}\.\d+)$/', $code)) {
+      return new JsonResponse(['error' => 'Le code est invalide (1 à 3 chiffres, puis un point pour séparer les trois premiers chiffres des suivants).'], 400);
+    }
     if (!$code || !$nom) {
       return new JsonResponse(['error' => 'Code et nom requis'], 400);
     }
@@ -35,7 +38,6 @@ class DeweyPersoCrudController extends AbstractController
       $em->persist($deweyPerso);
       $em->flush();
     }
-
 
     return new JsonResponse([
       'success' => true,
