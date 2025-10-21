@@ -77,8 +77,9 @@ class NoticeActionVoter extends Voter
      * Vérifie si l'utilisateur peut éditer ou supprimer la notice.
      *
      * Règles d'accès :
+     * - L'administrateur a toujours accès.
      * - Seul le créateur peut modifier/supprimer une notice "En travail".
-     * - Seuls les documentalistes ou administrateurs peuvent éditer une notice "Soumise".
+     * - Seuls les documentalistes peuvent éditer une notice "Soumise".
      *
      * @param Notice $notice La notice concernée
      * @param User $user L'utilisateur à vérifier
@@ -86,11 +87,15 @@ class NoticeActionVoter extends Voter
      */
     private function canEdit(Notice $notice, User $user): bool
     {
+        // L'administrateur a toujours accès
+        if ($user->getGroup()->getLabel() === 'Administrateur') {
+            return true;
+        }
         // Seul le créateur peut modifier/supprimer une notice "En travail"
         if ($notice->getEtat() === NoticEtat::Working) {
             return $this->isOwner($notice, $user);
         }
-        // Seuls les documentalistes/admins peuvent éditer une notice "Soumise"
+        // Seuls les documentalistes peuvent éditer une notice "Soumise"
         if ($notice->getEtat() === NoticEtat::Forward) {
             return $this->canVali($notice, $user);
         }
@@ -128,8 +133,7 @@ class NoticeActionVoter extends Voter
      *   - Accès si créateur de la notice.
      *   - Accès si son UNT correspond à la notice ET notice "Soumise" ou "Validée".
      * - Administrateur :
-     *   - Accès si notice "Soumise" ou "Validée".
-     *   - Accès si créateur de la notice.
+     *   - Accès à toutes les notices.
      * - Autres : accès refusé.
      *
      * @param Notice $notice La notice concernée
@@ -162,8 +166,7 @@ class NoticeActionVoter extends Voter
 
         // Administrateur
         if ($role === 'Administrateur') {
-            return in_array($notice->getEtat(), [NoticEtat::Forward, NoticEtat::Approved], true)
-                || $this->isOwner($notice, $user);
+            return true;
         }
 
         // Par défaut, accès refusé

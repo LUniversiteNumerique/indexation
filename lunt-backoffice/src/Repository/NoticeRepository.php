@@ -208,15 +208,7 @@ class NoticeRepository extends ServiceEntityRepository
         $unt = $user->getUntheme();
 
         if ($role === 'Administrateur') {
-            // Ses propres notices OU les notices soumises et validées
-            $qb->andWhere(
-                $qb->expr()->orX(
-                    $alias . '.createur = :user',
-                    $alias . '.etat IN (:etats)'
-                )
-            )
-                ->setParameter('user', $userId)
-                ->setParameter('etats', [NoticEtat::Forward, NoticEtat::Approved]);
+            // Toutes les notice
         } elseif ($role === 'Contributeur' && $school) {
             // Ses propres notices OU celles soumises et validées de son établissement
             $qb->andWhere(
@@ -246,7 +238,7 @@ class NoticeRepository extends ServiceEntityRepository
                 ->setParameter('user', $userId)
                 ->setParameter('champs', $unt->getFields())
                 ->setParameter('etats', [NoticEtat::Forward, NoticEtat::Approved]);
-        } else {
+        } else { // Contributeur sans établissement ou documentaliste sans UNT
             // Seulement ses propres notices
             $qb->andWhere($alias . '.createur = :user')
                 ->setParameter('user', $userId);
