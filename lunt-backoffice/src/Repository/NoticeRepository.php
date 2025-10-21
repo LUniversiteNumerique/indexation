@@ -90,14 +90,6 @@ class NoticeRepository extends ServiceEntityRepository
     public function findLatestBy(User $user, int $limit = 20): array
     {
         $qb = $this->createQueryBuilder('n')
-            ->select('n, a, e, dg, s, dgw, dpw, dp')
-            ->leftJoin('n.auteurs', 'a')
-            ->leftJoin('n.codeweys', 'e')
-            ->leftJoin('n.disciplineGroups', 'dg')
-            ->leftJoin('dg.specialites', 's')
-            ->leftJoin('n.deweyGroups', 'dgw')
-            ->leftJoin('dgw.codeweys', 'dpw')
-            ->leftJoin('n.deweyPersos', 'dp')
             ->where('n.deleted = 0 AND n.etat = :etat')
             ->setParameter('etat', NoticEtat::Approved);
 
@@ -149,8 +141,7 @@ class NoticeRepository extends ServiceEntityRepository
     public function countByEtat(User $user, ?string $date = null): array
     {
         $qb = $this->createQueryBuilder('n')
-            ->where('n.deleted = 0')
-            ->join('n.disciplineGroups', 'dg');
+            ->where('n.deleted = 0');
 
         $this->applyUserRestrictions($qb, $user);
 
@@ -225,16 +216,22 @@ class NoticeRepository extends ServiceEntityRepository
                 ->setParameter('etats', [NoticEtat::Forward, NoticEtat::Approved]);
         } elseif ($role === 'Documentaliste' && $unt) {
             // Ses propres notices OU celles soumises et validées liées à son UNT
-            $qb->join('dg.champDisc', 'cd')
-                ->andWhere(
-                    $qb->expr()->orX(
-                        $alias . '.createur = :user',
-                        $qb->expr()->andX(
-                            'cd IN (:champs)',
-                            $alias . '.etat IN (:etats)'
-                        )
+            // Jointures nécessaires au filtrage par UNT
+            if (!in_array('cd', $qb->getAllAliases())) {
+                if (!in_array('dg', $qb->getAllAliases())) {
+                    $qb->join($alias . '.disciplineGroups', 'dg');
+                }
+                $qb->join('dg.champDisc', 'cd');
+            }
+            $qb->andWhere(
+                $qb->expr()->orX(
+                    $alias . '.createur = :user',
+                    $qb->expr()->andX(
+                        'cd IN (:champs)',
+                        $alias . '.etat IN (:etats)'
                     )
                 )
+            )
                 ->setParameter('user', $userId)
                 ->setParameter('champs', $unt->getFields())
                 ->setParameter('etats', [NoticEtat::Forward, NoticEtat::Approved]);
