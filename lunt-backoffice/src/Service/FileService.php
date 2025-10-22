@@ -55,20 +55,31 @@ class FileService
         return array_map(fn ($fileName) => $this->writeFile($relativePath.$fileName, $filesContent[$fileName]), array_keys($filesContent));
     }
 
-    public function readFilesFrom(DateTime $since = null, string $relativePath = '', $depth = 0, $names = ['*.xml']): ?Finder
-    {
+    /**
+     * Récupère les fichiers d'un répertoire selon des critères.
+     *
+     * @param DateTime|null $since Date minimale de modification
+     * @param string $path Répertoire de collecte des fichiers
+     * @param int|string $depth Profondeur de recherche
+     * @param array $names Filtres de noms de fichiers (ex: ['*.xml'])
+     * @return Finder|null Instance de Finder ou null en cas d'erreur
+     */
+    public function readFilesFrom(
+        ?DateTime $since = null,
+        string $path = '',
+        int|string $depth = 0,
+        array $names = ['*.xml']
+    ): ?Finder {
         $finder = new Finder();
-        $path = $this->directory. $relativePath;
-        try {
-            // Vérifier si le répertoire existe
-            if (!$this->filesystem->exists($path))
-                throw new IOException("Le répertoire n'existe pas : $path");
-            $finder->files()->in($path)->name($names)->depth($depth);
+        if (!$this->filesystem->exists($path)) {
+            throw new IOException("Le répertoire n'existe pas : $path");
+        }
+        $finder->files()->in($path)->name($names)->depth($depth);
 
-            if ($since) $finder->date('>= ' . $since->format('Y-m-d H:i:s')); //foreach ($finder as $file) $filesContent[$file->getFilename()] = file_get_contents($file->getRealPath());
-
-            return $finder;
-        }catch (IOExceptionInterface) { return null; }
+        if ($since) {
+            $finder->date('>= ' . $since->format('Y-m-d H:i:s'));
+        }
+        return $finder;
     }
 
     public function removeFilesFrom(string $relativePath = '', $filenames = null): bool
