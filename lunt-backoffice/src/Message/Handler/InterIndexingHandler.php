@@ -117,8 +117,14 @@ readonly class InterIndexingHandler
         );
 
         // Retrait oai et suplom JOAI
-        $this->fileService->removeFilesFrom("XML/$index/suplomfr/", $uuids);
-        $this->fileService->removeFilesFrom("XML/$index/oai_dc/", $uuids);
+        $this->fileService->removeFilesFrom(
+            FileService::XML_DIR . $index . DIRECTORY_SEPARATOR . 'suplomfr',
+            array_map(fn($uuid) => 'sf_' . $uuid, $uuids) // préfixe les uuids avec 'sf_'
+        );
+        $this->fileService->removeFilesFrom(
+            FileService::XML_DIR . $index . DIRECTORY_SEPARATOR . 'oai_dc',
+            array_map(fn($uuid) => 'dc_' . $uuid, $uuids) // préfixe les uuids avec 'dc_'
+        );
 
         return $deleteQueries ? "<delete>$deleteQueries</delete>" : '';
     }
@@ -160,8 +166,8 @@ readonly class InterIndexingHandler
         }
 
         // Indexation oai et suplom JOAI
-        $this->fileService->writeFilesTo($itemOaiSF, "XML/$index/suplomfr/");
-        $this->fileService->writeFilesTo($itemOaiDC, "XML/$index/oai_dc/");
+        $this->fileService->writeFilesTo($itemOaiSF, FileService::XML_DIR . $index . DIRECTORY_SEPARATOR . 'suplomfr');
+        $this->fileService->writeFilesTo($itemOaiDC, FileService::XML_DIR . $index . DIRECTORY_SEPARATOR . 'oai_dc');
 
         return $itemSP ? "<add>$itemSP</add>" : '';
     }

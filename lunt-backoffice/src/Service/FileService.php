@@ -6,53 +6,91 @@ use DateTime;
 use Symfony\Component\{Filesystem\Filesystem, Finder\Finder};
 use Symfony\Component\Filesystem\Exception\{IOException,IOExceptionInterface};
 
+/**
+ * Service de gestion des fichiers et répertoires.
+ */
 class FileService
 {
-    const RESOURCES_DIR = DIRECTORY_SEPARATOR . 'opt' . DIRECTORY_SEPARATOR . 'lunt-resources' . DIRECTORY_SEPARATOR;
-    const REFERENTIELS_DIR = self::RESOURCES_DIR . 'referentiels' . DIRECTORY_SEPARATOR;
-    const XML_DIR = self::RESOURCES_DIR . 'XML' . DIRECTORY_SEPARATOR;
+    /** @var string Chemin du répertoire des ressources */
+    public const RESOURCES_DIR = DIRECTORY_SEPARATOR . 'opt' . DIRECTORY_SEPARATOR . 'lunt-resources' . DIRECTORY_SEPARATOR;
+    /** @var string Chemin du répertoire des référentiels */
+    public const REFERENTIELS_DIR = self::RESOURCES_DIR . 'referentiels' . DIRECTORY_SEPARATOR;
+    /** @var string Chemin du répertoire XML */
+    public const XML_DIR = self::RESOURCES_DIR . 'XML' . DIRECTORY_SEPARATOR;
+
+    /** @var Filesystem */
     private Filesystem $filesystem;
-    public function __construct(private ?string $directory = null)
+
+    /** @var string */
+    private string $directory;
+
+    /**
+     * @param string|null $directory Répertoire de base pour les opérations sur les fichiers
+     */
+    public function __construct(?string $directory = null)
     {
         $this->directory = $directory ?? self::RESOURCES_DIR;
         $this->filesystem = new Filesystem();
-        if (!$this->filesystem->exists($this->directory))
+
+        if (!$this->filesystem->exists($this->directory)) {
             $this->filesystem->mkdir($this->directory);
+        }
     }
 
+    /**
+     * Écrit le contenu dans un fichier.
+     *
+     * @param string $filename Nom du fichier (relatif au répertoire de base)
+     * @param string $content Contenu à écrire
+     * @return bool Succès de l'opération
+     */
     public function writeFile(string $filename, string $content): bool
     {
+        $filePath = $this->directory . $filename;
         try {
-            // Chemin complet du fichier
-            $filePath = $this->directory . $filename;
-
-            // Écrire le contenu dans le fichier
             $this->filesystem->dumpFile($filePath, $content);
-
             return true;
         } catch (IOExceptionInterface) {
             return false;
         }
     }
 
-    public function readFile(string $filePath, $isRelative = false): ?string
+    /**
+     * Lit le contenu d'un fichier.
+     *
+     * @param string $filePath Chemin du fichier (relatif ou absolu)
+     * @param bool $isRelative Indique si le chemin est relatif au répertoire de base
+     * @return string|null Contenu du fichier ou null en cas d'erreur
+     */
+    public function readFile(string $filePath, bool $isRelative = false): ?string
     {
-        $path = $isRelative ? $this->directory. $filePath : $filePath;
+        $path = $isRelative ? $this->directory . $filePath : $filePath;
         try {
-            // Vérifier si le fichier existe
-            if (!$this->filesystem->exists($path))
+            if (!$this->filesystem->exists($path)) {
                 throw new IOException("Le fichier n'existe pas : $path");
-
-            // Lire le contenu du fichier
+            }
             return file_get_contents($path);
-        } catch (IOExceptionInterface) { return null; }
+        } catch (IOExceptionInterface) {
+            return null;
+        }
     }
 
-    public function writeFilesTo(array $filesContent,string $relativePath = ''): array
+    /**
+     * Écrit plusieurs fichiers dans un répertoire.
+     *
+     * @param array $filesContent Tableau associatif [nomFichier => contenu]
+     * @param string $path Répertoire
+     * @return array Résultats booléens pour chaque fichier
+     */
+    public function writeFilesTo(array $filesContent, string $path = ''): array
     {
-        $path = $this->directory. $relativePath;
-        if (!$this->filesystem->exists($path)) $this->filesystem->mkdir($path);
-        return array_map(fn ($fileName) => $this->writeFile($relativePath.$fileName, $filesContent[$fileName]), array_keys($filesContent));
+        if (!$this->filesystem->exists($path)) {
+            $this->filesystem->mkdir($path);
+        }
+        return array_map(
+            fn($fileName) => $this->writeFile($path . $fileName, $filesContent[$fileName]),
+            array_keys($filesContent)
+        );
     }
 
     /**
@@ -82,19 +120,32 @@ class FileService
         return $finder;
     }
 
-    public function removeFilesFrom(string $relativePath = '', $filenames = null): bool
+    /**
+     * Supprime des fichiers d'un répertoire.
+     *
+     * @param string $path Répertoire
+     * @param array|null $filenames Liste des noms de fichiers à supprimer (sans extension), ou null pour tout supprimer
+     * @return bool Succès de l'opération
+     */
+    public function removeFilesFrom(string $path = '', ?array $filenames = null): bool
     {
         $finder = new Finder();
-        $path = $this->directory. $relativePath;
         try {
-            if (!$this->filesystem->exists($path))
+            if (!$this->filesystem->exists($path)) {
                 throw new IOException("Le répertoire n'existe pas : $path");
-            if($filenames === null) {
+            }
+            if ($filenames === null) {
                 $finder->files()->in($path);
-                foreach ($finder as $file) $this->filesystem->remove($file->getRealPath());
-            } else foreach ($filenames as $file) {
-                $filePath = sprintf("%s%s_%s.xml", $path, DIRECTORY_SEPARATOR.(str_starts_with($relativePath,'oai') ?'dc':'sf'), $file);
-                if ($this->filesystem->exists($filePath)) $this->filesystem->remove($filePath);
+                foreach ($finder as $file) {
+                    $this->filesystem->remove($file->getRealPath());
+                }
+            } else {
+                foreach ($filenames as $file) {
+                    $filePath = sprintf("%s%s.xml", $path, $file);
+                    if ($this->filesystem->exists($filePath)) {
+                        $this->filesystem->remove($filePath);
+                    }
+                }
             }
             return true;
         } catch (IOExceptionInterface) {

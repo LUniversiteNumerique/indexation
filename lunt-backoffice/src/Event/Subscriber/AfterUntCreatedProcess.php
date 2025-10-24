@@ -38,7 +38,7 @@ readonly class AfterUntCreatedProcess
         $unt = $event->getUnt();
 
         // Création des répertoires associés à l'UNT
-        $untDirXml = FileService::RESOURCES_DIR . "XML" . DIRECTORY_SEPARATOR . $unt->getName();
+        $untDirXml = FileService::XML_DIR . $unt->getName();
         $untDirList = [
             'suplom_externe',
             'suplom',
