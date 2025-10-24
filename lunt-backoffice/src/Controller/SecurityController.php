@@ -6,6 +6,8 @@ use App\Entity\User;
 use App\Event\UserPassSettingEvent;
 use App\Form\ChangePassType;
 use App\Repository\UserRepository;
+use DateMalformedStringException;
+use DateTimeImmutable;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\{Request,Response};
@@ -14,60 +16,95 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
+/**
+ * Contrôleur de gestion de la sécurité (authentification et réinitialisation de mot de passe).
+ */
 class SecurityController extends AbstractController
 {
+    /**
+     * @param UserRepository $repository
+     * @param EventDispatcherInterface $dispatcher
+     */
     public function __construct(
         private readonly UserRepository $repository,
         private readonly EventDispatcherInterface $dispatcher,
     ) {}
 
+    /**
+     * Affiche la page de connexion.
+     *
+     * @param AuthenticationUtils $authUtils
+     * @return Response
+     */
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authUtils): Response
     {
         return $this->render('security/login.html.twig', [
             'last_username' => $authUtils->getLastUsername(),
             'error' => $authUtils->getLastAuthenticationError(),
-
             'favicon_path' => 'uploads/favicon.ico',
             'page_title' => '<img src="uploads/logo-1000px.png" alt="logo"> UNT contribution',
             'csrf_token_intention' => 'authenticate',
-
             'forgot_password_enabled' => true,
             'forgot_password_path' => $this->generateUrl('app_reset_request'),
         ]);
     }
 
+    /**
+     * Gère la demande de réinitialisation de mot de passe.
+     *
+     * @param Request $request
+     * @param TokenGeneratorInterface $generator
+     * @return Response
+     * @throws DateMalformedStringException
+     */
     #[Route("/reset-pass", name: 'app_reset_request')]
     public function request(Request $request, TokenGeneratorInterface $generator): Response
     {
-        if($email = $request->get('email')) {
-            /** @var User $user */ $user = $this->repository->findOneBy(['email' => $email]);
+        $email = $request->get('email');
+        if ($email) {
+            /** @var User|null $user */
+            $user = $this->repository->findOneBy(['email' => $email]);
             if ($user) {
-                $this->repository->add($user->setReseToken($generator->generateToken())
-                    ->setTokenExpiresAt(new \DateTimeImmutable(User::VALIDATIME_TOKEN.' min')));
+                $user->setReseToken($generator->generateToken())
+                    ->setTokenExpiresAt(new DateTimeImmutable(User::VALIDATIME_TOKEN . ' min'));
+                $this->repository->add($user);
                 $this->dispatcher->dispatch(new UserPassSettingEvent($user));
-
                 $this->addFlash('success', 'Vous recevrez dans quelques instants un mail avec la procédure de réinitialisation.');
-            } else $this->addFlash('danger', 'Cette adresse email est inconnue.');
+            } else {
+                $this->addFlash('danger', 'Cette adresse email est inconnue.');
+            }
         }
         return $this->render('security/reset_req.html.twig');
     }
 
+    /**
+     * Gère la réinitialisation du mot de passe via le token reçu par email.
+     *
+     * @param Request $request
+     * @param UserPasswordHasherInterface $encoder
+     * @return Response
+     */
     #[Route("/reset-pass/{token}", name: "app_reset_response")]
     public function response(Request $request, UserPasswordHasherInterface $encoder): Response
     {
         /** @var User $user */
         $user = $this->repository->findOneBy(['reseToken' => $request->get('token')]);
-        if (!$user || $user->getTokenExpiresAt() < new \DateTimeImmutable()) {
+        if (!$user || $user->getTokenExpiresAt() < new DateTimeImmutable()) {
             $this->addFlash('danger', 'Votre demande de mot de passe a expiré.');
             return $this->redirectToRoute('app_reset_request');
         }
 
-        $form = $this->createForm(ChangePassType::class,$user,['user_logged' => false]);
+        $form = $this->createForm(ChangePassType::class, $user, ['user_logged' => false]);
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
             $hashNewPass = $encoder->hashPassword($user, $form->get('newPassword')->getData());
-            $this->repository->add($user->setPassword($hashNewPass)->setReseToken(null)->setTokenExpiresAt(null)->setEnabled(true));
+            $user->setPassword($hashNewPass)
+                ->setReseToken(null)
+                ->setTokenExpiresAt(null)
+                ->setEnabled(true);
+            $this->repository->add($user);
 
             $this->addFlash('success', 'Votre mot de passe a bien été mis à jour.');
             return $this->redirectToRoute('app_login');
