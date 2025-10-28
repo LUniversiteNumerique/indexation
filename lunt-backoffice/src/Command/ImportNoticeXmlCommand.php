@@ -61,7 +61,6 @@ class ImportNoticeXmlCommand extends Command
         $this->niveauRepository = $this->buildRepositoryMap(Niveau::class, fn(Niveau $niveau) => strtolower($niveau->getCode()));
         $this->tdocumentRepository = $this->buildRepositoryMap(TDocument::class, fn(TDocument $tdocument) => strtolower($tdocument->getCode()));
         $this->tpedagogiqueRepository = $this->buildRepositoryMap(TPedagogie::class, fn(TPedagogie $tpedagogie) => strtolower($tpedagogie->getSuplom()));
-        dump($this->licenceRepository);
     }
 
     /**
@@ -231,7 +230,7 @@ class ImportNoticeXmlCommand extends Command
      * @param array &$noticeWithoutRelation Référence vers le tableau des notices sans relation.
      * @return void
      */
-    private function handleRelations(SuplomDto $item, $uid, string $fileName, array &$relationsToLink, array &$noticeWithoutRelation): void
+    private function handleRelations(SuplomDto $item, mixed $uid, string $fileName, array &$relationsToLink, array &$noticeWithoutRelation): void
     {
         if (isset($item->relations)) {
             foreach ($item->relations as $relation) {
@@ -727,7 +726,7 @@ class ImportNoticeXmlCommand extends Command
      * @param array &$stats Référence vers le tableau des statistiques d'import (éléments manquants, anomalies, etc.).
      * @return void
      */
-    function setSpecialites(Notice $notice, $taxonPath, string $fileName, array &$stats): void
+    function setSpecialites(Notice $notice, mixed $taxonPath, string $fileName, array &$stats): void
     {
         $disciplineGroupsByParent = [];
         foreach ($taxonPath->taxons as $taxon) {
@@ -791,7 +790,7 @@ class ImportNoticeXmlCommand extends Command
      * @param array &$stats Référence vers le tableau des statistiques d'import (éléments manquants, anomalies, etc.).
      * @return void
      */
-    function setDeweys(Notice $notice, $taxonPath, string $fileName, array &$stats): void
+    function setDeweys(Notice $notice, mixed $taxonPath, string $fileName, array &$stats): void
     {
         $deweyGroupsByParent = [];
         foreach ($taxonPath->taxons as $taxon) {

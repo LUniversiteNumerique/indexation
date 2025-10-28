@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\KeywordRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -23,7 +24,7 @@ class Keyword
     {
         $this->nom = $name;
         $this->valide = $valid;
-        $this->creeLe = new \DateTimeImmutable();
+        $this->creeLe = new DateTimeImmutable();
     }
 
     public function getNom(): ?string

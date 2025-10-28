@@ -2,9 +2,10 @@
 
 namespace App\Entity;
 
-use Symfony\Component\Validator\Constraints as Assert;
 use App\Repository\IndexingConfigRepository;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: IndexingConfigRepository::class)]
 class IndexingConfig
@@ -18,7 +19,7 @@ class IndexingConfig
     private ?bool $fullMode, $indexType;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTime $scheduleAt;
+    private ?DateTime $scheduleAt;
 
     #[ORM\Column, Assert\NotNull]
     private ?int $batchSize;
@@ -31,7 +32,7 @@ class IndexingConfig
         Assert\Type(Univerique::class)]
     private ?Univerique $indexCore = null;
 
-    public function __construct(bool $fullMode = true, ?\DateTime $scheduleAt=null)
+    public function __construct(bool $fullMode = true, ?DateTime $scheduleAt = null)
     {
         $this->fullMode = $fullMode;
         $this->scheduleAt = $scheduleAt;
@@ -68,12 +69,12 @@ class IndexingConfig
         return $this;
     }
 
-    public function getScheduleAt(): ?\DateTime
+    public function getScheduleAt(): ?DateTime
     {
         return $this->scheduleAt;
     }
 
-    public function setScheduleAt(?\DateTime $scheduleAt): static
+    public function setScheduleAt(?DateTime $scheduleAt): static
     {
         $this->scheduleAt = $scheduleAt;
 

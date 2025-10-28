@@ -8,24 +8,6 @@ enum NoticEtat: int
     case Forward = 1;
     case Approved = 2; //case Published = 'Publiée';
 
-    public function getLabel(): string
-    {
-        return match ($this) {
-            self::Working => "En travail",
-            self::Forward => 'Soumise',
-            self::Approved => 'Validée',
-        };
-    }
-
-    public function getColor(): string
-    {
-        return match ($this) {
-            self::Working => "dark",
-            self::Forward => 'danger',
-            self::Approved => 'success',
-        };
-    }
-
     public static function getLabels(): array
     {
         return [
@@ -35,9 +17,27 @@ enum NoticEtat: int
         ];
     }
 
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::Working => "En travail",
+            self::Forward => 'Soumise',
+            self::Approved => 'Validée',
+        };
+    }
+
     public static function getColors(): array
     {
-        return [self::Working->getColor(),self::Forward->getColor(),self::Approved->getColor()];
+        return [self::Working->getColor(), self::Forward->getColor(), self::Approved->getColor()];
+    }
+
+    public function getColor(): string
+    {
+        return match ($this) {
+            self::Working => "dark",
+            self::Forward => 'danger',
+            self::Approved => 'success',
+        };
     }
 
     public static function getTransition(NoticEtat $from, NoticEtat $to): array

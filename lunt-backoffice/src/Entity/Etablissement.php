@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\EtablissementRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -22,15 +23,16 @@ class Etablissement
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $logo;
 
-    public function __construct(?string $code=null, ?string $nom=null)
+    public function __construct(?string $code = null, ?string $nom = null)
     {
-        $this->creeLe = new \DateTimeImmutable();
+        $this->creeLe = new DateTimeImmutable();
         $this->code = $code;
         $this->nom = $nom;
     }
+
     public static function create(array $o): self
     {
-        return new self($o['id'],$o['libelle_import']);
+        return new self($o['id'], $o['libelle_import']);
     }
 
     public function getCode(): ?string

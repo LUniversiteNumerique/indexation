@@ -3,7 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\DisciplineRepository;
-use Doctrine\Common\Collections\{ArrayCollection,Collection};
+use Doctrine\Common\Collections\{ArrayCollection, Collection};
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -25,9 +26,9 @@ class Discipline
     #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class, cascade: ["persist"])]
     private Collection $children;
 
-    public function __construct($code=null,$nom=null)
+    public function __construct($code = null, $nom = null)
     {
-        $this->creeLe = new \DateTimeImmutable();
+        $this->creeLe = new DateTimeImmutable();
         $this->code = $code;
         $this->nom = $nom;
         $this->children = new ArrayCollection();
@@ -35,7 +36,7 @@ class Discipline
 
     public static function create(array $o): self
     {
-        return new self($o['id'],$o['libelle_import']);
+        return new self($o['id'], $o['libelle_import']);
     }
 
     public function getCode(): ?string
@@ -62,18 +63,6 @@ class Discipline
         return $this;
     }
 
-    public function getParent(): ?self
-    {
-        return $this->parent;
-    }
-
-    public function setParent(?self $parent): static
-    {
-        $this->parent = $parent;
-
-        return $this;
-    }
-
     public function getChildren(): Collection
     {
         return $this->children;
@@ -95,6 +84,18 @@ class Discipline
             if ($child->getParent() === $this)
                 $child->setParent(null);
         }
+
+        return $this;
+    }
+
+    public function getParent(): ?self
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?self $parent): static
+    {
+        $this->parent = $parent;
 
         return $this;
     }

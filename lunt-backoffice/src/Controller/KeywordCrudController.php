@@ -167,7 +167,7 @@ class KeywordCrudController extends AbstractCrudController
      * @param SerializerInterface $serializer
      * @return Response
      */
-    #[Route('/api/keywords', name: 'app_keyword_new', methods: ['POST'])]
+    #[Route('/api/keyworks', name: 'app_keywork_new', methods: ['POST'])]
     #[IsGranted('ROLE_CREA_NOTI')]
     public function ajaxNew(
         Request $request,
@@ -175,13 +175,13 @@ class KeywordCrudController extends AbstractCrudController
         SerializerInterface $serializer
     ): Response {
         $word = $request->getContent();
-        $keyw = $repository->findOneBy(['nom' => $word]);
+        $keyword = $repository->findOneBy(['nom' => $word]);
 
-        if (!$keyw) {
-            $keyw = new Keyword($word);
-            $repository->add($keyw);
+        if (!$keyword) {
+            $keyword = new Keyword($word);
+            $repository->add($keyword);
         }
 
-        return new JsonResponse($serializer->serialize($keyw, 'json'), json: true);
+        return new JsonResponse($serializer->serialize($keyword, 'json'), json: true);
     }
 }

@@ -157,7 +157,7 @@ class DashboardController extends AbstractDashboardController
         $form->handleRequest($ctx->getRequest());
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->userRepository->add();
+            $this->userRepository->add($user);
 
             $this->addFlash('success', 'Informations mises à jour avec succès !');
 
@@ -185,7 +185,7 @@ class DashboardController extends AbstractDashboardController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->userRepository->add();
+            $this->userRepository->add($user);
 
             return $security->logout(validateCsrfToken: false) ?? $this->redirectToRoute('app_home');
         }

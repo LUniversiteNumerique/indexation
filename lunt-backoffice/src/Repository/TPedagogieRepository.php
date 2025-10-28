@@ -20,19 +20,4 @@ class TPedagogieRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, TPedagogie::class);
     }
-
-    public function add(TPedagogie $u=null): ?TPedagogie
-    {
-        if($u) $this->_em->persist($u);
-        $this->_em->flush();
-        return $u;
-    }
-
-    public function del(TPedagogie $u): TPedagogie
-    {
-        $this->_em->remove($u);
-        $this->_em->flush();
-
-        return $u;
-    }
 }

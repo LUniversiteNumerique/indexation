@@ -2,6 +2,9 @@
 
 namespace App\Message\Handler;
 
+use App\Repository\IndexingConfigRepository;
+use App\Repository\NoticeRepository;
+use DateTime;
 use App\Entity\{IndexingConfig, Notice, NoticEtat, Univerique};
 use Doctrine\ORM\{EntityManagerInterface, EntityRepository};
 use App\Entity\Dto\{OaidcDto, SuplomDto, IndexingNotice};
@@ -9,12 +12,21 @@ use App\Service\{FileService, SolrApiService};
 use App\Message\IntexingConfigMessage;
 use JMS\Serializer\SerializerInterface;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Contracts\HttpClient\Exception\{ClientExceptionInterface, RedirectionExceptionInterface, ServerExceptionInterface, TransportExceptionInterface};
 
 #[AsMessageHandler]
 readonly class InterIndexingHandler
 {
+    /**
+     * @var IndexingConfigRepository
+     */
     private EntityRepository $configRep;
+
+    /**
+     * @var NoticeRepository
+     */
     private EntityRepository $noticeRep;
 
     public function __construct(
@@ -28,12 +40,18 @@ readonly class InterIndexingHandler
         $this->configRep = $this->entityManager->getRepository(IndexingConfig::class);
     }
 
+    /**
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ClientExceptionInterface
+     */
     public function __invoke(IntexingConfigMessage $message): void
     {
         /** @var IndexingConfig|null $task */
         $task = $this->configRep->find($message->taskId);
         if (!$task) {
-            throw new \RuntimeException("Aucun planificateur d'identifiant " . $message->taskId);
+            throw new RuntimeException("Aucun planificateur d'identifiant " . $message->taskId);
         }
 
         $core = $task->getIndexCore()?->getName();
@@ -52,7 +70,7 @@ readonly class InterIndexingHandler
                 "$core/update?commit=true"
             );
 
-            $task->setScheduleAt(new \DateTime());
+            $task->setScheduleAt(new DateTime());
             $this->entityManager->flush();
             $this->entityManager->clear();
 
@@ -86,7 +104,7 @@ readonly class InterIndexingHandler
             if ($notice->getEtat() === NoticEtat::Approved) {
                 if (empty($notice->getPublieLe())) {
                     // A publier
-                    $toIndex[] = $notice->setPublieLe(new \DateTime());
+                    $toIndex[] = $notice->setPublieLe(new DateTime());
                 } elseif ($task->isFullMode() || $notice->getEditeLe() > $task->getScheduleAt()) {
                     // A republier
                     $toUnindex[] = $notice->getUuid();
@@ -139,7 +157,6 @@ readonly class InterIndexingHandler
     private function buildIndexXml(array $notices, Univerique $indexCore): string
     {
         $index = $indexCore->getName();
-        $itemSF = [];
         $itemSP = "";
         $itemOaiDC = [];
         $itemOaiSF = [];
@@ -152,8 +169,8 @@ readonly class InterIndexingHandler
             $itemSP .= $cleanXml;
 
             $uuid = $this->extractUuid($notice->getUuid());
-            $dcKey = "dc_{$uuid}.xml";
-            $sfKey = "sf_{$uuid}.xml";
+            $dcKey = "dc_$uuid.xml";
+            $sfKey = "sf_$uuid.xml";
 
             if ($isOai) {
                 $oaidcOaiDto = OaidcDto::create($notice);
@@ -161,8 +178,6 @@ readonly class InterIndexingHandler
                 $suplomOaiDto = SuplomDto::create($notice);
                 $itemOaiSF[$sfKey] = $this->serializer->serialize($suplomOaiDto, 'xml');
             }
-            $suplomDto = SuplomDto::create($notice);
-            $itemSF[$sfKey] = $this->serializer->serialize($suplomDto, 'xml');
         }
 
         // Indexation oai et suplom JOAI

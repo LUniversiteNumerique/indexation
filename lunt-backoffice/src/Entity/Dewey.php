@@ -4,7 +4,8 @@ namespace App\Entity;
 
 use App\Entity\Dto\DeweyDto;
 use App\Repository\DeweyRepository;
-use Doctrine\Common\Collections\{ArrayCollection,Collection};
+use Doctrine\Common\Collections\{ArrayCollection, Collection};
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -26,9 +27,9 @@ class Dewey
     #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]
     private Collection $children;
 
-    public function __construct($code=null,$nom=null)
+    public function __construct($code = null, $nom = null)
     {
-        $this->creeLe = new \DateTimeImmutable();
+        $this->creeLe = new DateTimeImmutable();
         $this->code = $code;
         $this->nom = $nom;
         $this->children = new ArrayCollection();
@@ -37,30 +38,6 @@ class Dewey
     public static function create(DeweyDto $dto): self
     {
         return new self($dto->uri, $dto->label);
-    }
-
-    public function getNumericCode(): ?string
-    {
-        // Remove the prefix
-        $numericCode = str_replace('http://dewey.info/class/', '', $this->code);
-
-        // Remove the final slash if present
-        return rtrim($numericCode, "/");
-    }
-
-    private function getNumericCodeWithSpace(): ?string
-    {
-        $numericCode = $this->getNumericCode();
-        // Ajout d'un espace tous les 3 chiffres après le point
-        if (str_contains($numericCode, '.')) {
-            // Sépare les parties avant et après le point
-            $parts = explode('.', $numericCode);
-            // Ajout des espaces dans la partie après le point
-            $parts[1] = wordwrap($parts[1], 3, ' ', true);
-            // Recombine les parties
-            $numericCode = implode('.', $parts);
-        }
-        return $numericCode;
     }
 
     public function getCode(): ?string
@@ -87,23 +64,6 @@ class Dewey
         return $this;
     }
 
-    public function getParent(): ?self
-    {
-        return $this->parent;
-    }
-
-    public function setParent(?self $parent): static
-    {
-        $this->parent = $parent;
-
-        return $this;
-    }
-
-    public function getChildren(): Collection
-    {
-        return $this->children;
-    }
-
     public function addChild(self $child): static
     {
         if (!$this->children->contains($child)) {
@@ -124,14 +84,55 @@ class Dewey
         return $this;
     }
 
+    public function getParent(): ?self
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?self $parent): static
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
     public function __toString(): string
     {
-        if ($this->getChildren()->count() > 0 ) {
+        if ($this->getChildren()->count() > 0) {
             // Discipline ou division
             return $this->nom;
         } else {
             // Spécialité
             return $this->getNumericCodeWithSpace() . ' - ' . $this->nom;
         }
+    }
+
+    public function getChildren(): Collection
+    {
+        return $this->children;
+    }
+
+    private function getNumericCodeWithSpace(): ?string
+    {
+        $numericCode = $this->getNumericCode();
+        // Ajout d'un espace tous les 3 chiffres après le point
+        if (str_contains($numericCode, '.')) {
+            // Sépare les parties avant et après le point
+            $parts = explode('.', $numericCode);
+            // Ajout des espaces dans la partie après le point
+            $parts[1] = wordwrap($parts[1], 3, ' ', true);
+            // Recombine les parties
+            $numericCode = implode('.', $parts);
+        }
+        return $numericCode;
+    }
+
+    public function getNumericCode(): ?string
+    {
+        // Remove the prefix
+        $numericCode = str_replace('http://dewey.info/class/', '', $this->code);
+
+        // Remove the final slash if present
+        return rtrim($numericCode, "/");
     }
 }

@@ -6,6 +6,7 @@ use App\Entity\Dewey;
 use App\Entity\Dto\DeweyData;
 use App\Service\FileService;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -75,7 +76,7 @@ class ImportDeweyXmlCommand extends Command
         try {
             /** @var DeweyData $deweyData */
             $deweyData = $this->serializer->deserialize($xmlContent, DeweyData::class, 'xml');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $io->error('Erreur lors de la désérialisation du fichier XML : ' . $e->getMessage());
             return Command::FAILURE;
         }

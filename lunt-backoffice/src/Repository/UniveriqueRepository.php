@@ -20,19 +20,4 @@ class UniveriqueRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Univerique::class);
     }
-
-    public function add(Univerique $u=null): ?Univerique
-    {
-        if($u) $this->_em->persist($u);
-        $this->_em->flush();
-        return $u;
-    }
-
-    public function del(Univerique $u): Univerique
-    {
-        $this->_em->remove($u);
-        $this->_em->flush();
-
-        return $u;
-    }
 }

@@ -27,6 +27,12 @@ class SuplomDto
         $this->schemaLocation = "http://ltsc.ieee.org/xsd/LOM http://lom-fr.fr/xsd/lomfrv1.0/std/lomfr.xsd";
     }
 
+    /**
+     * Crée un SuplomDto à partir d'une Notice.
+     *
+     * @param Notice $notice
+     * @return self
+     */
     public static function create(Notice $notice): self
     {
         $lang = 'fre';

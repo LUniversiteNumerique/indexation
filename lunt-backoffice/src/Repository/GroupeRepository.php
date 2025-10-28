@@ -20,19 +20,4 @@ class GroupeRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Groupe::class);
     }
-
-    public function add(Groupe $e=null): ?Groupe
-    {
-        if($e) $this->_em->persist($e);
-        $this->_em->flush();
-        return $e;
-    }
-
-    public function del(Groupe $e): Groupe
-    {
-        $this->_em->remove($e);
-        $this->_em->flush();
-
-        return $e;
-    }
 }

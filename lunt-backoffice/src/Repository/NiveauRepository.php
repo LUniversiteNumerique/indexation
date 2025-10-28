@@ -20,19 +20,4 @@ class NiveauRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Niveau::class);
     }
-
-    public function add(Niveau $u=null): ?Niveau
-    {
-        if($u) $this->_em->persist($u);
-        $this->_em->flush();
-        return $u;
-    }
-
-    public function del(Niveau $u): Niveau
-    {
-        $this->_em->remove($u);
-        $this->_em->flush();
-
-        return $u;
-    }
 }

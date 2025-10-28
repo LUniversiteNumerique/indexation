@@ -24,23 +24,6 @@ class NoticeRepository extends ServiceEntityRepository
     }
 
     /**
-     * Supprime définitivement les notices supprimées et non publiées créées avant une date donnée.
-     *
-     * @param DateTime $before Date limite : seules les notices créées avant cette date seront supprimées.
-     * @return int Nombre de notices supprimées.
-     */
-    public function clean(DateTime $before): int
-    {
-        return $this->createQueryBuilder('n')
-            ->where('n.deleted = 1 AND n.publieLe IS NULL')
-            ->andWhere('n.creeLe < :date')
-            ->setParameter('date', $before)
-            ->delete(Notice::class, 'n')
-            ->getQuery()
-            ->execute();
-    }
-
-    /**
      * Retourne une liste de notices selon la configuration d'indexation et la pagination.
      *
      * @param IndexingConfig $config Configuration d'indexation (mode, champs, date).
@@ -113,21 +96,6 @@ class NoticeRepository extends ServiceEntityRepository
             $this->_em->persist($notice);
         }
         $this->_em->flush();
-        return $notice;
-    }
-
-    /**
-     * Supprime une notice de la base de données et retourne l'objet supprimé.
-     *
-     * @param Notice|null $notice La notice à supprimer.
-     * @return Notice|null La notice supprimée, ou null si aucun objet n'est passé.
-     */
-    public function del(?Notice $notice): ?Notice
-    {
-        if ($notice) {
-            $this->_em->remove($notice);
-            $this->_em->flush();
-        }
         return $notice;
     }
 

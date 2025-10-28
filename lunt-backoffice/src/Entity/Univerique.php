@@ -3,10 +3,11 @@
 namespace App\Entity;
 
 use App\Repository\UniveriqueRepository;
-use Doctrine\Common\Collections\{ArrayCollection,Collection};
+use Doctrine\Common\Collections\{ArrayCollection, Collection};
+use DateTimeImmutable;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UniveriqueRepository::class),
     UniqueEntity('name'), UniqueEntity('label')]
@@ -14,11 +15,11 @@ class Univerique
 {
     use Timestamps;
 
-    #[ORM\Column(length: 255, unique:true),
+    #[ORM\Column(length: 255, unique: true),
         Assert\NotBlank, Assert\Type('string')]
     private ?string $label = null;
 
-    #[ORM\Column(length: 255, unique:true),
+    #[ORM\Column(length: 255, unique: true),
         Assert\Regex('/^[a-zA-Z0-9-_]+$/', "Le nom du répertoire ne peut contenir que des caractères alphanumériques, un tiret ou un tiret bas.")]
     private ?string $name = null;
 
@@ -28,10 +29,10 @@ class Univerique
 
     #[ORM\ManyToMany(targetEntity: Discipline::class)]
     private Collection $fields;
-    
+
     public function __construct()
     {
-        $this->creeLe = new \DateTimeImmutable();
+        $this->creeLe = new DateTimeImmutable();
         $this->fields = new ArrayCollection();
     }
 
@@ -75,6 +76,7 @@ class Univerique
 
         return $this;
     }
+
     public function getFields(): Collection
     {
         return $this->fields;

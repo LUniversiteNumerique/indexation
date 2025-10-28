@@ -16,11 +16,20 @@ class TreeChoiceType extends AbstractType
     {
         $choices = new ArrayCollection();
         foreach ($view->vars['choices'] as $choice) {
-            if ($choice->data?->getParent() === null)
+            if ($choice->data?->getParent() === null) {
                 $choices->set($choice->value, $choice->data);
+            }
         }
         $choices = $this->buildTree($choices);
         $view->vars['choices'] = $choices;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getParent(): ?string
+    {
+        return EntityType::class;
     }
 
     /**
@@ -34,19 +43,15 @@ class TreeChoiceType extends AbstractType
     {
         $result = array();
         foreach ($choices as $choice) {
-            $result[] = new ChoiceView($choice, (string)$choice->getId(),
-                sprintf("%s %s",str_repeat('-', $level),$choice->getNom()));
-            if (!$choice->getChildren()->isEmpty())
+            $result[] = new ChoiceView(
+                $choice,
+                (string)$choice->getId(),
+                sprintf("%s %s", str_repeat('-', $level), $choice->getNom())
+            );
+            if (!$choice->getChildren()->isEmpty()) {
                 $result = array_merge($result, $this->buildTree($choice->getChildren(), $level + 1));
+            }
         }
         return $result;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getParent(): ?string
-    {
-        return EntityType::class;
     }
 }

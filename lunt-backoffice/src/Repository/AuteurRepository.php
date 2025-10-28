@@ -20,20 +20,4 @@ class AuteurRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Auteur::class);
     }
-
-
-    public function add(Auteur $a=null): ?Auteur
-    {
-        if($a) $this->_em->persist($a);
-        $this->_em->flush();
-        return $a;
-    }
-
-    public function del(Auteur $a): Auteur
-    {
-        $this->_em->remove($a);
-        $this->_em->flush();
-
-        return $a;
-    }
 }

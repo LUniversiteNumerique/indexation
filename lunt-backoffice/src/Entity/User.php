@@ -3,10 +3,11 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Security\Core\User\{UserInterface,PasswordAuthenticatedUserInterface};
+use Symfony\Component\Security\Core\User\{PasswordAuthenticatedUserInterface, UserInterface};
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Table(name: '`user`'), UniqueEntity("email"),
     ORM\Entity(repositoryClass: UserRepository::class)]
@@ -19,7 +20,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255),
         Assert\NotBlank, Assert\Type('string')]
-    private ?string $name = null;
+    private ?string $name;
 
     #[ORM\Column(length: 180, unique: true),
         Assert\NotNull, Assert\Email]
@@ -35,7 +36,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $reseToken = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $tokenExpiresAt = null;
+    private ?DateTimeImmutable $tokenExpiresAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'users'), Assert\NotNull,
         Assert\Valid, Assert\Type(Groupe::class)]
@@ -51,18 +52,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     private array $roles = [self::ROLE_DEFAULT];
 
-    public function __construct(string $name=null, string $email=null, string $password=null, array $roles=[])
+    public function __construct(string $name = null, string $email = null, string $password = null, array $roles = [])
     {
         $this->name = $name;
         $this->email = $email;
         $this->password = $password;
-        if(!empty($roles)) $this->roles = $roles;
-        $this->creeLe = new \DateTimeImmutable();
+        if (!empty($roles)) {
+            $this->roles = $roles;
+        }
+        $this->creeLe = new DateTimeImmutable();
     }
 
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string)$this->email;
     }
 
     public function getName(): ?string
@@ -125,12 +128,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getTokenExpiresAt(): ?\DateTimeImmutable
+    public function getTokenExpiresAt(): ?DateTimeImmutable
     {
         return $this->tokenExpiresAt;
     }
 
-    public function setTokenExpiresAt(?\DateTimeImmutable $tokenExpiresAt): static
+    public function setTokenExpiresAt(?DateTimeImmutable $tokenExpiresAt): static
     {
         $this->tokenExpiresAt = $tokenExpiresAt;
 

@@ -12,7 +12,7 @@ use App\Repository\{DossierRepository, NoticeRepository};
 use App\Security\Voter\NoticeActionVoter;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\{EntityManagerInterface, QueryBuilder};
+use Doctrine\ORM\{EntityManagerInterface, NonUniqueResultException, QueryBuilder};
 use EasyCorp\Bundle\EasyAdminBundle\{Context\AdminContext, Event\AfterEntityPersistedEvent, Factory\FormFactory, Provider\AdminContextProvider, Router\AdminUrlGenerator};
 use EasyCorp\Bundle\EasyAdminBundle\Collection\{ActionCollection, FieldCollection, FilterCollection};
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action, Actions, Asset, Assets, Crud, Filters, KeyValueStore};
@@ -21,6 +21,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\{ActionDto, EntityDto, SearchDto};
 use EasyCorp\Bundle\EasyAdminBundle\Field\{ArrayField, AssociationField, BooleanField, ChoiceField, CollectionField, DateTimeField, FormField, IdField, ImageField, NumberField, TextareaField, TextEditorField, TextField, UrlField};
 use EasyCorp\Bundle\EasyAdminBundle\Filter\{ChoiceFilter, DateTimeFilter, EntityFilter, TextFilter};
 use EasyCorp\Bundle\EasyAdminBundle\Form\Type\{FileUploadType, Model\FileUploadState};
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\{Intl\Languages, Routing\Generator\UrlGeneratorInterface, Uid\Uuid};
 use Symfony\Component\Form\{FormBuilderInterface, FormInterface};
@@ -47,11 +49,11 @@ class NoticeCrudController extends AbstractCrudController
   public const FORWARD_ACTION = 'forwardNotice';
 
   public function __construct(
-    private readonly FormFactory $factory,
-    private readonly DossierRepository $rep,
-    private readonly NoticeRepository $repository,
-    private readonly AdminUrlGenerator $generator,
-    private readonly UrlGeneratorInterface $router,
+    private readonly FormFactory              $factory,
+    private readonly DossierRepository        $dossierRepository,
+    private readonly NoticeRepository         $noticeRepository,
+    private readonly AdminUrlGenerator        $generator,
+    private readonly UrlGeneratorInterface    $router,
     private readonly EventDispatcherInterface $dispatcher,
   ) {}
 
@@ -524,6 +526,9 @@ class NoticeCrudController extends AbstractCrudController
    *
    * @param string $entityFqcn Le FQCN de l'entité à instancier
    * @return Notice Instance de Notice initialisée
+   * @throws ContainerExceptionInterface
+   * @throws NonUniqueResultException
+   * @throws NotFoundExceptionInterface
    */
   public function createEntity(string $entityFqcn): Notice
   {
@@ -532,7 +537,7 @@ class NoticeCrudController extends AbstractCrudController
     $notice = parent::createEntity($entityFqcn);
 
     $folderId = $contextProvider->getRequest()->get('folderId', 1);
-    $folder = $this->rep->findOneForAll($folderId);
+    $folder = $this->dossierRepository->findOneById($folderId);
 
     /** @var User $user */
     $user = $this->getUser();
@@ -562,7 +567,7 @@ class NoticeCrudController extends AbstractCrudController
     $user = $this->getUser();
     $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
 
-    return $this->repository->enrichIndexQueryBuilder($qb, $user);
+    return $this->noticeRepository->enrichIndexQueryBuilder($qb, $user);
   }
 
   /**
@@ -782,6 +787,7 @@ class NoticeCrudController extends AbstractCrudController
    *
    * @param AdminContext $context Contexte EasyAdmin
    * @return KeyValueStore Paramètres de la vue détail
+   * @throws NonUniqueResultException
    */
   public function detail(AdminContext $context): KeyValueStore
   {
@@ -796,7 +802,7 @@ class NoticeCrudController extends AbstractCrudController
     $resParams = parent::detail($context);
 
     if ($folderId = $context->getRequest()->get('folderId')) {
-      $folder = $this->rep->findOneForAll($folderId);
+      $folder = $this->dossierRepository->findOneById($folderId);
 
       // Ajout de l'attribut folderId à chaque action
       $actions = array_map(
@@ -873,7 +879,7 @@ class NoticeCrudController extends AbstractCrudController
       ->setEditDemande(false)
       ->setTitre("COPIE - " . $notice->getTitre());
 
-    $this->repository->add($duplicatedNotice);
+    $this->noticeRepository->add($duplicatedNotice);
     $this->dispatcher->dispatch(new AfterEntityPersistedEvent($duplicatedNotice));
     $this->addFlash('success', "Cette notice dupliquée vient d'être créée avec succès !");
 
@@ -905,7 +911,7 @@ class NoticeCrudController extends AbstractCrudController
     $notice = $context->getEntity()->getInstance();
     $this->denyAccessUnlessGranted(NoticeActionVoter::EDIT, $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
 
-    $this->repository->add($notice->setEtat(NoticEtat::Forward));
+    $this->noticeRepository->add($notice->setEtat(NoticEtat::Forward));
     $this->dispatcher->dispatch(new AfterNoticeSubmissionEvent($notice));
     $this->dispatcher->dispatch(new AfterNoticeStateSetEvent($notice, ['Soumettre', NoticEtat::Forward->getLabel(), 'Soumission']));
     $this->addFlash('success', sprintf("La notice est bien %s avec succès !", NoticEtat::Forward->getLabel()));
@@ -931,7 +937,7 @@ class NoticeCrudController extends AbstractCrudController
     $notice = $context->getEntity()->getInstance();
     $this->denyAccessUnlessGranted(NoticeActionVoter::EDIT, $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
 
-    $this->repository->add($notice->setEtat(NoticEtat::Approved)->setValidateur($user));
+    $this->noticeRepository->add($notice->setEtat(NoticEtat::Approved)->setValidateur($user));
     $this->dispatcher->dispatch(new AfterNoticeApprovingEvent($notice));
     $this->addFlash('success', sprintf("La notice est bien %s avec succès !", NoticEtat::Approved->getLabel()));
 
@@ -955,7 +961,7 @@ class NoticeCrudController extends AbstractCrudController
     $notice = $context->getEntity()->getInstance();
     $this->denyAccessUnlessGranted(NoticeActionVoter::EDIT, $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
 
-    $this->repository->add($notice->setEtat(NoticEtat::Working));
+    $this->noticeRepository->add($notice->setEtat(NoticEtat::Working));
     $this->dispatcher->dispatch(new AfterNoticeRejectingEvent($notice, $motifs));
     $this->addFlash('success', "La notice est bien rejetée avec succès !");
 
@@ -978,7 +984,7 @@ class NoticeCrudController extends AbstractCrudController
     $notice = $context->getEntity()->getInstance();
     $this->denyAccessUnlessGranted('ROLE_VALI_NOTI', $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
 
-    $this->repository->add($notice->setEtat(NoticEtat::Forward));
+    $this->noticeRepository->add($notice->setEtat(NoticEtat::Forward));
     $this->dispatcher->dispatch(new AfterNoticeStateSetEvent($notice, ['Dépublier', 'Dépubliée', 'Dépublication']));
     $this->addFlash('success', "La notice est bien dépubliée avec succès !");
 
@@ -1001,7 +1007,7 @@ class NoticeCrudController extends AbstractCrudController
     $notice = $context->getEntity()->getInstance();
     $this->denyAccessUnlessGranted('ROLE_VALI_NOTI', $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
 
-    $this->repository->add($notice->setEtat(NoticEtat::Working)->setEditDemande(false));
+    $this->noticeRepository->add($notice->setEtat(NoticEtat::Working)->setEditDemande(false));
     $this->dispatcher->dispatch(new AfterNoticeStateSetEvent($notice, ['Autoriser', 'Autorisée', 'Autorisation']));
     $this->addFlash('success', "La notice est bien autorisée avec succès !");
 
@@ -1024,7 +1030,7 @@ class NoticeCrudController extends AbstractCrudController
     $notice = $context->getEntity()->getInstance();
     $this->denyAccessUnlessGranted(NoticeActionVoter::VIEW, $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
 
-    $this->repository->add($notice->setEditDemande(true));
+    $this->noticeRepository->add($notice->setEditDemande(true));
     $this->dispatcher->dispatch(new AfterNoticeAdjustingEvent($notice));
     $this->addFlash('success', "Votre demande de rectification est bien envoyée !");
 
@@ -1048,7 +1054,7 @@ class NoticeCrudController extends AbstractCrudController
     $notice = $context->getEntity()->getInstance();
     $this->denyAccessUnlessGranted('ROLE_VALI_NOTI', $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
 
-    $this->repository->add($notice->setLabel($label));
+    $this->noticeRepository->add($notice->setLabel($label));
     $this->dispatcher->dispatch(new AfterNoticeStateSetEvent($notice, ['Catégoriser', 'Labellisée', 'Catégorisation']));
     $this->addFlash('success', "La notice est labellisée avec succès !");
 
@@ -1072,11 +1078,11 @@ class NoticeCrudController extends AbstractCrudController
     $notice = $context->getEntity()->getInstance();
     $this->denyAccessUnlessGranted(NoticeActionVoter::EDIT, $notice, "Vous n'êtes pas autorisé à exécuter cette action sur cette notice.");
 
-    if (!empty($dossierData["dossier"]) && $dossier = $this->rep->find($dossierData["dossier"])) {
+    if (!empty($dossierData["dossier"]) && $dossier = $this->dossierRepository->find($dossierData["dossier"])) {
       $notice->setRepertoire($dossier);
     }
 
-    $this->repository->add($notice);
+    $this->noticeRepository->add($notice);
     $this->dispatcher->dispatch(new AfterNoticeStateSetEvent($notice, ['Déplacer', 'Déplacée', 'Déplacement']));
     $this->addFlash('success', "La notice est bien déplacée avec succès !");
 

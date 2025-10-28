@@ -3,7 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\DossierRepository;
-use Doctrine\Common\Collections\{ArrayCollection,Collection};
+use Doctrine\Common\Collections\{ArrayCollection, Collection};
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -29,7 +30,7 @@ class Dossier
 
     public function __construct()
     {
-        $this->creeLe = new \DateTimeImmutable();
+        $this->creeLe = new DateTimeImmutable();
         $this->children = new ArrayCollection();
         $this->notices = new ArrayCollection();
     }
@@ -48,25 +49,12 @@ class Dossier
 
     public function getUser(): ?User
     {
-      return $this->user;
+        return $this->user;
     }
 
     public function setUser(?User $user): self
     {
-      $this->user = $user;
-
-      return $this;
-    }
-
-    public function getParent(): ?self
-    {
-        return $this->parent;
-    }
-
-    public function setParent(?self $parent): static
-    {
-        $this->parent = $parent;
-
+        $this->user = $user;
         return $this;
     }
 
@@ -93,6 +81,18 @@ class Dossier
         return $this;
     }
 
+    public function getParent(): ?self
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?self $parent): static
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
     public function getNotices(): Collection
     {
         return $this->notices;
@@ -108,9 +108,8 @@ class Dossier
 
     public function removeNotice(Notice $notice): static
     {
-        if ($this->notices->removeElement($notice)) {
-            if ($notice->getRepertoire() === $this)
-              $notice->setRepertoire(null);
+        if ($this->notices->removeElement($notice) && $notice->getRepertoire() === $this) {
+            $notice->setRepertoire(null);
         }
 
         return $this;

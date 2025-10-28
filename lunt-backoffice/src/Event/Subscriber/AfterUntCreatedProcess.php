@@ -5,6 +5,7 @@ namespace App\Event\Subscriber;
 use App\Event\AfterUntCreatedEvent;
 use App\Service\FileService;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
@@ -47,14 +48,14 @@ readonly class AfterUntCreatedProcess
 
         // Création du dossier principal
         if (!mkdir($untDirXml, 0755, true) && !is_dir($untDirXml)) {
-            throw new \RuntimeException("Failed to create destination directory: $untDirXml");
+            throw new RuntimeException("Failed to create destination directory: $untDirXml");
         }
 
         // Création des sous-dossiers
         foreach ($untDirList as $subDir) {
             $dir = $untDirXml . DIRECTORY_SEPARATOR . $subDir;
             if (!mkdir($dir, 0755, true) && !is_dir($dir)) {
-                throw new \RuntimeException("Failed to create destination directory: $dir");
+                throw new RuntimeException("Failed to create destination directory: $dir");
             }
         }
 

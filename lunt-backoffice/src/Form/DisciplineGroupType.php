@@ -2,20 +2,13 @@
 
 namespace App\Form;
 
-use App\Entity\Discipline;
-use App\Entity\DisciplineGroup;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Asset;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use App\Entity\{Notice, Univerique};
-use function Symfony\Component\Translation\t;
+use App\Entity\{Univerique, Discipline, DisciplineGroup};
 use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Config\{Asset, Assets};
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\{AbstractType, FormBuilderInterface, FormEvent, FormEvents, FormInterface};
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use function Symfony\Component\Translation\t;
 
 class DisciplineGroupType extends AbstractType
 {
@@ -26,7 +19,7 @@ class DisciplineGroupType extends AbstractType
     $this->em = $em;
   }
 
-  public function buildForm(FormBuilderInterface $builder, array $options)
+  public function buildForm(FormBuilderInterface $builder, array $options): void
   {
     $user = $options['user'];
 
@@ -70,7 +63,7 @@ class DisciplineGroupType extends AbstractType
         'placeholder' => 'Sélectionner des spécialités',
       ]);
 
-    $formModifier = function (FormInterface $form, Discipline $champDisc = null, Discipline $selectedDiscipline = null) {
+    $formModifier = function (FormInterface $form, ?Discipline $champDisc = null, ?Discipline $selectedDiscipline = null) {
       $disciplines = null === $champDisc ? [] : $champDisc->getChildren()->toArray();
       if ($selectedDiscipline && !in_array($selectedDiscipline, $disciplines, true)) {
         $disciplines[] = $selectedDiscipline;
@@ -84,7 +77,7 @@ class DisciplineGroupType extends AbstractType
         'help' => t('notice.discipline_help', domain: 'EasyAdminBundle'),
         'data' => $selectedDiscipline,
       ]);
-      if ($selectedDiscipline && $selectedDiscipline instanceof Discipline) {
+      if ($selectedDiscipline) {
         $specialites = $selectedDiscipline->getChildren()->toArray();
         $form->add('specialites', EntityType::class, [
           'class' => Discipline::class,
@@ -188,7 +181,7 @@ class DisciplineGroupType extends AbstractType
     return $assets->addJsFile(Asset::new('../assets/form.js')->onlyOnForms());
   }
 
-  public function configureOptions(OptionsResolver $resolver)
+  public function configureOptions(OptionsResolver $resolver): void
   {
     $resolver->setDefaults([
       'user' => null,

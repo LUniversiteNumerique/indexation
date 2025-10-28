@@ -17,7 +17,9 @@ class TagAutoField extends AbstractType
             'choice_label' => 'nom',
             'class' => Keyword::class,
             'placeholder' => 'Sélectionne vos tags',
-            'preload' => true, 'multiple' => true, 'required' => false,
+            'preload' => true,
+            'multiple' => true,
+            'required' => false,
             'tom_select_options' => ['create' => false],
             'query_builder' => fn(KeywordRepository $r) => $r->createQueryBuilder('entity')
                 ->where('entity.valide = 1')->orderBy('entity.nom'),
