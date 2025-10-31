@@ -131,14 +131,14 @@ class IndexingNotice
             new Field(null, null, 'vignette'),
             new Field($suplom->general->description[0]?->value, null, 'description'),
             new Field($suplom->technical?->location, null, 'ressource_lien'),
-            new Field($suplom->technical?->duration?->duration, null, 'dure_execution'),
+            new Field($suplom->technical?->duration?->duration ?? null, null, 'dure_execution'),
             new Field(strip_tags($suplom->general->description[0]?->value), null, 'description_text'),
             new Field(implode(', ', $suplom->general->languages), null, 'langues_ressource'),
             new Field(implode(', ', $suplom->educational->languages), null, 'langues_utilisateur'),
-            new Field($suplom->educational->typicalLearningTime?->duration, null, 'dure_apprentissage'),
+            new Field($suplom->educational->typicalLearningTime?->duration ?? null, null, 'dure_apprentissage'),
             new Field(array_reduce($suplom->general?->keywords, fn(string $acc, Motcle $s) => $acc . trim($s->string?->value) . ", ", ""), null, 'mots_cles'),
             new Field(array_reduce($suplom->educational?->contexts, fn(string $acc, Source $s) => $acc . $s->value . ", ", ""), null, 'niveaux'),
-            new Field(array_reduce(array_merge($suplom->general?->documentTypesLOMFR, $suplom->general?->documentTypesLOM), fn(string $acc, Source $s) => $acc . $s->value . ", ", ""), null, 'types_documentaires'),
+            new Field(array_reduce(array_merge($suplom->general?->documentTypesLOMFR, $suplom->general?->documentTypesLOM), fn(string $acc, Source|Sources $s) => $acc . $s->value . ", ", ""), null, 'types_documentaires'),
             new Field(array_reduce($suplom->educational?->learningResourceTypes , fn(string $acc, Source $s) => $acc . $s->value . ", ", ""), null, 'types_pedagogiques'),
             new Field(array_reduce($suplom->educational?->description, fn(string $acc, Motcle $s) => $acc . trim($s->string?->value) . ", ", ""), null, 'proposition_utilisation'),
             new Field(strtolower($suplom->rights?->copyrightAndOtherRestrictions?->value ?? '') !== "no", null, 'propriete_intellectuelle'),
@@ -177,8 +177,8 @@ class IndexingNotice
             }
         }
 
-        $fields[] = new Field($contributors["creator"], null, 'correspondant');
-        $fields[] = new Field($contributors["validator"], null, 'validateur');
+        $fields[] = new Field(reset($contributors["creator"]), null, 'correspondant');
+        $fields[] = new Field(reset($contributors["validator"]), null, 'validateur');
         $fields[] = new Field(array_reduce(array_unique($contributors["author"]), fn(string $tmp, string $etab): string => $tmp . sprintf("%s, ", $etab), ""), null, 'contributions');
         $fields[] = new Field(array_reduce(array_unique($contributors["publisher"]), fn(string $tmp, string $etab): string => $tmp . sprintf("%s, ", $etab), ""), null, 'etablissement_porteurs');
 
