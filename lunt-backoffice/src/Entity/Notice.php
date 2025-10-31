@@ -24,7 +24,6 @@ class Notice
     private ?string $titre = null;
 
     #[ORM\Column(length: 285, nullable: true)]
-    #[Assert\NotNull(message: 'La notice doit contenir un Contenu Url.')]
     private ?string $ressUrl = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -155,6 +154,18 @@ class Notice
     public function setUuid(?string $uuid): self
     {
         $this->uuid = $uuid;
+
+        return $this;
+    }
+
+    public function getLabel(): ?string
+    {
+        return $this->label;
+    }
+
+    public function setLabel(?string $label): self
+    {
+        $this->label = $label;
 
         return $this;
     }
@@ -955,15 +966,13 @@ class Notice
         }
     }
 
-    public function getLabel(): ?string
+    #[Assert\Callback]
+    public function validateRessZipOrUrl(ExecutionContextInterface $context): void
     {
-        return $this->label;
-    }
-
-    public function setLabel(?string $label): self
-    {
-        $this->label = $label;
-
-        return $this;
+        if (empty($this->ressZip) && empty($this->ressUrl)) {
+            $context->buildViolation('La notice doit contenir soit une ressource ZIP, soit une URL.')
+                ->atPath('ressUrl')
+                ->addViolation();
+        }
     }
 }
