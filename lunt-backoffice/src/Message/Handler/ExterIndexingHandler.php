@@ -57,7 +57,7 @@ readonly class ExterIndexingHandler
 
         $coreIndex = $task->getIndexCore()?->getName();
         $this->logger->warning(sprintf(
-            "Début d'externe indexation %s de %s",
+            "Début d'indexation externe %s de %s",
             $task->isFullMode() ? 'complète' : 'différentielle',
             $coreIndex
         ));
@@ -114,7 +114,7 @@ readonly class ExterIndexingHandler
         }
 
         $this->logger->warning(sprintf(
-            "Fin d'externe indexation %s de %s",
+            "Fin d'indexation externe %s de %s",
             $task->isFullMode() ? 'complète' : 'différentielle',
             $coreIndex
         ));
