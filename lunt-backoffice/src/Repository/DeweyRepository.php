@@ -20,31 +20,4 @@ class DeweyRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Dewey::class);
     }
-    public function rootQB(): \Doctrine\ORM\QueryBuilder
-    {
-        return $this->createQueryBuilder('s')
-            ->select('s,c,cc')
-            ->join('s.children', 'c')
-            ->join('c.children', 'cc')
-            ->where('s.parent is null');
-    }
-    public function findParentWithChild()
-    {
-            return $this->rootQB()->getQuery()->getResult();
-    }
-
-    public function add(Dewey $d=null): ?Dewey
-    {
-        if($d) $this->_em->persist($d);
-        $this->_em->flush();
-        return $d;
-    }
-
-    public function del(Dewey $d): Dewey
-    {
-        $this->_em->remove($d);
-        $this->_em->flush();
-
-        return $d;
-    }
 }

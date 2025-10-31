@@ -4,10 +4,11 @@ namespace App\Entity;
 
 use App\Repository\NoticeRepository;
 use Doctrine\Common\Collections\{ArrayCollection, Collection};
+use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Types\UuidType;
-use Symfony\Component\{Uid\Uuid,Validator\Constraints as Assert};
+use Symfony\Component\{Uid\Uuid, Validator\Constraints as Assert};
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: NoticeRepository::class)]
@@ -16,15 +17,15 @@ class Notice
     use Timestamps;
 
     #[ORM\Column(type: "string", length: 128, unique: true)]
-    private ?string $uuid = null;
+    private ?string $uuid;
 
     #[ORM\Column(length: 285, nullable: true)]
     #[Assert\NotNull(message: 'La notice doit contenir un titre.')]
     private ?string $titre = null;
 
-  #[ORM\Column(length: 285, nullable: true)]
-  #[Assert\NotNull(message: 'La notice doit contenir un Contenu Url.')]
-  private ?string $ressUrl = null;
+    #[ORM\Column(length: 285, nullable: true)]
+    #[Assert\NotNull(message: 'La notice doit contenir un Contenu Url.')]
+    private ?string $ressUrl = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Assert\NotNull(message: 'La notice doit contenir une desciption.')]
@@ -57,12 +58,12 @@ class Notice
     #[ORM\Column(nullable: true)]
     private ?float $ressSize = null;
 
-    #[ORM\Column(length: 255, nullable: true),Assert\NotNull(message: 'La notice doit contenir une année de création.')]
+    #[ORM\Column(length: 255, nullable: true), Assert\NotNull(message: 'La notice doit contenir une année de création.')]
     private ?int $ressDate = null;
     private ?string $ressZip = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $publieLe = null;
+    private ?DateTimeInterface $publieLe = null;
 
     #[ORM\Column(length: 10, nullable: true,
         enumType: NoticEtat::class)]
@@ -72,9 +73,9 @@ class Notice
     private ?bool $exportOAI = true;
 
     #[ORM\ManyToOne]
-    private ?User $createur,$validateur;
+    private ?User $createur, $validateur;
 
-    #[ORM\Column(length: 255, nullable: true),Assert\Url]
+    #[ORM\Column(length: 255, nullable: true), Assert\Url]
     private ?string $formEvalUrl = null;
 
     #[ORM\ManyToOne, ORM\JoinColumn(nullable: false)]
@@ -140,7 +141,7 @@ class Notice
         $this->porteurs = new ArrayCollection();
         $this->auteurs = new ArrayCollection();
         $this->tags = new ArrayCollection();
-        $this->creeLe = new \DateTimeImmutable();
+        $this->creeLe = new DateTimeImmutable();
         $this->deweyPersos = new ArrayCollection();
         $this->disciplineGroups = new ArrayCollection();
         $this->deweyGroups = new ArrayCollection();
@@ -178,18 +179,6 @@ class Notice
     public function setDescription(?string $description): self
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getLabel(): ?string
-    {
-        return $this->label;
-    }
-
-    public function setLabel(?string $label): self
-    {
-        $this->label = $label;
 
         return $this;
     }
@@ -290,12 +279,12 @@ class Notice
         return $this;
     }
 
-    public function getPublieLe(): ?\DateTimeInterface
+    public function getPublieLe(): ?DateTimeInterface
     {
         return $this->publieLe;
     }
 
-    public function setPublieLe(?\DateTimeInterface $publieLe): self
+    public function setPublieLe(?DateTimeInterface $publieLe): self
     {
         $this->publieLe = $publieLe;
 
@@ -330,6 +319,7 @@ class Notice
     {
         return $this->ressDate;
     }
+
     public function setRessDate(?int $ressDate): self
     {
         $this->ressDate = $ressDate;
@@ -411,22 +401,14 @@ class Notice
 
     public function getRepertoire(): ?Dossier
     {
-      return $this->repertoire;
+        return $this->repertoire;
     }
 
     public function setRepertoire(?Dossier $repertoire): static
     {
-      $this->repertoire = $repertoire;
+        $this->repertoire = $repertoire;
 
-      return $this;
-    }
-
-    /**
-     * @return Collection<int, Dewey>
-     */
-    public function getCodeweys(): Collection
-    {
-        return $this->codeweys;
+        return $this;
     }
 
     public function addCodewey(Dewey $dewey): self
@@ -443,14 +425,6 @@ class Notice
         $this->codeweys->removeElement($dewey);
 
         return $this;
-    }
-
-    /**
-     * @return Collection<int, Discipline>
-     */
-    public function getSpecialites(): Collection
-    {
-        return $this->specialites;
     }
 
     public function addSpecialite(Discipline $specialite): self
@@ -745,80 +719,59 @@ class Notice
         return $this;
     }
 
-    public function getDeweyPersos(): Collection
-    {
-      return $this->deweyPersos;
-    }
-
     public function addDeweyPerso(DeweyPerso $deweyPerso): static
     {
-      if (!$this->deweyPersos->contains($deweyPerso)) {
-        $this->deweyPersos->add($deweyPerso);
-      }
-      return $this;
+        if (!$this->deweyPersos->contains($deweyPerso)) {
+            $this->deweyPersos->add($deweyPerso);
+        }
+        return $this;
     }
 
     public function removeDeweyPerso(DeweyPerso $deweyPerso): static
     {
-      $this->deweyPersos->removeElement($deweyPerso);
-      return $this;
-    }
-    /**
-   * @return Collection<int, DisciplineGroup>
-   */
-    public function getDisciplineGroups(): Collection
-    {
-      return $this->disciplineGroups;
+        $this->deweyPersos->removeElement($deweyPerso);
+        return $this;
     }
 
     public function addDisciplineGroup(DisciplineGroup $disciplineGroup): self
     {
-      if (!$this->disciplineGroups->contains($disciplineGroup)) {
-        $this->disciplineGroups->add($disciplineGroup);
-        $disciplineGroup->setNotice($this);
-      }
+        if (!$this->disciplineGroups->contains($disciplineGroup)) {
+            $this->disciplineGroups->add($disciplineGroup);
+            $disciplineGroup->setNotice($this);
+        }
 
-      return $this;
+        return $this;
     }
 
     public function removeDisciplineGroup(DisciplineGroup $disciplineGroup): self
     {
-      if ($this->disciplineGroups->removeElement($disciplineGroup)) {
-        // set the owning side to null (unless already changed)
-        if ($disciplineGroup->getNotice() === $this) {
-          $disciplineGroup->setNotice(null);
+        if ($this->disciplineGroups->removeElement($disciplineGroup)) {
+            // set the owning side to null (unless already changed)
+            if ($disciplineGroup->getNotice() === $this) {
+                $disciplineGroup->setNotice(null);
+            }
         }
-      }
 
-      return $this;
+        return $this;
     }
 
-    public function setDeweyGroups(Collection $groups): self
-    {
-      $this->deweyGroups = $groups;
-      return $this;
-    }
-
-    public function getDeweyGroups(): Collection
-    {
-      return $this->deweyGroups;
-    }
     public function addDeweyGroup(DeweyGroup $group): self
     {
-      if (!$this->deweyGroups->contains($group)) {
-        $this->deweyGroups->add($group);
-        $group->setNotice($this);
-      }
-      return $this;
+        if (!$this->deweyGroups->contains($group)) {
+            $this->deweyGroups->add($group);
+            $group->setNotice($this);
+        }
+        return $this;
     }
+
     public function removeDeweyGroup(DeweyGroup $group): self
     {
-      if ($this->deweyGroups->removeElement($group)) {
-        if ($group->getNotice() === $this) {
-          $group->setNotice(null);
+        if ($this->deweyGroups->removeElement($group)) {
+            if ($group->getNotice() === $this) {
+                $group->setNotice(null);
+            }
         }
-      }
-      return $this;
+        return $this;
     }
 
     public function __toString(): string
@@ -838,62 +791,85 @@ class Notice
      */
     public function belongsToUNT(Univerique $unt): bool
     {
-      if($this->getDisciplineGroups()->isEmpty()) return false;
+        if ($this->getDisciplineGroups()->isEmpty()) return false;
 
-      // Extract IDs of the fields (disciplines) associated with the Univerique
-      $untFieldIds = $unt->getFields()->map(fn($discipline) => $discipline->getId());
+        // Extract IDs of the fields (disciplines) associated with the Univerique
+        $untFieldIds = $unt->getFields()->map(fn($discipline) => $discipline->getId());
 
-      // Check if any disciplineGroup's champDisc is part of the Univerique's fields
-      foreach ($this->getDisciplineGroups() as $group) {
-        if ($group->getChampDisc() && $untFieldIds->contains($group->getChampDisc()->getId())) {
-          return true;
+        // Check if any disciplineGroup's champDisc is part of the Univerique's fields
+        foreach ($this->getDisciplineGroups() as $group) {
+            if ($group->getChampDisc() && $untFieldIds->contains($group->getChampDisc()->getId())) {
+                return true;
+            }
         }
-      }
 
-      return false;
+        return false;
     }
 
-  /**
-   * Retrieves all specialities associated with the Notice, including those from its DisciplineGroups.
-   *
-   * This method aggregates specialities from both the Notice's direct specialities
-   * and those from its DisciplineGroups, ensuring no duplicates.
-   *
-   * @return Discipline[] An array of unique specialities associated with the Notice.
-   */
-  public function getAllSpecialites(): array
-  {
-    $specialites = [];
-    foreach ($this->getDisciplineGroups() as $group) {
-      foreach ($group->getSpecialites() as $spec) {
-        if (!in_array($spec, $specialites, true)) {
-          $specialites[] = $spec;
-        }
-      }
+    /**
+     * @return Collection<int, DisciplineGroup>
+     */
+    public function getDisciplineGroups(): Collection
+    {
+        return $this->disciplineGroups;
     }
-    return $specialites;
-  }
 
-  /**
-   * Returns a string representation of all specialities associated with the Notice.
-   *
-   * Each speciality is wrapped in a badge for styling purposes.
-   * If no specialities are found, a default message is returned.
-   *
-   * @return string A string of badges representing the specialities or a default message.
-   */
+    /**
+     * Returns a string representation of all specialities associated with the Notice.
+     *
+     * Each speciality is wrapped in a badge for styling purposes.
+     * If no specialities are found, a default message is returned.
+     *
+     * @return string A string of badges representing the specialities or a default message.
+     */
     public function getAllSpecialitesString(): string
     {
-      $specs = $this->getAllSpecialites();
-      if (!$specs) return '<span class="badge bg-secondary">Aucune</span>';
-      return implode('<br>', array_map(fn($s) => '<span class="badge badge-custom">'.$s->getNom().'</span>', $specs));
+        $specs = $this->getAllSpecialites();
+        if (!$specs) return '<span class="badge bg-secondary">Aucune</span>';
+        return implode('<br>', array_map(fn($s) => '<span class="badge badge-custom">' . $s->getNom() . '</span>', $specs));
     }
 
+    /**
+     * Retrieves all specialities associated with the Notice, including those from its DisciplineGroups.
+     *
+     * This method aggregates specialities from both the Notice's direct specialities
+     * and those from its DisciplineGroups, ensuring no duplicates.
+     *
+     * @return Discipline[] An array of unique specialities associated with the Notice.
+     */
+    public function getAllSpecialites(): array
+    {
+        $specialites = [];
+        foreach ($this->getDisciplineGroups() as $group) {
+            foreach ($group->getSpecialites() as $spec) {
+                if (!in_array($spec, $specialites, true)) {
+                    $specialites[] = $spec;
+                }
+            }
+        }
+        return $specialites;
+    }
+
+    /**
+     * @return Collection<int, Discipline>
+     */
+    public function getSpecialites(): Collection
+    {
+        return $this->specialites;
+    }
+
+    public function getAllDeweyString(): string
+    {
+        $codeDew = $this->getAllDewey();
+        if (!$codeDew) return '<span class="badge bg-secondary">Aucune</span>';
+        return implode('<br>', array_map(fn($s) => '<span class="badge badge-custom">' . $s->getNom() . '</span>', $codeDew));
+    }
 
     public function getAllDewey(): array
     {
         $codeweys = [];
         // Ajoute les Dewey classiques via les groupes
+        /** @var DeweyGroup $group */
         foreach ($this->getDeweyGroups() as $group) {
             foreach ($group->getCodeweys() as $code) {
                 if (!in_array($code, $codeweys, true)) {
@@ -910,53 +886,84 @@ class Notice
         return $codeweys;
     }
 
-    public function getAllDeweyString(): string
+    public function getDeweyGroups(): Collection
     {
-        $codeDew = $this->getAllDewey();
-        if (!$codeDew) return '<span class="badge bg-secondary">Aucune</span>';
-        return implode('<br>', array_map(fn($s) => '<span class="badge badge-custom">'.$s->getNom().'</span>', $codeDew));
+        return $this->deweyGroups;
     }
+
+    public function setDeweyGroups(Collection $groups): self
+    {
+        $this->deweyGroups = $groups;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Dewey>
+     */
+    public function getCodeweys(): Collection
+    {
+        return $this->codeweys;
+    }
+
+    public function getDeweyPersos(): Collection
+    {
+        return $this->deweyPersos;
+    }
+
     public function getAllDeweyGroup(): array
     {
-      $codeweys = [];
-      // Ajoute les Dewey classiques via les groupes
-      foreach ($this->getDeweyGroups() as $group) {
-        foreach ($group->getCodeweys() as $code) {
-          if (!in_array($code, $codeweys, true)) {
-            $codeweys[] = $code;
-          }
+        $codeweys = [];
+        // Ajoute les Dewey classiques via les groupes
+        foreach ($this->getDeweyGroups() as $group) {
+            foreach ($group->getCodeweys() as $code) {
+                if (!in_array($code, $codeweys, true)) {
+                    $codeweys[] = $code;
+                }
+            }
         }
-      }
-      return $codeweys;
+        return $codeweys;
     }
+
     public function getAllDeweyPerso(): array
     {
-      $codeweys = [];
-      // Ajoute les DeweyPerso sélectionnés
-      foreach ($this->getDeweyPersos() as $perso) {
-        if (!in_array($perso, $codeweys, true)) {
-          $codeweys[] = $perso;
+        $codeweys = [];
+        // Ajoute les DeweyPerso sélectionnés
+        foreach ($this->getDeweyPersos() as $perso) {
+            if (!in_array($perso, $codeweys, true)) {
+                $codeweys[] = $perso;
+            }
         }
-      }
-      return $codeweys;
+        return $codeweys;
     }
 
     #[Assert\Callback]
     public function validateDeweyGroups(ExecutionContextInterface $context): void
     {
-      // Seuls les états "Soumise" et "Validée" nécessitent des classifications Dewey
-      $etatsNecessitantDewey = [NoticEtat::Forward, NoticEtat::Approved];
+        // Seuls les états "Soumise" et "Validée" nécessitent des classifications Dewey
+        $etatsNecessitantDewey = [NoticEtat::Forward, NoticEtat::Approved];
 
-      if (in_array($this->etat, $etatsNecessitantDewey)) {
-        $hasClassificationDewey = $this->deweyGroups->count() > 0 || $this->deweyPersos->count() > 0;
+        if (in_array($this->etat, $etatsNecessitantDewey)) {
+            $hasClassificationDewey = $this->deweyGroups->count() > 0 || $this->deweyPersos->count() > 0;
 
-        if (!$hasClassificationDewey) {
-          $labelEtat = $this->etat->getLabel();
-          $context->buildViolation('Une notice "{{ etat }}" doit avoir au moins une classification Dewey (groupe ou personnalisé)')
-            ->setParameter('{{ etat }}', $labelEtat)
-            ->atPath('deweyGroups')
-            ->addViolation();
+            if (!$hasClassificationDewey) {
+                $labelEtat = $this->etat->getLabel();
+                $context->buildViolation('Une notice "{{ etat }}" doit avoir au moins une classification Dewey (groupe ou personnalisé)')
+                    ->setParameter('{{ etat }}', $labelEtat)
+                    ->atPath('deweyGroups')
+                    ->addViolation();
+            }
         }
-      }
+    }
+
+    public function getLabel(): ?string
+    {
+        return $this->label;
+    }
+
+    public function setLabel(?string $label): self
+    {
+        $this->label = $label;
+
+        return $this;
     }
 }

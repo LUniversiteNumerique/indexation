@@ -20,19 +20,4 @@ class EtablissementRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Etablissement::class);
     }
-
-    public function add(Etablissement $e=null): ?Etablissement
-    {
-        if($e) $this->_em->persist($e);
-        $this->_em->flush();
-        return $e;
-    }
-
-    public function del(Etablissement $e): Etablissement
-    {
-        $this->_em->remove($e);
-        $this->_em->flush();
-
-        return $e;
-    }
 }

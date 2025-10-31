@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Niveau;
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Action,Actions,Crud,Filters};
 use App\Repository\NiveauRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\{DateTimeField, IdField, IntegerField, TextField};
@@ -97,6 +99,8 @@ class NiveauCrudController extends AbstractCrudController
      *
      * @param string $entityFqcn Le FQCN de l'entité.
      * @return Niveau
+     * @throws NoResultException
+     * @throws NonUniqueResultException
      */
     public function createEntity(string $entityFqcn)
     {

@@ -20,48 +20,4 @@ class DisciplineRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Discipline::class);
     }
-
-    public function rootQB(): \Doctrine\ORM\QueryBuilder
-    {
-      return $this->createQueryBuilder('s')->select('s,c,cc')
-        ->leftJoin('s.children', 'c')
-        ->leftJoin('c.children', 'cc');
-    }
-    public function findParentWithChild()
-    {
-      return $this->rootQB()->where('s.parent is null')->getQuery()->getResult();
-    }
-    public function findWithChild(?int $id): array
-    {
-      $qb = $this->rootQB();
-
-      if($id) $qb->where('s.parent = :parent')
-        ->setParameter('parent',$id);
-      else $qb->where('s.parent is null');
-
-      return $qb->getQuery()->getResult();
-    }
-    public function findOneForAll(?int $id)
-    {
-      $qb = $this->rootQB();
-
-      if($id) return $qb->where('s = :parent')->setParameter('parent',$id)
-        ->getQuery()->getOneOrNullResult();
-      else return $qb->where('s.parent is null')->getQuery()->getResult();
-    }
-
-    public function add(Discipline $d=null): ?Discipline
-    {
-        if($d) $this->_em->persist($d);
-        $this->_em->flush();
-        return $d;
-    }
-
-    public function del(Discipline $d): Discipline
-    {
-        $this->_em->remove($d);
-        $this->_em->flush();
-
-        return $d;
-    }
 }

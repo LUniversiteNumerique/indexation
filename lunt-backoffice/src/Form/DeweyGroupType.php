@@ -1,20 +1,13 @@
 <?php
+
 namespace App\Form;
 
-use App\Entity\Dewey;
-use App\Entity\DeweyGroup;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
+use App\Entity\{Dewey, DeweyGroup};
+use Doctrine\ORM\{EntityManagerInterface, EntityRepository};
+use EasyCorp\Bundle\EasyAdminBundle\Config\{Asset, Assets};
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\{AbstractType, FormBuilderInterface, FormEvent, FormEvents, FormInterface};
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Asset;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use function Symfony\Component\Translation\t;
 
 class DeweyGroupType extends AbstractType
@@ -26,7 +19,7 @@ class DeweyGroupType extends AbstractType
     $this->em = $em;
   }
 
-  public function buildForm(FormBuilderInterface $builder, array $options)
+  public function buildForm(FormBuilderInterface $builder, array $options): void
   {
     // Ajout des trois champs vides (division et codeweys seront remplis dynamiquement)
     $builder
@@ -67,7 +60,7 @@ class DeweyGroupType extends AbstractType
         'label' => 'Codes Dewey',
       ]);
 
-    $formModifier = function (FormInterface $form, Dewey $dewey = null, Dewey $selectedDivision = null) {
+    $formModifier = function (FormInterface $form, ?Dewey $dewey = null, ?Dewey $selectedDivision = null) {
       $divisions = null === $dewey ? [] : $dewey->getChildren()->toArray();
       if ($selectedDivision && !in_array($selectedDivision, $divisions, true)) {
         $divisions[] = $selectedDivision;
@@ -81,7 +74,7 @@ class DeweyGroupType extends AbstractType
         'help' => t('notice.division_help', domain: 'EasyAdminBundle'),
         'data' => $selectedDivision,
       ]);
-      if ($selectedDivision && $selectedDivision instanceof Dewey) {
+      if ($selectedDivision) {
         $codeweys = $selectedDivision->getChildren()->toArray();
         $form->add('codeweys', EntityType::class, [
           'class' => Dewey::class,
@@ -96,7 +89,7 @@ class DeweyGroupType extends AbstractType
     };
 
     // Fonction pour remplir les codes selon la division
-    $codeweysModifier = function (FormInterface $form, Dewey $division = null, array $selectedCodes = []) {
+    $codeweysModifier = function (FormInterface $form, ?Dewey $division = null, array $selectedCodes = []) {
       if ($division && !$division instanceof Dewey) {
         $division = $this->em->getRepository(Dewey::class)->find($division);
       }
@@ -139,7 +132,7 @@ class DeweyGroupType extends AbstractType
         $dewey = $form->has('dewey') ? $form->get('dewey')->getData() : null;
         $division = $event->getForm()->getData();
         $index = $form->getName();
-        if(!$division){
+        if (!$division) {
           $submittedData = $event->getForm()->getViewData();
           if ($submittedData) {
             $division = $this->em->getRepository(Dewey::class)->find($submittedData);
@@ -187,7 +180,7 @@ class DeweyGroupType extends AbstractType
     return $assets->addJsFile(Asset::new('../assets/form.js')->onlyOnForms());
   }
 
-  public function configureOptions(OptionsResolver $resolver)
+  public function configureOptions(OptionsResolver $resolver): void
   {
     $resolver->setDefaults([
       'user' => null,

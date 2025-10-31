@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\TDocumentRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -17,16 +18,16 @@ class TDocument
     #[ORM\Column(length: 255), Assert\NotBlank]
     private ?string $nom;
 
-    public function __construct($code=null,$nom=null)
+    public function __construct($code = null, $nom = null)
     {
-        $this->creeLe = new \DateTimeImmutable();
+        $this->creeLe = new DateTimeImmutable();
         $this->code = $code;
         $this->nom = $nom;
     }
 
     public static function create(array $o): self
     {
-        return new self($o['id'],$o['libelle_uoh']);
+        return new self($o['id'], $o['libelle_uoh']);
     }
 
     public function getId(): ?int

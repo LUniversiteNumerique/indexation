@@ -3,6 +3,7 @@
 namespace App\Field;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\{Asset,Option\TextAlign};
+use Closure;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FieldTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Form\Type\FileUploadType;
@@ -57,7 +58,7 @@ final class FileField implements FieldInterface
     }
 
     /**
-     * @param string|\Closure $patternOrCallable
+     * @param string|Closure $patternOrCallable
      *
      * If it's a string, uploaded files will be renamed according to the given pattern.
      * The pattern can include the following special values:
@@ -66,11 +67,11 @@ final class FileField implements FieldInterface
      *   [randomhash] [uuid] [ulid]
      * (e.g. [year]/[month]/[day]/[slug]-[contenthash].[extension])
      *
-     * If it's a callable, you will be passed the Symfony's UploadedFile instance and you must
+     * If it's a callable, you will be passed the Symfony's UploadedFile instance, and you must
      * return a string with the new filename.
      * (e.g. fn(UploadedFile $file) => sprintf('upload_%d_%s.%s', random_int(1, 999), $file->getFilename(), $file->guessExtension()))
      */
-    public function setUploadedFileNamePattern($patternOrCallable): self
+    public function setUploadedFileNamePattern(string|Closure $patternOrCallable): self
     {
         $this->setCustomOption(self::OPTION_UPLOADED_FILE_NAME_PATTERN, $patternOrCallable);
 

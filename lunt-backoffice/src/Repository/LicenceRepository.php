@@ -20,19 +20,4 @@ class LicenceRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Licence::class);
     }
-
-    public function add(Licence $u=null): ?Licence
-    {
-        if($u) $this->_em->persist($u);
-        $this->_em->flush();
-        return $u;
-    }
-
-    public function del(Licence $u): Licence
-    {
-        $this->_em->remove($u);
-        $this->_em->flush();
-
-        return $u;
-    }
 }

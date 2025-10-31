@@ -2,11 +2,23 @@
 
 namespace App\Field;
 
+use Closure;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FieldTrait;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Contracts\Translation\TranslatableInterface;
 
+/**
+ * Champ personnalisé pour la gestion des entités dans EasyAdmin.
+ *
+ * @method self setProperty(string $propertyName)
+ * @method self setLabel(TranslatableInterface|string|false|null $label)
+ * @method self setTemplatePath(string $templatePath)
+ * @method self setFormType(string $formType)
+ * @method self addCssClass(string $cssClass)
+ * @method self setDefaultColumns(string $columns)
+ * @method self setCustomOption(string $optionName, mixed $value)
+ */
 class EntityField implements FieldInterface
 {
     use FieldTrait;
@@ -33,7 +45,11 @@ class EntityField implements FieldInterface
     public const OPTION_EMBEDDED_CRUD_FORM_EDIT_PAGE_NAME = 'crudEditPageName';
 
     /**
-     * @param TranslatableInterface|string|false|null $label
+     * Crée une nouvelle instance de EntityField.
+     *
+     * @param string $propertyName
+     * @param TranslatableInterface|string|false|null $label Le label du champ.
+     * @return self
      */
     public static function new(string $propertyName, $label = null): self
     {
@@ -55,6 +71,11 @@ class EntityField implements FieldInterface
             ->setCustomOption(self::OPTION_EMBEDDED_CRUD_FORM_EDIT_PAGE_NAME, null);
     }
 
+    /**
+     * Active l'autocomplétion pour ce champ.
+     *
+     * @return self
+     */
     public function autocomplete(): self
     {
         $this->setCustomOption(self::OPTION_AUTOCOMPLETE, true);
@@ -62,6 +83,12 @@ class EntityField implements FieldInterface
         return $this;
     }
 
+    /**
+     * Définit le widget comme natif ou autocomplétion.
+     *
+     * @param bool $asNative Utiliser le widget natif si true, sinon autocomplétion.
+     * @return self
+     */
     public function renderAsNativeWidget(bool $asNative = true): self
     {
         $this->setCustomOption(self::OPTION_WIDGET, $asNative ? self::WIDGET_NATIVE : self::WIDGET_AUTOCOMPLETE);
@@ -69,6 +96,12 @@ class EntityField implements FieldInterface
         return $this;
     }
 
+    /**
+     * Définit le contrôleur CRUD associé pour le formulaire embarqué.
+     *
+     * @param string $crudControllerFqcn FQCN du contrôleur CRUD.
+     * @return self
+     */
     public function setCrudController(string $crudControllerFqcn): self
     {
         $this->setCustomOption(self::OPTION_EMBEDDED_CRUD_FORM_CONTROLLER, $crudControllerFqcn);
@@ -76,13 +109,27 @@ class EntityField implements FieldInterface
         return $this;
     }
 
-    public function setQueryBuilder(\Closure $queryBuilderCallable): self
+    /**
+     * Définit une closure personnalisée pour le query builder.
+     *
+     * @param Closure $queryBuilderCallable
+     * @return self
+     */
+    public function setQueryBuilder(Closure $queryBuilderCallable): self
     {
         $this->setCustomOption(self::OPTION_QUERY_BUILDER_CALLABLE, $queryBuilderCallable);
 
         return $this;
     }
 
+    /**
+     * Affiche le champ comme un formulaire embarqué.
+     *
+     * @param string|null $crudControllerFqcn
+     * @param string|null $crudNewPageName
+     * @param string|null $crudEditPageName
+     * @return self
+     */
     public function renderAsEmbeddedForm(?string $crudControllerFqcn = null, ?string $crudNewPageName = null, ?string $crudEditPageName = null): self
     {
         $this->setCustomOption(self::OPTION_RENDER_AS_EMBEDDED_FORM, true);
@@ -92,5 +139,4 @@ class EntityField implements FieldInterface
 
         return $this;
     }
-
 }

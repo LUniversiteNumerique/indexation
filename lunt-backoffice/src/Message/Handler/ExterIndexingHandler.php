@@ -11,6 +11,7 @@ use App\Service\{FileService, SolrApiService};
 use JMS\Serializer\SerializerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Contracts\HttpClient\Exception\{ClientExceptionInterface, RedirectionExceptionInterface, ServerExceptionInterface, TransportExceptionInterface};
 
 /**
  * Handler pour l'indexation externe.
@@ -41,7 +42,10 @@ readonly class ExterIndexingHandler
      * Traite le message d'indexation externe.
      *
      * @param ExtexingConfigMessage $message
-     * @throws Exception
+     * @throws TransportExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
      */
     public function __invoke(ExtexingConfigMessage $message): void
     {
