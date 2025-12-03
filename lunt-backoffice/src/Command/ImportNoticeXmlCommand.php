@@ -202,7 +202,7 @@ class ImportNoticeXmlCommand extends Command
         $notice = new Notice();
 
         $this->handleRelations($item, $uid, $fileName, $stats['relationsToLink'], $stats['noticeWithoutRelation']);
-        $roleNotice = $this->extractRoles($item);
+        $roleNotice = SuplomDto::extractRoles($item);
 
         $this->setDates($notice, $roleNotice, $fileName, $stats['noticeWithoutPublieeLe']);
         $this->setValidateur($notice, $roleNotice, $mailDocumentaliste, $fileName, $stats['notFoundValidateur']);
@@ -251,45 +251,6 @@ class ImportNoticeXmlCommand extends Command
                 'fileName' => $fileName
             ];
         }
-    }
-
-    /**
-     * Extrait les rôles contributeurs depuis le DTO suplom.
-     *
-     * @param SuplomDto $item Les données importées du fichier XML.
-     * @return array Tableau associatif des rôles et de leurs informations (nom, prénom, organisation, email, etc.).
-     */
-    private function extractRoles(SuplomDto $item): array
-    {
-        $contributes = array_merge(
-            $item->metadata?->contributes,
-            $item->lifeCycle?->contributes
-        );
-        $roleNotice = [];
-        foreach ($contributes as $role) {
-            if (isset($role->entities[0])) {
-                $roleValue = $role->role->value ?? null;
-                $vcardFields = parseVCard($role->entities[0]);
-                $firstName = $vcardFields['FIRSTNAME'] ?? '';
-                $lastName  = $vcardFields['LASTNAME'] ?? '';
-                $org       = $vcardFields['ORG'] ?? '';
-                $email     = $vcardFields['EMAIL'] ?? '';
-                $fn        = $vcardFields['FN'] ?? '';
-                $name      = trim($firstName . ' ' . $lastName) ?: $org ?: $fn;
-
-                // Stocke toutes les infos utiles pour ce rôle
-                $roleNotice[$roleValue][] = [
-                    'name'      => $name,
-                    'firstname' => $firstName,
-                    'lastname'  => $lastName,
-                    'org'       => $org,
-                    'email'     => $email,
-                    'fn'        => $fn,
-                    'date'      => $role->date[0] ?? null,
-                ];
-            }
-        }
-        return $roleNotice;
     }
 
     /**
@@ -987,34 +948,4 @@ function normalizeDuration(?string $duration): ?string
         return sprintf('PT0H%dM%dS', $matches[1], $matches[2]);
     }
     return $duration;
-}
-
-/**
- * Parse une chaîne vCard et retourne un tableau associatif des champs.
- *
- * @param string $vcardString
- * @return array<string, string>
- */
-function parseVCard(string $vcardString): array
-{
-    $fields = [];
-    $lines = preg_split('/\r\n|\r|\n/', $vcardString);
-    foreach ($lines as $line) {
-        $line = trim($line);
-        if (str_starts_with($line, 'FN:')) {
-            $fields['FN'] = substr($line, 3);
-        } elseif (str_starts_with($line, 'EMAIL')) {
-            $parts = explode(':', $line, 2);
-            $fields['EMAIL'] = $parts[1] ?? '';
-        } elseif (str_starts_with($line, 'ORG:')) {
-            $parts = explode(':', $line, 2);
-            $fields['ORG'] = isset($parts[1]) ? trim($parts[1]) : '';
-        } elseif (str_starts_with($line, 'N:')) {
-            $fields['N'] = substr($line, 2);
-            $nParts = explode(';', $fields['N']);
-            $fields['LASTNAME'] = $nParts[0] ?? '';
-            $fields['FIRSTNAME'] = $nParts[1] ?? '';
-        }
-    }
-    return $fields;
 }

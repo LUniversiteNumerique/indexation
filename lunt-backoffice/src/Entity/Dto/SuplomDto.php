@@ -184,6 +184,70 @@ class SuplomDto
             $classifications
         );
     }
+
+    /**
+     * Parse une chaîne vCard et retourne un tableau associatif des champs.
+     *
+     * @param string $vcardString
+     * @return array<string, string>
+     */
+    public static function parseVCard(string $vcardString): array
+    {
+        $lines = preg_split('/\r\n|\r|\n/', $vcardString);
+        $vcardData = [];
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if (str_contains($line, ':')) {
+                list($key, $value) = explode(':', $line, 2);
+                $vcardData[$key] = $value;
+                if ($key === 'N') {
+                    $parts = explode(';', $value);
+                    $vcardData['LASTNAME'] = $parts[0] ?? '';
+                    $vcardData['FIRSTNAME'] = $parts[1] ?? '';
+                }
+            }
+        }
+        return $vcardData;
+    }
+
+    /**
+     * Extrait les rôles contributeurs depuis le DTO suplom.
+     *
+     * @param SuplomDto $item Les données importées du fichier XML.
+     * @return array Tableau associatif des rôles et de leurs informations (nom, prénom, organisation, email, etc.).
+     */
+    public static function extractRoles(SuplomDto $item): array
+    {
+        $contributes = array_merge(
+            $item->metadata?->contributes,
+            $item->lifeCycle?->contributes
+        );
+        $roleNotice = [];
+        foreach ($contributes as $contribute) {
+            if (isset($contribute->entities[0])) {
+                $role = $contribute->role->value ?? null;
+                $vcardFields = SuplomDto::parseVCard($contribute->entities[0]);
+                $firstName = $vcardFields['FIRSTNAME'] ?? '';
+                $lastName  = $vcardFields['LASTNAME'] ?? '';
+                $org       = $vcardFields['ORG'] ?? '';
+                $email     = $vcardFields['EMAIL'] ?? '';
+                $fn        = $vcardFields['FN'] ?? '';
+                $name      = trim($firstName . ' ' . $lastName) ?: $org ?: $fn;
+
+                // Stocke toutes les infos utiles pour ce rôle
+                $roleNotice[$role][] = [
+                    'name'      => $name,
+                    'firstname' => $firstName,
+                    'lastname'  => $lastName,
+                    'org'       => $org,
+                    'email'     => $email,
+                    'fn'        => $fn,
+                    'date'      => $contribute->date[0] ?? null,
+                ];
+            }
+        }
+        return $roleNotice;
+    }
 }
 
 

@@ -2,7 +2,7 @@
 
 namespace App\Entity\Dto;
 
-use App\Entity\{Auteur, DeweyGroup, DeweyPerso, Discipline, DisciplineGroup, Notice, NoticEtat, Univerique};
+use App\Entity\{Notice, NoticEtat, Univerique};
 use DateTime;
 use JMS\Serializer\Annotation as Jms;
 
@@ -35,16 +35,13 @@ class IndexingNotice
      */
     public static function fromNotice(Notice $notice, Univerique $core): IndexingNotice
     {
-        $user = $notice->getCreateur();
-        $deweyGroups = $notice->getDeweyGroups();
-        $disciplineGroups = $notice->getDisciplineGroups();
-        $deweyPersos = $notice->getDeweyPersos();
+        $createur = $notice->getCreateur();
 
-        return new self([
+        $fields = [
             new Field($notice->getUuid(), null, 'uuid'),
             new Field($notice->getTitre(), null, 'titre'),
             new Field($core->getLabel(), null, 'entrepot_nom'),
-            new Field($user->getSchool()?->getLogo(), null, 'entrepot_logo'),
+            new Field($createur->getSchool()?->getLogo(), null, 'entrepot_logo'),
             new Field($core->getSiteWeb(), null, 'entrepot_url'),
             new Field($notice->getVignette(), null, 'vignette'),
             new Field($notice->getRessUrl(), null, 'ressource_lien'),
@@ -55,51 +52,17 @@ class IndexingNotice
             new Field($notice->getFormEvalUrl(), null, 'evaluation_form_url'),
             new Field(strip_tags($notice->getDescription()), null, 'description_text'),
             new Field($notice->getRessDate(), null, 'date_creation'),
-            new Field(implode(";", $notice->getTags()->toArray()), null, 'mots_cles'),
-            new Field(implode(",", $notice->getNiveaux()->toArray()), null, 'niveaux'),
-            new Field(implode(",", $notice->getPedTypes()->toArray()), null, 'types_pedagogiques'),
-            new Field(implode(",", $notice->getDocTypes()->toArray()), null, 'types_documentaires'),
-            new Field(implode(";", (array)$notice->getPropUser()), null, 'proposition_utilisation'),
-            new Field(json_encode(array_map(function (DeweyGroup $group) {
-                return [
-                    "id" => $group->getDewey()?->getCode(),
-                    "libelle" => $group->getDewey()?->getNom()
-                ];
-            }, $deweyGroups->toArray())), null, 'dewey'),
-            new Field(json_encode(array_map(fn(DeweyPerso $deweyPerso) => [
-                "id" => $deweyPerso->getCode(),
-                "libelle" => $deweyPerso->getNom()
-            ], $deweyPersos->toArray())), null, 'deweyPerso'),
-            new Field(json_encode(array_merge(...array_map(function (DisciplineGroup $group) {
-                return array_map(fn(Discipline $spec) => [
-                    "id" => $spec->getCode(),
-                    "libelle" => $spec->getNom()
-                ], $group->getSpecialites()->toArray());
-            }, $disciplineGroups->toArray()))), null, 'specialites'),
             new Field(json_encode([
-                "nom" => $user?->getName(),
-                "email" => $user->getEmail(),
-                "etablissement" => $user->getSchool()
+                "nom" => $createur?->getName(),
+                "email" => $createur->getEmail(),
+                "etablissement" => $createur->getSchool()
             ]), null, 'correspondant'),
-            new Field(json_encode(array_map(fn(Auteur $auteur) => [
-                "prenom" => $auteur->getPrenom(),
-                "nom" => $auteur->getNom(),
-                "email" => $auteur->getEmail() ?? ''
-            ], $notice->getAuteurs()->toArray())), null, 'contributions'),
-            new Field(json_encode(array_map(fn(Notice $notice) => [
-                "id" => $notice->getId(),
-                "uuid" => $notice->getUuid(),
-                "titre" => $notice->getTitre()
-            ], $notice->getRessources()->filter(fn(Notice $notice) => !$notice->isDeleted() && $notice->getEtat() === NoticEtat::Approved)->toArray())), null, 'associations_associate'),
-            new Field($user->getSchool() ? json_encode([
-                "id" => $user->getSchool()->getId(),
-                "libelle" => $user->getSchool()->getNom()
+            new Field($createur->getSchool() ? json_encode([
+                "id" => $createur->getSchool()->getId(),
+                "libelle" => $createur->getSchool()->getNom()
             ]) : "", null, 'etablissement_porteur'),
-            new Field(json_encode(array_map("strval", $notice->getPorteurs()->toArray())), null, 'etablissements_co_editeurs'),
             new Field(($notice->getEditeLe() ?? $notice->getCreeLe())->format('Y-m-d H:i:s'), null, 'date_modification'),
             new Field(($notice->getPublieLe() ?? new DateTime())->format('Y-m-d H:i:s'), null, 'date_publication'),
-            new Field(implode(",", (array)$notice->getUserLang()), null, 'langues_utilisateur'),
-            new Field(implode(",", (array)$notice->getRessLang()), null, 'langues_ressource'),
             new Field($notice->isProprIntel() ?: 0, null, 'propriete_intellectuelle'),
             new Field($notice->isRessPayant() ?: 0, null, 'ressource_payante'),
             new Field($notice->isExportOai() ?: 0, null, 'exposition_oai'),
@@ -110,7 +73,85 @@ class IndexingNotice
             new Field($notice->getChampExt4(), null, 'champ_extension4'),
             new Field($notice->getChampExt5(), null, 'champ_extension5'),
             new Field(0, null, 'external_resource')
-        ]);
+            // dure_execution ?
+            // ressource_taille ?
+            // validateur ?
+        ];
+        // Champs multivalués
+        $motsCles = $notice->getTags()->toArray();
+        foreach ($motsCles as $motCle) {
+            $fields[] = new Field($motCle, null, 'mots_cles');
+        }
+        $niveaux = $notice->getNiveaux()->toArray();
+        foreach ($niveaux as $niveau) {
+            $fields[] = new Field($niveau, null, 'niveaux');
+        }
+        $tPeds = $notice->getPedTypes()->toArray();
+        foreach ($tPeds as $tPed) {
+            $fields[] = new Field($tPed, null, 'types_pedagogiques');
+        }
+        $tDocs = $notice->getDocTypes()->toArray();
+        foreach ($tDocs as $tDoc) {
+            $fields[] = new Field($tDoc, null, 'types_documentaires');
+        }
+        $propUsers = $notice->getPropUser();
+        foreach ($propUsers as $propUser) {
+            $fields[] = new Field($propUser, null, 'proposition_utilisation');
+        }
+        $deweyGroups = $notice->getDeweyGroups()->toArray();
+        foreach ($deweyGroups as $group) {
+            $fields[] = new Field(json_encode([
+                "id" => $group->getDewey()?->getCode(),
+                "libelle" => $group->getDewey()?->getNom()
+            ]), null, 'dewey');
+        }
+        $deweyPersos = $notice->getDeweyPersos()->toArray();
+        foreach ($deweyPersos as $deweyPerso) {
+            $fields[] = new Field(json_encode([
+                "id" => $deweyPerso->getCode(),
+                "libelle" => $deweyPerso->getNom()
+            ]), null, 'dewey');
+        }
+        $disciplineGroups = $notice->getDisciplineGroups()->toArray();
+        foreach ($disciplineGroups as $group) {
+            $specs = $group->getSpecialites()->toArray();
+            foreach ($specs as $spec) {
+                $fields[] = new Field(json_encode([
+                    "id" => $spec->getCode(),
+                    "libelle" => $spec->getNom()
+                ]), null, 'specialite');
+            }
+        }
+        $auteurs = $notice->getAuteurs()->toArray();
+        foreach ($auteurs as $auteur) {
+            $fields[] = new Field(json_encode([
+                "prenom" => $auteur->getPrenom(),
+                "nom" => $auteur->getNom(),
+                "email" => $auteur->getEmail() ?? ''
+            ]), null, 'contributions');
+        }
+        $noticesAssociees = $notice->getRessources()->filter(fn(Notice $notice) => !$notice->isDeleted() && $notice->getEtat() === NoticEtat::Approved)->toArray();
+        foreach ($noticesAssociees as $associe) {
+            $fields[] = new Field(json_encode([
+                "id" => $associe->getId(),
+                "uuid" => $associe->getUuid(),
+                "titre" => $associe->getTitre()
+            ]), null, 'associations_associate');
+        }
+        $porteurs = $notice->getPorteurs()->toArray();
+        foreach ($porteurs as $porteur) {
+            $fields[] = new Field(strval($porteur), null, 'etablissements_co_editeurs');
+        }
+        $userLangs = $notice->getUserLang();
+        foreach ($userLangs as $userLang) {
+            $fields[] = new Field($userLang, null, 'langues_utilisateur');
+        }
+        $ressLangs = $notice->getRessLang();
+        foreach ($ressLangs as $ressLang) {
+            $fields[] = new Field($ressLang, null, 'langues_ressource');
+        }
+
+        return new self($fields);
     }
 
     /**
@@ -129,28 +170,60 @@ class IndexingNotice
             new Field($core?->getName(), null, 'entrepot_logo'),
             new Field($core?->getSiteWeb(), null, 'entrepot_url'),
             new Field(null, null, 'vignette'),
-            new Field($suplom->general->description[0]?->value, null, 'description'),
             new Field($suplom->technical?->location, null, 'ressource_lien'),
-            new Field($suplom->technical?->duration?->duration ?? null, null, 'dure_execution'),
-            new Field(strip_tags($suplom->general->description[0]?->value), null, 'description_text'),
-            new Field(implode(', ', $suplom->general->languages), null, 'langues_ressource'),
-            new Field(implode(', ', $suplom->educational->languages), null, 'langues_utilisateur'),
+            new Field($suplom->general->description[0]?->value, null, 'description'),
             new Field($suplom->educational->typicalLearningTime?->duration ?? null, null, 'dure_apprentissage'),
-            new Field(array_reduce($suplom->general?->keywords, fn(string $acc, Motcle $s) => $acc . trim($s->string?->value) . ", ", ""), null, 'mots_cles'),
-            new Field(array_reduce($suplom->educational?->contexts, fn(string $acc, Source $s) => $acc . $s->value . ", ", ""), null, 'niveaux'),
-            new Field(array_reduce(array_merge($suplom->general?->documentTypesLOMFR, $suplom->general?->documentTypesLOM), fn(string $acc, Source|Sources $s) => $acc . $s->value . ", ", ""), null, 'types_documentaires'),
-            new Field(array_reduce($suplom->educational?->learningResourceTypes , fn(string $acc, Source $s) => $acc . $s->value . ", ", ""), null, 'types_pedagogiques'),
-            new Field(array_reduce($suplom->educational?->description, fn(string $acc, Motcle $s) => $acc . trim($s->string?->value) . ", ", ""), null, 'proposition_utilisation'),
+            new Field(strip_tags($suplom->general->description[0]?->value), null, 'description_text'),
+            // etablissement_porteur ?
             new Field(strtolower($suplom->rights?->copyrightAndOtherRestrictions?->value ?? '') !== "no", null, 'propriete_intellectuelle'),
             new Field(strtolower($suplom->rights?->cost?->value ?? '') !== "no", null, 'ressource_payante'),
-            new Field($suplom->rights?->description[0]?->value, null, 'droit'),
             new Field(0, null, 'exposition_oai'),
+            new Field($suplom->rights?->description[0]?->value, null, 'droit'),
             new Field(1, null, 'external_resource'),
+            new Field($suplom->technical?->duration?->duration ?? null, null, 'dure_execution'),
         ];
+        // Champs multivalués
+        $motsCles = $suplom->general?->keywords;
+        foreach ($motsCles as $motCle) {
+            $value = $motCle->string?->value;
+            if (isset($value)) {
+                $fields[] = new Field($value, null, 'mots_cles');
+            }
+        }
+        $niveaux = $suplom->educational?->contexts;
+        foreach ($niveaux as $niveau) {
+            $fields[] = new Field($niveau->value, null, 'niveaux');
+        }
+        $tPeds = $suplom->educational?->learningResourceTypes;
+        foreach ($tPeds as $tPed) {
+            $fields[] = new Field($tPed->value, null, 'types_pedagogiques');
+        }
+        $tDocs = array_merge($suplom->general?->documentTypesLOMFR, $suplom->general?->documentTypesLOM);
+        foreach ($tDocs as $tDoc) {
+            $fields[] = new Field($tDoc->value, null, 'types_documentaires');
+        }
+        $propUsers = $suplom->educational?->description;
+        foreach ($propUsers as $propUser) {
+            $value = $propUser->string?->value;
+            if (isset($value)) {
+                $fields[] = new Field($value, null, 'proposition_utilisation');
+            }
+        }
+        // associations_associate ?
+        $userLangs = $suplom->educational->languages;
+        foreach ($userLangs as $userLang) {
+            $fields[] = new Field($userLang, null, 'langues_utilisateur');
+        }
+        $ressLangs = $suplom->general->languages;
+        foreach ($ressLangs as $ressLang) {
+            $fields[] = new Field($ressLang, null, 'langues_ressource');
+        }
 
         if (isset($suplom->technical?->size)) {
             $fields[] = new Field($suplom->technical?->size, null, 'ressource_taille');
         }
+
+        $roles = SuplomDto::extractRoles($suplom);
 
         $contributors = [
             "author" => [],
@@ -159,35 +232,64 @@ class IndexingNotice
             "creator" => []
         ];
 
-        foreach ($suplom->metadata?->contributes ?? [] as $contributor) {
-            $entities = self::getContribute($contributor->entities);
-            if ($contributor->role->value === "contributeur" || $contributor->role->value === "initiator") {
-                $contributors["creator"] = $entities;
-            } else {
-                $contributors[$contributor->role->value] = $entities;
+        $dateCreation = null;
+        $datePublicationPublisher = null;
+        $datePublicationValidator = null;
+
+        foreach ($roles as $role => $contributes) {
+            foreach ($contributes as $contribute) {
+                if ($role === 'contributeur' || $role === 'initiator') {
+                    $contributors['creator'][] = json_encode([
+                        'nom' => $contribute['name'],
+                        'email' => $contribute['email']
+                    ]);
+                } else {
+                    $contributors[$role][] = json_encode([
+                        'nom' => $contribute['name'],
+                        'email' => $contribute['email']
+                    ]);
+                }
+
+                if (!isset($dateCreation) && $role === 'author' && isset($contribute['date'])) {
+                    $dateCreation = (new DateTime($contribute['date']))->format('Y');
+                    $fields[] = new Field($dateCreation, null, 'date_creation');
+                }
+                if (!isset($datePublicationPublisher) && $role === 'publisher' && isset($contribute['date'])) {
+                    $datePublicationPublisher = $contribute['date'];
+                }
+                if (!isset($datePublicationValidator) && $role === 'validator' && isset($contribute['date'])) {
+                    $datePublicationValidator = $contribute['date'];
+                }
             }
         }
 
-        foreach ($suplom->lifeCycle?->contributes ?? [] as $contribute) {
-            $entities = self::getContribute($contribute->entities);
-            if ($contribute->role->value === "contributeur" || $contribute->role->value === "initiator") {
-                $contributors["creator"] = $entities;
-            } else {
-                $contributors[$contribute->role->value] = $entities;
-            }
+        if (isset($datePublicationPublisher)) {
+            $fields[] = new Field($datePublicationPublisher, null, 'date_publication');
+        } elseif (isset($datePublicationValidator)) {
+            $fields[] = new Field($datePublicationValidator, null, 'date_publication');
         }
 
         $fields[] = new Field(reset($contributors["creator"]), null, 'correspondant');
         $fields[] = new Field(reset($contributors["validator"]), null, 'validateur');
-        $fields[] = new Field(array_reduce(array_unique($contributors["author"]), fn(string $tmp, string $etab): string => $tmp . sprintf("%s, ", $etab), ""), null, 'contributions');
-        $fields[] = new Field(array_reduce(array_unique($contributors["publisher"]), fn(string $tmp, string $etab): string => $tmp . sprintf("%s, ", $etab), ""), null, 'etablissement_porteurs');
+
+        $auteurs = $contributors["author"];
+        foreach ($auteurs as $auteur) {
+            $fields[] = new Field($auteur, null, 'contributions');
+        }
+        $porteurs = $contributors["publisher"];
+        foreach ($porteurs as $porteur) {
+            $fields[] = new Field($porteur, null, 'etablissements_co_editeurs');
+        }
 
         foreach ($suplom->classifications ?? [] as $class) {
             $key = array_reduce($class->taxonPath->source ?? [], fn(string $a, Field $s) => "$a $s->value", "");
             $value = array_map(fn(Taxon $taxon) => $taxon->entry[0]?->value, $class->taxonPath->taxons ?? []);
 
+            if (!isset($class->taxonPathes) && str_contains($class->purpose?->value, 'educational')) {
+                $fields[] = new Field($class->description[0]?->string->value, null, 'objectifs_pedagogiques');
+            }
             if (str_contains($key, 'lassification')) {
-                $fields[] = new Field($value, null, 'specialites');
+                $fields[] = new Field($value, null, 'specialite');
             }
             if (str_contains($key, 'CDD 22')) {
                 $fields[] = new Field($value, null, 'dewey');
@@ -195,25 +297,6 @@ class IndexingNotice
         }
 
         return new self($fields);
-    }
-
-    /**
-     * Extrait les contributeurs d'un tableau d'entités.
-     *
-     * @param array $entities
-     * @return array
-     */
-    private static function getContribute(array $entities): array
-    {
-        $parts = explode("ORG:", $entities[0] ?? '');
-        if (count($parts) === 2 && !str_contains($parts[0], ';;;')) {
-            $entity = str_replace("VERSION:3.0", '{nom:', $parts[0]);
-            $entity = str_replace("FN:", ', email:', $entity);
-            $entity = str_replace(['BEGIN:VCARD', ';;', 'N:', '\n'], '', $entity);
-            $entity = str_replace(' UID:', ', id=', $entity);
-            return [sprintf("%s}", trim($entity)), str_replace('END:VCARD', '', trim($parts[1]))];
-        }
-        return [];
     }
 }
 
