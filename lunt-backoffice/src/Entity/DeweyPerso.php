@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: DeweyPersoRepository::class)]
 class DeweyPerso
 {
+  use DeweyCodeTrait;
   #[ORM\Id]
   #[ORM\GeneratedValue]
   #[ORM\Column(type: 'integer')]
@@ -48,15 +49,6 @@ class DeweyPerso
 
   public function __toString(): string
   {
-    $numero = '';
-    $parts = explode('/', trim($this->code, '/'));
-
-    $classIndex = array_search('class', $parts);
-    // recupère l'élément après class dans l'url
-    if ($classIndex !== false && isset($parts[$classIndex + 1])) {
-      $numero = $parts[$classIndex + 1];
-    }
-
-    return $numero . ' - ' . $this->nom;
+    return $this->getNumericCodeWithSpace() . ' - ' . $this->nom;
   }
 }

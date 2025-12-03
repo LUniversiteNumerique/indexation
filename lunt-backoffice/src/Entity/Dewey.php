@@ -12,6 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: DeweyRepository::class)]
 class Dewey
 {
+    use DeweyCodeTrait;
     use Timestamps;
 
     #[ORM\Column(length: 255, unique: true), Assert\NotBlank]
@@ -110,29 +111,5 @@ class Dewey
     public function getChildren(): Collection
     {
         return $this->children;
-    }
-
-    private function getNumericCodeWithSpace(): ?string
-    {
-        $numericCode = $this->getNumericCode();
-        // Ajout d'un espace tous les 3 chiffres après le point
-        if (str_contains($numericCode, '.')) {
-            // Sépare les parties avant et après le point
-            $parts = explode('.', $numericCode);
-            // Ajout des espaces dans la partie après le point
-            $parts[1] = wordwrap($parts[1], 3, ' ', true);
-            // Recombine les parties
-            $numericCode = implode('.', $parts);
-        }
-        return $numericCode;
-    }
-
-    public function getNumericCode(): ?string
-    {
-        // Remove the prefix
-        $numericCode = str_replace('http://dewey.info/class/', '', $this->code);
-
-        // Remove the final slash if present
-        return rtrim($numericCode, "/");
     }
 }
