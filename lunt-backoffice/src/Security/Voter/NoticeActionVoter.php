@@ -44,6 +44,7 @@ class NoticeActionVoter extends Voter
         /** @var User $user */
         $user = $token->getUser();
         if (!$user instanceof User) return false;
+        if ($subject->isDeleted()) return false;
 
         return match ($attribute) {
             self::VIEW => $this->canView($subject, $user),

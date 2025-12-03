@@ -95,7 +95,9 @@ class Dossier
 
     public function getNotices(): Collection
     {
-        return $this->notices;
+        return $this->notices->filter(function (Notice $notice) {
+            return !$notice->isDeleted();
+        });
     }
 
     public function addNotice(Notice $notice): static
