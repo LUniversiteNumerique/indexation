@@ -119,7 +119,7 @@ class IndexingNotice
                 $fields[] = new Field(json_encode([
                     "id" => $spec->getCode(),
                     "libelle" => $spec->getNom()
-                ]), null, 'specialite');
+                ]), null, 'specialites');
             }
         }
         $auteurs = $notice->getAuteurs()->toArray();
@@ -289,7 +289,7 @@ class IndexingNotice
                 $fields[] = new Field($class->description[0]?->string->value, null, 'objectifs_pedagogiques');
             }
             if (str_contains($key, 'lassification')) {
-                $fields[] = new Field($value, null, 'specialite');
+                $fields[] = new Field($value, null, 'specialites');
             }
             if (str_contains($key, 'CDD 22')) {
                 $fields[] = new Field($value, null, 'dewey');

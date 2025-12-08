@@ -462,7 +462,7 @@
     <field name="date_creation" type="pint"/>
     <field name="niveaux" type="string" indexed="false" stored="true" multiValued="true"/>
     <field name="domaines" type="string" indexed="false" stored="true"/>
-    <field name="specialite" type="string" indexed="false" stored="true" multiValued="true"/>
+    <field name="specialites" type="string" indexed="false" stored="true" multiValued="true"/>
     <field name="types_documentaires" type="string" indexed="false" stored="true" multiValued="true"/>
     <field name="types_pedagogiques" type="string" indexed="false" stored="true" multiValued="true"/>
     <field name="mots_cles" type="string" indexed="true" stored="true" multiValued="true"/>
@@ -491,6 +491,11 @@
     <field name="associations_associate" type="string" indexed="false" stored="true" multiValued="true"/>
     <field name="description_text" type="string" indexed="false" stored="true"/>
     <field name="validateur" type="string" indexed="false" stored="true"/>
+    <field name="champ_extension1" type="string" indexed="false" stored="true"/>
+    <field name="champ_extension2" type="string" indexed="false" stored="true"/>
+    <field name="champ_extension3" type="string" indexed="false" stored="true"/>
+    <field name="champ_extension4" type="string" indexed="false" stored="true"/>
+    <field name="champ_extension5" type="string" indexed="false" stored="true"/>
 
     <dynamicField name="*" type="string" indexed="false" stored="false"/>
 
@@ -498,7 +503,7 @@
     <field name="specialite_str" type="string" indexed="false" stored="true" multiValued="true"/>
 
     <copyField source="contributions" dest="contributions_str" maxChars="256"/>
-    <copyField source="specialite" dest="specialite_str" maxChars="256"/>
+    <copyField source="specialites" dest="specialites_str" maxChars="256"/>
     <copyField source="etablissement_porteur" dest="etablissement_porteur_str" maxChars="256"/>
     <copyField source="description_text" dest="description_text_str" maxChars="256"/>
     <copyField source="domaines" dest="domaines_str" maxChars="256"/>
