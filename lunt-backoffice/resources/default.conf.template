@@ -8,6 +8,16 @@ server {
     error_log /var/log/nginx/project_error.log;
     access_log /var/log/nginx/project_access.log;
 
+    location = /uploads/files/ {
+        return 404;
+    }
+
+    location ^~ /uploads/files/ {
+        alias /var/www/site/public/uploads/files/;
+        autoindex on;
+        try_files $uri $uri/ =404;
+    }
+
     location / {
         try_files $uri /index.php$is_args$args;
     }
