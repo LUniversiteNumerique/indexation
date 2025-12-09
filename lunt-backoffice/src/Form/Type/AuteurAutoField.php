@@ -3,6 +3,7 @@
 namespace App\Form\Type;
 
 use App\Entity\Auteur;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\UX\Autocomplete\Form\{AsEntityAutocompleteField, BaseEntityAutocompleteType};
@@ -17,6 +18,11 @@ class AuteurAutoField extends AbstractType
             'placeholder' => 'Choisir un Auteur',
             'security' => 'ROLE_READ_ACTE',
             'preload' => true,
+            'query_builder' => function (EntityRepository $er) {
+                return $er->createQueryBuilder('a')
+                    ->orderBy('a.nom', 'ASC')
+                    ->addOrderBy('a.prenom', 'ASC');
+            },
         ]);
     }
 
