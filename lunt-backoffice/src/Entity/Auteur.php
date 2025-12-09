@@ -77,6 +77,6 @@ class Auteur
 
     public function __toString(): string
     {
-        return sprintf('%s %s', $this->prenom, $this->nom);
+        return sprintf('%s %s', $this->nom, $this->prenom);
     }
 }
