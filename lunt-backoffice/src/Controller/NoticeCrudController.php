@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Controller\Admin\Filter\AuteurFilter;
 use App\Entity\{Notice, NoticEtat, User};
 use App\Event\{AfterNoticeAdjustingEvent, AfterNoticeApprovingEvent, AfterNoticeRejectingEvent, AfterNoticeStateSetEvent, AfterNoticeSubmissionEvent};
 use App\Field\{DurationField, EntityField, FileField};
@@ -200,7 +201,7 @@ class NoticeCrudController extends AbstractCrudController
           ->renderExpanded()
       )
       ->add(TextFilter::new('titre'))
-      ->add(EntityFilter::new('auteurs'))
+      ->add(AuteurFilter::new('auteurs')->canSelectMultiple(false))
       ->add(DateTimeFilter::new('creeLe', 'Créée le'))
       ->add(DateTimeFilter::new('editeLe', 'Date de modification'));
   }
